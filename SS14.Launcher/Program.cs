@@ -70,8 +70,7 @@ namespace SS14.Launcher
             {
                 var process = Process.Start(new ProcessStartInfo
                 {
-                    FileName = "SS14.Client.exe",
-                    WorkingDirectory = binPath,
+                    FileName = Path.Combine(binPath, "SS14.Client.exe"),
                 });
                 process?.WaitForExit();
             }
