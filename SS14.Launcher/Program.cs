@@ -17,12 +17,15 @@ namespace SS14.Launcher
     {
         private const string JenkinsBaseUrl = "https://builds.spacestation14.io/jenkins";
         private const string JenkinsJobName = "SS14 Content";
+        private const string CurrentLauncherVersion = "1";
 
         private static HttpClient _httpClient;
 
         public static async Task Main(string[] args)
         {
             _httpClient = new HttpClient();
+
+            await BrickIfOutdated();
 
             var dataDir = GetUserDataDir();
             // Ensure data dir exists.
@@ -33,6 +36,21 @@ namespace SS14.Launcher
             LaunchClient();
         }
 
+        private static async Task BrickIfOutdated()
+        {
+            // Brick the launcher if it's an old version.
+            var launcherVersionUri =
+                new Uri("https://builds.spacestation14.io/jenkins/userContent/current_launcher_version.txt");
+
+            var versionRequest = await _httpClient.GetAsync(launcherVersionUri);
+            var version = (await versionRequest.Content.ReadAsStringAsync()).Trim();
+            if (version != CurrentLauncherVersion)
+            {
+                Console.WriteLine("This launcher is out of date. Download a new one.");
+                Environment.Exit(1);
+            }
+        }
+
         private static void LaunchClient()
         {
             var binPath = GetClientBinPath();
@@ -41,7 +59,7 @@ namespace SS14.Launcher
                 var process = Process.Start(new ProcessStartInfo
                 {
                     FileName = "mono",
-                    ArgumentList = { "SS14.Client.exe" },
+                    ArgumentList = {"SS14.Client.exe"},
                     WorkingDirectory = binPath,
                     UseShellExecute = false,
                 });
