@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="ILLink.Tasks" Version="0.1.5-preview-1841731" />
+      <PackageReference Include="Microsoft.Packaging.Tools.Trimming" Version="1.1.0-preview1-26619-01" />
       <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     </ItemGroup>
 
