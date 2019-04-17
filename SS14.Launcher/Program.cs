@@ -59,7 +59,7 @@ namespace SS14.Launcher
                 var process = Process.Start(new ProcessStartInfo
                 {
                     FileName = "mono",
-                    ArgumentList = {"SS14.Client.exe"},
+                    ArgumentList = {"Robust.Client.exe"},
                     WorkingDirectory = binPath,
                     UseShellExecute = false,
                 });
@@ -70,7 +70,7 @@ namespace SS14.Launcher
             {
                 var process = Process.Start(new ProcessStartInfo
                 {
-                    FileName = Path.Combine(binPath, "SS14.Client.exe"),
+                    FileName = Path.Combine(binPath, "Robust.Client.exe"),
                 });
                 process?.WaitForExit();
             }
@@ -212,7 +212,7 @@ namespace SS14.Launcher
                 throw new NotSupportedException("Unsupported platform.");
             }
 
-            return $"SS14.Client_{platform}_x64.zip";
+            return $"Robust.Client_{platform}_x64.zip";
         }
 
         [Pure]
