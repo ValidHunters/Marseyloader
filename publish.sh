@@ -1,21 +1,15 @@
 #!/bin/sh
 
+cd "$(dirname "$0")"
+
 rm -r **/bin
-rm -r **/obj
 
-rm SS14.Launcher_Linux_x64.zip
-rm SS14.Launcher_Windows_x64.zip
-rm SS14.Launcher_macOS_x64.zip
+nuget restore SS14.Launcher.sln
+msbuild /p:Configuration=Release /p:TargetFramework=net472 SS14.Launcher.sln
 
-dotnet publish --self-contained --runtime linux-x64 -c release /p:TrimUnusedDependencies=true
-pushd SS14.Launcher/bin/Release/netcoreapp2.2/linux-x64/publish
-zip -r ../../../../../../SS14.Launcher_Linux_x64.zip *
-popd
-dotnet publish --self-contained --runtime win-x64 -c release /p:TrimUnusedDependencies=true /p:LinkDuringPublish=false
-pushd SS14.Launcher/bin/Release/netcoreapp2.2/win-x64/publish
-zip -r ../../../../../../SS14.Launcher_Windows_x64.zip *
-popd
-dotnet publish --self-contained --runtime osx-x64 -c release /p:TrimUnusedDependencies=true /p:LinkDuringPublish=false
-pushd SS14.Launcher/bin/Release/netcoreapp2.2/osx-x64/publish
-zip -r ../../../../../../SS14.Launcher_macOS_x64.zip *
+cp PublishFiles/SS14.Launcher SS14.Launcher/bin/Release/net472/
+
+pushd SS14.Launcher/bin/Release/net472/
+rm *.pdb
+zip -r ../../../../SS14.Launcher_all_platforms.zip *
 popd
