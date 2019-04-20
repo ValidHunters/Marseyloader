@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -21,7 +20,7 @@ namespace SS14.Launcher
 
         private static HttpClient _httpClient;
 
-        public static async Task Main(string[] args)
+        public static async Task Main()
         {
             _httpClient = new HttpClient();
 
@@ -59,7 +58,7 @@ namespace SS14.Launcher
                 var process = Process.Start(new ProcessStartInfo
                 {
                     FileName = "mono",
-                    ArgumentList = {"Robust.Client.exe"},
+                    Arguments = "Robust.Client.exe",
                     WorkingDirectory = binPath,
                     UseShellExecute = false,
                 });
@@ -282,17 +281,5 @@ namespace SS14.Launcher
         public string Url;
     }
 
-    [Serializable]
-    internal class JenkinsBuildInfo
-    {
-        public List<JenkinsArtifactInfo> Artifacts;
-    }
-
-    [Serializable]
-    internal class JenkinsArtifactInfo
-    {
-        public string FileName;
-        public string RelativePath;
-    }
 #pragma warning restore 649
 }
