@@ -211,7 +211,7 @@ namespace SS14.Launcher
                 throw new NotSupportedException("Unsupported platform.");
             }
 
-            return $"Robust.Client_{platform}_x64.zip";
+            return $"SS14.Client_{platform}_x64.zip";
         }
 
         [Pure]
