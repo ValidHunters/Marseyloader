@@ -2,14 +2,36 @@
 
 cd "$(dirname "$0")"
 
+# Clear out previous build.
 rm -r **/bin
 
+# Run build.
 nuget restore SS14.Launcher.sln
 msbuild /p:Configuration=Release /p:TargetFramework=net472 SS14.Launcher.sln
+# Delete PDB file.
+rm SS14.Launcher/bin/Release/net472/*.pdb
 
-cp PublishFiles/SS14.Launcher SS14.Launcher/bin/Release/net472/
+# Create intermediate directories.
+mkdir -p bin/publish/macOS
+mkdir -p bin/publish/Windows
+mkdir -p bin/publish/Linux
 
-pushd SS14.Launcher/bin/Release/net472/
-rm *.pdb
-zip -r ../../../../SS14.Launcher_all_platforms.zip *
+# Linux
+cp PublishFiles/SS14.Launcher bin/publish/Linux
+cp SS14.Launcher/bin/Release/net472/* bin/publish/Linux
+pushd bin/publish/Linux
+zip -r ../../../SS14.Launcher_Linux.zip *
+popd
+
+# Windows
+cp SS14.Launcher/bin/Release/net472/* bin/publish/Windows
+pushd bin/publish/Windows
+zip -r ../../../SS14.Launcher_Windows.zip *
+popd
+
+# macOS
+cp -r "PublishFiles/Space Station 14 Launcher.app" bin/publish/macOS
+cp SS14.Launcher/bin/Release/net472/* "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/"
+pushd bin/publish/macOS
+zip -r ../../../SS14.Launcher_macOS.zip *
 popd
