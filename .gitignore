@@ -3,3 +3,4 @@ obj/
 .idea/
 *.zip
 *.DotSettings.user
+.DS_Store
