@@ -80,7 +80,7 @@ namespace SS14.Launcher
                 var process = Process.Start(new ProcessStartInfo
                 {
                     FileName = "open",
-                    Arguments = "Space Station 14.app",
+                    Arguments = "'Space Station 14.app'",
                     WorkingDirectory = binPath,
                 });
                 process?.WaitForExit();
@@ -145,6 +145,22 @@ namespace SS14.Launcher
             using (var stream = await _downloadArtifact(latestBuildNumber, GetBuildFilename()))
             {
                 ExtractZipToDirectory(binPath, stream);
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                // .NET's zip extraction system doesn't seem to preserve +x.
+                // Technically can't blame it because there's no "official" way to store that,
+                // since zip files are DOS-centric.
+
+                // Manually chmod +x the App bundle then.
+                var process = Process.Start(new ProcessStartInfo
+                {
+                    FileName = "chmod",
+                    Arguments = $"+x '{Path.Combine("Space Station 14.app", "Contents", "MacOS", "SS14")}'",
+                    WorkingDirectory = binPath,
+                });
+                process?.WaitForExit();
             }
 
             // Write version to disk.
