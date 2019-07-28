@@ -4,3 +4,5 @@ obj/
 *.zip
 *.DotSettings.user
 .DS_Store
+cmake-build*
+publish_test

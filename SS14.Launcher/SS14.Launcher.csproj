@@ -3,11 +3,19 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <LangVersion>7.3</LangVersion>
-        <TargetFrameworks>netcoreapp2.0;net472</TargetFrameworks>
+        <TargetFramework>net472</TargetFramework>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <!--<TargetFrameworks>netcoreapp2.0;net472</TargetFrameworks>-->
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+        <PackageReference Include="JetBrains.Annotations" Version="10.2.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+        <PackageReference Include="Qml.Net" Version="0.10.1" />
+        <PackageReference Include="Qml.Net.LinuxBinaries" Version="0.10.1" />
+        <PackageReference Include="Qml.Net.OSXBinaries" Version="0.10.1" />
+        <PackageReference Include="Qml.Net.WindowsBinaries" Version="0.10.1" />
+        <PackageReference Include="System.Buffers" Version="4.5.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
@@ -18,6 +26,13 @@
     <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
       <Reference Include="System.IO.Compression" />
       <Reference Include="System.Net.Http" />
+    </ItemGroup>
+
+    <ItemGroup>
+
+        <None Update="assets/**/*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
