@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:v="clr-namespace:SS14.Launcher.Views;assembly=SS14.Launcher"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        MinWidth="500" MinHeight="200"
+        x:Class="SS14.Launcher.Views.MainWindow"
+        Icon="/Assets/icon.ico"
+        Title="SS14.Launcher">
+
+    <Design.DataContext>
+        <!--<vm:MainWindowViewModel/>-->
+    </Design.DataContext>
+
+    <DockPanel LastChildFill="false">
+        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Text="Space Station 14"
+                   FontFamily="/Assets/Fonts/Animal_Silence.otf#Animal Silence"
+                   FontSize="55"/>
+        <v:ClientUpdater DockPanel.Dock="Bottom" DataContext="{Binding Updater}" />
+    </DockPanel>
+</Window>
