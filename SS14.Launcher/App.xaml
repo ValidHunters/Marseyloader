@@ -10,5 +10,9 @@
         <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseDark.xaml"/>
         <StyleInclude Source="/Theme.xaml"/>
+        <StyleInclude Source="/ThemeResources.xaml"/>
+        <StyleInclude Source="/Theme/ThemeTabControl.xaml"/>
+        <StyleInclude Source="/Theme/ThemeExpander.xaml"/>
+        <StyleInclude Source="/Theme/ThemeButton.xaml"/>
     </Application.Styles>
 </Application>

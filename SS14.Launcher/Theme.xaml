@@ -1,12 +1,42 @@
-<Style xmlns="https://github.com/avaloniaui"
-       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-       xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <Style.Resources>
-        <Color x:Key="ThemeAccentColor">#FF119EDA</Color>
-        <Color x:Key="ThemeBackgroundColor">#20202a</Color>
-        <Color x:Key="ThemeForegroundColor">#FFFFFF</Color>
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-        <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{DynamicResource ThemeBackgroundColor}" />
-        <SolidColorBrush x:Key="ThemeForegroundBrush" Color="{DynamicResource ThemeForegroundColor}"></SolidColorBrush>
-    </Style.Resources>
-</Style>
+    <Style Selector="TextBlock.NanoHeading">
+        <Setter Property="Foreground" Value="{DynamicResource ThemeNanoGoldBrush}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="30" />
+    </Style>
+
+    <Style Selector="TextBlock.NanoHeadingMedium">
+        <Setter Property="Foreground" Value="{DynamicResource ThemeNanoGoldBrush}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="20" />
+    </Style>
+
+    <!-- Also catch the text presenter used by TextBox -->
+    <Style Selector=":is(TextBlock)">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontFamily" Value="/Assets/Fonts/noto_sans/*.ttf#Noto Sans" />
+        <Setter Property="Foreground">
+            <SolidColorBrush Color="#EEEEEE" />
+        </Setter>
+    </Style>
+
+    <Style Selector="Panel.GoldLineHorizontal">
+        <Setter Property="Background" Value="{DynamicResource ThemeNanoGoldBrush}" />
+        <Setter Property="MinHeight" Value="2" />
+    </Style>
+
+    <Style Selector="Expander[ExpandDirection=Down] /template/ ToggleButton#PART_toggle">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style Selector="Panel.ScrollViewerSep">
+        <Setter Property="Background">
+            <SolidColorBrush Color="#2e2e35" />
+        </Setter>
+        <Setter Property="MinHeight" Value="1" />
+    </Style>
+
+</Styles>

@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
+             xmlns:v="clr-namespace:SS14.Launcher.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SS14.Launcher.Views.ServerEntryView">
+    <Design.DataContext>
+        <vm:ServerEntryViewModel />
+    </Design.DataContext>
+
+    <Panel>
+        <Panel.Background>
+            <SolidColorBrush Color="{Binding BackgroundColor}" />
+        </Panel.Background>
+        <Expander Name="Expando" Classes="NoPad">
+            <Expander.Header>
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="Connect" />
+                    <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center"
+                               TextAlignment="Right" Text="{Binding PlayerCountString}"
+                               MinWidth="100"
+                               Margin="10, 0"/>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
+                </DockPanel>
+            </Expander.Header>
+            <TextBlock Text="{Binding Description}" />
+        </Expander>
+    </Panel>
+
+</UserControl>

@@ -1,0 +1,31 @@
+<Style xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <Style.Resources>
+        <Color x:Key="ThemeAccentColor">#FF119EDA</Color>
+        <Color x:Key="ThemeBackgroundColor">#25252a</Color>
+        <Color x:Key="ThemeForegroundColor">#FFFFFF</Color>
+        <Color x:Key="ThemeControlMidColor">#464966</Color>
+        <Color x:Key="ThemeControlHighColor">#3e6c45</Color>
+        <Color x:Key="ThemeNanoGoldColor">#ada24b</Color>
+        <Color x:Key="ThemeStripebackEdgeColor">#525252</Color>
+        <Color x:Key="ThemeButtonHoveredColor">#575b7f</Color>
+
+        <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource ThemeBackgroundColor}" />
+        <SolidColorBrush x:Key="ThemeForegroundBrush" Color="{StaticResource ThemeForegroundColor}" />
+        <SolidColorBrush x:Key="ThemeControlMidBrush" Color="{StaticResource ThemeControlMidColor}" />
+        <SolidColorBrush x:Key="ThemeControlHighBrush" Color="{StaticResource ThemeControlHighColor}" />
+        <SolidColorBrush x:Key="ThemeNanoGoldBrush" Color="{StaticResource ThemeNanoGoldColor}" />
+        <SolidColorBrush x:Key="ThemeButtonHoveredBrush" Color="{StaticResource ThemeButtonHoveredColor}" />
+
+        <ImageBrush x:Key="ThemeStripeBackBrush">
+            <ImageBrush.Source>/Assets/stripeback.svg.96dpi.png</ImageBrush.Source>
+            <ImageBrush.TileMode>Tile</ImageBrush.TileMode>
+            <ImageBrush.Stretch>Fill</ImageBrush.Stretch>
+
+            <!-- Need to specify these to make tiling work. -->
+            <ImageBrush.SourceRect>0, 0, 32, 32</ImageBrush.SourceRect>
+            <ImageBrush.DestinationRect>0, 0, 32, 32</ImageBrush.DestinationRect>
+        </ImageBrush>
+    </Style.Resources>
+</Style>

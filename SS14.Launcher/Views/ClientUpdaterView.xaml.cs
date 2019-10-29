@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views
 {
-    public class ClientUpdater : UserControl
+    public class ClientUpdaterView : UserControl
     {
-        public ClientUpdater()
+        public ClientUpdaterView()
         {
             InitializeComponent();
         }

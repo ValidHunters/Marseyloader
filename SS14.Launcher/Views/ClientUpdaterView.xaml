@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SS14.Launcher.Views.ClientUpdater">
+             x:Class="SS14.Launcher.Views.ClientUpdaterView">
     <Design.DataContext>
-        <!--<vm:ClientUpdaterViewModel />-->
+        <vm:ClientUpdaterViewModel />
     </Design.DataContext>
 
     <DockPanel>

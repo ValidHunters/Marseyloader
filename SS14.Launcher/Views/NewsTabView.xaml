@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SS14.Launcher.Views.NewsTabView"
+             Name="NewsTab">
+    <Design.DataContext>
+        <vm:NewsTabViewModel />
+    </Design.DataContext>
+
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Recent News:" Classes="NanoHeading" />
+
+        <Panel Background="{DynamicResource StripeBackBrush}">
+            <ScrollViewer IsVisible="{Binding NewsPulled}">
+                <ItemsControl Items="{Binding NewsEntries}" >
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="vm:NewsEntryViewModel">
+                            <Button Margin="4, 4" Command="{Binding Open}">
+                                <TextBlock Text="{Binding Headline}" />
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <TextBlock IsVisible="{Binding NewsNotPulled}">
+                Pulling news...
+            </TextBlock>
+        </Panel>
+
+
+    </DockPanel>
+</UserControl>

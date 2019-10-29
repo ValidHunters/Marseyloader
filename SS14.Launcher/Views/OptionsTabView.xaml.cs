@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views
 {
-    public class MainWindow : Window
+    public class OptionsTabView : UserControl
     {
-        public MainWindow()
+        public OptionsTabView()
         {
             InitializeComponent();
         }
