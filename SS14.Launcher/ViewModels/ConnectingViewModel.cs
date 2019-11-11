@@ -36,7 +36,7 @@ namespace SS14.Launcher.ViewModels
                     if (val == Connector.ConnectionStatus.ClientRunning
                         || val == Connector.ConnectionStatus.ClientExited && !_connector.ClientExitedBadly)
                     {
-                        Window.Close();
+                        Window!.Close();
                     }
                 });
 
@@ -99,7 +99,7 @@ namespace SS14.Launcher.ViewModels
             dialog.ShowDialog(window);
         }
 
-        private async void Start(string address)
+        private void Start(string address)
         {
             _connector.Connect(address);
         }
