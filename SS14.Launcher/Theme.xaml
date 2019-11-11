@@ -18,9 +18,6 @@
     <Style Selector=":is(TextBlock)">
         <Setter Property="FontSize" Value="15" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/noto_sans/*.ttf#Noto Sans" />
-        <Setter Property="Foreground">
-            <SolidColorBrush Color="#EEEEEE" />
-        </Setter>
     </Style>
 
     <Style Selector="Panel.GoldLineHorizontal">
@@ -39,4 +36,20 @@
         <Setter Property="MinHeight" Value="1" />
     </Style>
 
+    <!-- TabItem -->
+    <Style Selector="TabItem:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ThemeTabItemHoveredBrush}"/>
+    </Style>
+    <Style Selector="TabItem:selected">
+        <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
+    </Style>
+    <Style Selector="TabItem:selected:focus">
+        <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
+    </Style>
+    <Style Selector="TabItem:selected:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
+    </Style>
+    <Style Selector="TabItem:selected:focus:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
+    </Style>
 </Styles>

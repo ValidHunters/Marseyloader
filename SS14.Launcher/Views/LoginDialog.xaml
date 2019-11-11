@@ -3,19 +3,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
-        MinWidth="350" MinHeight="100"
+        MinWidth="500" MinHeight="140"
         Height="100"
-        x:Class="SS14.Launcher.Views.DirectConnectDialog"
+        x:Class="SS14.Launcher.Views.LoginDialog"
         Icon="/Assets/icon.ico"
-        Title="Direct Connect..."
+        Title="Log in"
+        Padding="4, 0, 4, 4"
         WindowStartupLocation="CenterOwner">
 
-    <DockPanel LastChildFill="false" Margin="4">
+    <DockPanel LastChildFill="false">
         <TextBlock Classes="NanoHeadingMedium" HorizontalAlignment="Center" DockPanel.Dock="Top"
-                   Text="Enter server address to connect:" />
+                   Text="We don't actually have a proper login system yet,&#10;so enter any username you want!" />
         <DockPanel DockPanel.Dock="Bottom">
-            <Button DockPanel.Dock="Right" Name="SubmitButton" Content="Connect" />
-            <TextBox Name="AddressBox"  Watermark="ss14://example.com:1212" />
+            <Button DockPanel.Dock="Right" Name="SubmitButton" Content="Save" />
+            <TextBlock VerticalAlignment="Center" Name="InvalidReason" />
         </DockPanel>
+        <Control MinHeight="4" DockPanel.Dock="Bottom" />
+        <TextBox DockPanel.Dock="Bottom" Name="NameBox" Watermark="UristMcGreyShirt" />
     </DockPanel>
 </Window>

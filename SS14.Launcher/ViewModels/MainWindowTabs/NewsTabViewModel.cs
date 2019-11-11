@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using CodeHollow.FeedReader;
 using ReactiveUI;
 
-namespace SS14.Launcher.ViewModels
+namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class NewsTabViewModel : MainWindowTabViewModel
     {
@@ -36,7 +36,7 @@ namespace SS14.Launcher.ViewModels
             PullNews();
         }
 
-        public async void PullNews()
+        private async void PullNews()
         {
             if (_startedPullingNews)
             {
@@ -52,11 +52,6 @@ namespace SS14.Launcher.ViewModels
             }
 
             NewsPulled = true;
-        }
-
-        public void OpenNews(Uri uri)
-        {
-            Helpers.OpenUri(uri);
         }
 
         public ObservableCollection<NewsEntryViewModel> NewsEntries { get; }

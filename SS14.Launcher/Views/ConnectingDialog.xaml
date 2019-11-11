@@ -1,0 +1,24 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:SS14.Launcher.ViewModels"
+        xmlns:views="clr-namespace:SS14.Launcher.Views"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
+        MinWidth="350" MinHeight="100"
+        Height="100"
+        x:Class="SS14.Launcher.Views.ConnectingDialog"
+        Icon="/Assets/icon.ico"
+        Title="Connecting..."
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:ConnectingViewModel />
+    </Design.DataContext>
+    <DockPanel LastChildFill="False" Margin="4">
+        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Text="{Binding StatusText}" TextWrapping="Wrap" />
+
+        <ProgressBar DockPanel.Dock="Bottom" Maximum="1" Value="{Binding Progress}"
+                     IsIndeterminate="{Binding ProgressIndeterminate}" IsVisible="{Binding ProgressBarVisible}" />
+    </DockPanel>
+</Window>

@@ -1,9 +1,7 @@
-namespace SS14.Launcher.ViewModels
+namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class OptionsTabViewModel : MainWindowTabViewModel
     {
         public override string Name => "Options";
-
-        public string PlayerName { get; set; } = "Joe Genero";
     }
 }

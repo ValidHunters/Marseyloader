@@ -25,11 +25,7 @@ Taken & modified from Avalonia's git repo.
                                 ItemsPanel="{TemplateBinding ItemsPanel}"
                                 ItemTemplate="{TemplateBinding ItemTemplate}" />
                         </Panel>
-                        <Panel Name="PART_Edge">
-                            <Panel.Background>
-                                <SolidColorBrush Color="{DynamicResource ThemeStripebackEdgeColor}" />
-                            </Panel.Background>
-                        </Panel>
+                        <Panel Name="PART_Edge" Background="{DynamicResource ThemeStripebackEdgeBrush}" />
                         <ContentPresenter
                             Name="PART_SelectedContentHost"
                             Margin="{TemplateBinding Padding}"

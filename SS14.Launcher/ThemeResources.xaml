@@ -2,21 +2,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Style.Resources>
-        <Color x:Key="ThemeAccentColor">#FF119EDA</Color>
-        <Color x:Key="ThemeBackgroundColor">#25252a</Color>
-        <Color x:Key="ThemeForegroundColor">#FFFFFF</Color>
+        <Color x:Key="ThemeBackgroundColor">#25252A</Color>
+        <Color x:Key="ThemeForegroundColor">#EEEEEE</Color>
+
         <Color x:Key="ThemeControlMidColor">#464966</Color>
-        <Color x:Key="ThemeControlHighColor">#3e6c45</Color>
-        <Color x:Key="ThemeNanoGoldColor">#ada24b</Color>
+        <Color x:Key="ThemeControlHighColor">#3E6C45</Color>
+
+        <Color x:Key="ThemeNanoGoldColor">#ADA24B</Color>
         <Color x:Key="ThemeStripebackEdgeColor">#525252</Color>
-        <Color x:Key="ThemeButtonHoveredColor">#575b7f</Color>
+        <Color x:Key="ThemeButtonHoveredColor">#575B7F</Color>
+
+        <Color x:Key="ThemeTabItemSelectedColor">#CC3E6C45</Color>
+        <Color x:Key="ThemeTabItemHoveredColor">#CC575B7F</Color>
 
         <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource ThemeBackgroundColor}" />
         <SolidColorBrush x:Key="ThemeForegroundBrush" Color="{StaticResource ThemeForegroundColor}" />
+
         <SolidColorBrush x:Key="ThemeControlMidBrush" Color="{StaticResource ThemeControlMidColor}" />
         <SolidColorBrush x:Key="ThemeControlHighBrush" Color="{StaticResource ThemeControlHighColor}" />
+
         <SolidColorBrush x:Key="ThemeNanoGoldBrush" Color="{StaticResource ThemeNanoGoldColor}" />
         <SolidColorBrush x:Key="ThemeButtonHoveredBrush" Color="{StaticResource ThemeButtonHoveredColor}" />
+        <SolidColorBrush x:Key="ThemeStripebackEdgeBrush" Color="{StaticResource ThemeStripebackEdgeColor}" />
+
+        <SolidColorBrush x:Key="ThemeTabItemSelectedBrush" Color="{StaticResource ThemeTabItemSelectedColor}" />
+        <SolidColorBrush x:Key="ThemeTabItemHoveredBrush" Color="{StaticResource ThemeTabItemHoveredColor}" />
 
         <ImageBrush x:Key="ThemeStripeBackBrush">
             <ImageBrush.Source>/Assets/stripeback.svg.96dpi.png</ImageBrush.Source>

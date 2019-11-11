@@ -6,14 +6,14 @@ namespace SS14.Launcher
     [Serializable]
     internal class JenkinsJobInfo
     {
-        public JenkinsBuildRef LastSuccessfulBuild;
+        public JenkinsBuildRef? LastSuccessfulBuild;
     }
 
     [Serializable]
     internal class JenkinsBuildRef
     {
         public int Number;
-        public string Url;
+        public string? Url;
     }
 #pragma warning restore 649
 }

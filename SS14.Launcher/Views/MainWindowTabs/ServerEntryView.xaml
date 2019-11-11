@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
              xmlns:v="clr-namespace:SS14.Launcher.Views"
+             xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SS14.Launcher.Views.ServerEntryView">
+             x:Class="SS14.Launcher.Views.MainWindowTabs.ServerEntryView">
     <Design.DataContext>
-        <vm:ServerEntryViewModel />
+        <mainWindowTabs:ServerEntryViewModel />
     </Design.DataContext>
 
     <Panel>
@@ -17,15 +18,21 @@
         <Expander Name="Expando" Classes="NoPad">
             <Expander.Header>
                 <DockPanel>
-                    <Button DockPanel.Dock="Right" Content="Connect" />
+                    <Button IsEnabled="{Binding IsOnline}" DockPanel.Dock="Right" Content="Connect"
+                            Command="{Binding ConnectPressed}" />
                     <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center"
-                               TextAlignment="Right" Text="{Binding PlayerCountString}"
-                               MinWidth="100"
-                               Margin="10, 0"/>
+                               TextAlignment="Left" Text="{Binding ServerStatusString}"
+                               MinWidth="150"
+                               Margin="10, 0" />
                     <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
                 </DockPanel>
             </Expander.Header>
-            <TextBlock Text="{Binding Description}" />
+            <DockPanel>
+                <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="4"
+                        Content="{Binding FavoriteButtonText}"
+                        Command="{Binding FavoriteButtonPressed}" />
+            </DockPanel>
+
         </Expander>
     </Panel>
 

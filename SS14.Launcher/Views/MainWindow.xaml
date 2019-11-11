@@ -3,11 +3,12 @@
         xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         MinWidth="650" MinHeight="400"
         x:Class="SS14.Launcher.Views.MainWindow"
         Icon="/Assets/icon.ico"
-        Title="SS14.Launcher">
+        Title="Space Station 14 Launcher">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
@@ -27,7 +28,7 @@
         <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" />
         <TabControl Items="{Binding Tabs}" TabStripPlacement="Bottom" SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}">
             <TabControl.ItemTemplate>
-                <DataTemplate DataType="vm:MainWindowTabViewModel">
+                <DataTemplate DataType="mainWindowTabs:MainWindowTabViewModel">
                     <TextBlock Text="{Binding Name}"></TextBlock>
                 </DataTemplate>
             </TabControl.ItemTemplate>

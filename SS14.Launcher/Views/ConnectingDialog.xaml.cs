@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views
 {
-    public class NewsTabView : UserControl
+    public class ConnectingDialog : Window
     {
-        public NewsTabView()
+        public ConnectingDialog()
         {
             InitializeComponent();
         }

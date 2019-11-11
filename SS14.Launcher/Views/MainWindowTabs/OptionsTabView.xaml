@@ -3,15 +3,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
+             xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SS14.Launcher.Views.OptionsTabView"
+             x:Class="SS14.Launcher.Views.MainWindowTabs.OptionsTabView"
              Name="NewsTab">
     <Design.DataContext>
-        <vm:OptionsTabViewModel />
+        <mainWindowTabs:OptionsTabViewModel />
     </Design.DataContext>
 
-    <Grid Margin="4" VerticalAlignment="Top" ColumnDefinitions="Auto, *">
+    <!--<Grid Margin="4" VerticalAlignment="Top" ColumnDefinitions="Auto, *">
         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Player Name:" Margin="4" />
-        <TextBox Margin="4" VerticalAlignment="Center" Grid.Column="1" Text="{Binding PlayerName,Mode=TwoWay}" />
-    </Grid>
+
+        <DockPanel Grid.Column="1">
+            <Button DockPanel.Dock="Right" Content="Save" Command="{Binding PlayerNameSaveButtonPressed}" />
+            <TextBox Margin="4" VerticalAlignment="Center" Text="{Binding PlayerName,Mode=TwoWay}" />
+        </DockPanel>
+    </Grid>-->
 </UserControl>

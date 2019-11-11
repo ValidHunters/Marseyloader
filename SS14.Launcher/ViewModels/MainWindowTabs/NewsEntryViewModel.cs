@@ -1,7 +1,6 @@
 using System;
-using Metsys.Bson;
 
-namespace SS14.Launcher.ViewModels
+namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class NewsEntryViewModel : ViewModelBase
     {

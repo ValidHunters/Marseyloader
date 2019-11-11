@@ -1,12 +1,11 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace SS14.Launcher.Views
+namespace SS14.Launcher.Views.MainWindowTabs
 {
-    public class ClientUpdaterView : UserControl
+    public class NewsTabView : UserControl
     {
-        public ClientUpdaterView()
+        public NewsTabView()
         {
             InitializeComponent();
         }

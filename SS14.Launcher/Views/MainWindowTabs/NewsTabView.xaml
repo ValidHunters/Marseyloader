@@ -3,11 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
+             xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SS14.Launcher.Views.NewsTabView"
+             x:Class="SS14.Launcher.Views.MainWindowTabs.NewsTabView"
              Name="NewsTab">
     <Design.DataContext>
-        <vm:NewsTabViewModel />
+        <mainWindowTabs:NewsTabViewModel />
     </Design.DataContext>
 
     <DockPanel>
@@ -17,7 +18,7 @@
             <ScrollViewer IsVisible="{Binding NewsPulled}">
                 <ItemsControl Items="{Binding NewsEntries}" >
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="vm:NewsEntryViewModel">
+                        <DataTemplate DataType="mainWindowTabs:NewsEntryViewModel">
                             <Button Margin="4, 4" Command="{Binding Open}">
                                 <TextBlock Text="{Binding Headline}" />
                             </Button>

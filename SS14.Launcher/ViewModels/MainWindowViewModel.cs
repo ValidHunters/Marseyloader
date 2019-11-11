@@ -1,35 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ReactiveUI;
+using SS14.Launcher.Models;
+using SS14.Launcher.ViewModels.MainWindowTabs;
+using SS14.Launcher.Views;
 
 namespace SS14.Launcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly Updater _updater;
+        private const string CurrentLauncherVersion = "1";
+
         private int _selectedIndex;
 
-        private readonly ServerListTabViewModel _servers;
-        private readonly NewsTabViewModel _news;
-        private readonly OptionsTabViewModel _options;
-        private readonly HomePageViewModel _home;
-
-        public MainWindowViewModel()
+        public MainWindowViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
         {
-            _servers = new ServerListTabViewModel();
-            _news = new NewsTabViewModel();
-            _options = new OptionsTabViewModel();
-            _home = new HomePageViewModel();
+            _updater = updater;
+
+            var servers = new ServerListTabViewModel(cfg, statusCache, updater);
+            var news = new NewsTabViewModel();
+            var home = new HomePageViewModel(cfg, statusCache, updater);
 
             Tabs = new MainWindowTabViewModel[]
             {
-                _home,
-                _servers,
-                _news,
-                _options
+                home,
+                servers,
+                news
             };
 
             this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
         }
+
+        public MainWindow? Control { get; set; }
 
         public IReadOnlyList<MainWindowTabViewModel> Tabs { get; }
 
@@ -39,9 +43,9 @@ namespace SS14.Launcher.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedIndex, value);
         }
 
-        public void OnWindowInitialized()
+        public async void OnWindowInitialized()
         {
-            _servers.Updater.OnWindowInitialized();
+            await CheckLauncherUpdate();
         }
 
         public void OnDiscordButtonPressed()
@@ -52,6 +56,34 @@ namespace SS14.Launcher.ViewModels
         public void OnWebsiteButtonPressed()
         {
             Helpers.OpenUri(new Uri("https://spacestation14.io"));
+        }
+
+        private async Task<bool> CheckLauncherUpdate()
+        {
+            var launcherVersionUri =
+                new Uri($"{Global.JenkinsBaseUrl}/userContent/current_launcher_version.txt");
+            var versionRequest = await Global.GlobalHttpClient.GetAsync(launcherVersionUri);
+            versionRequest.EnsureSuccessStatusCode();
+            var outOfDate = CurrentLauncherVersion != (await versionRequest.Content.ReadAsStringAsync()).Trim();
+
+            if (!outOfDate)
+            {
+                return true;
+            }
+
+            async void ShowDialog()
+            {
+                // I seriously had an issue where the dialog opened too quickly so it didn't get placed correctly.
+                await Task.Delay(100);
+
+                await new OutOfDateDialog().ShowDialog(Control);
+
+                Control?.Close();
+            }
+
+            ShowDialog();
+
+            return false;
         }
     }
 }

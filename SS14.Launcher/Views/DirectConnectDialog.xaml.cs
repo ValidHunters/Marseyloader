@@ -27,9 +27,26 @@ namespace SS14.Launcher.Views
             var submitButton = this.FindControl<Button>("SubmitButton");
             submitButton.Command = ReactiveCommand.Create(TrySubmit);
 
-            _addressBox.WhenAnyValue(x => x.Text)
+            this.WhenAnyValue(x => x._addressBox.Text)
                 .Select(IsAddressValid)
                 .Subscribe(b => submitButton.IsEnabled = b);
+        }
+
+        protected override void OnOpened(EventArgs e)
+        {
+            base.OnOpened(e);
+
+            _addressBox.Focus();
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                Close(null);
+            }
+
+            base.OnKeyDown(e);
         }
 
         private void InitializeComponent()
@@ -47,7 +64,7 @@ namespace SS14.Launcher.Views
             Close(_addressBox.Text);
         }
 
-        private static bool IsAddressValid(string address)
+        internal static bool IsAddressValid(string address)
         {
             return !string.IsNullOrWhiteSpace(address);
         }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
+using SS14.Launcher.Models;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
 
@@ -20,7 +19,7 @@ namespace SS14.Launcher
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp()
+        private static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .LogToDebug()
@@ -30,7 +29,12 @@ namespace SS14.Launcher
         // container, etc.
         private static void AppMain(Application app, string[] args)
         {
-            var viewModel = new MainWindowViewModel();
+            var cfg = new ConfigurationManager();
+            cfg.Load();
+            var statusCache = new ServerStatusCache();
+            var updater = new Updater(cfg);
+
+            var viewModel = new MainWindowViewModel(cfg, statusCache, updater);
             var window = new MainWindow
             {
                 DataContext = viewModel
@@ -39,8 +43,5 @@ namespace SS14.Launcher
 
             app.Run(window);
         }
-
-        [DllImport("fluidsynth")]
-        public static extern IntPtr new_fluid_settings();
     }
 }

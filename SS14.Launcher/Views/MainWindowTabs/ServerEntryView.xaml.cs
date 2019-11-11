@@ -1,15 +1,15 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using SS14.Launcher.ViewModels;
+using SS14.Launcher.ViewModels.MainWindowTabs;
 
-namespace SS14.Launcher.Views
+namespace SS14.Launcher.Views.MainWindowTabs
 {
-    public class HomePageView : UserControl
+    public class ServerEntryView : UserControl
     {
-        private HomePageViewModel _viewModel;
+        private ServerEntryViewModel? _viewModel;
 
-        public HomePageView()
+        public ServerEntryView()
         {
             InitializeComponent();
         }
@@ -21,7 +21,7 @@ namespace SS14.Launcher.Views
                 _viewModel.Control = null;
             }
 
-            _viewModel = DataContext as HomePageViewModel;
+            _viewModel = DataContext as ServerEntryViewModel;
 
             if (_viewModel != null)
             {
