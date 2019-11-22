@@ -10,6 +10,7 @@ namespace SS14.Launcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly ConfigurationManager _cfg;
         private readonly Updater _updater;
         private const string CurrentLauncherVersion = "1";
 
@@ -17,6 +18,7 @@ namespace SS14.Launcher.ViewModels
 
         public MainWindowViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
         {
+            _cfg = cfg;
             _updater = updater;
 
             var servers = new ServerListTabViewModel(cfg, statusCache, updater);
@@ -31,11 +33,29 @@ namespace SS14.Launcher.ViewModels
             };
 
             this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
+
+            this.WhenAnyValue(x => x._cfg.UserName)
+                .Subscribe(_ =>
+                {
+                    this.RaisePropertyChanged(nameof(Username));
+                    this.RaisePropertyChanged(nameof(LoggedIn));
+                    this.RaisePropertyChanged(nameof(LoginText));
+                    this.RaisePropertyChanged(nameof(ManageAccountText));
+                });
+
+            AccountDropDown = new AccountDropDownViewModel(cfg);
         }
 
         public MainWindow? Control { get; set; }
 
         public IReadOnlyList<MainWindowTabViewModel> Tabs { get; }
+
+        private bool LoggedIn => _cfg.UserName != null;
+        public string LoginText => LoggedIn ? $"'Logged in' as {Username}." : "Not logged in.";
+        public string ManageAccountText => LoggedIn ? "Change Account..." : "Log in...";
+        private string? Username => _cfg.UserName;
+
+        public AccountDropDownViewModel AccountDropDown { get; }
 
         public int SelectedIndex
         {

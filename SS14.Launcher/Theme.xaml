@@ -52,4 +52,8 @@
     <Style Selector="TabItem:selected:focus:pointerover">
         <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
     </Style>
+
+    <Style Selector="Button.BigButton > TextBlock">
+        <Setter Property="FontSize" Value="20" />
+    </Style>
 </Styles>

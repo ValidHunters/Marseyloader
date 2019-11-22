@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
+        xmlns:v="clr-namespace:SS14.Launcher.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         MinWidth="650" MinHeight="400"
         x:Class="SS14.Launcher.Views.MainWindow"
@@ -16,20 +17,25 @@
 
     <DockPanel LastChildFill="true">
         <DockPanel DockPanel.Dock="Top" Margin="4, 0">
-            <TextBlock HorizontalAlignment="Left" DockPanel.Dock="Left" Text="Space Station 14"
-                       FontFamily="/Assets/Fonts/Animal_Silence.otf#Animal Silence"
-                       FontSize="40" />
+            <Image Source="/Assets/logo.png" HorizontalAlignment="Left" Margin="0, 8" Stretch="None"
+                   DockPanel.Dock="Left" />
 
-            <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Content="Discord" Command="{Binding OnDiscordButtonPressed}" Margin="4, 6"/>
-                <Button Content="Website" Command="{Binding OnWebsiteButtonPressed}" Margin="0, 6" />
-            </StackPanel>
+            <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
+                  ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto">
+                <Button Content="Discord" Grid.Row="0" Grid.Column="1" MinWidth="90" Command="{Binding OnDiscordButtonPressed}"
+                        Margin="0, 6, 4, 6" />
+                <Button Content="Website" Grid.Row="0" Grid.Column="2" MinWidth="90" Command="{Binding OnWebsiteButtonPressed}"
+                        Margin="0, 6" />
+
+                <v:AccountDropDown Grid.ColumnSpan="3" MinWidth="90" HorizontalAlignment="Right" Grid.Row="1" DataContext="{Binding AccountDropDown}" />
+            </Grid>
         </DockPanel>
-        <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" />
-        <TabControl Items="{Binding Tabs}" TabStripPlacement="Bottom" SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}">
+        <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" Margin="0, 0, 0, 4" />
+        <TabControl Items="{Binding Tabs}" TabStripPlacement="Bottom"
+                    SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}">
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="mainWindowTabs:MainWindowTabViewModel">
-                    <TextBlock Text="{Binding Name}"></TextBlock>
+                    <TextBlock Text="{Binding Name}" />
                 </DataTemplate>
             </TabControl.ItemTemplate>
         </TabControl>

@@ -13,12 +13,7 @@
 
     <DockPanel>
         <!-- Account info -->
-        <DockPanel DockPanel.Dock="Top" Margin="4">
-            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="Account:" Classes="NanoHeadingMedium" />
-            <TextBlock DockPanel.Dock="Left" Margin="4" VerticalAlignment="Center" Text="{Binding LoginText}" />
-            <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{Binding ManageAccountText}"
-                    Command="{Binding ManageAccountPressed}" />
-        </DockPanel>
+
 
         <!-- Favorites -->
         <DockPanel DockPanel.Dock="Top" LastChildFill="False" Margin="4, 0, 4, 2">

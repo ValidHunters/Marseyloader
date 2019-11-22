@@ -25,15 +25,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             _statusCache = statusCache;
             _updater = updater;
 
-            this.WhenAnyValue(x => x._cfg.UserName)
-                .Subscribe(_ =>
-                {
-                    this.RaisePropertyChanged(nameof(Username));
-                    this.RaisePropertyChanged(nameof(LoggedIn));
-                    this.RaisePropertyChanged(nameof(LoginText));
-                    this.RaisePropertyChanged(nameof(ManageAccountText));
-                });
-
             _cfg.FavoriteServers
                 .Connect()
                 .Subscribe(_ => UpdateFavoritesList());
@@ -44,10 +35,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public override string Name => "Home";
         public Control? Control { get; set; }
-        private bool LoggedIn => _cfg.UserName != null;
-        public string LoginText => LoggedIn ? $"'Logged in' as {Username}." : "Not logged in.";
-        public string ManageAccountText => LoggedIn ? "Change Account..." : "Log in...";
-        private string? Username => _cfg.UserName;
 
         public async void DirectConnectPressed()
         {
@@ -82,20 +69,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             {
                 // Happens if address already a favorite, so ignore.
                 // TODO: Give a popup to the user?
-            }
-        }
-
-        public async void ManageAccountPressed()
-        {
-            if (!TryGetWindow(out var window))
-            {
-                return;
-            }
-
-            var res = await new LoginDialog {DefaultName = Username}.ShowDialog<string>(window);
-            if (res != null)
-            {
-                _cfg.UserName = res;
             }
         }
 
