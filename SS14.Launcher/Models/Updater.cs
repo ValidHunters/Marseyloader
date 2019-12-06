@@ -143,7 +143,11 @@ namespace SS14.Launcher.Models
                 var process = Process.Start(new ProcessStartInfo
                 {
                     FileName = "chmod",
-                    Arguments = $"+x '{Path.Combine("Space Station 14.app", "Contents", "MacOS", "SS14")}'",
+                    ArgumentList =
+                    {
+                        "+x",
+                        Path.Combine("Space Station 14.app", "Contents", "MacOS", "SS14")
+                    },
                     WorkingDirectory = binPath,
                 });
                 process?.WaitForExit();
