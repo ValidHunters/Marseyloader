@@ -132,8 +132,7 @@ namespace SS14.Launcher.Models
             {
                 startInfo = new ProcessStartInfo
                 {
-                    FileName = "mono",
-                    ArgumentList = {"Robust.Client.exe"},
+                    FileName = "Robust.Client",
                 };
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

@@ -2,4 +2,6 @@
 
 cd "$(dirname "$0")"
 
-exec mono SS14.Launcher.exe
+export DOTNET_ROOT="$(pwd)/dotnet"
+
+exec bin/SS14.Launcher "$@"

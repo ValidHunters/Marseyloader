@@ -6,3 +6,4 @@ obj/
 .DS_Store
 cmake-build*
 publish_test
+Dependencies

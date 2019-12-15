@@ -5,4 +5,6 @@ BASEDIR=$(dirname "$0")
 echo "$BASEDIR"
 cd "$BASEDIR"
 
-exec ../Resources/SS14.Launcher
+export DOTNET_ROOT="$(pwd)/../Resources/dotnet"
+
+exec ../Resources/bin/SS14.Launcher "$@"
