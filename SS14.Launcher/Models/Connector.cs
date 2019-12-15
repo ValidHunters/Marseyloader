@@ -139,7 +139,7 @@ namespace SS14.Launcher.Models
             {
                 startInfo = new ProcessStartInfo
                 {
-                    FileName = "Robust.Client.exe",
+                    FileName = Path.Combine(binPath, "Robust.Client.exe"),
                 };
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
