@@ -132,7 +132,7 @@ namespace SS14.Launcher.Models
             {
                 startInfo = new ProcessStartInfo
                 {
-                    FileName = "Robust.Client",
+                    FileName = Path.Combine(binPath, "Robust.Client")
                 };
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

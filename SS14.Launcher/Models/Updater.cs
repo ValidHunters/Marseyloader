@@ -133,13 +133,13 @@ namespace SS14.Launcher.Models
                 File.Delete(tmpFile);
             });
 
+            // .NET's zip extraction system doesn't seem to preserve +x.
+            // Technically can't blame it because there's no "official" way to store that,
+            // since zip files are DOS-centric.
+            // Anyways we have to handle this on macOS and Linux.
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                // .NET's zip extraction system doesn't seem to preserve +x.
-                // Technically can't blame it because there's no "official" way to store that,
-                // since zip files are DOS-centric.
-
-                // Manually chmod +x the App bundle then.
+                // Manually chmod +x the App bundle's startup script.
                 var process = Process.Start(new ProcessStartInfo
                 {
                     FileName = "chmod",
@@ -147,6 +147,21 @@ namespace SS14.Launcher.Models
                     {
                         "+x",
                         Path.Combine("Space Station 14.app", "Contents", "MacOS", "SS14")
+                    },
+                    WorkingDirectory = binPath,
+                });
+                process?.WaitForExit();
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var process = Process.Start(new ProcessStartInfo
+                {
+                    FileName = "chmod",
+                    ArgumentList =
+                    {
+                        "+x",
+                        "Robust.Client"
                     },
                     WorkingDirectory = binPath,
                 });
