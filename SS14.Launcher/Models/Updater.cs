@@ -140,7 +140,7 @@ namespace SS14.Launcher.Models
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 // Manually chmod +x the App bundle's startup script.
-                var process = Process.Start(new ProcessStartInfo
+                var processA = Process.Start(new ProcessStartInfo
                 {
                     FileName = "chmod",
                     ArgumentList =
@@ -150,7 +150,20 @@ namespace SS14.Launcher.Models
                     },
                     WorkingDirectory = binPath,
                 });
-                process?.WaitForExit();
+                // And also chmod +x the Robust.Client executable.
+                var processB = Process.Start(new ProcessStartInfo
+                {
+                    FileName = "chmod",
+                    ArgumentList =
+                    {
+                        "+x",
+                        Path.Combine("Space Station 14.app", "Contents", "Resources", "Robust.Client")
+                    },
+                    WorkingDirectory = binPath,
+                });
+
+                processA?.WaitForExit();
+                processB?.WaitForExit();
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
