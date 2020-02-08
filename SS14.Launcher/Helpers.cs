@@ -78,30 +78,7 @@ namespace SS14.Launcher
 
         public static void OpenUri(Uri uri)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "xdg-open",
-                    ArgumentList = {uri.ToString()}
-                });
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "open",
-                    ArgumentList = {uri.ToString()}
-                });
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Process.Start(uri.ToString());
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            Process.Start(new ProcessStartInfo(uri.ToString()) {UseShellExecute = true});
         }
 
         public static async Task WaitForExitAsync(this Process process, CancellationToken cancellationToken = default)
@@ -133,6 +110,5 @@ namespace SS14.Launcher
                 process.Exited -= ProcessExited;
             }
         }
-
     }
 }
