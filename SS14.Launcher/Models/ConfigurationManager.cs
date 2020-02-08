@@ -15,6 +15,12 @@ namespace SS14.Launcher.Models
     /// </summary>
     public sealed class ConfigurationManager : ReactiveObject
     {
+        private static readonly (string name, string addr)[] DefaultFavorites =
+            {
+                ("Wizard's Den", "ss14s://builds.spacestation14.io/ss14_server"),
+                ("Colonial Marines 14", "ss14://ss14.cm-ss13.com"),
+            };
+
         private readonly object _configWriteLock = new object();
 
         private readonly SourceCache<FavoriteServer, string> _favoriteServers
@@ -116,9 +122,7 @@ namespace SS14.Launcher.Models
                     _favoriteServers.Edit(x =>
                     {
                         x.Clear();
-                        x.AddOrUpdate(
-                            new FavoriteServer("Wizard's Den", "ss14s://builds.spacestation14.io/ss14_server"));
-                        x.AddOrUpdate(new FavoriteServer("Honk", "ss14s://server.spacestation14.io"));
+                        x.AddOrUpdate(DefaultFavorites.Select(p => new FavoriteServer(p.name, p.addr)));
                     });
                     UserName = null;
                     return;

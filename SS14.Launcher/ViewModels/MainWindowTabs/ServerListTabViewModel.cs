@@ -13,7 +13,8 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         private static readonly (string name, string address)[] PresetServers =
         {
-            ("Wizard's Den", "ss14s://builds.spacestation14.io/ss14_server")
+            ("Wizard's Den", "ss14s://builds.spacestation14.io/ss14_server"),
+            ("Colonial Marines 14", "ss14://ss14.cm-ss13.com")
         };
 
         private string? _searchString;
