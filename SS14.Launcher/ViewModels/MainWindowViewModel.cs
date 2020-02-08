@@ -81,7 +81,7 @@ namespace SS14.Launcher.ViewModels
         private async Task<bool> CheckLauncherUpdate()
         {
             var launcherVersionUri =
-                new Uri($"{Global.JenkinsBaseUrl}/userContent/current_launcher_version.txt");
+                new Uri($"{Updater.JenkinsBaseUrl}/userContent/current_launcher_version.txt");
             var versionRequest = await Global.GlobalHttpClient.GetAsync(launcherVersionUri);
             versionRequest.EnsureSuccessStatusCode();
             var outOfDate = CurrentLauncherVersion != (await versionRequest.Content.ReadAsStringAsync()).Trim();

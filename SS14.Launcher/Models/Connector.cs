@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Runtime.InteropServices;
@@ -39,15 +40,6 @@ namespace SS14.Launcher.Models
 
         public async void Connect(string address)
         {
-            Status = ConnectionStatus.Updating;
-            await _updater.RunUpdatesAsync();
-
-            if (_updater.Status == Updater.UpdateStatus.Error)
-            {
-                Status = ConnectionStatus.UpdateError;
-                return;
-            }
-
             Status = ConnectionStatus.Connecting;
 
             // Fetch server connect info.
@@ -65,6 +57,18 @@ namespace SS14.Launcher.Models
                 Status = ConnectionStatus.ConnectionFailed;
                 return;
             }
+
+            // Run update.
+            Status = ConnectionStatus.Updating;
+            var installation = await _updater.RunUpdateForLaunchAsync(info.BuildInformation);
+
+            if (_updater.Status == Updater.UpdateStatus.Error)
+            {
+                Status = ConnectionStatus.UpdateError;
+                return;
+            }
+
+            Debug.Assert(installation != null);
 
             Uri connectAddress;
             if (info.ConnectAddress == null)
@@ -94,7 +98,7 @@ namespace SS14.Launcher.Models
             Status = ConnectionStatus.StartingClient;
 
             // Launch client.
-            var proc = LaunchClient(new[]
+            var proc = LaunchClient(installation, new[]
             {
                 // We are using the launcher. Don't show main menu etc..
                 "--launcher",
@@ -124,9 +128,9 @@ namespace SS14.Launcher.Models
             Status = ConnectionStatus.ClientExited;
         }
 
-        private static Process LaunchClient(IEnumerable<string> extraArgs)
+        private static Process LaunchClient(Installation installation, IEnumerable<string> extraArgs)
         {
-            var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "client_bin");
+            var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "installations", installation.DiskId.ToString(CultureInfo.InvariantCulture));
             ProcessStartInfo startInfo;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

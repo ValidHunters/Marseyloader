@@ -4,8 +4,6 @@ namespace SS14.Launcher
 {
     public static class Global
     {
-        public const string JenkinsBaseUrl = "https://builds.spacestation14.io/jenkins";
-        public const string JenkinsJobName = "SS14 Content";
         public const string CurrentLauncherVersion = "1";
         public const ushort DefaultServerPort = 1212;
 

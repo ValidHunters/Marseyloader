@@ -77,6 +77,7 @@ namespace SS14.Launcher.ViewModels
                     Updater.UpdateStatus.CheckingClientUpdate => "Checking for client update...",
                     Updater.UpdateStatus.DownloadingClientUpdate => "Downloading client update...",
                     Updater.UpdateStatus.Extracting => "Extracting update...",
+                    Updater.UpdateStatus.Verifying => "Verifying download integrity...",
                     Updater.UpdateStatus.Ready => "Update done!",
                     _ => "You shouldn't see this"
                 },

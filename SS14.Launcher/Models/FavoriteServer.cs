@@ -31,6 +31,6 @@ namespace SS14.Launcher.Models
         }
 
         [JsonProperty(PropertyName = "address")]
-        public string Address { get; private set; }
+        public string Address { get; private set; } // Need private set for JSON.NET to work.
     }
 }
