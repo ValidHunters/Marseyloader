@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
+        <OutputType>WinExe</OutputType>
         <TargetFramework>net45</TargetFramework>
         <TargetName>Space Station 14 Launcher</TargetName>
         <ApplicationIcon>../SS14.Launcher/Assets/icon.ico</ApplicationIcon>

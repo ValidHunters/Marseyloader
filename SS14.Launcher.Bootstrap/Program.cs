@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace SS14.Launcher.Bootstrap
@@ -14,10 +15,8 @@ namespace SS14.Launcher.Bootstrap
             var dotnetDir = Path.Combine(ourDir, "dotnet");
             var exeDir = Path.Combine(ourDir, "bin", "SS14.Launcher.exe");
 
-            Process.Start(new ProcessStartInfo(exeDir)
-            {
-                EnvironmentVariables = {{"DOTNET_ROOT", dotnetDir}}
-            });
+            Environment.SetEnvironmentVariable("DOTNET_ROOT", dotnetDir);
+            Process.Start(new ProcessStartInfo(exeDir));
         }
     }
 }

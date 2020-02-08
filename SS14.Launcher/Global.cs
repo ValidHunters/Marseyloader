@@ -4,7 +4,7 @@ namespace SS14.Launcher
 {
     public static class Global
     {
-        public const string CurrentLauncherVersion = "1";
+        public const string CurrentLauncherVersion = "2";
         public const ushort DefaultServerPort = 1212;
 
         /// <summary>
