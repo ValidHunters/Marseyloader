@@ -5,6 +5,8 @@ BASEDIR=$(dirname "$0")
 echo "$BASEDIR"
 cd "$BASEDIR"
 
+mkdir -p "$HOME/Library/Application Support/Space Station 14"
+
 export DOTNET_ROOT="$(pwd)/../Resources/dotnet"
 
-exec ../Resources/bin/SS14.Launcher "$@"
+exec ../Resources/bin/SS14.Launcher "$@" > "$HOME/Library/Application Support/Space Station 14/launcher.log"
