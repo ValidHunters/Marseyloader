@@ -23,8 +23,8 @@ namespace SS14.Launcher.Models
             _cfg = cfg;
         }
 
-        [Reactive] public UpdateStatus Status { get; set; }
-        [Reactive] public float? Progress { get; set; }
+        [Reactive] public UpdateStatus Status { get; private set; }
+        [Reactive] public float? Progress { get; private set; }
 
         public async Task<Installation?> RunUpdateForLaunchAsync(ServerBuildInformation? buildInformation)
         {
