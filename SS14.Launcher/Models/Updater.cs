@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using DynamicData.Kernel;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace SS14.Launcher.Models
 {
     public sealed partial class Updater : ReactiveObject
     {
         private readonly ConfigurationManager _cfg;
-        private float? _progress;
-        private UpdateStatus _status;
         private bool _updating = false;
 
         public Updater(ConfigurationManager cfg)
@@ -24,17 +23,8 @@ namespace SS14.Launcher.Models
             _cfg = cfg;
         }
 
-        public UpdateStatus Status
-        {
-            get => _status;
-            private set => this.RaiseAndSetIfChanged(ref _status, value);
-        }
-
-        public float? Progress
-        {
-            get => _progress;
-            private set => this.RaiseAndSetIfChanged(ref _progress, value);
-        }
+        [Reactive] public UpdateStatus Status { get; set; }
+        [Reactive] public float? Progress { get; set; }
 
         public async Task<Installation?> RunUpdateForLaunchAsync(ServerBuildInformation? buildInformation)
         {
