@@ -42,8 +42,10 @@ namespace SS14.Launcher.Models
         {
             Status = ConnectionStatus.Connecting;
 
+            var parsedAddress = UriHelper.ParseSs14Uri(address);
+
             // Fetch server connect info.
-            var infoAddr = UriHelper.GetServerInfoAddress(address);
+            var infoAddr = UriHelper.GetServerInfoAddress(parsedAddress);
             ServerInfo info;
 
             try
@@ -108,7 +110,10 @@ namespace SS14.Launcher.Models
                 "--username", _cfg.UserName ?? "JoeGenero",
 
                 // Connection address
-                "--connect-address", connectAddress.ToString()
+                "--connect-address", connectAddress.ToString(),
+
+                // ss14(s):// address passed in. Only used for feedback in the client.
+                "--ss14-address", parsedAddress.ToString(),
             });
 
             // Wait 300ms, if the client exits with a bad error code before that it's probably fucked.
