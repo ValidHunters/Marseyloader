@@ -24,7 +24,7 @@ namespace SS14.Launcher.Models
         }
 
         [Reactive] public UpdateStatus Status { get; private set; }
-        [Reactive] public float? Progress { get; private set; }
+        [Reactive] public (long downloaded, long total)? Progress { get; private set; }
 
         public async Task<Installation?> RunUpdateForLaunchAsync(ServerBuildInformation? buildInformation)
         {

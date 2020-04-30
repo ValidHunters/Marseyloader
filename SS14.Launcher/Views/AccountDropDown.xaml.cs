@@ -5,21 +5,22 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.ViewModels;
 
 namespace SS14.Launcher.Views
 {
     public class AccountDropDown : UserControl
     {
-        private AccountDropDownViewModel? _viewModel;
-        private readonly Popup _popup;
+        [Reactive] private AccountDropDownViewModel? _viewModel { get; set; }
+        public Popup Popup { get; }
         private readonly ToggleButton _button;
 
         public AccountDropDown()
         {
             InitializeComponent();
 
-            _popup = this.FindControl<Popup>("Popup");
+            Popup = this.FindControl<Popup>("Popup");
             _button = this.FindControl<ToggleButton>("Button");
 
             this.WhenAnyValue(x => x._button.IsChecked)
@@ -27,15 +28,15 @@ namespace SS14.Launcher.Views
                 {
                     if (n == true)
                     {
-                        _popup.Open();
+                        Popup.Open();
                     }
                     else
                     {
-                        _popup.Close();
+                        Popup.Close();
                     }
                 });
 
-            _popup.Closed += (sender, args) => _button.IsChecked = false;
+            Popup.Closed += (sender, args) => _button.IsChecked = false;
         }
 
         private void InitializeComponent()
@@ -64,7 +65,7 @@ namespace SS14.Launcher.Views
         {
             if (!e.Handled)
             {
-                if (_popup?.IsInsidePopup((IVisual) e.Source) == false)
+                if (Popup?.IsInsidePopup((IVisual) e.Source) == false)
                 {
                     _button.IsChecked = !_button.IsChecked;
                     e.Handled = true;

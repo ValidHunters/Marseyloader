@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.VisualTree;
 using ReactiveUI;
 using SS14.Launcher.Models;
 using SS14.Launcher.ViewModels.MainWindowTabs;
@@ -44,18 +46,21 @@ namespace SS14.Launcher.ViewModels
                 });
 
             AccountDropDown = new AccountDropDownViewModel(cfg);
+            LoginViewModel = new MainWindowLoginViewModel(cfg);
         }
 
         public MainWindow? Control { get; set; }
 
         public IReadOnlyList<MainWindowTabViewModel> Tabs { get; }
 
-        private bool LoggedIn => _cfg.UserName != null;
+        public bool LoggedIn => _cfg.UserName != null;
         public string LoginText => LoggedIn ? $"'Logged in' as {Username}." : "Not logged in.";
         public string ManageAccountText => LoggedIn ? "Change Account..." : "Log in...";
         private string? Username => _cfg.UserName;
 
         public AccountDropDownViewModel AccountDropDown { get; }
+
+        public MainWindowLoginViewModel LoginViewModel { get; }
 
         public int SelectedIndex
         {

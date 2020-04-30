@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,7 +32,7 @@ namespace SS14.Launcher
         }
 
         public static async Task DownloadToFile(this HttpClient client, Uri uri, string filePath,
-            Action<float>? progress = null)
+            Action<(long downloaded, long total)>? progress = null)
         {
             await Task.Run(async () =>
             {
@@ -45,12 +44,12 @@ namespace SS14.Launcher
                 var totalLength = response.Content.Headers.ContentLength;
                 if (totalLength.HasValue)
                 {
-                    progress?.Invoke(0);
+                    progress?.Invoke((0, totalLength.Value));
                 }
 
                 var totalRead = 0L;
                 var reads = 0L;
-                const int bufferLength = 8192;
+                const int bufferLength = 4096;
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferLength);
                 var isMoreToRead = true;
 
@@ -69,7 +68,7 @@ namespace SS14.Launcher
                         totalRead += read;
                         if (totalLength.HasValue && reads % 20 == 0)
                         {
-                            progress?.Invoke(totalRead / (float) totalLength.Value);
+                            progress?.Invoke((totalRead, totalLength.Value));
                         }
                     }
                 } while (isMoreToRead);
@@ -109,6 +108,31 @@ namespace SS14.Launcher
             {
                 process.Exited -= ProcessExited;
             }
+        }
+
+        private static readonly string[] ByteSuffixes =
+        {
+            "B",
+            "KiB",
+            "MiB",
+            "GiB",
+            "TiB",
+            "PiB",
+            "EiB",
+            "ZiB",
+            "YiB"
+        };
+
+        public static string FormatBytes(long bytes)
+        {
+            double d = bytes;
+            var i = 0;
+            for (; i < ByteSuffixes.Length && d >= 1024; i++)
+            {
+                d /= 1024;
+            }
+
+            return $"{Math.Round(d, 2)} {ByteSuffixes[i]}";
         }
     }
 }

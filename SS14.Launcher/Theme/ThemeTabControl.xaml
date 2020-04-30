@@ -40,16 +40,16 @@ Taken & modified from Avalonia's git repo.
     </Style>
 
     <Style Selector="TabControl[TabStripPlacement=Top] /template/ Panel#PART_TabPanel">
-        <Setter Property="DockPanel.Dock" Value="Top"/>
+        <Setter Property="DockPanel.Dock" Value="Top" />
     </Style>
     <Style Selector="TabControl[TabStripPlacement=Bottom] /template/ Panel#PART_TabPanel">
-        <Setter Property="DockPanel.Dock" Value="Bottom"/>
+        <Setter Property="DockPanel.Dock" Value="Bottom" />
     </Style>
     <Style Selector="TabControl[TabStripPlacement=Right] /template/ Panel#PART_TabPanel">
-        <Setter Property="DockPanel.Dock" Value="Right"/>
+        <Setter Property="DockPanel.Dock" Value="Right" />
     </Style>
     <Style Selector="TabControl[TabStripPlacement=Left] /template/ Panel#PART_TabPanel">
-        <Setter Property="DockPanel.Dock" Value="Left"/>
+        <Setter Property="DockPanel.Dock" Value="Left" />
     </Style>
 
     <Style Selector="TabControl[TabStripPlacement=Top] /template/ Panel#PART_Edge">

@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SS14.Launcher.Views.MainWindowLogin"
+             Name="MainWindowLogin">
+    <Design.DataContext>
+        <vm:MainWindowLoginViewModel />
+    </Design.DataContext>
+
+    <DockPanel LastChildFill="False">
+        <StackPanel></StackPanel>
+        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium" Text="Log in" />
+
+        <TextBox DockPanel.Dock="Top" Name="NameBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Username"
+                 Text="{Binding EditingUsername, Mode=TwoWay}" />
+
+        <TextBlock DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="SubText"
+                   Text="{Binding InvalidReason}" />
+        <Button DockPanel.Dock="Top" IsEnabled="{Binding IsUsernameValid}" HorizontalAlignment="Center"
+                Content="Log in" Command="{Binding OnLogInButtonPressed}" />
+
+        <!-- The bottom -->
+        <DockPanel Background="{DynamicResource ThemeStripeBackBrush}" DockPanel.Dock="Bottom"
+                   LastChildFill="False">
+
+            <TextBlock Text="{Binding Version}" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="4"
+                       Classes="SubText" />
+        </DockPanel>
+        <Panel Background="{DynamicResource ThemeStripebackEdgeBrush}" MinHeight="2" DockPanel.Dock="Bottom" />
+
+        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Bottom"
+                   Text="We don't actually have a proper login system yet, so enter any username you want!" />
+    </DockPanel>
+</UserControl>

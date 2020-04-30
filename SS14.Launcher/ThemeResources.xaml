@@ -9,6 +9,7 @@
         <Color x:Key="ThemeControlHighColor">#3E6C45</Color>
 
         <Color x:Key="ThemeNanoGoldColor">#ADA24B</Color>
+        <Color x:Key="ThemeSubTextColor">#AAAAAA</Color>
         <Color x:Key="ThemeStripebackEdgeColor">#525252</Color>
         <Color x:Key="ThemeButtonHoveredColor">#575B7F</Color>
 
@@ -22,6 +23,7 @@
         <SolidColorBrush x:Key="ThemeControlHighBrush" Color="{StaticResource ThemeControlHighColor}" />
 
         <SolidColorBrush x:Key="ThemeNanoGoldBrush" Color="{StaticResource ThemeNanoGoldColor}" />
+        <SolidColorBrush x:Key="ThemeSubTextBrush" Color="{StaticResource ThemeSubTextColor}" />
         <SolidColorBrush x:Key="ThemeButtonHoveredBrush" Color="{StaticResource ThemeButtonHoveredColor}" />
         <SolidColorBrush x:Key="ThemeStripebackEdgeBrush" Color="{StaticResource ThemeStripebackEdgeColor}" />
 

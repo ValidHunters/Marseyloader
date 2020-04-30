@@ -21,7 +21,7 @@
         <ProgressBar DockPanel.Dock="Bottom" Maximum="1" Value="{Binding Progress}"
                      IsIndeterminate="{Binding ProgressIndeterminate}" IsVisible="{Binding ProgressBarVisible}" />
 
-        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Bottom" Text="{Binding ProgressText}" TextWrapping="Wrap" />
+        <TextBlock HorizontalAlignment="Right" DockPanel.Dock="Bottom" Text="{Binding ProgressText}" TextWrapping="Wrap" IsVisible="{Binding !ProgressIndeterminate}" />
 
     </DockPanel>
 </Window>

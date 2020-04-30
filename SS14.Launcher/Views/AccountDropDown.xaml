@@ -29,7 +29,7 @@
                     PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
                     StaysOpen="False">
 
-                    <Button Content="{Binding ManageAccountText}" Command="{Binding ManageAccountPressed}" />
+                    <Button Content="Log out" Command="{Binding ManageAccountPressed}" Margin="4" />
                 </Popup>
             </Grid>
         </Panel>

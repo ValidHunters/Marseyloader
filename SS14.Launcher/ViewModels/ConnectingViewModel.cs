@@ -21,6 +21,7 @@ namespace SS14.Launcher.ViewModels
                 {
                     this.RaisePropertyChanged(nameof(Progress));
                     this.RaisePropertyChanged(nameof(ProgressIndeterminate));
+                    this.RaisePropertyChanged(nameof(ProgressText));
                 });
 
             this.WhenAnyValue(x => x._updater.Status)
@@ -46,7 +47,35 @@ namespace SS14.Launcher.ViewModels
 
         private Window? Window { get; set; }
 
-        public float Progress => _updater.Progress ?? 0;
+        public float Progress
+        {
+            get
+            {
+                if (_updater.Progress == null)
+                {
+                    return 0;
+                }
+
+                var (downloaded, total) = _updater.Progress.Value;
+
+                return downloaded / (float) total;
+            }
+        }
+
+        public string ProgressText
+        {
+            get
+            {
+                if (_updater.Progress == null)
+                {
+                    return "";
+                }
+
+                var (downloaded, total) = _updater.Progress.Value;
+
+                return $"{Helpers.FormatBytes(downloaded)} / {Helpers.FormatBytes(total)}";
+            }
+        }
 
         public bool ProgressIndeterminate
         {
