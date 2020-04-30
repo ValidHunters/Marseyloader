@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
         MinWidth="350" MinHeight="100"
-        Height="100"
+        Width="350" Height="100"
         x:Class="SS14.Launcher.Views.OutOfDateDialog"
         Icon="/Assets/icon.ico"
         Title="Out Of Date!"

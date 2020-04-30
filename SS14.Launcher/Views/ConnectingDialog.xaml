@@ -6,7 +6,7 @@
         xmlns:views="clr-namespace:SS14.Launcher.Views"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
         MinWidth="350" MinHeight="100"
-        Height="100"
+        Width="350" Height="100"
         x:Class="SS14.Launcher.Views.ConnectingDialog"
         Icon="/Assets/icon.ico"
         Title="Connecting..."
@@ -20,5 +20,8 @@
 
         <ProgressBar DockPanel.Dock="Bottom" Maximum="1" Value="{Binding Progress}"
                      IsIndeterminate="{Binding ProgressIndeterminate}" IsVisible="{Binding ProgressBarVisible}" />
+
+        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Bottom" Text="{Binding ProgressText}" TextWrapping="Wrap" />
+
     </DockPanel>
 </Window>

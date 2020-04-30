@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
         MinWidth="500" MinHeight="140"
-        Height="100"
+        Width="500" Height="140"
         x:Class="SS14.Launcher.Views.LoginDialog"
         Icon="/Assets/icon.ico"
         Title="Log in"
