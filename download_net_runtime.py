@@ -5,24 +5,27 @@ import sys
 import urllib.request
 import tarfile
 import zipfile
+import shutil
 from typing import List, Optional
 
 PLATFORM_WINDOWS = "windows"
 PLATFORM_LINUX = "linux"
 PLATFORM_MACOS = "mac"
 
-DOTNET_RUNTIME_VERSION = "3.1.0"
+DOTNET_RUNTIME_VERSION = "3.1.3"
 
 DOTNET_RUNTIME_DOWNLOADS = {
-    PLATFORM_LINUX: "https://download.visualstudio.microsoft.com/download/pr/5d139dff-4ca0-4e0c-a68b-0976281d5b2d/d306f725466e058842faa25bf1b2f379/dotnet-runtime-3.1.0-linux-x64.tar.gz",
-    PLATFORM_WINDOWS: "https://download.visualstudio.microsoft.com/download/pr/5e1c20ea-113f-47fd-9702-22a8bf1e3974/16bf234b587064709d8e7b58439022d4/dotnet-runtime-3.1.0-win-x64.zip",
-    PLATFORM_MACOS: "https://download.visualstudio.microsoft.com/download/pr/454ca582-64f7-4817-bbb0-34a7fb831499/1d2d5613a2d2ebb26da04471e97cb539/dotnet-runtime-3.1.0-osx-x64.tar.gz"
+    PLATFORM_LINUX: "https://download.visualstudio.microsoft.com/download/pr/c1d419e7-4312-4464-b272-27bee7676560/22e7bb584ff56f3089c85d98b21c0445/dotnet-runtime-3.1.3-linux-x64.tar.gz",
+    PLATFORM_WINDOWS: "https://download.visualstudio.microsoft.com/download/pr/f6387d06-5958-4935-ba28-183bb1f8ec7f/a9ccb4d10faec396135e6b967b7037da/dotnet-runtime-3.1.3-win-x64.zip",
+    PLATFORM_MACOS: "https://download.visualstudio.microsoft.com/download/pr/6adeeaf9-e591-4a3c-bc34-9cf3b7c60f9b/75826932f66a9afb6f6e2115ded1355b/dotnet-runtime-3.1.3-osx-x64.tar.gz"
 }
 
 p = os.path.join
 
+
 def main() -> None:
     update_netcore_runtime(sys.argv[1:])
+
 
 def update_netcore_runtime(platforms: List[str]) -> None:
     runtime_cache = p("Dependencies/dotnet")
@@ -69,6 +72,7 @@ def download_platform_runtime(dir: str, platform: str) -> None:
             zipF.extractall(dir)
 
     os.remove(download_file)
+
 
 if __name__ == "__main__":
     main()
