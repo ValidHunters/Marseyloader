@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using Avalonia.VisualTree;
 using ReactiveUI;
 using SS14.Launcher.Models;
 using SS14.Launcher.ViewModels.MainWindowTabs;
@@ -14,7 +12,7 @@ namespace SS14.Launcher.ViewModels
     {
         private readonly ConfigurationManager _cfg;
         private readonly Updater _updater;
-        private const string CurrentLauncherVersion = "3";
+        private const string CurrentLauncherVersion = "4";
 
         private int _selectedIndex;
 
