@@ -1,54 +1,110 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Threading;
 using DynamicData;
+using Newtonsoft.Json;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class ServerListTabViewModel : MainWindowTabViewModel
     {
+        private const string HubUrl = "https://builds.spacestation14.io/hub/";
+
+        private readonly ConfigurationManager _cfg;
         private readonly ServerStatusCache _statusCache;
+        private readonly Updater _updater;
 
-        private static readonly (string name, string address)[] PresetServers =
+        public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
+            = new ObservableCollection<ServerEntryViewModel>();
+
+        public ObservableCollection<ServerEntryViewModel> AllServers { get; }
+            = new ObservableCollection<ServerEntryViewModel>();
+
+        [Reactive] private RefreshListStatus Status { get; set; } = RefreshListStatus.NotUpdated;
+
+        public override string Name => "Servers";
+
+        [Reactive] public string? SearchString { get; set; }
+
+        public bool ListVisible => Status == RefreshListStatus.Updated && SearchedServers.Count != 0;
+
+        public string ListEmptyText
         {
-            ("Wizard's Den", "ss14s://builds.spacestation14.io/ss14_server"),
-            ("Colonial Marines 14", "ss14://ss14.cm-ss13.com")
-        };
+            get
+            {
+                if (Status == RefreshListStatus.Error)
+                {
+                    return "There was an error fetching the master server list.";
+                }
 
-        private string? _searchString;
+                if (Status == RefreshListStatus.Updating)
+                {
+                    return "Updating server list...";
+                }
+
+                if (AllServers.Count != 0)
+                {
+                    return "There's no public servers, apparently?";
+                }
+
+                if (SearchedServers.Count != 0)
+                {
+                    return "No servers match your search.";
+                }
+
+                return "";
+            }
+        }
 
         public ServerListTabViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
         {
+            _cfg = cfg;
             _statusCache = statusCache;
-            AllServers = new ObservableCollection<ServerEntryViewModel>(PresetServers.Select(a =>
-            {
-                var (name, address) = a;
-                return new ServerEntryViewModel(statusCache, cfg, updater, address) {FallbackName = name};
-            }));
+            _updater = updater;
+
+            AllServers.CollectionChanged += (s, e) => RepopulateServerList();
 
             this.WhenAnyValue(x => x.SearchString)
-                .Subscribe(v =>
-                {
-                    SearchedServers.Clear();
-                    if (string.IsNullOrEmpty(v))
-                    {
-                        SearchedServers.AddRange(AllServers);
-                    }
-                    else
-                    {
-                        SearchedServers.AddRange(AllServers.Where(s =>
-                            s.Name.Contains(v, StringComparison.CurrentCultureIgnoreCase)));
-                    }
+                .Subscribe(_ => RepopulateServerList());
 
-                    var alt = false;
-                    foreach (var server in SearchedServers)
-                    {
-                        server.IsAltBackground = alt;
-                        alt ^= true;
-                    }
+            this.WhenAnyValue(x => x.Status)
+                .Subscribe(_ =>
+                {
+                    this.RaisePropertyChanged(nameof(ListEmptyText));
+                    this.RaisePropertyChanged(nameof(ListVisible));
                 });
+
+            SearchedServers.CollectionChanged += (s, e) =>
+            {
+                this.RaisePropertyChanged(nameof(ListEmptyText));
+                this.RaisePropertyChanged(nameof(ListVisible));
+            };
+        }
+
+        private void RepopulateServerList()
+        {
+            SearchedServers.Clear();
+            if (string.IsNullOrEmpty(SearchString))
+            {
+                SearchedServers.AddRange(AllServers);
+            }
+            else
+            {
+                SearchedServers.AddRange(AllServers.Where(s =>
+                    s.Name.Contains(SearchString, StringComparison.CurrentCultureIgnoreCase)));
+            }
+
+            var alt = false;
+            foreach (var server in SearchedServers)
+            {
+                server.IsAltBackground = alt;
+                alt ^= true;
+            }
         }
 
         public override void Selected()
@@ -57,24 +113,63 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             {
                 server.TabSelected();
             }
+
+            if (Status == RefreshListStatus.NotUpdated)
+            {
+                RefreshServerList();
+            }
         }
-
-        public override string Name => "Servers";
-
-        public string? SearchString
-        {
-            get => _searchString;
-            set => this.RaiseAndSetIfChanged(ref _searchString, value);
-        }
-
-        public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
-            = new ObservableCollection<ServerEntryViewModel>();
-
-        public ObservableCollection<ServerEntryViewModel> AllServers { get; }
 
         public void RefreshPressed()
         {
+            RefreshServerList();
             _statusCache.Refresh();
+        }
+
+        private async void RefreshServerList()
+        {
+            AllServers.Clear();
+            Status = RefreshListStatus.Updating;
+
+            try
+            {
+                var response = await Global.GlobalHttpClient.GetStringAsync(HubUrl + "api/servers");
+
+                var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(response);
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    Status = RefreshListStatus.Updated;
+
+                    AllServers.AddRange(entries.Select(e =>
+                        new ServerEntryViewModel(_statusCache, _cfg, _updater, e.Address)
+                        {
+                            FallbackName = e.Name
+                        }));
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to fetch server list due to exception:\n{0}", e);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    Status = RefreshListStatus.Error;
+                });
+            }
+        }
+
+        private sealed class ServerListEntry
+        {
+            public string Address { get; set; } = default!;
+            public string Name { get; set; } = default!;
+        }
+
+        private enum RefreshListStatus
+        {
+            NotUpdated,
+            Updating,
+            Updated,
+            Error
         }
     }
 }

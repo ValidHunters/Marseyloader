@@ -118,7 +118,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
             else
             {
-                var fav = new FavoriteServer(_cacheData.Name, Address);
+                var fav = new FavoriteServer(_cacheData.Name ?? FallbackName, Address);
                 _cfg.AddFavoriteServer(fav);
             }
         }

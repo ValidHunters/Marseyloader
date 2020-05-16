@@ -4,7 +4,6 @@ namespace SS14.Launcher
 {
     public static class Global
     {
-        public const string CurrentLauncherVersion = "2";
         public const ushort DefaultServerPort = 1212;
 
         /// <summary>
@@ -14,8 +13,9 @@ namespace SS14.Launcher
 
         static Global()
         {
+            var version = typeof(Global).Assembly.GetName().Version;
             GlobalHttpClient = new HttpClient();
-            GlobalHttpClient.DefaultRequestHeaders.Add("User-Agent", $"SS14.Launcher v{CurrentLauncherVersion}");
+            GlobalHttpClient.DefaultRequestHeaders.Add("User-Agent", $"SS14.Launcher v{version}");
         }
     }
 }

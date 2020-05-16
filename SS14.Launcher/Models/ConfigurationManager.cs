@@ -17,8 +17,7 @@ namespace SS14.Launcher.Models
     {
         private static readonly (string name, string addr)[] DefaultFavorites =
             {
-                ("Wizard's Den", "ss14s://builds.spacestation14.io/ss14_server"),
-                ("Colonial Marines 14", "ss14://ss14.cm-ss13.com"),
+                ("Wizard's Den [US West]", "ss14s://builds.spacestation14.io/ss14_server")
             };
 
         private readonly object _configWriteLock = new object();
