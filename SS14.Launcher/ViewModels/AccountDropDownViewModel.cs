@@ -21,7 +21,7 @@ namespace SS14.Launcher.ViewModels
 
         public AccountDropDown? Control { get; set; }
 
-        public async void ManageAccountPressed()
+        public void ManageAccountPressed()
         {
             _cfg.UserName = null;
             Control?.Popup.Close();
