@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <!--<PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>-->
-    <Version>0.3.6</Version>
+    <Version>0.3.7</Version>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">

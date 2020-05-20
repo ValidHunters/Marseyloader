@@ -12,7 +12,7 @@ namespace SS14.Launcher.ViewModels
     {
         private readonly ConfigurationManager _cfg;
         private readonly Updater _updater;
-        private const string CurrentLauncherVersion = "4";
+        private const string CurrentLauncherVersion = "5";
 
         private int _selectedIndex;
 
