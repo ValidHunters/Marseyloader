@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 ./download_net_runtime.py linux
 
 # Clear out previous build.
-rm -r **/bin bin/
+rm -r **/bin bin/publish/Linux
 rm SS14.Launcher_Linux.zip
 
 dotnet publish SS14.Launcher/SS14.Launcher.csproj -c Release --no-self-contained -r linux-x64 /nologo

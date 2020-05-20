@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 ./download_net_runtime.py windows
 
 # Clear out previous build.
-rm -r **/bin bin/
+rm -r **/bin bin/publish/Windows
 rm SS14.Launcher_Windows.zip
 
 dotnet publish SS14.Launcher/SS14.Launcher.csproj -c Release --no-self-contained -r win-x64 /nologo
