@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia.Threading;
+using System.Threading.Tasks;
 using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
@@ -67,7 +67,14 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             _statusCache = statusCache;
             _updater = updater;
 
-            AllServers.CollectionChanged += (s, e) => RepopulateServerList();
+            AllServers.CollectionChanged += (s, e) =>
+            {
+                foreach (var server in AllServers)
+                {
+                    server.DoInitialUpdate();
+                }
+                RepopulateServerList();
+            };
 
             this.WhenAnyValue(x => x.SearchString)
                 .Subscribe(_ => RepopulateServerList());
@@ -107,26 +114,21 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
         }
 
-        public override void Selected()
+        public override async void Selected()
         {
-            foreach (var server in AllServers)
-            {
-                server.TabSelected();
-            }
-
             if (Status == RefreshListStatus.NotUpdated)
             {
-                RefreshServerList();
+                await RefreshServerList();
             }
         }
 
-        public void RefreshPressed()
+        public async void RefreshPressed()
         {
-            RefreshServerList();
+            await RefreshServerList();
             _statusCache.Refresh();
         }
 
-        private async void RefreshServerList()
+        private async Task RefreshServerList()
         {
             AllServers.Clear();
             Status = RefreshListStatus.Updating;
@@ -137,24 +139,18 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
                 var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(response);
 
-                Dispatcher.UIThread.Post(() =>
-                {
-                    Status = RefreshListStatus.Updated;
+                Status = RefreshListStatus.Updated;
 
-                    AllServers.AddRange(entries.Select(e =>
-                        new ServerEntryViewModel(_statusCache, _cfg, _updater, e.Address)
-                        {
-                            FallbackName = e.Name
-                        }));
-                });
+                AllServers.AddRange(entries.Select(e =>
+                    new ServerEntryViewModel(_statusCache, _cfg, _updater, e.Address)
+                    {
+                        FallbackName = e.Name
+                    }));
             }
             catch (Exception e)
             {
                 Console.WriteLine("Failed to fetch server list due to exception:\n{0}", e);
-                Dispatcher.UIThread.Post(() =>
-                {
-                    Status = RefreshListStatus.Error;
-                });
+                Status = RefreshListStatus.Error;
             }
         }
 

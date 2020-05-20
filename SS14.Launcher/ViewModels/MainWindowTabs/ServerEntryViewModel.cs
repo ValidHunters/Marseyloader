@@ -58,7 +58,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public Control? Control { get; set; }
 
-        public void TabSelected()
+        public void DoInitialUpdate()
         {
             _cache.InitialUpdateStatus(_cacheData);
         }

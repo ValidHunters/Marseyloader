@@ -92,7 +92,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 }
 
                 var serverEntryViewModel = new ServerEntryViewModel(_statusCache, _cfg, _updater, favoriteServer);
-                serverEntryViewModel.TabSelected();
+                serverEntryViewModel.DoInitialUpdate();
                 _favorites.Add(serverEntryViewModel);
             }
 
