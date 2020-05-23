@@ -1,4 +1,4 @@
 #!/bin/sh
 cd "$(dirname "$0")"
-export DOTNET_ROOT=./dotnet
+export DOTNET_ROOT=$(pwd)/dotnet
 exec ./bin/SS14.Launcher "$@"

@@ -3,5 +3,5 @@
 Encoding=UTF-8
 Version=1.0
 Type=Application
-Exec=env DOTNET_ROOT=./dotnet ./bin/SS14.Launcher %u
+Exec=env ./SS14.Launcher %u
 Name=Space Station 14
