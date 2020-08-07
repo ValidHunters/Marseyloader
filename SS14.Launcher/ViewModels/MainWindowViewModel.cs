@@ -34,7 +34,7 @@ namespace SS14.Launcher.ViewModels
 
             this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
 
-            this.WhenAnyValue(x => x._cfg.UserName)
+            this.WhenAnyValue(x => x._cfg.CurrentLogin)
                 .Subscribe(_ =>
                 {
                     this.RaisePropertyChanged(nameof(Username));
@@ -51,10 +51,10 @@ namespace SS14.Launcher.ViewModels
 
         public IReadOnlyList<MainWindowTabViewModel> Tabs { get; }
 
-        public bool LoggedIn => _cfg.UserName != null;
+        public bool LoggedIn => _cfg.CurrentLogin != null;
         public string LoginText => LoggedIn ? $"'Logged in' as {Username}." : "Not logged in.";
         public string ManageAccountText => LoggedIn ? "Change Account..." : "Log in...";
-        private string? Username => _cfg.UserName;
+        private string? Username => _cfg.CurrentLogin?.Username;
 
         public AccountDropDownViewModel AccountDropDown { get; }
 

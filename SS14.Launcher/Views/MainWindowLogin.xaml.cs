@@ -10,16 +10,6 @@ namespace SS14.Launcher.Views
         public MainWindowLogin()
         {
             InitializeComponent();
-
-            var nameBox = this.FindControl<TextBox>("NameBox");
-
-            nameBox.KeyDown += (sender, args) =>
-            {
-                if (args.Key == Key.Enter && DataContext is MainWindowLoginViewModel vm)
-                {
-                    vm.OnLogInButtonPressed();
-                }
-            };
         }
 
         private void InitializeComponent()

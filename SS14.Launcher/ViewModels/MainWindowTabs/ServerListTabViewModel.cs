@@ -13,8 +13,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class ServerListTabViewModel : MainWindowTabViewModel
     {
-        private const string HubUrl = "https://builds.spacestation14.io/hub/";
-
         private readonly ConfigurationManager _cfg;
         private readonly ServerStatusCache _statusCache;
         private readonly Updater _updater;
@@ -135,7 +133,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
             try
             {
-                var response = await Global.GlobalHttpClient.GetStringAsync(HubUrl + "api/servers");
+                var response = await Global.GlobalHttpClient.GetStringAsync(UrlConstants.HubUrl + "api/servers");
 
                 var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(response);
 

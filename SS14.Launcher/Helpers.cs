@@ -4,8 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
+using System.Net.Mime;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SS14.Launcher
 {
@@ -133,6 +136,23 @@ namespace SS14.Launcher
             }
 
             return $"{Math.Round(d, 2)} {ByteSuffixes[i]}";
+        }
+
+        /// <summary>
+        ///     Does a POST with JSON.
+        /// </summary>
+        public static Task<HttpResponseMessage> PostAsync<T>(this HttpClient client, string uri, T value)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(value), Encoding.UTF8,
+                MediaTypeNames.Application.Json);
+
+            return client.PostAsync(uri, content);
+        }
+
+        public static async Task<T> AsJson<T>(this HttpContent content)
+        {
+            var str = await content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(str);
         }
     }
 }

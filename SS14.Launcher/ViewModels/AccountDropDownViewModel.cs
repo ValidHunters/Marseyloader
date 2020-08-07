@@ -13,17 +13,17 @@ namespace SS14.Launcher.ViewModels
         {
             _cfg = cfg;
 
-            this.WhenAnyValue(x => x._cfg.UserName)
+            this.WhenAnyValue(x => x._cfg.CurrentLogin)
                 .Subscribe(_ => { this.RaisePropertyChanged(nameof(LoginText)); });
         }
 
-        public string LoginText => _cfg.UserName ?? "Not logged in";
+        public string LoginText => _cfg.CurrentLogin?.Username ?? "Not logged in";
 
         public AccountDropDown? Control { get; set; }
 
         public void ManageAccountPressed()
         {
-            _cfg.UserName = null;
+            _cfg.CurrentLogin = null;
             Control?.Popup.Close();
         }
     }

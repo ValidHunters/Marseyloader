@@ -16,9 +16,9 @@ namespace SS14.Launcher.Models
     public sealed class ConfigurationManager : ReactiveObject
     {
         private static readonly (string name, string addr)[] DefaultFavorites =
-            {
-                ("Wizard's Den [US West]", "ss14s://builds.spacestation14.io/ss14_server")
-            };
+        {
+            ("Wizard's Den [US West]", "ss14s://builds.spacestation14.io/ss14_server")
+        };
 
         private readonly object _configWriteLock = new object();
 
@@ -29,8 +29,9 @@ namespace SS14.Launcher.Models
             new SourceCache<Installation, string>(i => i.ForkId);
 
         private bool _ignoreSave;
-        private string? _userName;
+        private LoginInfo? _currentLogin;
         private int _nextInstallationId = 1;
+        private Guid _fingerprint;
 
         public ConfigurationManager()
         {
@@ -56,15 +57,17 @@ namespace SS14.Launcher.Models
         /// <summary>
         ///     The username used to log into servers.
         /// </summary>
-        public string? UserName
+        public LoginInfo? CurrentLogin
         {
-            get => _userName;
+            get => _currentLogin;
             set
             {
-                this.RaiseAndSetIfChanged(ref _userName, value);
+                this.RaiseAndSetIfChanged(ref _currentLogin, value);
                 Save();
             }
         }
+
+        public Guid Fingerprint => _fingerprint;
 
         public IObservableCache<FavoriteServer, string> FavoriteServers => _favoriteServers;
         public IObservableCache<Installation, string> Installations => _installations;
@@ -118,18 +121,13 @@ namespace SS14.Launcher.Models
 
                 if (!File.Exists(path))
                 {
-                    _favoriteServers.Edit(x =>
-                    {
-                        x.Clear();
-                        x.AddOrUpdate(DefaultFavorites.Select(p => new FavoriteServer(p.name, p.addr)));
-                    });
-                    UserName = null;
+                    LoadDefaultConfig();
                     return;
                 }
 
                 var data = JsonConvert.DeserializeObject<JsonData>(File.ReadAllText(path));
 
-                UserName = data.Username;
+                CurrentLogin = data.CurrentLogin;
                 _nextInstallationId = data.NextInstallationId;
 
                 _favoriteServers.Edit(a =>
@@ -146,11 +144,31 @@ namespace SS14.Launcher.Models
                         a.AddOrUpdate(data.Installations);
                     });
                 }
+
+                _fingerprint = data.Fingerprint;
             }
             finally
             {
                 _ignoreSave = false;
             }
+
+            if (_fingerprint == default)
+            {
+                // If we don't have a fingerprint yet this is either a fresh config or an older config.
+                // Generate a fingerprint and immediately save it to disk.
+                _fingerprint = Guid.NewGuid();
+                Save();
+            }
+        }
+
+        private void LoadDefaultConfig()
+        {
+            _favoriteServers.Edit(x =>
+            {
+                x.Clear();
+                x.AddOrUpdate(DefaultFavorites.Select(p => new FavoriteServer(p.name, p.addr)));
+            });
+            CurrentLogin = null;
         }
 
         private void Save()
@@ -164,10 +182,11 @@ namespace SS14.Launcher.Models
 
             var data = JsonConvert.SerializeObject(new JsonData
             {
-                Username = _userName,
+                CurrentLogin = _currentLogin,
                 Favorites = _favoriteServers.Items.ToList(),
                 NextInstallationId = _nextInstallationId,
-                Installations = _installations.Items.ToList()
+                Installations = _installations.Items.ToList(),
+                Fingerprint = _fingerprint
             });
 
             // Save config asynchronously to avoid potential disk hangs.
@@ -188,8 +207,8 @@ namespace SS14.Launcher.Models
         [Serializable]
         private sealed class JsonData
         {
-            [JsonProperty(PropertyName = "username")]
-            public string? Username { get; set; }
+            [JsonProperty(PropertyName = "current_login")]
+            public LoginInfo? CurrentLogin { get; set; }
 
             [JsonProperty(PropertyName = "favorites")]
             public List<FavoriteServer>? Favorites { get; set; }
@@ -199,6 +218,9 @@ namespace SS14.Launcher.Models
 
             [JsonProperty(PropertyName = "next_installation_id")]
             public int NextInstallationId { get; set; } = 1;
+
+            [JsonProperty(PropertyName = "fingerprint")]
+            public Guid Fingerprint { get; set; }
         }
     }
 }

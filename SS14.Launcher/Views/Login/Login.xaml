@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vml="clr-namespace:SS14.Launcher.ViewModels.Login;assembly=SS14.Launcher"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SS14.Launcher.Views.Login.Login"
+             Name="Login">
+    <Design.DataContext>
+        <vml:LoginViewModel />
+    </Design.DataContext>
+
+    <DockPanel LastChildFill="False">
+        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium" Text="Log in" />
+
+        <TextBox DockPanel.Dock="Top" Name="NameBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Username or email"
+                 Text="{Binding EditingUsername, Mode=TwoWay}" />
+
+        <TextBox DockPanel.Dock="Top" Name="PasswordBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Password"
+                 Text="{Binding EditingPassword, Mode=TwoWay}" />
+
+        <DockPanel DockPanel.Dock="Top" LastChildFill="False" MaxWidth="300" Margin="0 20">
+            <Button DockPanel.Dock="Right" IsEnabled="{Binding IsInputValid}" HorizontalAlignment="Center"
+                    Content="Log in" Command="{Binding OnLogInButtonPressed}" />
+
+            <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Forgot password?" />
+        </DockPanel>
+
+        <Button DockPanel.Dock="Bottom" Classes="BigButton" Margin="0 4" HorizontalAlignment="Center"
+                Content="Don't have an account? Register!" Command="{Binding OnRegisterButtonPressed}" />
+    </DockPanel>
+</UserControl>

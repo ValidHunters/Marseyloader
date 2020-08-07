@@ -1,50 +1,23 @@
 using System;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
+using SS14.Launcher.ViewModels.Login;
 
 namespace SS14.Launcher.ViewModels
 {
     public class MainWindowLoginViewModel : ViewModelBase
     {
-        private readonly ConfigurationManager _cfg;
+        public LoginViewModel Login { get; }
+        public RegisterViewModel Register { get; }
 
-        [Reactive] public string EditingUsername { get; set; } = "";
+        [Reactive] public bool Registering { get; set; }
 
         public MainWindowLoginViewModel(ConfigurationManager cfg)
         {
-            _cfg = cfg;
-
-            this.WhenAnyValue(x => x.EditingUsername)
-                .Subscribe(s =>
-                {
-                    IsUsernameValid = UsernameHelpers.IsNameValid(s, out var reason);
-
-                    InvalidReason = reason ?? " ";
-                });
+            Login = new LoginViewModel(cfg, this);
+            Register = new RegisterViewModel(cfg, this);
         }
 
-        public string? Version
-        {
-            get
-            {
-                var version = typeof(MainWindowViewModel).Assembly.GetName().Version;
-                return $"v{version}";
-            }
-        }
-
-        [Reactive] public bool IsUsernameValid { get; private set; }
-        [Reactive] public string InvalidReason { get; private set; } = " ";
-
-        public void OnLogInButtonPressed()
-        {
-            if (!IsUsernameValid)
-            {
-                return;
-            }
-
-            _cfg.UserName = EditingUsername;
-            EditingUsername = "";
-        }
+        public string? Version => $"v{LauncherVersion.Version}";
     }
 }
