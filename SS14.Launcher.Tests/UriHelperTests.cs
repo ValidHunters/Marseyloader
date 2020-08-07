@@ -1,30 +1,22 @@
 using System;
 using NUnit.Framework;
-using SS14.Launcher.Models;
 
 namespace SS14.Launcher.Tests
 {
     [TestFixture]
+    [Parallelizable(ParallelScope.All)]
     public class UriHelperTests
     {
         [Test]
-        public void GetServerStatusAddress()
+        [TestCase("server.spacestation14.io", "http://server.spacestation14.io:1212/status")]
+        [TestCase("ss14s://server.spacestation14.io", "https://server.spacestation14.io/status")]
+        [TestCase("ss14s://server.spacestation14.io:1212", "https://server.spacestation14.io:1212/status")]
+        [TestCase("ss14s://server.spacestation14.io/foo", "https://server.spacestation14.io/foo/status")]
+        public void GetServerStatusAddress(string input, string expected)
         {
-            var uri = UriHelper.GetServerStatusAddress("server.spacestation14.io");
+            var uri = UriHelper.GetServerStatusAddress(input);
 
-            Assert.AreEqual(new Uri("http://server.spacestation14.io:1212/status"), uri);
-
-            uri = UriHelper.GetServerStatusAddress("ss14s://server.spacestation14.io");
-
-            Assert.AreEqual(new Uri("https://server.spacestation14.io/status"), uri);
-
-            uri = UriHelper.GetServerStatusAddress("ss14s://server.spacestation14.io:1212");
-
-            Assert.AreEqual(new Uri("https://server.spacestation14.io:1212/status"), uri);
-
-            uri = UriHelper.GetServerStatusAddress("ss14s://server.spacestation14.io/foo");
-
-            Assert.AreEqual(new Uri("https://server.spacestation14.io/foo/status"), uri);
+            Assert.That(uri, Is.EqualTo(new Uri(expected)));
         }
     }
 }
