@@ -21,13 +21,13 @@
     </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.9" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.9" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.9" />
+    <PackageReference Include="Avalonia" Version="0.9.12" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.12" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.12" />
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="ReactiveUI.Fody" Version="11.3.8" />
-    <PackageReference Include="Robust.Shared.AuthLib" Version="0.1.0" />
+    <PackageReference Include="ReactiveUI.Fody" Version="11.5.17" />
+    <PackageReference Include="Robust.Shared.AuthLib" Version="0.1.1" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
   </ItemGroup>
 </Project>
