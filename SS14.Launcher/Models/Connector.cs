@@ -107,7 +107,7 @@ namespace SS14.Launcher.Models
 
                 // Pass username to launched client.
                 // We don't load username from client_config.toml when launched via launcher.
-                "--username", _cfg.CurrentLogin?.Username ?? "JoeGenero",
+                "--username", _cfg.SelectedLogin?.Username ?? "JoeGenero",
 
                 // Connection address
                 "--connect-address", connectAddress.ToString(),

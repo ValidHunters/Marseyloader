@@ -16,43 +16,51 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid>
-        <DockPanel LastChildFill="true">
-            <DockPanel DockPanel.Dock="Top" Margin="4, 0">
-                <DockPanel.Background><SolidColorBrush Color="#212126" /></DockPanel.Background>
-                <Image Source="/Assets/logo.png" HorizontalAlignment="Left" Margin="0, 8" Stretch="None"
-                       DockPanel.Dock="Left" />
-                <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
-                      ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto">
-                    <Button Content="Discord" Grid.Row="0" Grid.Column="1" MinWidth="90"
-                            Command="{Binding OnDiscordButtonPressed}"
-                            Margin="0, 6, 4, 6" />
-                    <Button Content="Website" Grid.Row="0" Grid.Column="2" MinWidth="90"
-                            Command="{Binding OnWebsiteButtonPressed}"
-                            Margin="0, 6" />
+    <DockPanel LastChildFill="true">
+        <!-- Header -->
+        <DockPanel DockPanel.Dock="Top" Margin="4, 0">
+            <DockPanel.Background>
+                <SolidColorBrush Color="#212126" />
+            </DockPanel.Background>
+            <!-- Logo -->
+            <Image Source="/Assets/logo.png" HorizontalAlignment="Left" Margin="0, 8" Stretch="None"
+                   DockPanel.Dock="Left" />
+            <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
+                  ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto">
+                <!-- Discord link -->
+                <Button Content="Discord" Grid.Row="0" Grid.Column="1" MinWidth="90"
+                        Command="{Binding OnDiscordButtonPressed}"
+                        Margin="0, 6, 4, 6" />
 
-                    <Panel Grid.ColumnSpan="3" Grid.Row="1" IsVisible="{Binding LoggedIn}">
-                        <v:AccountDropDown MinWidth="90" HorizontalAlignment="Right"
-                                           DataContext="{Binding AccountDropDown}" />
-                    </Panel>
-                </Grid>
-            </DockPanel>
-            <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" Margin="0, 0, 0, 4" />
-            <Grid>
-                <TabControl IsVisible="{Binding LoggedIn}" Items="{Binding Tabs}" TabStripPlacement="Bottom"
-                            SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}">
-                    <TabControl.ItemTemplate>
-                        <DataTemplate DataType="mainWindowTabs:MainWindowTabViewModel">
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </TabControl.ItemTemplate>
-                </TabControl>
-                <Panel IsVisible="{Binding !LoggedIn}">
-                    <v:MainWindowLogin DataContext="{Binding LoginViewModel}" />
-                </Panel>
+                <!-- Website link -->
+                <Button Content="Website" Grid.Row="0" Grid.Column="2" MinWidth="90"
+                        Command="{Binding OnWebsiteButtonPressed}"
+                        Margin="0, 6" />
+
+                <!-- Account drop down -->
+                <v:AccountDropDown Grid.ColumnSpan="3" Grid.Row="1" MinWidth="90"
+                                   HorizontalAlignment="Right"
+                                   IsEnabled="{Binding DataContext.AccountDropDownVisible, RelativeSource={RelativeSource AncestorType=v:MainWindow}}"
+                                   DataContext="{Binding AccountDropDown}" />
             </Grid>
         </DockPanel>
-    </Grid>
+        <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" />
+        <Grid>
+            <!-- Main tabbed layout when logged in -->
+            <TabControl IsVisible="{Binding LoggedIn}" Items="{Binding Tabs}" TabStripPlacement="Bottom"
+                        SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}" Margin="0 4 0 0">
+                <TabControl.ItemTemplate>
+                    <DataTemplate DataType="mainWindowTabs:MainWindowTabViewModel">
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+            </TabControl>
+            <!-- Login interface when not logged in -->
+            <v:MainWindowLogin
+                IsVisible="{Binding !DataContext.LoggedIn, RelativeSource={RelativeSource AncestorType=v:MainWindow}}"
+                DataContext="{Binding LoginViewModel}" />
+        </Grid>
+    </DockPanel>
 
 
 </Window>

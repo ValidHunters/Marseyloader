@@ -10,6 +10,7 @@ namespace SS14.Launcher.ViewModels.Login
     public class RegisterViewModel : ViewModelBase
     {
         private readonly ConfigurationManager _cfg;
+        private readonly MainWindowLoginViewModel _parentVm;
 
         [Reactive] public string EditingUsername { get; set; } = "";
         [Reactive] public string EditingPassword { get; set; } = "";
@@ -20,9 +21,10 @@ namespace SS14.Launcher.ViewModels.Login
         [Reactive] public string InvalidReason { get; private set; } = " ";
 
 
-        public RegisterViewModel(ConfigurationManager cfg, MainWindowLoginViewModel mainWindowLoginViewModel)
+        public RegisterViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm)
         {
             _cfg = cfg;
+            _parentVm = parentVm;
 
             this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword, x => x.EditingPasswordConfirm,
                     x => x.EditingEmail)
@@ -55,7 +57,7 @@ namespace SS14.Launcher.ViewModels.Login
                         // TODO: .NET 5 has a Try* version of this, switch to that when .NET 5 is available.
                         var mailAddr = new MailAddress(email);
                     }
-                    catch (FormatException e)
+                    catch (FormatException)
                     {
                         InvalidReason = "Email is invalid";
                         return;
@@ -85,8 +87,16 @@ namespace SS14.Launcher.ViewModels.Login
                 return;
             }
 
-            _cfg.CurrentLogin = null;
+        }
+
+        public void OnLoginButtonPressed()
+        {
+            EditingEmail = "";
             EditingUsername = "";
+            EditingPassword = "";
+            EditingPasswordConfirm = "";
+
+            _parentVm.Screen = LoginScreen.Login;
         }
     }
 }

@@ -11,6 +11,9 @@
         <mainWindowTabs:OptionsTabViewModel />
     </Design.DataContext>
 
+    <Button Content="Do a flip!" Name="Flip" />
+
+
     <!--<Grid Margin="4" VerticalAlignment="Top" ColumnDefinitions="Auto, *">
         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Player Name:" Margin="4" />
 

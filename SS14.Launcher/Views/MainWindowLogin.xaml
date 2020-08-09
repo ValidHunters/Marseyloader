@@ -23,8 +23,10 @@
         <Panel Background="{DynamicResource ThemeStripebackEdgeBrush}" MinHeight="2" DockPanel.Dock="Bottom" />
 
         <Panel>
-            <vl:Login DataContext="{Binding Login}" IsVisible="{Binding !DataContext.Registering, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
-            <vl:Register DataContext="{Binding Register}" IsVisible="{Binding DataContext.Registering, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+            <vl:Login DataContext="{Binding Login}" IsVisible="{Binding DataContext.ScreenLogin, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+            <vl:Register DataContext="{Binding Register}" IsVisible="{Binding DataContext.ScreenRegister, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+            <vl:ForgotPassword DataContext="{Binding ForgotPassword}" IsVisible="{Binding DataContext.ScreenForgotPassword, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+            <vl:ResendConfirmation DataContext="{Binding ResendConfirmation}" IsVisible="{Binding DataContext.ScreenResendConfirmation, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
         </Panel>
     </DockPanel>
 </UserControl>

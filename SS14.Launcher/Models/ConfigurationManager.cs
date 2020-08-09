@@ -25,13 +25,16 @@ namespace SS14.Launcher.Models
         private readonly SourceCache<FavoriteServer, string> _favoriteServers
             = new SourceCache<FavoriteServer, string>(f => f.Address);
 
-        private readonly SourceCache<Installation, string> _installations =
-            new SourceCache<Installation, string>(i => i.ForkId);
+        private readonly SourceCache<Installation, string> _installations
+            = new SourceCache<Installation, string>(i => i.ForkId);
 
-        private bool _ignoreSave;
-        private LoginInfo? _currentLogin;
+        private readonly SourceCache<LoginInfo, Guid> _logins
+            = new SourceCache<LoginInfo, Guid>(l => l.UserId);
+
+        private bool _ignoreSave = true;
         private int _nextInstallationId = 1;
         private Guid _fingerprint;
+        private Guid? _selectedLogin;
 
         public ConfigurationManager()
         {
@@ -52,25 +55,45 @@ namespace SS14.Launcher.Models
 
             _installations.Connect()
                 .Subscribe(_ => Save());
-        }
 
-        /// <summary>
-        ///     The username used to log into servers.
-        /// </summary>
-        public LoginInfo? CurrentLogin
-        {
-            get => _currentLogin;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _currentLogin, value);
-                Save();
-            }
+            _logins.Connect()
+                .Subscribe(_ => Save());
         }
 
         public Guid Fingerprint => _fingerprint;
 
+        public Guid? SelectedLoginId
+        {
+            get => _selectedLogin;
+            set
+            {
+                if (value != null && !_logins.Lookup(value.Value).HasValue)
+                {
+                    throw new ArgumentException("We are not logged in for that user ID.");
+                }
+
+                this.RaiseAndSetIfChanged(ref _selectedLogin, value, nameof(SelectedLoginId));
+                this.RaisePropertyChanged(nameof(SelectedLogin));
+                Save();
+            }
+        }
+
+        public LoginInfo? SelectedLogin
+        {
+            get
+            {
+                if (_selectedLogin == null)
+                {
+                    return null;
+                }
+
+                return _logins.Lookup(_selectedLogin.Value).Value;
+            }
+        }
+
         public IObservableCache<FavoriteServer, string> FavoriteServers => _favoriteServers;
         public IObservableCache<Installation, string> Installations => _installations;
+        public IObservableCache<LoginInfo, Guid> Logins => _logins;
 
         public void AddFavoriteServer(FavoriteServer server)
         {
@@ -102,6 +125,26 @@ namespace SS14.Launcher.Models
             _installations.Remove(installation);
         }
 
+        public void AddLogin(LoginInfo login)
+        {
+            if (_logins.Lookup(login.UserId).HasValue)
+            {
+                throw new ArgumentException("A login with that UID already exists.");
+            }
+
+            _logins.AddOrUpdate(login);
+        }
+
+        public void RemoveLogin(LoginInfo loginInfo)
+        {
+            _logins.Remove(loginInfo);
+
+            if (loginInfo.UserId == _selectedLogin)
+            {
+                SelectedLoginId = null;
+            }
+        }
+
         public int GetNewInstallationId()
         {
             // Don't explicitly save.
@@ -125,15 +168,25 @@ namespace SS14.Launcher.Models
                     return;
                 }
 
+                using var changeSuppress = SuppressChangeNotifications();
+
                 var data = JsonConvert.DeserializeObject<JsonData>(File.ReadAllText(path));
 
-                CurrentLogin = data.CurrentLogin;
                 _nextInstallationId = data.NextInstallationId;
 
                 _favoriteServers.Edit(a =>
                 {
                     a.Clear();
                     a.AddOrUpdate(data.Favorites);
+                });
+
+                _logins.Edit(p =>
+                {
+                    p.Clear();
+                    if (data.Logins != null)
+                    {
+                        p.AddOrUpdate(data.Logins);
+                    }
                 });
 
                 if (data.Installations != null)
@@ -146,6 +199,7 @@ namespace SS14.Launcher.Models
                 }
 
                 _fingerprint = data.Fingerprint;
+                _selectedLogin = data.SelectedLogin;
             }
             finally
             {
@@ -168,7 +222,6 @@ namespace SS14.Launcher.Models
                 x.Clear();
                 x.AddOrUpdate(DefaultFavorites.Select(p => new FavoriteServer(p.name, p.addr)));
             });
-            CurrentLogin = null;
         }
 
         private void Save()
@@ -182,7 +235,8 @@ namespace SS14.Launcher.Models
 
             var data = JsonConvert.SerializeObject(new JsonData
             {
-                CurrentLogin = _currentLogin,
+                SelectedLogin = _selectedLogin,
+                Logins = _logins.Items.ToList(),
                 Favorites = _favoriteServers.Items.ToList(),
                 NextInstallationId = _nextInstallationId,
                 Installations = _installations.Items.ToList(),
@@ -207,14 +261,17 @@ namespace SS14.Launcher.Models
         [Serializable]
         private sealed class JsonData
         {
-            [JsonProperty(PropertyName = "current_login")]
-            public LoginInfo? CurrentLogin { get; set; }
+            [JsonProperty(PropertyName = "selected_login")]
+            public Guid? SelectedLogin { get; set; }
 
             [JsonProperty(PropertyName = "favorites")]
             public List<FavoriteServer>? Favorites { get; set; }
 
             [JsonProperty(PropertyName = "installations")]
             public List<Installation>? Installations { get; set; }
+
+            [JsonProperty(PropertyName = "logins")]
+            public List<LoginInfo>? Logins { get; set; }
 
             [JsonProperty(PropertyName = "next_installation_id")]
             public int NextInstallationId { get; set; } = 1;

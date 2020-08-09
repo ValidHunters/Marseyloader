@@ -13,6 +13,7 @@
     <DockPanel LastChildFill="false" Margin="4">
         <TextBlock Classes="NanoHeadingMedium" HorizontalAlignment="Center" DockPanel.Dock="Top"
                    Text="Enter server address to connect:" />
+
         <DockPanel DockPanel.Dock="Bottom">
             <Button DockPanel.Dock="Right" Name="SubmitButton" Content="Connect" />
             <TextBox Name="AddressBox"  Watermark="ss14://example.com:1212" />

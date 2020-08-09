@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
@@ -15,6 +16,8 @@ namespace SS14.Launcher.ViewModels.Login
         [Reactive] public string EditingPassword { get; set; } = "";
 
         [Reactive] public bool IsInputValid { get; private set; }
+
+        [Reactive] public bool IsLoggingIn { get; set; }
 
         public LoginViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm)
         {
@@ -38,14 +41,43 @@ namespace SS14.Launcher.ViewModels.Login
                 return;
             }
 
-            var resp = (LoginInfo) await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
+            IsLoggingIn = true;
+            try
+            {
+                // TODO: Remove Task.Delay here.
+                await Task.Delay(1000);
+                var resp = (LoginInfo) await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
 
-            _cfg.CurrentLogin = resp;
+                if (_cfg.Logins.Lookup(resp.UserId).HasValue)
+                {
+                    // Already had a login like this??
+                    // TODO: Immediately sign out the token here.
+                    _cfg.SelectedLoginId = resp.UserId;
+                    return;
+                }
+
+                _cfg.AddLogin(resp);
+                _cfg.SelectedLoginId = resp.UserId;
+            }
+            finally
+            {
+                IsLoggingIn = false;
+            }
         }
 
         public void OnRegisterButtonPressed()
         {
-            _parentVm.Registering = true;
+            _parentVm.Screen = LoginScreen.Register;
+        }
+
+        public void OnForgotPasswordPressed()
+        {
+            _parentVm.Screen = LoginScreen.ForgotPassword;
+        }
+
+        public void OnResendConfirmationPressed()
+        {
+            _parentVm.Screen = LoginScreen.ResendConfirmation;
         }
     }
 }

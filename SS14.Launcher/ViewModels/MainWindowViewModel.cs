@@ -11,7 +11,6 @@ namespace SS14.Launcher.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly ConfigurationManager _cfg;
-        private readonly Updater _updater;
         private const string CurrentLauncherVersion = "5";
 
         private int _selectedIndex;
@@ -19,28 +18,35 @@ namespace SS14.Launcher.ViewModels
         public MainWindowViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
         {
             _cfg = cfg;
-            _updater = updater;
 
             var servers = new ServerListTabViewModel(cfg, statusCache, updater);
             var news = new NewsTabViewModel();
             var home = new HomePageViewModel(cfg, statusCache, updater);
+            var options = new OptionsTabViewModel();
 
             Tabs = new MainWindowTabViewModel[]
             {
                 home,
                 servers,
-                news
+                news,
+                options
             };
 
             this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
 
-            this.WhenAnyValue(x => x._cfg.CurrentLogin)
+            this.WhenAnyValue(x => x._cfg.SelectedLogin)
                 .Subscribe(_ =>
                 {
                     this.RaisePropertyChanged(nameof(Username));
                     this.RaisePropertyChanged(nameof(LoggedIn));
                     this.RaisePropertyChanged(nameof(LoginText));
                     this.RaisePropertyChanged(nameof(ManageAccountText));
+                });
+
+            _cfg.Logins.Connect()
+                .Subscribe(_ =>
+                {
+                    this.RaisePropertyChanged(nameof(AccountDropDownVisible));
                 });
 
             AccountDropDown = new AccountDropDownViewModel(cfg);
@@ -51,10 +57,11 @@ namespace SS14.Launcher.ViewModels
 
         public IReadOnlyList<MainWindowTabViewModel> Tabs { get; }
 
-        public bool LoggedIn => _cfg.CurrentLogin != null;
+        public bool LoggedIn => _cfg.SelectedLoginId != null;
         public string LoginText => LoggedIn ? $"'Logged in' as {Username}." : "Not logged in.";
         public string ManageAccountText => LoggedIn ? "Change Account..." : "Log in...";
-        private string? Username => _cfg.CurrentLogin?.Username;
+        private string? Username => _cfg.SelectedLogin?.Username;
+        public bool AccountDropDownVisible => _cfg.Logins.Count != 0;
 
         public AccountDropDownViewModel AccountDropDown { get; }
 
@@ -73,12 +80,12 @@ namespace SS14.Launcher.ViewModels
 
         public void OnDiscordButtonPressed()
         {
-            Helpers.OpenUri(new Uri("https://discord.gg/t2jac3p"));
+            Helpers.OpenUri(new Uri(UrlConstants.DiscordUrl));
         }
 
         public void OnWebsiteButtonPressed()
         {
-            Helpers.OpenUri(new Uri("https://spacestation14.io"));
+            Helpers.OpenUri(new Uri(UrlConstants.WebsiteUrl));
         }
 
         private async Task<bool> CheckLauncherUpdate()
