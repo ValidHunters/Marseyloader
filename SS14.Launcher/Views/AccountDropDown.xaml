@@ -3,83 +3,35 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SS14.Launcher.ViewModels"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:v="clr-namespace:SS14.Launcher.Views"
              xmlns:models="clr-namespace:SS14.Launcher.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.AccountDropDown">
 
-    <Design.DataContext>
-        <vm:AccountDropDownViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <vm:AccountDropDownViewModel />
+  </Design.DataContext>
 
-    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,*,Auto">
-        <Panel Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Background="{DynamicResource ThemeControlMidBrush}">
-            <Grid Margin="0, 2" ColumnDefinitions="*,Auto">
-                <TextBlock HorizontalAlignment="Center" Margin="2, 0" VerticalAlignment="Center" Grid.Column="0"
-                           Text="{Binding LoginText}" />
-                <ToggleButton Grid.Column="1" Name="Button" Content="Foo">
-                    <Path Fill="{DynamicResource ThemeForegroundBrush}"
-                          Width="8"
-                          Height="4"
-                          Stretch="Uniform"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z" />
-                </ToggleButton>
-                <Popup
-                    MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}"
-                    Name="Popup"
-                    PlacementTarget="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
-                    StaysOpen="False">
+  <v:DropDown HeaderContent="{Binding LoginText}" IsDropDownOpen="{Binding IsDropDownOpen, Mode=TwoWay}">
+    <StackPanel Orientation="Vertical">
+      <StackPanel Orientation="Vertical" IsVisible="{Binding AccountControlsVisible}">
+        <Button Content="{Binding LogoutText}" Command="{Binding ManageAccountPressed}" Margin="4" />
+        <Button Content="Add account" Command="{Binding AddAccountPressed}" Margin="4" />
+      </StackPanel>
 
-                    <!-- Actual popup content here -->
+      <StackPanel Orientation="Vertical" IsVisible="{Binding AccountSwitchVisible}">
+        <TextBlock Text="{Binding AccountSwitchText}" Margin="4" />
 
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Vertical" IsVisible="{Binding AccountControlsVisible}">
-                            <Button Content="{Binding LogoutText}" Command="{Binding ManageAccountPressed}" Margin="4" />
-                            <Button Content="Add account" Command="{Binding AddAccountPressed}" Margin="4" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Vertical" IsVisible="{Binding AccountSwitchVisible}">
-                            <TextBlock Text="{Binding AccountSwitchText}" Margin="4" />
-
-                            <ItemsControl Name="Items" Items="{Binding Accounts}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="models:LoginInfo">
-                                        <Button Content="{Binding Username}" Margin="4"
-                                                Command="{Binding DataContext.AccountButtonPressed,ElementName=Items}"
-                                                CommandParameter="{Binding UserId}" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </StackPanel>
-                </Popup>
-            </Grid>
-        </Panel>
-
-        <Path Fill="{DynamicResource ThemeControlMidBrush}"
-              Grid.Column="2"
-              Grid.Row="0"
-              Data="M 0 0 L 4 0 L 14 10 L 0 10 Z" />
-
-        <Path Fill="{DynamicResource ThemeControlMidBrush}"
-              Grid.Column="0"
-              Grid.Row="2"
-              Data="M 0 0 L 14 0 L 14 10 L 10 10 Z" />
-
-        <Panel
-            Grid.Column="0"
-            Grid.RowSpan="2"
-            Grid.Row="0"
-            MinWidth="14"
-            Background="{DynamicResource ThemeControlMidBrush}" />
-
-        <Panel
-            Grid.Column="2"
-            Grid.Row="1"
-            Grid.RowSpan="2"
-            MinWidth="14"
-            Background="{DynamicResource ThemeControlMidBrush}" />
-    </Grid>
+        <ItemsControl Name="Items" Items="{Binding Accounts}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="models:LoginInfo">
+              <Button Content="{Binding Username}" Margin="4"
+                      Command="{Binding DataContext.AccountButtonPressed,ElementName=Items}"
+                      CommandParameter="{Binding UserId}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+    </StackPanel>
+  </v:DropDown>
 </UserControl>

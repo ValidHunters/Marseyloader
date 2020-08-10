@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using DynamicData;
 using JetBrains.Annotations;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
 using SS14.Launcher.Views;
 
@@ -60,6 +61,7 @@ namespace SS14.Launcher.ViewModels
         public string AccountSwitchText => _cfg.SelectedLogin != null ? "Switch account:" : "Select account:";
         public bool AccountControlsVisible => _cfg.SelectedLogin != null;
 
+        [Reactive] public bool IsDropDownOpen { get; set; }
 
         public void ManageAccountPressed()
         {
@@ -68,20 +70,20 @@ namespace SS14.Launcher.ViewModels
                 _cfg.RemoveLogin(_cfg.SelectedLogin);
             }
 
-            Control?.Popup.Close();
+            IsDropDownOpen = false;
         }
 
         [UsedImplicitly]
         public void AccountButtonPressed(Guid id)
         {
-            Control?.Popup.Close();
+            IsDropDownOpen = false;
 
             _cfg.SelectedLoginId = id;
         }
 
         public void AddAccountPressed()
         {
-            Control?.Popup.Close();
+            IsDropDownOpen = false;
 
             _cfg.SelectedLoginId = null;
         }

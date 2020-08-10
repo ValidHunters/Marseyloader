@@ -15,6 +15,7 @@
         <StyleInclude Source="/Theme/ThemeExpander.xaml"/>
         <StyleInclude Source="/Theme/ThemeButton.xaml"/>
         <StyleInclude Source="/Theme/ThemeDungSpinner.xaml"/>
+        <StyleInclude Source="/Theme/ThemeDropDown.xaml"/>
         <StyleInclude Source="/Theme/ThemeWindow.xaml"/>
         <!-- I'm too lazy to fix the styling on those text boxes so this is staying commented out for now. -->
         <!--<StyleInclude Source="/Theme/ThemeTextBox.xaml"/>-->
