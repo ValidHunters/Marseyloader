@@ -12,7 +12,7 @@ namespace SS14.Launcher.ViewModels.Login
             _cfg = cfg;
             _parentVm = parentVm;
         }
-        
+
         public void BackPressed()
         {
             _parentVm.Screen = LoginScreen.Login;

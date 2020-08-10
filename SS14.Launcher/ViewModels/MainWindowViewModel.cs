@@ -44,10 +44,7 @@ namespace SS14.Launcher.ViewModels
                 });
 
             _cfg.Logins.Connect()
-                .Subscribe(_ =>
-                {
-                    this.RaisePropertyChanged(nameof(AccountDropDownVisible));
-                });
+                .Subscribe(_ => { this.RaisePropertyChanged(nameof(AccountDropDownVisible)); });
 
             AccountDropDown = new AccountDropDownViewModel(cfg);
             LoginViewModel = new MainWindowLoginViewModel(cfg);

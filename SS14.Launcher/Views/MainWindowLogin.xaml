@@ -8,25 +8,29 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowLogin"
              Name="MainWindowLogin">
-    <Design.DataContext>
-        <vm:MainWindowLoginViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <vm:MainWindowLoginViewModel />
+  </Design.DataContext>
 
-    <DockPanel LastChildFill="True">
-        <!-- The bottom -->
-        <DockPanel Background="{DynamicResource ThemeStripeBackBrush}" DockPanel.Dock="Bottom"
-                   LastChildFill="False">
+  <DockPanel LastChildFill="True">
+    <!-- The bottom -->
+    <DockPanel Background="{DynamicResource ThemeStripeBackBrush}" DockPanel.Dock="Bottom"
+               LastChildFill="False">
 
-            <TextBlock Text="{Binding Version}" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="4"
-                       Classes="SubText" />
-        </DockPanel>
-        <Panel Background="{DynamicResource ThemeStripebackEdgeBrush}" MinHeight="2" DockPanel.Dock="Bottom" />
-
-        <Panel>
-            <vl:Login DataContext="{Binding Login}" IsVisible="{Binding DataContext.ScreenLogin, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
-            <vl:Register DataContext="{Binding Register}" IsVisible="{Binding DataContext.ScreenRegister, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
-            <vl:ForgotPassword DataContext="{Binding ForgotPassword}" IsVisible="{Binding DataContext.ScreenForgotPassword, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
-            <vl:ResendConfirmation DataContext="{Binding ResendConfirmation}" IsVisible="{Binding DataContext.ScreenResendConfirmation, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
-        </Panel>
+      <TextBlock Text="{Binding Version}" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="4"
+                 Classes="SubText" />
     </DockPanel>
+    <Panel Background="{DynamicResource ThemeStripebackEdgeBrush}" MinHeight="2" DockPanel.Dock="Bottom" />
+
+    <Panel>
+      <vl:Login DataContext="{Binding Login}"
+                IsVisible="{Binding DataContext.ScreenLogin, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+      <vl:Register DataContext="{Binding Register}"
+                   IsVisible="{Binding DataContext.ScreenRegister, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+      <vl:ForgotPassword DataContext="{Binding ForgotPassword}"
+                         IsVisible="{Binding DataContext.ScreenForgotPassword, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+      <vl:ResendConfirmation DataContext="{Binding ResendConfirmation}"
+                             IsVisible="{Binding DataContext.ScreenResendConfirmation, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+    </Panel>
+  </DockPanel>
 </UserControl>

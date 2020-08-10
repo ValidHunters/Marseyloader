@@ -18,10 +18,7 @@ namespace SS14.Launcher.Views.MainWindowTabs
                 var window = (Window) VisualRoot;
                 window.Classes.Add("DoAFlip");
 
-                DispatcherTimer.RunOnce(() =>
-                {
-                    window.Classes.Remove("DoAFlip");
-                }, TimeSpan.FromSeconds(1));
+                DispatcherTimer.RunOnce(() => { window.Classes.Remove("DoAFlip"); }, TimeSpan.FromSeconds(1));
             });
         }
 

@@ -7,29 +7,30 @@
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.ServerListTabView">
-    <Design.DataContext>
-        <mainWindowTabs:ServerListTabViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <mainWindowTabs:ServerListTabViewModel />
+  </Design.DataContext>
 
-    <DockPanel LastChildFill="True">
-        <DockPanel DockPanel.Dock="Top" LastChildFill="False" Margin="4, 0, 4, 2">
-            <TextBlock DockPanel.Dock="Left" Text="Servers:" Classes="NanoHeadingMedium" />
-            <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding RefreshPressed}" />
-        </DockPanel>
-
-        <TextBox DockPanel.Dock="Bottom" Text="{Binding SearchString, Mode=TwoWay}" Watermark="Search For Servers..."
-                 UseFloatingWatermark="False" />
-
-        <Panel DockPanel.Dock="Bottom" Classes="ScrollViewerSep" />
-        <Panel DockPanel.Dock="Top" Classes="ScrollViewerSep" />
-        <Panel>
-            <Panel.Background>
-                <SolidColorBrush Color="#1e1e22" />
-            </Panel.Background>
-            <ScrollViewer MinHeight="150" IsVisible="{Binding ListVisible}">
-                <ItemsControl Items="{Binding SearchedServers}" />
-            </ScrollViewer>
-            <TextBlock IsVisible="{Binding !ListVisible}" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding ListEmptyText}" />
-        </Panel>
+  <DockPanel LastChildFill="True">
+    <DockPanel DockPanel.Dock="Top" LastChildFill="False" Margin="4, 0, 4, 2">
+      <TextBlock DockPanel.Dock="Left" Text="Servers:" Classes="NanoHeadingMedium" />
+      <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding RefreshPressed}" />
     </DockPanel>
+
+    <TextBox DockPanel.Dock="Bottom" Text="{Binding SearchString, Mode=TwoWay}" Watermark="Search For Servers..."
+             UseFloatingWatermark="False" />
+
+    <Panel DockPanel.Dock="Bottom" Classes="ScrollViewerSep" />
+    <Panel DockPanel.Dock="Top" Classes="ScrollViewerSep" />
+    <Panel>
+      <Panel.Background>
+        <SolidColorBrush Color="#1e1e22" />
+      </Panel.Background>
+      <ScrollViewer MinHeight="150" IsVisible="{Binding ListVisible}">
+        <ItemsControl Items="{Binding SearchedServers}" />
+      </ScrollViewer>
+      <TextBlock IsVisible="{Binding !ListVisible}" TextAlignment="Center" VerticalAlignment="Center"
+                 Text="{Binding ListEmptyText}" />
+    </Panel>
+  </DockPanel>
 </UserControl>

@@ -53,7 +53,8 @@ namespace SS14.Launcher.Views
             var brush = Fill;
             var progress = AnimationProgress * Math.PI * 2;
 
-            void DrawElectron(double angle, double xScale, double yScale, double radius, double animationOffset, double mul = 1)
+            void DrawElectron(double angle, double xScale, double yScale, double radius, double animationOffset,
+                double mul = 1)
             {
                 var rotation = Matrix.CreateRotation(angle);
                 using var _ = context.PushPreTransform(rotation);

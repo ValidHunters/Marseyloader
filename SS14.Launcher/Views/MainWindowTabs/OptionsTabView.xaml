@@ -7,14 +7,14 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.OptionsTabView"
              Name="NewsTab">
-    <Design.DataContext>
-        <mainWindowTabs:OptionsTabViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <mainWindowTabs:OptionsTabViewModel />
+  </Design.DataContext>
 
-    <Button Content="Do a flip!" Name="Flip" />
+  <Button Content="Do a flip!" Name="Flip" />
 
 
-    <!--<Grid Margin="4" VerticalAlignment="Top" ColumnDefinitions="Auto, *">
+  <!--<Grid Margin="4" VerticalAlignment="Top" ColumnDefinitions="Auto, *">
         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Player Name:" Margin="4" />
 
         <DockPanel Grid.Column="1">

@@ -135,7 +135,8 @@ namespace SS14.Launcher.Models
 
         private static Process LaunchClient(Installation installation, IEnumerable<string> extraArgs)
         {
-            var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "installations", installation.DiskId.ToString(CultureInfo.InvariantCulture));
+            var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "installations",
+                installation.DiskId.ToString(CultureInfo.InvariantCulture));
             ProcessStartInfo startInfo;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

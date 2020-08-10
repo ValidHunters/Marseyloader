@@ -30,6 +30,5 @@ namespace SS14.Launcher.Views.Login
         {
             AvaloniaXamlLoader.Load(this);
         }
-
     }
 }

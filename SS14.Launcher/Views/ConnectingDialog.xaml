@@ -12,16 +12,17 @@
         Title="Connecting..."
         WindowStartupLocation="CenterOwner">
 
-    <Design.DataContext>
-        <vm:ConnectingViewModel />
-    </Design.DataContext>
-    <DockPanel LastChildFill="False" Margin="4">
-        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Text="{Binding StatusText}" TextWrapping="Wrap" />
+  <Design.DataContext>
+    <vm:ConnectingViewModel />
+  </Design.DataContext>
+  <DockPanel LastChildFill="False" Margin="4">
+    <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Text="{Binding StatusText}" TextWrapping="Wrap" />
 
-        <ProgressBar DockPanel.Dock="Bottom" Maximum="1" Value="{Binding Progress}"
-                     IsIndeterminate="{Binding ProgressIndeterminate}" IsVisible="{Binding ProgressBarVisible}" />
+    <ProgressBar DockPanel.Dock="Bottom" Maximum="1" Value="{Binding Progress}"
+                 IsIndeterminate="{Binding ProgressIndeterminate}" IsVisible="{Binding ProgressBarVisible}" />
 
-        <TextBlock HorizontalAlignment="Right" DockPanel.Dock="Bottom" Text="{Binding ProgressText}" TextWrapping="Wrap" IsVisible="{Binding !ProgressIndeterminate}" />
+    <TextBlock HorizontalAlignment="Right" DockPanel.Dock="Bottom" Text="{Binding ProgressText}" TextWrapping="Wrap"
+               IsVisible="{Binding !ProgressIndeterminate}" />
 
-    </DockPanel>
+  </DockPanel>
 </Window>

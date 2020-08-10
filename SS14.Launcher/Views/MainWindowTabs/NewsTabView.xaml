@@ -7,31 +7,31 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.NewsTabView"
              Name="NewsTab">
-    <Design.DataContext>
-        <mainWindowTabs:NewsTabViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <mainWindowTabs:NewsTabViewModel />
+  </Design.DataContext>
 
-    <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Margin="4, 0" Text="Recent News:" Classes="NanoHeadingMedium" />
+  <DockPanel>
+    <TextBlock DockPanel.Dock="Top" Margin="4, 0" Text="Recent News:" Classes="NanoHeadingMedium" />
 
-        <Panel Background="{DynamicResource StripeBackBrush}">
-            <ScrollViewer IsVisible="{Binding NewsPulled}">
-                <ItemsControl Items="{Binding NewsEntries}" >
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="mainWindowTabs:NewsEntryViewModel">
-                            <Button Margin="4, 4" Command="{Binding Open}">
-                                <TextBlock Text="{Binding Headline}" />
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+    <Panel Background="{DynamicResource StripeBackBrush}">
+      <ScrollViewer IsVisible="{Binding NewsPulled}">
+        <ItemsControl Items="{Binding NewsEntries}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="mainWindowTabs:NewsEntryViewModel">
+              <Button Margin="4, 4" Command="{Binding Open}">
+                <TextBlock Text="{Binding Headline}" />
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
 
-            <TextBlock IsVisible="{Binding NewsNotPulled}">
-                Pulling news...
-            </TextBlock>
-        </Panel>
+      <TextBlock IsVisible="{Binding NewsNotPulled}">
+        Pulling news...
+      </TextBlock>
+    </Panel>
 
 
-    </DockPanel>
+  </DockPanel>
 </UserControl>

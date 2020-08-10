@@ -71,6 +71,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 {
                     server.DoInitialUpdate();
                 }
+
                 RepopulateServerList();
             };
 

@@ -25,10 +25,7 @@ namespace SS14.Launcher.ViewModels.Login
             _parentVm = parentVm;
 
             this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword)
-                .Subscribe(s =>
-                {
-                    IsInputValid = !string.IsNullOrEmpty(s.Item1) && !string.IsNullOrEmpty(s.Item2);
-                });
+                .Subscribe(s => { IsInputValid = !string.IsNullOrEmpty(s.Item1) && !string.IsNullOrEmpty(s.Item2); });
 
 
             _authApi = new AuthApi(cfg);

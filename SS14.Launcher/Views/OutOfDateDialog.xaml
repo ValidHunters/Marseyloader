@@ -11,12 +11,12 @@
         WindowStartupLocation="CenterOwner"
         CanResize="False">
 
-    <DockPanel Margin="4">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
-            <Button Name="DownloadButton" Content="Download" />
-            <Button Name="ExitButton" Content="Exit" />
-        </StackPanel>
-        <TextBlock TextWrapping="Wrap"
-                   Text="This launcher is out of date! It probably won't work correctly anymore, so you should download the new version from the website." />
-    </DockPanel>
+  <DockPanel Margin="4">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
+      <Button Name="DownloadButton" Content="Download" />
+      <Button Name="ExitButton" Content="Exit" />
+    </StackPanel>
+    <TextBlock TextWrapping="Wrap"
+               Text="This launcher is out of date! It probably won't work correctly anymore, so you should download the new version from the website." />
+  </DockPanel>
 </Window>

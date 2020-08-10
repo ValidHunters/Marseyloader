@@ -80,6 +80,6 @@
   </Style>
 
   <Style Selector="views|DropDown:disabled">
-    <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}"/>
+    <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
   </Style>
 </Styles>

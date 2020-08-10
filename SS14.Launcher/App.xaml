@@ -2,22 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:SS14.Launcher"
              x:Class="SS14.Launcher.App">
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
+  <Application.DataTemplates>
+    <local:ViewLocator />
+  </Application.DataTemplates>
 
-    <Application.Styles>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseDark.xaml"/>
-        <StyleInclude Source="/Theme/Theme.xaml"/>
-        <StyleInclude Source="/Theme/ThemeResources.xaml"/>
-        <StyleInclude Source="/Theme/ThemeTabControl.xaml"/>
-        <StyleInclude Source="/Theme/ThemeExpander.xaml"/>
-        <StyleInclude Source="/Theme/ThemeButton.xaml"/>
-        <StyleInclude Source="/Theme/ThemeDungSpinner.xaml"/>
-        <StyleInclude Source="/Theme/ThemeDropDown.xaml"/>
-        <StyleInclude Source="/Theme/ThemeWindow.xaml"/>
-        <!-- I'm too lazy to fix the styling on those text boxes so this is staying commented out for now. -->
-        <!--<StyleInclude Source="/Theme/ThemeTextBox.xaml"/>-->
-    </Application.Styles>
+  <Application.Styles>
+    <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml" />
+    <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseDark.xaml" />
+    <StyleInclude Source="/Theme/Theme.xaml" />
+    <StyleInclude Source="/Theme/ThemeResources.xaml" />
+    <StyleInclude Source="/Theme/ThemeTabControl.xaml" />
+    <StyleInclude Source="/Theme/ThemeExpander.xaml" />
+    <StyleInclude Source="/Theme/ThemeButton.xaml" />
+    <StyleInclude Source="/Theme/ThemeDungSpinner.xaml" />
+    <StyleInclude Source="/Theme/ThemeDropDown.xaml" />
+    <StyleInclude Source="/Theme/ThemeWindow.xaml" />
+    <!-- I'm too lazy to fix the styling on those text boxes so this is staying commented out for now. -->
+    <!--<StyleInclude Source="/Theme/ThemeTextBox.xaml"/>-->
+  </Application.Styles>
 </Application>

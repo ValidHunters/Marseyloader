@@ -7,34 +7,34 @@
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.HomePageView">
-    <Design.DataContext>
-        <mainWindowTabs:HomePageViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <mainWindowTabs:HomePageViewModel />
+  </Design.DataContext>
 
-    <DockPanel>
-        <!-- Account info -->
+  <DockPanel>
+    <!-- Account info -->
 
 
-        <!-- Favorites -->
-        <DockPanel DockPanel.Dock="Top" LastChildFill="False" Margin="4, 0, 4, 2">
-            <TextBlock DockPanel.Dock="Left" Text="Favorite Servers:" Classes="NanoHeadingMedium" />
-            <Button DockPanel.Dock="Right" Content="Add Favorite..." Command="{Binding AddFavoritePressed}" />
-            <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding RefreshPressed}" />
-        </DockPanel>
-
-        <Button DockPanel.Dock="Bottom" Margin="0, 5, 5, 1" HorizontalAlignment="Right"
-                Content="Direct Connect To Server..."
-                Command="{Binding DirectConnectPressed}" />
-
-        <Panel DockPanel.Dock="Bottom" Classes="ScrollViewerSep" />
-        <Panel DockPanel.Dock="Top" Classes="ScrollViewerSep" />
-        <Panel>
-            <Panel.Background>
-                <SolidColorBrush Color="#1e1e22" />
-            </Panel.Background>
-            <ScrollViewer MinHeight="150">
-                <ItemsControl Items="{Binding Favorites}" />
-            </ScrollViewer>
-        </Panel>
+    <!-- Favorites -->
+    <DockPanel DockPanel.Dock="Top" LastChildFill="False" Margin="4, 0, 4, 2">
+      <TextBlock DockPanel.Dock="Left" Text="Favorite Servers:" Classes="NanoHeadingMedium" />
+      <Button DockPanel.Dock="Right" Content="Add Favorite..." Command="{Binding AddFavoritePressed}" />
+      <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding RefreshPressed}" />
     </DockPanel>
+
+    <Button DockPanel.Dock="Bottom" Margin="0, 5, 5, 1" HorizontalAlignment="Right"
+            Content="Direct Connect To Server..."
+            Command="{Binding DirectConnectPressed}" />
+
+    <Panel DockPanel.Dock="Bottom" Classes="ScrollViewerSep" />
+    <Panel DockPanel.Dock="Top" Classes="ScrollViewerSep" />
+    <Panel>
+      <Panel.Background>
+        <SolidColorBrush Color="#1e1e22" />
+      </Panel.Background>
+      <ScrollViewer MinHeight="150">
+        <ItemsControl Items="{Binding Favorites}" />
+      </ScrollViewer>
+    </Panel>
+  </DockPanel>
 </UserControl>

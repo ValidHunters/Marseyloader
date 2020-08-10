@@ -6,32 +6,32 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.Login.Register"
              Name="Register">
-    <Design.DataContext>
-        <vml:RegisterViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <vml:RegisterViewModel />
+  </Design.DataContext>
 
-    <DockPanel LastChildFill="False">
-        <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium" Text="Register" />
+  <DockPanel LastChildFill="False">
+    <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium" Text="Register" />
 
-        <TextBox DockPanel.Dock="Top" Name="NameBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Username"
-                 Text="{Binding EditingUsername, Mode=TwoWay}" />
+    <TextBox DockPanel.Dock="Top" Name="NameBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Username"
+             Text="{Binding EditingUsername, Mode=TwoWay}" />
 
-        <TextBox DockPanel.Dock="Top" Name="EmailBox" MaxWidth="300" Margin="0, 4, 0, 0" Watermark="Email Address"
-                 Text="{Binding EditingEmail, Mode=TwoWay}" />
+    <TextBox DockPanel.Dock="Top" Name="EmailBox" MaxWidth="300" Margin="0, 4, 0, 0" Watermark="Email Address"
+             Text="{Binding EditingEmail, Mode=TwoWay}" />
 
-        <TextBox DockPanel.Dock="Top" Name="PasswordBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Password"
-                 Text="{Binding EditingPassword, Mode=TwoWay}" PasswordChar="•" />
+    <TextBox DockPanel.Dock="Top" Name="PasswordBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Password"
+             Text="{Binding EditingPassword, Mode=TwoWay}" PasswordChar="•" />
 
-        <TextBox DockPanel.Dock="Top" Name="PasswordConfirmBox" MaxWidth="300" Margin="0, 4, 0, 0"
-                 Watermark="Confirm Password" PasswordChar="•"
-                 Text="{Binding EditingPasswordConfirm, Mode=TwoWay}" />
+    <TextBox DockPanel.Dock="Top" Name="PasswordConfirmBox" MaxWidth="300" Margin="0, 4, 0, 0"
+             Watermark="Confirm Password" PasswordChar="•"
+             Text="{Binding EditingPasswordConfirm, Mode=TwoWay}" />
 
-        <TextBlock DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="SubText"
-                   Text="{Binding InvalidReason}" />
-        <Button DockPanel.Dock="Top" IsEnabled="{Binding IsInputValid}" HorizontalAlignment="Center"
-                Content="Register" Command="{Binding OnRegisterInButtonPressed}" />
+    <TextBlock DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="SubText"
+               Text="{Binding InvalidReason}" />
+    <Button DockPanel.Dock="Top" IsEnabled="{Binding IsInputValid}" HorizontalAlignment="Center"
+            Content="Register" Command="{Binding OnRegisterInButtonPressed}" />
 
-        <Button DockPanel.Dock="Bottom" Margin="0 4" HorizontalAlignment="Center"
-                Content="Log into an existing account instead" Command="{Binding OnLoginButtonPressed}" />
-    </DockPanel>
+    <Button DockPanel.Dock="Bottom" Margin="0 4" HorizontalAlignment="Center"
+            Content="Log into an existing account instead" Command="{Binding OnLoginButtonPressed}" />
+  </DockPanel>
 </UserControl>

@@ -9,5 +9,5 @@ namespace SS14.Launcher
         {
             AvaloniaXamlLoader.Load(this);
         }
-   }
+    }
 }

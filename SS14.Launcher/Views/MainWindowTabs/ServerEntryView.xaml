@@ -7,33 +7,33 @@
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.ServerEntryView">
-    <Design.DataContext>
-        <mainWindowTabs:ServerEntryViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <mainWindowTabs:ServerEntryViewModel />
+  </Design.DataContext>
 
-    <Panel>
-        <Panel.Background>
-            <SolidColorBrush Color="{Binding BackgroundColor}" />
-        </Panel.Background>
-        <Expander Name="Expando" Classes="NoPad">
-            <Expander.Header>
-                <DockPanel>
-                    <Button IsEnabled="{Binding IsOnline}" DockPanel.Dock="Right" Content="Connect"
-                            Command="{Binding ConnectPressed}" />
-                    <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center"
-                               TextAlignment="Left" Text="{Binding ServerStatusString}"
-                               MinWidth="150"
-                               Margin="10, 0" />
-                    <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
-                </DockPanel>
-            </Expander.Header>
-            <DockPanel>
-                <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="4"
-                        Content="{Binding FavoriteButtonText}"
-                        Command="{Binding FavoriteButtonPressed}" />
-            </DockPanel>
+  <Panel>
+    <Panel.Background>
+      <SolidColorBrush Color="{Binding BackgroundColor}" />
+    </Panel.Background>
+    <Expander Name="Expando" Classes="NoPad">
+      <Expander.Header>
+        <DockPanel>
+          <Button IsEnabled="{Binding IsOnline}" DockPanel.Dock="Right" Content="Connect"
+                  Command="{Binding ConnectPressed}" />
+          <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center"
+                     TextAlignment="Left" Text="{Binding ServerStatusString}"
+                     MinWidth="150"
+                     Margin="10, 0" />
+          <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
+        </DockPanel>
+      </Expander.Header>
+      <DockPanel>
+        <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="4"
+                Content="{Binding FavoriteButtonText}"
+                Command="{Binding FavoriteButtonPressed}" />
+      </DockPanel>
 
-        </Expander>
-    </Panel>
+    </Expander>
+  </Panel>
 
 </UserControl>

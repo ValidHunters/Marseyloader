@@ -86,7 +86,6 @@ namespace SS14.Launcher.ViewModels.Login
             {
                 return;
             }
-
         }
 
         public void OnLoginButtonPressed()

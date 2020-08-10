@@ -104,7 +104,8 @@ namespace SS14.Launcher.Models
                     var currentHash = existingInstallation.Value.CurrentHash;
                     if (buildInformation.Hashes.ForCurrentPlatform != null &&
                         currentHash != null &&
-                        !currentHash.Equals(buildInformation.Hashes.ForCurrentPlatform, StringComparison.OrdinalIgnoreCase))
+                        !currentHash.Equals(buildInformation.Hashes.ForCurrentPlatform,
+                            StringComparison.OrdinalIgnoreCase))
                     {
                         Console.WriteLine("Hash mismatch, re-downloading anyways.");
                         needsUpdate = true;

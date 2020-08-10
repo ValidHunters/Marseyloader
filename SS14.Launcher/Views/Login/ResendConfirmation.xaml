@@ -7,27 +7,25 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.Login.ResendConfirmation"
              Name="Login">
-    <Design.DataContext>
-        <vml:ResendConfirmationViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <vml:ResendConfirmationViewModel />
+  </Design.DataContext>
 
-    <UserControl.Styles>
-        <Style Selector="Rectangle">
-            <Style.Animations>
-                <Animation Duration="0:0:2" IterationCount="INFINITE">
-                    <KeyFrame Cue="0%">
-                        <Setter Property="RotateTransform.Angle" Value="0" />
-                    </KeyFrame>
+  <UserControl.Styles>
+    <Style Selector="Rectangle">
+      <Style.Animations>
+        <Animation Duration="0:0:2" IterationCount="INFINITE">
+          <KeyFrame Cue="0%">
+            <Setter Property="RotateTransform.Angle" Value="0" />
+          </KeyFrame>
 
-                    <KeyFrame Cue="100%">
-                        <Setter Property="RotateTransform.Angle" Value="360" />
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-        </Style>
-    </UserControl.Styles>
+          <KeyFrame Cue="100%">
+            <Setter Property="RotateTransform.Angle" Value="360" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+  </UserControl.Styles>
 
-    <DockPanel LastChildFill="False">
-
-    </DockPanel>
+  <DockPanel LastChildFill="False" />
 </UserControl>

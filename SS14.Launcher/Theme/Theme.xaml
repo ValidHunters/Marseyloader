@@ -2,62 +2,62 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Style Selector="TextBlock.NanoHeading">
-        <Setter Property="Foreground" Value="{DynamicResource ThemeNanoGoldBrush}" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontSize" Value="30" />
-    </Style>
+  <Style Selector="TextBlock.NanoHeading">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeNanoGoldBrush}" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="30" />
+  </Style>
 
-    <Style Selector="TextBlock.NanoHeadingMedium">
-        <Setter Property="Foreground" Value="{DynamicResource ThemeNanoGoldBrush}" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontSize" Value="20" />
-    </Style>
+  <Style Selector="TextBlock.NanoHeadingMedium">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeNanoGoldBrush}" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="20" />
+  </Style>
 
-    <Style Selector="TextBlock.SubText">
-        <Setter Property="Foreground" Value="{DynamicResource ThemeSubTextBrush}" />
-    </Style>
+  <Style Selector="TextBlock.SubText">
+    <Setter Property="Foreground" Value="{DynamicResource ThemeSubTextBrush}" />
+  </Style>
 
-    <!-- Also catch the text presenter used by TextBox -->
-    <Style Selector=":is(TextBlock)">
-        <Setter Property="FontSize" Value="15" />
-        <Setter Property="FontFamily" Value="/Assets/Fonts/noto_sans/*.ttf#Noto Sans" />
-    </Style>
+  <!-- Also catch the text presenter used by TextBox -->
+  <Style Selector=":is(TextBlock)">
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="FontFamily" Value="/Assets/Fonts/noto_sans/*.ttf#Noto Sans" />
+  </Style>
 
-    <Style Selector="Panel.GoldLineHorizontal">
-        <Setter Property="Background" Value="{DynamicResource ThemeNanoGoldBrush}" />
-        <Setter Property="MinHeight" Value="2" />
-    </Style>
+  <Style Selector="Panel.GoldLineHorizontal">
+    <Setter Property="Background" Value="{DynamicResource ThemeNanoGoldBrush}" />
+    <Setter Property="MinHeight" Value="2" />
+  </Style>
 
-    <Style Selector="Expander[ExpandDirection=Down] /template/ ToggleButton#PART_toggle">
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-    </Style>
+  <Style Selector="Expander[ExpandDirection=Down] /template/ ToggleButton#PART_toggle">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
 
-    <Style Selector="Panel.ScrollViewerSep">
-        <Setter Property="Background">
-            <SolidColorBrush Color="#2e2e35" />
-        </Setter>
-        <Setter Property="MinHeight" Value="1" />
-    </Style>
+  <Style Selector="Panel.ScrollViewerSep">
+    <Setter Property="Background">
+      <SolidColorBrush Color="#2e2e35" />
+    </Setter>
+    <Setter Property="MinHeight" Value="1" />
+  </Style>
 
-    <!-- TabItem -->
-    <Style Selector="TabItem:pointerover">
-        <Setter Property="Background" Value="{DynamicResource ThemeTabItemHoveredBrush}"/>
-    </Style>
-    <Style Selector="TabItem:selected">
-        <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
-    </Style>
-    <Style Selector="TabItem:selected:focus">
-        <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
-    </Style>
-    <Style Selector="TabItem:selected:pointerover">
-        <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
-    </Style>
-    <Style Selector="TabItem:selected:focus:pointerover">
-        <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}"/>
-    </Style>
+  <!-- TabItem -->
+  <Style Selector="TabItem:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ThemeTabItemHoveredBrush}" />
+  </Style>
+  <Style Selector="TabItem:selected">
+    <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}" />
+  </Style>
+  <Style Selector="TabItem:selected:focus">
+    <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}" />
+  </Style>
+  <Style Selector="TabItem:selected:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}" />
+  </Style>
+  <Style Selector="TabItem:selected:focus:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ThemeTabItemSelectedBrush}" />
+  </Style>
 
-    <Style Selector="Button.BigButton > TextBlock">
-        <Setter Property="FontSize" Value="20" />
-    </Style>
+  <Style Selector="Button.BigButton > TextBlock">
+    <Setter Property="FontSize" Value="20" />
+  </Style>
 </Styles>

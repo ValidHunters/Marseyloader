@@ -1,16 +1,16 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style Selector="Window.DoAFlip">
-        <Style.Animations>
-            <Animation Duration="0:0:1">
-                <KeyFrame Cue="0%">
-                    <Setter Property="RotateTransform.Angle" Value="0" />
-                </KeyFrame>
+  <Style Selector="Window.DoAFlip">
+    <Style.Animations>
+      <Animation Duration="0:0:1">
+        <KeyFrame Cue="0%">
+          <Setter Property="RotateTransform.Angle" Value="0" />
+        </KeyFrame>
 
-                <KeyFrame Cue="100%">
-                    <Setter Property="RotateTransform.Angle" Value="360" />
-                </KeyFrame>
-            </Animation>
-        </Style.Animations>
-    </Style>
+        <KeyFrame Cue="100%">
+          <Setter Property="RotateTransform.Angle" Value="360" />
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
 </Styles>

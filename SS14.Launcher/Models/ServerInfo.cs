@@ -12,8 +12,7 @@ namespace SS14.Launcher.Models
         [JsonProperty(PropertyName = "connect_address")]
         public string? ConnectAddress { get; set; }
 
-        [JsonProperty(PropertyName = "build")]
-        public ServerBuildInformation? BuildInformation { get; set; }
+        [JsonProperty(PropertyName = "build")] public ServerBuildInformation? BuildInformation { get; set; }
     }
 
     [JsonObject(ItemRequired = Required.Always)]

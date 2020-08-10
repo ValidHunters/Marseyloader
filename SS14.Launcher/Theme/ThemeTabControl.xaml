@@ -5,67 +5,67 @@ Taken & modified from Avalonia's git repo.
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style Selector="TabControl">
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border
-                    Margin="{TemplateBinding Margin}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    Background="{TemplateBinding Background}"
-                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                    VerticalAlignment="{TemplateBinding VerticalAlignment}">
-                    <DockPanel>
-                        <Panel
-                            Name="PART_TabPanel"
-                            Background="{DynamicResource ThemeStripeBackBrush}">
-                            <ItemsPresenter
-                                Name="PART_ItemsPresenter"
-                                Items="{TemplateBinding Items}"
-                                ItemsPanel="{TemplateBinding ItemsPanel}"
-                                ItemTemplate="{TemplateBinding ItemTemplate}" />
-                        </Panel>
-                        <Panel Name="PART_Edge" Background="{DynamicResource ThemeStripebackEdgeBrush}" />
-                        <ContentPresenter
-                            Name="PART_SelectedContentHost"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Content="{TemplateBinding SelectedContent}"
-                            ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
-                    </DockPanel>
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
+  <Style Selector="TabControl">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border
+          Margin="{TemplateBinding Margin}"
+          BorderBrush="{TemplateBinding BorderBrush}"
+          BorderThickness="{TemplateBinding BorderThickness}"
+          Background="{TemplateBinding Background}"
+          HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+          VerticalAlignment="{TemplateBinding VerticalAlignment}">
+          <DockPanel>
+            <Panel
+              Name="PART_TabPanel"
+              Background="{DynamicResource ThemeStripeBackBrush}">
+              <ItemsPresenter
+                Name="PART_ItemsPresenter"
+                Items="{TemplateBinding Items}"
+                ItemsPanel="{TemplateBinding ItemsPanel}"
+                ItemTemplate="{TemplateBinding ItemTemplate}" />
+            </Panel>
+            <Panel Name="PART_Edge" Background="{DynamicResource ThemeStripebackEdgeBrush}" />
+            <ContentPresenter
+              Name="PART_SelectedContentHost"
+              Margin="{TemplateBinding Padding}"
+              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+              Content="{TemplateBinding SelectedContent}"
+              ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
+          </DockPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
 
-    <Style Selector="TabControl[TabStripPlacement=Top] /template/ Panel#PART_TabPanel">
-        <Setter Property="DockPanel.Dock" Value="Top" />
-    </Style>
-    <Style Selector="TabControl[TabStripPlacement=Bottom] /template/ Panel#PART_TabPanel">
-        <Setter Property="DockPanel.Dock" Value="Bottom" />
-    </Style>
-    <Style Selector="TabControl[TabStripPlacement=Right] /template/ Panel#PART_TabPanel">
-        <Setter Property="DockPanel.Dock" Value="Right" />
-    </Style>
-    <Style Selector="TabControl[TabStripPlacement=Left] /template/ Panel#PART_TabPanel">
-        <Setter Property="DockPanel.Dock" Value="Left" />
-    </Style>
+  <Style Selector="TabControl[TabStripPlacement=Top] /template/ Panel#PART_TabPanel">
+    <Setter Property="DockPanel.Dock" Value="Top" />
+  </Style>
+  <Style Selector="TabControl[TabStripPlacement=Bottom] /template/ Panel#PART_TabPanel">
+    <Setter Property="DockPanel.Dock" Value="Bottom" />
+  </Style>
+  <Style Selector="TabControl[TabStripPlacement=Right] /template/ Panel#PART_TabPanel">
+    <Setter Property="DockPanel.Dock" Value="Right" />
+  </Style>
+  <Style Selector="TabControl[TabStripPlacement=Left] /template/ Panel#PART_TabPanel">
+    <Setter Property="DockPanel.Dock" Value="Left" />
+  </Style>
 
-    <Style Selector="TabControl[TabStripPlacement=Top] /template/ Panel#PART_Edge">
-        <Setter Property="DockPanel.Dock" Value="Top" />
-        <Setter Property="MinHeight" Value="2" />
-    </Style>
-    <Style Selector="TabControl[TabStripPlacement=Bottom] /template/ Panel#PART_Edge">
-        <Setter Property="DockPanel.Dock" Value="Bottom" />
-        <Setter Property="MinHeight" Value="2" />
-    </Style>
-    <Style Selector="TabControl[TabStripPlacement=Left] /template/ Panel#PART_Edge">
-        <Setter Property="DockPanel.Dock" Value="Left" />
-        <Setter Property="MinWidth" Value="2" />
-    </Style>
-    <Style Selector="TabControl[TabStripPlacement=Right] /template/ Panel#PART_Edge">
-        <Setter Property="DockPanel.Dock" Value="Right" />
-        <Setter Property="MinWidth" Value="2" />
-    </Style>
+  <Style Selector="TabControl[TabStripPlacement=Top] /template/ Panel#PART_Edge">
+    <Setter Property="DockPanel.Dock" Value="Top" />
+    <Setter Property="MinHeight" Value="2" />
+  </Style>
+  <Style Selector="TabControl[TabStripPlacement=Bottom] /template/ Panel#PART_Edge">
+    <Setter Property="DockPanel.Dock" Value="Bottom" />
+    <Setter Property="MinHeight" Value="2" />
+  </Style>
+  <Style Selector="TabControl[TabStripPlacement=Left] /template/ Panel#PART_Edge">
+    <Setter Property="DockPanel.Dock" Value="Left" />
+    <Setter Property="MinWidth" Value="2" />
+  </Style>
+  <Style Selector="TabControl[TabStripPlacement=Right] /template/ Panel#PART_Edge">
+    <Setter Property="DockPanel.Dock" Value="Right" />
+    <Setter Property="MinWidth" Value="2" />
+  </Style>
 </Styles>
