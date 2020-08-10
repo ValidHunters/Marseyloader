@@ -38,9 +38,8 @@
                 Margin="0, 6" />
 
         <!-- Account drop down -->
-        <v:AccountDropDown Grid.ColumnSpan="3" Grid.Row="1" MinWidth="90"
-                           HorizontalAlignment="Right"
-                           IsEnabled="{Binding DataContext.AccountDropDownVisible, RelativeSource={RelativeSource AncestorType=v:MainWindow}}"
+        <v:AccountDropDown Grid.ColumnSpan="2" Grid.Row="1"
+                           IsEnabled="{Binding $parent.DataContext.AccountDropDownVisible}"
                            DataContext="{Binding AccountDropDown}" />
       </Grid>
     </DockPanel>

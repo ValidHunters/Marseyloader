@@ -19,6 +19,7 @@
                     Stretch="Uniform"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    Margin="2 0 0 0"
                     Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z" />
               <Popup
                 MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
