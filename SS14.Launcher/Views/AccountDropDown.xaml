@@ -26,7 +26,7 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="models:LoginInfo">
               <Button Content="{Binding Username}" Margin="4"
-                      Command="{Binding DataContext.AccountButtonPressed,ElementName=Items}"
+                      Command="{Binding #Items.DataContext.AccountButtonPressed}"
                       CommandParameter="{Binding UserId}" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>

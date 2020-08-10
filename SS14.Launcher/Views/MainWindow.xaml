@@ -26,14 +26,14 @@
       <Image Source="/Assets/logo.png" HorizontalAlignment="Left" Margin="0, 8" Stretch="None"
              DockPanel.Dock="Left" />
       <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
-            ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto">
+            ColumnDefinitions="Auto, Auto" RowDefinitions="Auto, Auto">
         <!-- Discord link -->
-        <Button Content="Discord" Grid.Row="0" Grid.Column="1" MinWidth="90"
+        <Button Content="Discord" Grid.Row="0" Grid.Column="0" MinWidth="90"
                 Command="{Binding OnDiscordButtonPressed}"
                 Margin="0, 6, 4, 6" />
 
         <!-- Website link -->
-        <Button Content="Website" Grid.Row="0" Grid.Column="2" MinWidth="90"
+        <Button Content="Website" Grid.Row="0" Grid.Column="1" MinWidth="90"
                 Command="{Binding OnWebsiteButtonPressed}"
                 Margin="0, 6" />
 
@@ -56,7 +56,7 @@
       </TabControl>
       <!-- Login interface when not logged in -->
       <v:MainWindowLogin
-        IsVisible="{Binding !DataContext.LoggedIn, RelativeSource={RelativeSource AncestorType=v:MainWindow}}"
+        IsVisible="{Binding !$parent.DataContext.LoggedIn}"
         DataContext="{Binding LoginViewModel}" />
     </Grid>
   </DockPanel>

@@ -24,13 +24,13 @@
 
     <Panel>
       <vl:Login DataContext="{Binding Login}"
-                IsVisible="{Binding DataContext.ScreenLogin, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+                IsVisible="{Binding $parent.DataContext.ScreenLogin}" />
       <vl:Register DataContext="{Binding Register}"
-                   IsVisible="{Binding DataContext.ScreenRegister, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+                   IsVisible="{Binding $parent.DataContext.ScreenRegister}" />
       <vl:ForgotPassword DataContext="{Binding ForgotPassword}"
-                         IsVisible="{Binding DataContext.ScreenForgotPassword, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+                         IsVisible="{Binding $parent.DataContext.ScreenForgotPassword}" />
       <vl:ResendConfirmation DataContext="{Binding ResendConfirmation}"
-                             IsVisible="{Binding DataContext.ScreenResendConfirmation, RelativeSource={RelativeSource AncestorType=views:MainWindowLogin}}" />
+                             IsVisible="{Binding $parent.DataContext.ScreenResendConfirmation}" />
     </Panel>
   </DockPanel>
 </UserControl>
