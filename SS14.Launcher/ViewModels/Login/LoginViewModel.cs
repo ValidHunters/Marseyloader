@@ -43,18 +43,27 @@ namespace SS14.Launcher.ViewModels.Login
             {
                 // TODO: Remove Task.Delay here.
                 await Task.Delay(1000);
-                var resp = (LoginInfo) await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
+                var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
 
-                if (_cfg.Logins.Lookup(resp.UserId).HasValue)
+                if (resp.IsSuccess)
                 {
-                    // Already had a login like this??
-                    // TODO: Immediately sign out the token here.
-                    _cfg.SelectedLoginId = resp.UserId;
-                    return;
-                }
+                    var loginInfo = resp.LoginInfo;
+                    if (_cfg.Logins.Lookup(loginInfo.UserId).HasValue)
+                    {
+                        // Already had a login like this??
+                        // TODO: Immediately sign out the token here.
+                        _cfg.SelectedLoginId = loginInfo.UserId;
+                        return;
+                    }
 
-                _cfg.AddLogin(resp);
-                _cfg.SelectedLoginId = resp.UserId;
+                    _cfg.AddLogin(loginInfo);
+                    _cfg.SelectedLoginId = loginInfo.UserId;
+                }
+                else
+                {
+                    Console.WriteLine(string.Join(Environment.NewLine, resp.Errors));
+                    // TODO: Display errors
+                }
             }
             finally
             {

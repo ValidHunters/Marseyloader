@@ -80,12 +80,14 @@ namespace SS14.Launcher.ViewModels.Login
                 });
         }
 
-        public void OnRegisterInButtonPressed()
+        public async void OnRegisterInButtonPressed()
         {
             if (!IsInputValid)
             {
                 return;
             }
+
+
         }
 
         public void OnLoginButtonPressed()
