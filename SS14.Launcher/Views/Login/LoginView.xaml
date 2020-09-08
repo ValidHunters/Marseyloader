@@ -17,10 +17,10 @@
 
       <TextBox DockPanel.Dock="Top" Name="NameBox" MaxWidth="300" Margin="0, 20, 0, 0"
                Watermark="Username or email"
-               Text="{Binding EditingUsername, Mode=TwoWay}" IsEnabled="{Binding !IsLoggingIn}" />
+               Text="{Binding EditingUsername, Mode=TwoWay}" IsEnabled="{Binding !Busy}" />
 
       <TextBox DockPanel.Dock="Top" Name="PasswordBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Password"
-               Text="{Binding EditingPassword, Mode=TwoWay}" PasswordChar="•" IsEnabled="{Binding !IsLoggingIn}" />
+               Text="{Binding EditingPassword, Mode=TwoWay}" PasswordChar="•" IsEnabled="{Binding !Busy}" />
 
       <DockPanel DockPanel.Dock="Top" LastChildFill="False" MaxWidth="300" Margin="0 20 0 0">
         <Button DockPanel.Dock="Right" HorizontalAlignment="Center"
@@ -28,13 +28,13 @@
           <Button.IsEnabled>
             <MultiBinding Converter="{x:Static BoolConverters.And}">
               <Binding Path="IsInputValid" />
-              <Binding Path="!IsLoggingIn" />
+              <Binding Path="!Busy" />
             </MultiBinding>
           </Button.IsEnabled>
         </Button>
 
         <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Forgot your password?"
-                Command="{Binding OnForgotPasswordPressed}" IsEnabled="{Binding !IsLoggingIn}" />
+                Command="{Binding OnForgotPasswordPressed}" IsEnabled="{Binding !Busy}" />
       </DockPanel>
 
 
@@ -46,15 +46,7 @@
 
       <Button DockPanel.Dock="Bottom" Classes="BigButton" Margin="0 4" HorizontalAlignment="Center"
               Content="Don't have an account? Register!" Command="{Binding OnRegisterButtonPressed}"
-              IsEnabled="{Binding !IsLoggingIn}" />
+              IsEnabled="{Binding !Busy}" />
     </DockPanel>
-    <Panel IsVisible="{Binding IsLoggingIn}">
-      <Panel.Background>
-        <SolidColorBrush Color="#99000000" />
-      </Panel.Background>
-      <Viewbox Width="72" Height="72" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <views:DungSpinner DockPanel.Dock="Top" />
-      </Viewbox>
-    </Panel>
   </Panel>
 </UserControl>

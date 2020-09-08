@@ -53,7 +53,7 @@ namespace SS14.Launcher.ViewModels
 
         public void SwitchToRegisterNeedsConfirmation(string username, string password)
         {
-
+            Screen = new RegisterNeedsConfirmationViewModel(_cfg, this, _authApi, username, password);
         }
     }
 }

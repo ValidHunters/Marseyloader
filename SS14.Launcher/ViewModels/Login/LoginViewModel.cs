@@ -17,8 +17,6 @@ namespace SS14.Launcher.ViewModels.Login
 
         [Reactive] public bool IsInputValid { get; private set; }
 
-        [Reactive] public bool IsLoggingIn { get; set; }
-
         public LoginViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
         {
             _authApi = authApi;
@@ -36,7 +34,7 @@ namespace SS14.Launcher.ViewModels.Login
                 return;
             }
 
-            IsLoggingIn = true;
+            Busy = true;
             try
             {
                 // TODO: Remove Task.Delay here.
@@ -64,7 +62,7 @@ namespace SS14.Launcher.ViewModels.Login
             }
             finally
             {
-                IsLoggingIn = false;
+                Busy = false;
             }
         }
 

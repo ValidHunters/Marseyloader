@@ -91,41 +91,49 @@ namespace SS14.Launcher.ViewModels.Login
                 return;
             }
 
-            var result = await _authApi.RegisterAsync(EditingUsername, EditingEmail, EditingPassword);
-            if (result.IsSuccess)
+            Busy = true;
+            try
             {
-                var status = result.Status;
-                if (status == RegisterResponseStatus.Registered)
+                var result = await _authApi.RegisterAsync(EditingUsername, EditingEmail, EditingPassword);
+                if (result.IsSuccess)
                 {
-                    // No confirmation needed, log in immediately.
-                    var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
-
-                    if (resp.IsSuccess)
+                    var status = result.Status;
+                    if (status == RegisterResponseStatus.Registered)
                     {
-                        var loginInfo = resp.LoginInfo;
-                        if (_cfg.Logins.Lookup(loginInfo.UserId).HasValue)
-                        {
-                            throw new InvalidOperationException("We just registered this account but also already had it??");
-                        }
+                        // No confirmation needed, log in immediately.
+                        var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
 
-                        _cfg.AddLogin(loginInfo);
-                        _cfg.SelectedLoginId = loginInfo.UserId;
+                        if (resp.IsSuccess)
+                        {
+                            var loginInfo = resp.LoginInfo;
+                            if (_cfg.Logins.Lookup(loginInfo.UserId).HasValue)
+                            {
+                                throw new InvalidOperationException(
+                                    "We just registered this account but also already had it??");
+                            }
+
+                            _cfg.AddLogin(loginInfo);
+                            _cfg.SelectedLoginId = loginInfo.UserId;
+                        }
+                        else
+                        {
+                            // TODO: Display errors
+                        }
                     }
                     else
                     {
-                        // TODO: Display errors
+                        Debug.Assert(status == RegisterResponseStatus.RegisteredNeedConfirmation);
+
+                        _parentVm.SwitchToRegisterNeedsConfirmation(EditingUsername, EditingPassword);
                     }
-                }
-                else
-                {
-                    Debug.Assert(status == RegisterResponseStatus.RegisteredNeedConfirmation);
 
-                    _parentVm.SwitchToRegisterNeedsConfirmation(EditingUsername, EditingPassword);
+                    ClearEnteredData();
                 }
-
-                ClearEnteredData();
             }
-
+            finally
+            {
+                Busy = false;
+            }
         }
 
         public void OnLoginButtonPressed()

@@ -16,50 +16,60 @@
     <vm:MainWindowViewModel />
   </Design.DataContext>
 
-  <DockPanel LastChildFill="true">
-    <!-- Header -->
-    <DockPanel DockPanel.Dock="Top" Margin="4, 0">
-      <DockPanel.Background>
-        <SolidColorBrush Color="#212126" />
-      </DockPanel.Background>
-      <!-- Logo -->
-      <Image Source="/Assets/logo.png" HorizontalAlignment="Left" Margin="0, 8" Stretch="None"
-             DockPanel.Dock="Left" />
-      <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
-            ColumnDefinitions="Auto, Auto" RowDefinitions="Auto, Auto">
-        <!-- Discord link -->
-        <Button Content="Discord" Grid.Row="0" Grid.Column="0" MinWidth="90"
-                Command="{Binding OnDiscordButtonPressed}"
-                Margin="0, 6, 4, 6" />
+  <Panel>
+    <DockPanel LastChildFill="true">
+      <!-- Header -->
+      <DockPanel DockPanel.Dock="Top" Margin="4, 0">
+        <DockPanel.Background>
+          <SolidColorBrush Color="#212126" />
+        </DockPanel.Background>
+        <!-- Logo -->
+        <Image Source="/Assets/logo.png" HorizontalAlignment="Left" Margin="0, 8" Stretch="None"
+               DockPanel.Dock="Left" />
+        <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
+              ColumnDefinitions="Auto, Auto" RowDefinitions="Auto, Auto">
+          <!-- Discord link -->
+          <Button Content="Discord" Grid.Row="0" Grid.Column="0" MinWidth="90"
+                  Command="{Binding OnDiscordButtonPressed}"
+                  Margin="0, 6, 4, 6" />
 
-        <!-- Website link -->
-        <Button Content="Website" Grid.Row="0" Grid.Column="1" MinWidth="90"
-                Command="{Binding OnWebsiteButtonPressed}"
-                Margin="0, 6" />
+          <!-- Website link -->
+          <Button Content="Website" Grid.Row="0" Grid.Column="1" MinWidth="90"
+                  Command="{Binding OnWebsiteButtonPressed}"
+                  Margin="0, 6" />
 
-        <!-- Account drop down -->
-        <v:AccountDropDown Grid.ColumnSpan="2" Grid.Row="1"
-                           IsEnabled="{Binding $parent.DataContext.AccountDropDownVisible}"
-                           DataContext="{Binding AccountDropDown}" />
+          <!-- Account drop down -->
+          <v:AccountDropDown Grid.ColumnSpan="2" Grid.Row="1"
+                             IsEnabled="{Binding $parent.DataContext.AccountDropDownVisible}"
+                             DataContext="{Binding AccountDropDown}" />
+        </Grid>
+      </DockPanel>
+      <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" />
+      <Grid>
+        <!-- Main tabbed layout when logged in -->
+        <TabControl IsVisible="{Binding LoggedIn}" Items="{Binding Tabs}" TabStripPlacement="Bottom"
+                    SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}" Margin="0 4 0 0">
+          <TabControl.ItemTemplate>
+            <DataTemplate DataType="mainWindowTabs:MainWindowTabViewModel">
+              <TextBlock Text="{Binding Name}" />
+            </DataTemplate>
+          </TabControl.ItemTemplate>
+        </TabControl>
+        <!-- Login interface when not logged in -->
+        <v:MainWindowLogin
+          IsVisible="{Binding !$parent.DataContext.LoggedIn}"
+          DataContext="{Binding LoginViewModel}" />
       </Grid>
     </DockPanel>
-    <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" />
-    <Grid>
-      <!-- Main tabbed layout when logged in -->
-      <TabControl IsVisible="{Binding LoggedIn}" Items="{Binding Tabs}" TabStripPlacement="Bottom"
-                  SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}" Margin="0 4 0 0">
-        <TabControl.ItemTemplate>
-          <DataTemplate DataType="mainWindowTabs:MainWindowTabViewModel">
-            <TextBlock Text="{Binding Name}" />
-          </DataTemplate>
-        </TabControl.ItemTemplate>
-      </TabControl>
-      <!-- Login interface when not logged in -->
-      <v:MainWindowLogin
-        IsVisible="{Binding !$parent.DataContext.LoggedIn}"
-        DataContext="{Binding LoginViewModel}" />
-    </Grid>
-  </DockPanel>
+    <Panel IsVisible="{Binding LoginViewModel.Screen.Busy}">
+      <Panel.Background>
+        <SolidColorBrush Color="#99000000" />
+      </Panel.Background>
+      <Viewbox Width="72" Height="72" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <v:DungSpinner DockPanel.Dock="Top" />
+      </Viewbox>
+    </Panel>
+  </Panel>
 
 
 </Window>
