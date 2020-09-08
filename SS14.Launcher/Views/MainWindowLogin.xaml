@@ -31,6 +31,8 @@
                          IsVisible="{Binding $parent.DataContext.ScreenForgotPassword}" />
       <vl:ResendConfirmation DataContext="{Binding ResendConfirmation}"
                              IsVisible="{Binding $parent.DataContext.ScreenResendConfirmation}" />
+      <vl:RegisterNeedsConfirmation DataContext="{Binding RegisterNeedsConfirmation}"
+                             IsVisible="{Binding $parent.DataContext.ScreenRegisterNeedsConfirmation}" />
     </Panel>
   </DockPanel>
 </UserControl>

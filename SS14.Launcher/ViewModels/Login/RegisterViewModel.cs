@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Net.Mail;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -11,6 +12,7 @@ namespace SS14.Launcher.ViewModels.Login
     {
         private readonly ConfigurationManager _cfg;
         private readonly MainWindowLoginViewModel _parentVm;
+        private readonly AuthApi _authApi;
 
         [Reactive] public string EditingUsername { get; set; } = "";
         [Reactive] public string EditingPassword { get; set; } = "";
@@ -21,63 +23,65 @@ namespace SS14.Launcher.ViewModels.Login
         [Reactive] public string InvalidReason { get; private set; } = " ";
 
 
-        public RegisterViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm)
+        public RegisterViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
         {
             _cfg = cfg;
             _parentVm = parentVm;
+            _authApi = authApi;
 
             this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword, x => x.EditingPasswordConfirm,
                     x => x.EditingEmail)
-                .Subscribe(s =>
+                .Subscribe(UpdateInputValid);
+        }
+
+        private void UpdateInputValid((string user, string pass, string passConfirm, string email) s)
+        {
+            var (user, pass, passConfirm, email) = s;
+
+            IsInputValid = false;
+            if (!UsernameHelpers.IsNameValid(user, out var reason))
+            {
+                InvalidReason = reason switch
                 {
-                    var (user, pass, passConfirm, email) = s;
+                    UsernameHelpers.UsernameInvalidReason.Empty => "Username is empty",
+                    UsernameHelpers.UsernameInvalidReason.TooLong => "Username is too long",
+                    UsernameHelpers.UsernameInvalidReason.InvalidCharacter => "Username contains an invalid character",
+                    _ => "???"
+                };
+                return;
+            }
 
-                    IsInputValid = false;
-                    if (!UsernameHelpers.IsNameValid(user, out var reason))
-                    {
-                        InvalidReason = reason switch
-                        {
-                            UsernameHelpers.UsernameInvalidReason.Empty => "Username is empty",
-                            UsernameHelpers.UsernameInvalidReason.TooLong => "Username is too long",
-                            UsernameHelpers.UsernameInvalidReason.InvalidCharacter =>
-                            "Username contains an invalid character",
-                            _ => "???"
-                        };
-                        return;
-                    }
+            if (string.IsNullOrEmpty(email))
+            {
+                InvalidReason = "Email is empty";
+                return;
+            }
 
-                    if (string.IsNullOrEmpty(email))
-                    {
-                        InvalidReason = "Email is empty";
-                        return;
-                    }
+            try
+            {
+                // TODO: .NET 5 has a Try* version of this, switch to that when .NET 5 is available.
+                var unused = new MailAddress(email);
+            }
+            catch (FormatException)
+            {
+                InvalidReason = "Email is invalid";
+                return;
+            }
 
-                    try
-                    {
-                        // TODO: .NET 5 has a Try* version of this, switch to that when .NET 5 is available.
-                        var mailAddr = new MailAddress(email);
-                    }
-                    catch (FormatException)
-                    {
-                        InvalidReason = "Email is invalid";
-                        return;
-                    }
+            if (string.IsNullOrEmpty(pass))
+            {
+                InvalidReason = "Password is empty";
+                return;
+            }
 
-                    if (string.IsNullOrEmpty(pass))
-                    {
-                        InvalidReason = "Password is empty";
-                        return;
-                    }
+            if (pass != passConfirm)
+            {
+                InvalidReason = "Confirm password does not match";
+                return;
+            }
 
-                    if (pass != passConfirm)
-                    {
-                        InvalidReason = "Confirm password does not match";
-                        return;
-                    }
-
-                    InvalidReason = " ";
-                    IsInputValid = true;
-                });
+            InvalidReason = " ";
+            IsInputValid = true;
         }
 
         public async void OnRegisterInButtonPressed()
@@ -87,17 +91,57 @@ namespace SS14.Launcher.ViewModels.Login
                 return;
             }
 
+            var result = await _authApi.RegisterAsync(EditingUsername, EditingEmail, EditingPassword);
+            if (result.IsSuccess)
+            {
+                var status = result.Status;
+                if (status == RegisterResponseStatus.Registered)
+                {
+                    // No confirmation needed, log in immediately.
+                    var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
+
+                    if (resp.IsSuccess)
+                    {
+                        var loginInfo = resp.LoginInfo;
+                        if (_cfg.Logins.Lookup(loginInfo.UserId).HasValue)
+                        {
+                            throw new InvalidOperationException("We just registered this account but also already had it??");
+                        }
+
+                        _cfg.AddLogin(loginInfo);
+                        _cfg.SelectedLoginId = loginInfo.UserId;
+                    }
+                    else
+                    {
+                        // TODO: Display errors
+                    }
+                }
+                else
+                {
+                    Debug.Assert(status == RegisterResponseStatus.RegisteredNeedConfirmation);
+
+                    _parentVm.Screen = LoginScreen.RegisterNeedsConfirmation;
+                    _parentVm.RegisterNeedsConfirmation.SetLoginInfo(EditingUsername, EditingPassword);
+                }
+
+                ClearEnteredData();
+            }
 
         }
 
         public void OnLoginButtonPressed()
         {
+            ClearEnteredData();
+
+            _parentVm.Screen = LoginScreen.Login;
+        }
+
+        private void ClearEnteredData()
+        {
             EditingEmail = "";
             EditingUsername = "";
             EditingPassword = "";
             EditingPasswordConfirm = "";
-
-            _parentVm.Screen = LoginScreen.Login;
         }
     }
 }

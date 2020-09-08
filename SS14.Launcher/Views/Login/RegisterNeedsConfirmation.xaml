@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vml="clr-namespace:SS14.Launcher.ViewModels.Login;assembly=SS14.Launcher"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SS14.Launcher.Views.Login.RegisterNeedsConfirmation"
+             Name="Register">
+  <Design.DataContext>
+    <vml:RegisterNeedsConfirmationViewModel />
+  </Design.DataContext>
+
+  <DockPanel LastChildFill="False">
+    <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium"
+               Text="Register confirmation" />
+
+    <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" TextWrapping="Wrap" MaxWidth="400"
+               Text="Please check your email to confirm your account. Once you have confirmed your account, press the button below to log in." />
+
+    <Button Content="{Binding ConfirmButtonText}" Command="{Binding ConfirmButtonPressed}"
+            IsEnabled="{Binding ConfirmButtonEnabled}" DockPanel.Dock="Top" MaxWidth="400" HorizontalAlignment="Center" />
+
+  </DockPanel>
+
+</UserControl>

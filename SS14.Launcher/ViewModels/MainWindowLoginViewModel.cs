@@ -10,11 +10,13 @@ namespace SS14.Launcher.ViewModels
     {
         public LoginViewModel Login { get; }
         public RegisterViewModel Register { get; }
+        public RegisterNeedsConfirmationViewModel RegisterNeedsConfirmation { get; }
         public ForgotPasswordViewModel ForgotPassword { get; }
         public ResendConfirmationViewModel ResendConfirmation { get; }
 
         public bool ScreenLogin => Screen == LoginScreen.Login;
         public bool ScreenRegister => Screen == LoginScreen.Register;
+        public bool ScreenRegisterNeedsConfirmation => Screen == LoginScreen.RegisterNeedsConfirmation;
         public bool ScreenForgotPassword => Screen == LoginScreen.ForgotPassword;
         public bool ScreenResendConfirmation => Screen == LoginScreen.ResendConfirmation;
 
@@ -22,8 +24,11 @@ namespace SS14.Launcher.ViewModels
 
         public MainWindowLoginViewModel(ConfigurationManager cfg)
         {
-            Login = new LoginViewModel(cfg, this);
-            Register = new RegisterViewModel(cfg, this);
+            var authApi = new AuthApi(cfg);
+
+            Login = new LoginViewModel(cfg, this, authApi);
+            Register = new RegisterViewModel(cfg, this, authApi);
+            RegisterNeedsConfirmation = new RegisterNeedsConfirmationViewModel(cfg, this, authApi);
             ForgotPassword = new ForgotPasswordViewModel(cfg, this);
             ResendConfirmation = new ResendConfirmationViewModel(cfg, this);
 
@@ -32,18 +37,20 @@ namespace SS14.Launcher.ViewModels
                 {
                     this.RaisePropertyChanged(nameof(ScreenLogin));
                     this.RaisePropertyChanged(nameof(ScreenRegister));
+                    this.RaisePropertyChanged(nameof(ScreenRegisterNeedsConfirmation));
                     this.RaisePropertyChanged(nameof(ScreenForgotPassword));
                     this.RaisePropertyChanged(nameof(ScreenResendConfirmation));
                 });
         }
 
-        public string? Version => $"v{LauncherVersion.Version}";
+        public string Version => $"v{LauncherVersion.Version}";
     }
 
     public enum LoginScreen
     {
         Login,
         Register,
+        RegisterNeedsConfirmation,
         ForgotPassword,
         ResendConfirmation
     }

@@ -19,16 +19,14 @@ namespace SS14.Launcher.ViewModels.Login
 
         [Reactive] public bool IsLoggingIn { get; set; }
 
-        public LoginViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm)
+        public LoginViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
         {
+            _authApi = authApi;
             _cfg = cfg;
             _parentVm = parentVm;
 
             this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword)
                 .Subscribe(s => { IsInputValid = !string.IsNullOrEmpty(s.Item1) && !string.IsNullOrEmpty(s.Item2); });
-
-
-            _authApi = new AuthApi(cfg);
         }
 
         public async void OnLogInButtonPressed()
