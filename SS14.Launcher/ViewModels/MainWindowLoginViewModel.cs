@@ -1,6 +1,4 @@
-using System;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
 using SS14.Launcher.ViewModels.Login;
 
@@ -8,50 +6,54 @@ namespace SS14.Launcher.ViewModels
 {
     public class MainWindowLoginViewModel : ViewModelBase
     {
-        public LoginViewModel Login { get; }
-        public RegisterViewModel Register { get; }
-        public RegisterNeedsConfirmationViewModel RegisterNeedsConfirmation { get; }
-        public ForgotPasswordViewModel ForgotPassword { get; }
-        public ResendConfirmationViewModel ResendConfirmation { get; }
+        private readonly ConfigurationManager _cfg;
+        private readonly AuthApi _authApi;
+        private BaseLoginViewModel _screen;
 
-        public bool ScreenLogin => Screen == LoginScreen.Login;
-        public bool ScreenRegister => Screen == LoginScreen.Register;
-        public bool ScreenRegisterNeedsConfirmation => Screen == LoginScreen.RegisterNeedsConfirmation;
-        public bool ScreenForgotPassword => Screen == LoginScreen.ForgotPassword;
-        public bool ScreenResendConfirmation => Screen == LoginScreen.ResendConfirmation;
-
-        [Reactive] public LoginScreen Screen { get; set; }
+        public BaseLoginViewModel Screen
+        {
+            get => _screen;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _screen, value);
+                value.Activated();
+            }
+        }
 
         public MainWindowLoginViewModel(ConfigurationManager cfg)
         {
-            var authApi = new AuthApi(cfg);
+            _cfg = cfg;
+            _authApi = new AuthApi(cfg);
 
-            Login = new LoginViewModel(cfg, this, authApi);
-            Register = new RegisterViewModel(cfg, this, authApi);
-            RegisterNeedsConfirmation = new RegisterNeedsConfirmationViewModel(cfg, this, authApi);
-            ForgotPassword = new ForgotPasswordViewModel(cfg, this);
-            ResendConfirmation = new ResendConfirmationViewModel(cfg, this);
-
-            this.WhenAnyValue(p => p.Screen)
-                .Subscribe(_ =>
-                {
-                    this.RaisePropertyChanged(nameof(ScreenLogin));
-                    this.RaisePropertyChanged(nameof(ScreenRegister));
-                    this.RaisePropertyChanged(nameof(ScreenRegisterNeedsConfirmation));
-                    this.RaisePropertyChanged(nameof(ScreenForgotPassword));
-                    this.RaisePropertyChanged(nameof(ScreenResendConfirmation));
-                });
+            _screen = default!;
+            SwitchToLogin();
         }
 
         public string Version => $"v{LauncherVersion.Version}";
-    }
 
-    public enum LoginScreen
-    {
-        Login,
-        Register,
-        RegisterNeedsConfirmation,
-        ForgotPassword,
-        ResendConfirmation
+        public void SwitchToLogin()
+        {
+            Screen = new LoginViewModel(_cfg, this, _authApi);
+        }
+
+        public void SwitchToRegister()
+        {
+            Screen = new RegisterViewModel(_cfg, this, _authApi);
+        }
+
+        public void SwitchToForgotPassword()
+        {
+            Screen = new ForgotPasswordViewModel(_cfg, this);
+        }
+
+        public void SwitchToResendConfirmation()
+        {
+            Screen = new ResendConfirmationViewModel(_cfg, this);
+        }
+
+        public void SwitchToRegisterNeedsConfirmation(string username, string password)
+        {
+
+        }
     }
 }

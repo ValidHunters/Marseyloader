@@ -7,14 +7,16 @@ using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.Login
 {
-    public class RegisterNeedsConfirmationViewModel : ViewModelBase
+    public class RegisterNeedsConfirmationViewModel : BaseLoginViewModel
     {
+        private const int TimeoutSeconds = 5;
+
         private readonly ConfigurationManager _cfg;
         private readonly MainWindowLoginViewModel _parentVm;
         private readonly AuthApi _authApi;
-        public const int TimeoutSeconds = 5;
 
-        private (string username, string password)? _loginInfo;
+        private readonly string _loginUsername;
+        private readonly string _loginPassword;
 
         public bool ConfirmButtonEnabled => TimeoutSecondsLeft == 0;
         public string ConfirmButtonText
@@ -34,11 +36,15 @@ namespace SS14.Launcher.ViewModels.Login
         [Reactive] private int TimeoutSecondsLeft { get; set; }
 
         public RegisterNeedsConfirmationViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm,
-            AuthApi authApi)
+            AuthApi authApi, string username, string password)
         {
             _cfg = cfg;
             _parentVm = parentVm;
             _authApi = authApi;
+
+            _loginUsername = username;
+            _loginPassword = password;
+
             this.WhenAnyValue(p => p.TimeoutSecondsLeft)
                 .Subscribe(_ =>
                 {
@@ -47,13 +53,7 @@ namespace SS14.Launcher.ViewModels.Login
                 });
         }
 
-        public void SetLoginInfo(string username, string password)
-        {
-            _loginInfo = (username, password);
-            Selected();
-        }
-
-        private void Selected()
+        public override void Activated()
         {
             TimeoutSecondsLeft = TimeoutSeconds;
             DispatcherTimer.Run(TimerTick, TimeSpan.FromSeconds(1));
@@ -67,11 +67,9 @@ namespace SS14.Launcher.ViewModels.Login
 
         public async void ConfirmButtonPressed()
         {
-            var (username, password) = _loginInfo!.Value;
-
             // TODO: Remove Task.Delay here.
             await Task.Delay(1000);
-            var resp = await _authApi.AuthenticateAsync(username, password);
+            var resp = await _authApi.AuthenticateAsync(_loginUsername, _loginPassword);
 
             if (resp.IsSuccess)
             {
@@ -81,13 +79,13 @@ namespace SS14.Launcher.ViewModels.Login
                     // Already had a login like this??
                     // TODO: Immediately sign out the token here.
                     _cfg.SelectedLoginId = loginInfo.UserId;
-                    _parentVm.Screen = LoginScreen.Login;
+                    _parentVm.SwitchToLogin();
                     return;
                 }
 
                 _cfg.AddLogin(loginInfo);
                 _cfg.SelectedLoginId = loginInfo.UserId;
-                _parentVm.Screen = LoginScreen.Login;
+                _parentVm.SwitchToLogin();
             }
             else
             {

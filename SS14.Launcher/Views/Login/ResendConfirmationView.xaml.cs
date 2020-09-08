@@ -5,9 +5,9 @@ using SS14.Launcher.ViewModels.Login;
 
 namespace SS14.Launcher.Views.Login
 {
-    public sealed class ResendConfirmation : UserControl
+    public sealed class ResendConfirmationView : UserControl
     {
-        public ResendConfirmation()
+        public ResendConfirmationView()
         {
             InitializeComponent();
         }

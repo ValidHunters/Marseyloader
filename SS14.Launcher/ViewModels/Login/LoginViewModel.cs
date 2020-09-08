@@ -6,7 +6,7 @@ using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.Login
 {
-    public class LoginViewModel : ViewModelBase
+    public class LoginViewModel : BaseLoginViewModel
     {
         private readonly ConfigurationManager _cfg;
         private readonly MainWindowLoginViewModel _parentVm;
@@ -70,17 +70,17 @@ namespace SS14.Launcher.ViewModels.Login
 
         public void OnRegisterButtonPressed()
         {
-            _parentVm.Screen = LoginScreen.Register;
+            _parentVm.SwitchToRegister();
         }
 
         public void OnForgotPasswordPressed()
         {
-            _parentVm.Screen = LoginScreen.ForgotPassword;
+            _parentVm.SwitchToForgotPassword();
         }
 
         public void OnResendConfirmationPressed()
         {
-            _parentVm.Screen = LoginScreen.ResendConfirmation;
+            _parentVm.SwitchToResendConfirmation();
         }
     }
 }

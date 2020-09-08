@@ -5,18 +5,24 @@ using SS14.Launcher.ViewModels.Login;
 
 namespace SS14.Launcher.Views.Login
 {
-    public sealed class ForgotPassword : UserControl
+    public class LoginView : UserControl
     {
-        public ForgotPassword()
+        public LoginView()
         {
             InitializeComponent();
+
+            var nameBox = this.FindControl<TextBox>("NameBox");
+            var passwordBox = this.FindControl<TextBox>("PasswordBox");
+
+            nameBox.KeyDown += InputBoxOnKeyDown;
+            passwordBox.KeyDown += InputBoxOnKeyDown;
         }
 
         private void InputBoxOnKeyDown(object? sender, KeyEventArgs args)
         {
-            if (args.Key == Key.Enter && DataContext is ForgotPasswordViewModel vm)
+            if (args.Key == Key.Enter && DataContext is LoginViewModel vm)
             {
-                // vm.OnLogInButtonPressed();
+                vm.OnLogInButtonPressed();
             }
         }
 

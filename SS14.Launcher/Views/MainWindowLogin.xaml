@@ -22,17 +22,6 @@
     </DockPanel>
     <Panel Background="{DynamicResource ThemeStripebackEdgeBrush}" MinHeight="2" DockPanel.Dock="Bottom" />
 
-    <Panel>
-      <vl:Login DataContext="{Binding Login}"
-                IsVisible="{Binding $parent.DataContext.ScreenLogin}" />
-      <vl:Register DataContext="{Binding Register}"
-                   IsVisible="{Binding $parent.DataContext.ScreenRegister}" />
-      <vl:ForgotPassword DataContext="{Binding ForgotPassword}"
-                         IsVisible="{Binding $parent.DataContext.ScreenForgotPassword}" />
-      <vl:ResendConfirmation DataContext="{Binding ResendConfirmation}"
-                             IsVisible="{Binding $parent.DataContext.ScreenResendConfirmation}" />
-      <vl:RegisterNeedsConfirmation DataContext="{Binding RegisterNeedsConfirmation}"
-                             IsVisible="{Binding $parent.DataContext.ScreenRegisterNeedsConfirmation}" />
-    </Panel>
+    <ContentControl Content="{Binding Screen}" />
   </DockPanel>
 </UserControl>

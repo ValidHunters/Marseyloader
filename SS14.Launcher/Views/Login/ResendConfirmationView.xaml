@@ -5,7 +5,7 @@
              xmlns:vml="clr-namespace:SS14.Launcher.ViewModels.Login;assembly=SS14.Launcher"
              xmlns:views="clr-namespace:SS14.Launcher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SS14.Launcher.Views.Login.ResendConfirmation"
+             x:Class="SS14.Launcher.Views.Login.ResendConfirmationView"
              Name="Login">
   <Design.DataContext>
     <vml:ResendConfirmationViewModel />

@@ -8,7 +8,7 @@ using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.Login
 {
-    public class RegisterViewModel : ViewModelBase
+    public class RegisterViewModel : BaseLoginViewModel
     {
         private readonly ConfigurationManager _cfg;
         private readonly MainWindowLoginViewModel _parentVm;
@@ -120,8 +120,7 @@ namespace SS14.Launcher.ViewModels.Login
                 {
                     Debug.Assert(status == RegisterResponseStatus.RegisteredNeedConfirmation);
 
-                    _parentVm.Screen = LoginScreen.RegisterNeedsConfirmation;
-                    _parentVm.RegisterNeedsConfirmation.SetLoginInfo(EditingUsername, EditingPassword);
+                    _parentVm.SwitchToRegisterNeedsConfirmation(EditingUsername, EditingPassword);
                 }
 
                 ClearEnteredData();
@@ -133,7 +132,7 @@ namespace SS14.Launcher.ViewModels.Login
         {
             ClearEnteredData();
 
-            _parentVm.Screen = LoginScreen.Login;
+            _parentVm.SwitchToLogin();
         }
 
         private void ClearEnteredData()

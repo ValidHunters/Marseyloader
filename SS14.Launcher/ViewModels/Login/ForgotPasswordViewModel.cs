@@ -3,7 +3,7 @@ using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.Login
 {
-    public sealed class ForgotPasswordViewModel : ViewModelBase
+    public sealed class ForgotPasswordViewModel : BaseLoginViewModel
     {
         private readonly ConfigurationManager _cfg;
         private readonly MainWindowLoginViewModel _parentVm;
@@ -18,7 +18,7 @@ namespace SS14.Launcher.ViewModels.Login
 
         public void BackPressed()
         {
-            _parentVm.Screen = LoginScreen.Login;
+            _parentVm.SwitchToLogin();
         }
     }
 }
