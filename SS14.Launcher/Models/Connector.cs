@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
+using Serilog;
 
 namespace SS14.Launcher.Models
 {
@@ -55,7 +56,7 @@ namespace SS14.Launcher.Models
             }
             catch (Exception e) when (e is JsonException || e is HttpRequestException)
             {
-                Console.WriteLine("Failed to connect: {0}", e);
+                Log.Error(e, "Failed to connect");
                 Status = ConnectionStatus.ConnectionFailed;
                 return;
             }
@@ -91,7 +92,7 @@ namespace SS14.Launcher.Models
                 }
                 catch (FormatException e)
                 {
-                    Console.WriteLine("Failed to parse ConnectAddress: {0}", e);
+                    Log.Error(e, "Failed to parse ConnectAddress");
                     Status = ConnectionStatus.ConnectionFailed;
                     return;
                 }

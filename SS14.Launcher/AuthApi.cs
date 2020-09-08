@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Serilog;
 using SS14.Launcher.Models;
 
 namespace SS14.Launcher
@@ -56,6 +57,8 @@ namespace SS14.Launcher
                     return new AuthenticateResult(respJson.Errors);
                 }
 
+                Log.Error("Server returned unexpected HTTP status code: {responseCode}", resp.StatusCode);
+                Log.Debug("Response for error:\n{response}\n{content}", resp, await resp.Content.ReadAsStringAsync());
                 // Unknown error? uh oh.
                 return new AuthenticateResult(new[] {"Server returned unknown error"});
             }
@@ -97,6 +100,7 @@ namespace SS14.Launcher
                     return new RegisterResult(respJson.Errors);
                 }
 
+                Log.Error("Server returned unexpected HTTP status code: {response}", resp);
                 // Unknown error? uh oh.
                 return new RegisterResult(new[] {"Server returned unknown error"});
             }

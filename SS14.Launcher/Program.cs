@@ -1,8 +1,9 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
+using Serilog;
+using Serilog.Events;
 using SS14.Launcher.Models;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
@@ -16,6 +17,19 @@ namespace SS14.Launcher
         // yet and stuff might break.
         public static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+
+#if DEBUG
+            SerilogLogger.Initialize(new LoggerConfiguration()
+                .MinimumLevel.Is(LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.Console(outputTemplate: "[{Area}] {Message} ({SourceType} #{SourceHash})\n")
+                .CreateLogger());
+#endif
+
             BuildAvaloniaApp().Start(AppMain, args);
         }
 
@@ -23,7 +37,6 @@ namespace SS14.Launcher
         private static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .LogToDebug()
                 .UseReactiveUI();
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI

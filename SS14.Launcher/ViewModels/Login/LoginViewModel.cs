@@ -61,7 +61,6 @@ namespace SS14.Launcher.ViewModels.Login
                 }
                 else
                 {
-                    Console.WriteLine(string.Join(Environment.NewLine, resp.Errors));
                     // TODO: Display errors
                 }
             }

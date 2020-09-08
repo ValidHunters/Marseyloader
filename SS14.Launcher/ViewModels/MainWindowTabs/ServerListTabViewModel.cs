@@ -7,6 +7,7 @@ using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Serilog;
 using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
@@ -148,7 +149,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
             catch (Exception e)
             {
-                Console.WriteLine("Failed to fetch server list due to exception:\n{0}", e);
+                Log.Error(e, "Failed to fetch server list due to exception.");
                 Status = RefreshListStatus.Error;
             }
         }

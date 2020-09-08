@@ -10,6 +10,7 @@ using Avalonia.Threading;
 using DynamicData.Kernel;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Serilog;
 
 namespace SS14.Launcher.Models
 {
@@ -37,6 +38,7 @@ namespace SS14.Launcher.Models
 
             try
             {
+                throw new Exception();
                 Status = UpdateStatus.CheckingClientUpdate;
                 if (buildInformation == null)
                 {
@@ -50,7 +52,7 @@ namespace SS14.Launcher.Models
             catch (Exception e)
             {
                 Status = UpdateStatus.Error;
-                Console.WriteLine("Exception while trying to run updates:\n{0}", e);
+                Log.Error(e, "Exception while trying to run updates");
             }
             finally
             {
@@ -77,7 +79,7 @@ namespace SS14.Launcher.Models
             catch (Exception e)
             {
                 Status = UpdateStatus.Error;
-                Console.WriteLine("Exception while trying to run updates:\n{0}", e);
+                Log.Error(e, "Exception while trying to run updates.");
             }
 
             return null;
@@ -92,9 +94,8 @@ namespace SS14.Launcher.Models
                 var currentVersion = existingInstallation.Value.CurrentVersion;
                 if (buildInformation.Version != currentVersion)
                 {
-                    Console.WriteLine("Current version ({0}) is out of date, updating to {1}.",
-                        currentVersion,
-                        buildInformation.Version);
+                    Log.Information("Current version ({currentVersion}) is out of date, updating to {newVersion}.",
+                        currentVersion, buildInformation.Version);
 
                     needsUpdate = true;
                 }
@@ -107,7 +108,7 @@ namespace SS14.Launcher.Models
                         !currentHash.Equals(buildInformation.Hashes.ForCurrentPlatform,
                             StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine("Hash mismatch, re-downloading anyways.");
+                        Log.Information("Hash mismatch, re-downloading anyways.");
                         needsUpdate = true;
                     }
                     else
@@ -118,7 +119,7 @@ namespace SS14.Launcher.Models
             }
             else
             {
-                Console.WriteLine("As it turns out, we don't have any version yet. Time to update.");
+                Log.Information("As it turns out, we don't have any version yet. Time to update.");
 
                 needsUpdate = true;
             }
@@ -253,7 +254,7 @@ namespace SS14.Launcher.Models
                 _cfg.AddInstallation(installation);
             }
 
-            Console.WriteLine("Update done!");
+            Log.Information("Update done!");
             return installation;
         }
 
