@@ -11,15 +11,20 @@ namespace SS14.Launcher.Views.Login
         {
             InitializeComponent();
 
-            var nameBox = this.FindControl<TextBox>("NameBox");
+            void AddKeyDown(string name) => this.FindControl<TextBox>(name).KeyDown += OnTextBoxKeyDown;
 
-            nameBox.KeyDown += (sender, args) =>
+            AddKeyDown("NameBox");
+            AddKeyDown("EmailBox");
+            AddKeyDown("PasswordBox");
+            AddKeyDown("PasswordConfirmBox");
+        }
+
+        private void OnTextBoxKeyDown(object? sender, KeyEventArgs args)
+        {
+            if (args.Key == Key.Enter && DataContext is RegisterViewModel vm)
             {
-                if (args.Key == Key.Enter && DataContext is LoginViewModel vm)
-                {
-                    vm.OnLogInButtonPressed();
-                }
-            };
+                vm.OnRegisterInButtonPressed();
+            }
         }
 
         private void InitializeComponent()
