@@ -93,9 +93,9 @@ namespace SS14.Launcher
                     return new RegisterResult(respJson.Status);
                 }
 
-                if (resp.StatusCode == HttpStatusCode.Unauthorized)
+                if (resp.StatusCode == HttpStatusCode.UnprocessableEntity)
                 {
-                    // Login failure.
+                    // Register failure.
                     var respJson = await resp.Content.AsJson<RegisterResponseError>();
                     return new RegisterResult(respJson.Errors);
                 }
