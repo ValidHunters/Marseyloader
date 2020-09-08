@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vml="clr-namespace:SS14.Launcher.ViewModels.Login;assembly=SS14.Launcher"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SS14.Launcher.Views.Login.AuthErrorsOverlayView"
+             Name="Login" HorizontalAlignment="Center" VerticalAlignment="Center">
+  <Design.DataContext>
+    <vml:AuthErrorsOverlayViewModel />
+  </Design.DataContext>
+
+  <DockPanel>
+    <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium" Text="{Binding Title}" />
+
+    <Button DockPanel.Dock="Bottom" Content="Ok" MinWidth="60" HorizontalAlignment="Center"
+            Command="{Binding ParentVm.OverlayOk}" />
+    <ItemsControl Items="{Binding Errors}" Margin="0, 20" MaxWidth="400">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate DataType="system:String">
+          <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </DockPanel>
+</UserControl>

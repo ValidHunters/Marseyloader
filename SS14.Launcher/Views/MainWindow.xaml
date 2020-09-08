@@ -61,6 +61,13 @@
           DataContext="{Binding LoginViewModel}" />
       </Grid>
     </DockPanel>
+    <Panel IsVisible="{Binding LoginViewModel.Screen.OverlayControl, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <Panel.Background>
+        <SolidColorBrush Color="#99000000" />
+      </Panel.Background>
+
+      <ContentControl Content="{Binding LoginViewModel.Screen.OverlayControl}" />
+    </Panel>
     <Panel IsVisible="{Binding LoginViewModel.Screen.Busy}">
       <Panel.Background>
         <SolidColorBrush Color="#99000000" />

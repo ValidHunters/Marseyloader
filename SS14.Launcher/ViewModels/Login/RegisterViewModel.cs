@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Robust.Shared.AuthLib;
@@ -8,7 +9,7 @@ using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.Login
 {
-    public class RegisterViewModel : BaseLoginViewModel
+    public class RegisterViewModel : BaseLoginViewModel, IErrorOverlayOwner
     {
         private readonly ConfigurationManager _cfg;
         private readonly MainWindowLoginViewModel _parentVm;
@@ -94,6 +95,7 @@ namespace SS14.Launcher.ViewModels.Login
             Busy = true;
             try
             {
+                await Task.Delay(1000);
                 var result = await _authApi.RegisterAsync(EditingUsername, EditingEmail, EditingPassword);
                 if (result.IsSuccess)
                 {
@@ -117,6 +119,7 @@ namespace SS14.Launcher.ViewModels.Login
                         }
                         else
                         {
+
                             // TODO: Display errors
                         }
                     }
@@ -128,6 +131,10 @@ namespace SS14.Launcher.ViewModels.Login
                     }
 
                     ClearEnteredData();
+                }
+                else
+                {
+                    OverlayControl = new AuthErrorsOverlayViewModel(this, "Unable to register", result.Errors);
                 }
             }
             finally
@@ -141,6 +148,11 @@ namespace SS14.Launcher.ViewModels.Login
             ClearEnteredData();
 
             _parentVm.SwitchToLogin();
+        }
+
+        public void OverlayOk()
+        {
+            OverlayControl = null;
         }
 
         private void ClearEnteredData()

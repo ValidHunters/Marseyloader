@@ -6,7 +6,7 @@ using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.Login
 {
-    public class LoginViewModel : BaseLoginViewModel
+    public class LoginViewModel : BaseLoginViewModel, IErrorOverlayOwner
     {
         private readonly ConfigurationManager _cfg;
         private readonly MainWindowLoginViewModel _parentVm;
@@ -57,7 +57,7 @@ namespace SS14.Launcher.ViewModels.Login
                 }
                 else
                 {
-                    // TODO: Display errors
+                    OverlayControl = new AuthErrorsOverlayViewModel(this, "Unable to log in", resp.Errors);
                 }
             }
             finally
@@ -79,6 +79,11 @@ namespace SS14.Launcher.ViewModels.Login
         public void OnResendConfirmationPressed()
         {
             _parentVm.SwitchToResendConfirmation();
+        }
+
+        public void OverlayOk()
+        {
+            OverlayControl = null;
         }
     }
 }

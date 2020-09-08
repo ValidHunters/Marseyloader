@@ -62,12 +62,14 @@ namespace SS14.Launcher
                 // Unknown error? uh oh.
                 return new AuthenticateResult(new[] {"Server returned unknown error"});
             }
-            catch (JsonException)
+            catch (JsonException e)
             {
+                Log.Error(e, "JsonException in AuthenticateAsync");
                 return new AuthenticateResult(new[] {"Server sent invalid response"});
             }
             catch (HttpRequestException httpE)
             {
+                Log.Error(httpE, "HttpRequestException in AuthenticateAsync");
                 return new AuthenticateResult(new[] {$"Connection error to authentication server: {httpE.Message}"});
             }
         }
@@ -104,12 +106,14 @@ namespace SS14.Launcher
                 // Unknown error? uh oh.
                 return new RegisterResult(new[] {"Server returned unknown error"});
             }
-            catch (JsonException)
+            catch (JsonException e)
             {
+                Log.Error(e, "JsonException in RegisterAsync");
                 return new RegisterResult(new[] {"Server sent invalid response"});
             }
             catch (HttpRequestException httpE)
             {
+                Log.Error(httpE, "HttpRequestException in RegisterAsync");
                 return new RegisterResult(new[] {$"Connection error to authentication server: {httpE.Message}"});
             }
         }
