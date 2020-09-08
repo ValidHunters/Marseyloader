@@ -102,7 +102,8 @@ namespace SS14.Launcher
                     return new RegisterResult(respJson.Errors);
                 }
 
-                Log.Error("Server returned unexpected HTTP status code: {response}", resp);
+                Log.Error("Server returned unexpected HTTP status code: {responseCode}", resp.StatusCode);
+                Log.Debug("Response for error:\n{response}\n{content}", resp, await resp.Content.ReadAsStringAsync());
                 // Unknown error? uh oh.
                 return new RegisterResult(new[] {"Server returned unknown error"});
             }
@@ -115,6 +116,37 @@ namespace SS14.Launcher
             {
                 Log.Error(httpE, "HttpRequestException in RegisterAsync");
                 return new RegisterResult(new[] {$"Connection error to authentication server: {httpE.Message}"});
+            }
+        }
+
+        /// <returns>Any errors that occured</returns>
+        public async Task<string[]?> ForgotPasswordAsync(string email)
+        {
+            try
+            {
+                var request = new ResetPasswordRequest
+                {
+                    Email = email,
+                };
+
+                const string authUrl = UrlConstants.AuthUrl + "api/auth/resetPassword";
+
+                using var resp = await _httpClient.PostAsync(authUrl, request);
+
+                if (resp.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                // Unknown error? uh oh.
+                Log.Error("Server returned unexpected HTTP status code: {responseCode}", resp.StatusCode);
+                Log.Debug("Response for error:\n{response}\n{content}", resp, await resp.Content.ReadAsStringAsync());
+                return new[] {"Server returned unknown error"};
+            }
+            catch (HttpRequestException httpE)
+            {
+                Log.Error(httpE, "HttpRequestException in ForgotPasswordAsync");
+                return new[] {$"Connection error to authentication server: {httpE.Message}"};
             }
         }
 
@@ -151,6 +183,11 @@ namespace SS14.Launcher
         public sealed class RegisterResponseError
         {
             public string[] Errors { get; set; } = default!;
+        }
+
+        public sealed class ResetPasswordRequest
+        {
+            public string Email { get; set; } = default!;
         }
     }
 

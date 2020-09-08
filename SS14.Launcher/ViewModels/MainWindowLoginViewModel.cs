@@ -43,7 +43,7 @@ namespace SS14.Launcher.ViewModels
 
         public void SwitchToForgotPassword()
         {
-            Screen = new ForgotPasswordViewModel(_cfg, this);
+            Screen = new ForgotPasswordViewModel(_cfg, this, _authApi);
         }
 
         public void SwitchToResendConfirmation()

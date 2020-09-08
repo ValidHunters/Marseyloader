@@ -10,13 +10,17 @@ namespace SS14.Launcher.Views.Login
         public ForgotPasswordView()
         {
             InitializeComponent();
+
+            var emailBox = this.FindControl<TextBox>("EmailBox");
+
+            emailBox.KeyDown += InputBoxOnKeyDown;
         }
 
         private void InputBoxOnKeyDown(object? sender, KeyEventArgs args)
         {
             if (args.Key == Key.Enter && DataContext is ForgotPasswordViewModel vm)
             {
-                // vm.OnLogInButtonPressed();
+                vm.SubmitPressed();
             }
         }
 
