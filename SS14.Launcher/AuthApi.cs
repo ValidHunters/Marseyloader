@@ -150,6 +150,36 @@ namespace SS14.Launcher
             }
         }
 
+        public async Task<string[]?> ResendConfirmationAsync(string email)
+        {
+            try
+            {
+                var request = new ResendConfirmationRequest
+                {
+                    Email = email,
+                };
+
+                const string authUrl = UrlConstants.AuthUrl + "api/auth/resendConfirmation";
+
+                using var resp = await _httpClient.PostAsync(authUrl, request);
+
+                if (resp.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                // Unknown error? uh oh.
+                Log.Error("Server returned unexpected HTTP status code: {responseCode}", resp.StatusCode);
+                Log.Debug("Response for error:\n{response}\n{content}", resp, await resp.Content.ReadAsStringAsync());
+                return new[] {"Server returned unknown error"};
+            }
+            catch (HttpRequestException httpE)
+            {
+                Log.Error(httpE, "HttpRequestException in ResendConfirmationAsync");
+                return new[] {$"Connection error to authentication server: {httpE.Message}"};
+            }
+        }
+
         public sealed class AuthenticateRequest
         {
             public string Username { get; set; } = default!;
@@ -188,6 +218,11 @@ namespace SS14.Launcher
         public sealed class ResetPasswordRequest
         {
             public string Email { get; set; } = default!;
+        }
+
+        public sealed class ResendConfirmationRequest
+        {
+            public string Email { get; set; }
         }
     }
 

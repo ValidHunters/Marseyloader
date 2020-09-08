@@ -48,7 +48,7 @@ namespace SS14.Launcher.ViewModels
 
         public void SwitchToResendConfirmation()
         {
-            Screen = new ResendConfirmationViewModel(_cfg, this);
+            Screen = new ResendConfirmationViewModel(this, _authApi);
         }
 
         public void SwitchToRegisterNeedsConfirmation(string username, string password)

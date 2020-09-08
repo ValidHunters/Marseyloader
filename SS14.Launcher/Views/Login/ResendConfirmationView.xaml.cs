@@ -10,13 +10,17 @@ namespace SS14.Launcher.Views.Login
         public ResendConfirmationView()
         {
             InitializeComponent();
+
+            var emailBox = this.FindControl<TextBox>("EmailBox");
+
+            emailBox.KeyDown += InputBoxOnKeyDown;
         }
 
         private void InputBoxOnKeyDown(object? sender, KeyEventArgs args)
         {
-            if (args.Key == Key.Enter && DataContext is ForgotPasswordViewModel vm)
+            if (args.Key == Key.Enter && DataContext is ResendConfirmationViewModel vm)
             {
-                // vm.OnLogInButtonPressed();
+                vm.SubmitPressed();
             }
         }
 

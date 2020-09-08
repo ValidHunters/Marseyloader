@@ -11,21 +11,21 @@
     <vml:ResendConfirmationViewModel />
   </Design.DataContext>
 
-  <UserControl.Styles>
-    <Style Selector="Rectangle">
-      <Style.Animations>
-        <Animation Duration="0:0:2" IterationCount="INFINITE">
-          <KeyFrame Cue="0%">
-            <Setter Property="RotateTransform.Angle" Value="0" />
-          </KeyFrame>
+  <DockPanel LastChildFill="False">
+    <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium"
+               Text="Resend email confirmation" />
 
-          <KeyFrame Cue="100%">
-            <Setter Property="RotateTransform.Angle" Value="360" />
-          </KeyFrame>
-        </Animation>
-      </Style.Animations>
-    </Style>
-  </UserControl.Styles>
+    <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" TextWrapping="Wrap" MaxWidth="400"
+               Text="If you've managed to... misplace your original confirmation email, you can send another one here by entering your email address." />
 
-  <DockPanel LastChildFill="False" />
+    <TextBox DockPanel.Dock="Top" Watermark="Your email address" MaxWidth="400" Margin="0 4"
+             Text="{Binding EditingEmail, Mode=TwoWay}" Name="EmailBox" />
+
+    <Button Content="Submit" DockPanel.Dock="Top" MaxWidth="400" HorizontalAlignment="Center"
+            Command="{Binding SubmitPressed}"
+            IsEnabled="{Binding EditingEmail, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+    <Button Content="Back to login" DockPanel.Dock="Bottom" Margin="0 4" HorizontalAlignment="Center"
+            Command="{Binding ParentVM.SwitchToLogin}" />
+  </DockPanel>
 </UserControl>
