@@ -38,7 +38,6 @@ namespace SS14.Launcher.Models
 
             try
             {
-                throw new Exception();
                 Status = UpdateStatus.CheckingClientUpdate;
                 if (buildInformation == null)
                 {
