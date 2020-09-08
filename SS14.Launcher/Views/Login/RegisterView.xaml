@@ -32,6 +32,6 @@
             Content="Register" Command="{Binding OnRegisterInButtonPressed}" />
 
     <Button DockPanel.Dock="Bottom" Margin="0 4" HorizontalAlignment="Center"
-            Content="Log into an existing account instead" Command="{Binding OnLoginButtonPressed}" />
+            Content="Log into an existing account instead" Command="{Binding ParentVM.SwitchToLogin}" />
   </DockPanel>
 </UserControl>

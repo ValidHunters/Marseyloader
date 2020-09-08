@@ -12,7 +12,7 @@ namespace SS14.Launcher.ViewModels.Login
     public class RegisterViewModel : BaseLoginViewModel, IErrorOverlayOwner
     {
         private readonly ConfigurationManager _cfg;
-        private readonly MainWindowLoginViewModel _parentVm;
+        public MainWindowLoginViewModel ParentVM { get; }
         private readonly AuthApi _authApi;
 
         [Reactive] public string EditingUsername { get; set; } = "";
@@ -27,7 +27,7 @@ namespace SS14.Launcher.ViewModels.Login
         public RegisterViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
         {
             _cfg = cfg;
-            _parentVm = parentVm;
+            ParentVM = parentVm;
             _authApi = authApi;
 
             this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword, x => x.EditingPasswordConfirm,
@@ -127,10 +127,8 @@ namespace SS14.Launcher.ViewModels.Login
                     {
                         Debug.Assert(status == RegisterResponseStatus.RegisteredNeedConfirmation);
 
-                        _parentVm.SwitchToRegisterNeedsConfirmation(EditingUsername, EditingPassword);
+                        ParentVM.SwitchToRegisterNeedsConfirmation(EditingUsername, EditingPassword);
                     }
-
-                    ClearEnteredData();
                 }
                 else
                 {
@@ -143,24 +141,9 @@ namespace SS14.Launcher.ViewModels.Login
             }
         }
 
-        public void OnLoginButtonPressed()
-        {
-            ClearEnteredData();
-
-            _parentVm.SwitchToLogin();
-        }
-
         public void OverlayOk()
         {
             OverlayControl = null;
-        }
-
-        private void ClearEnteredData()
-        {
-            EditingEmail = "";
-            EditingUsername = "";
-            EditingPassword = "";
-            EditingPasswordConfirm = "";
         }
     }
 }

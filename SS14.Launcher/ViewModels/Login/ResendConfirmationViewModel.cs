@@ -5,17 +5,12 @@ namespace SS14.Launcher.ViewModels.Login
     public class ResendConfirmationViewModel : BaseLoginViewModel
     {
         private readonly ConfigurationManager _cfg;
-        private readonly MainWindowLoginViewModel _parentVm;
+        public MainWindowLoginViewModel ParentVM { get; }
 
-        public ResendConfirmationViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm)
+        public ResendConfirmationViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVM)
         {
             _cfg = cfg;
-            _parentVm = parentVm;
-        }
-
-        public void BackPressed()
-        {
-            _parentVm.SwitchToLogin();
+            ParentVM = parentVM;
         }
     }
 }

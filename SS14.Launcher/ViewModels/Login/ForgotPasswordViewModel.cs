@@ -6,19 +6,14 @@ namespace SS14.Launcher.ViewModels.Login
     public sealed class ForgotPasswordViewModel : BaseLoginViewModel
     {
         private readonly ConfigurationManager _cfg;
-        private readonly MainWindowLoginViewModel _parentVm;
+        public MainWindowLoginViewModel ParentVM { get; }
 
         [Reactive] public string EditingEmail { get; set; } = "";
 
-        public ForgotPasswordViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm)
+        public ForgotPasswordViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVM)
         {
             _cfg = cfg;
-            _parentVm = parentVm;
-        }
-
-        public void BackPressed()
-        {
-            _parentVm.SwitchToLogin();
+            ParentVM = parentVM;
         }
     }
 }

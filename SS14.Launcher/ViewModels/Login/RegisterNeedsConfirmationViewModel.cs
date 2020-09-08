@@ -7,12 +7,12 @@ using SS14.Launcher.Models;
 
 namespace SS14.Launcher.ViewModels.Login
 {
-    public class RegisterNeedsConfirmationViewModel : BaseLoginViewModel
+    public class RegisterNeedsConfirmationViewModel : BaseLoginViewModel, IErrorOverlayOwner
     {
         private const int TimeoutSeconds = 5;
 
         private readonly ConfigurationManager _cfg;
-        private readonly MainWindowLoginViewModel _parentVm;
+        public MainWindowLoginViewModel ParentVM { get; }
         private readonly AuthApi _authApi;
 
         private readonly string _loginUsername;
@@ -39,7 +39,7 @@ namespace SS14.Launcher.ViewModels.Login
             AuthApi authApi, string username, string password)
         {
             _cfg = cfg;
-            _parentVm = parentVm;
+            ParentVM = parentVm;
             _authApi = authApi;
 
             _loginUsername = username;
@@ -67,6 +67,7 @@ namespace SS14.Launcher.ViewModels.Login
 
         public async void ConfirmButtonPressed()
         {
+            Busy = true;
             // TODO: Remove Task.Delay here.
             await Task.Delay(1000);
             var resp = await _authApi.AuthenticateAsync(_loginUsername, _loginPassword);
@@ -79,18 +80,23 @@ namespace SS14.Launcher.ViewModels.Login
                     // Already had a login like this??
                     // TODO: Immediately sign out the token here.
                     _cfg.SelectedLoginId = loginInfo.UserId;
-                    _parentVm.SwitchToLogin();
+                    ParentVM.SwitchToLogin();
                     return;
                 }
 
                 _cfg.AddLogin(loginInfo);
                 _cfg.SelectedLoginId = loginInfo.UserId;
-                _parentVm.SwitchToLogin();
+                ParentVM.SwitchToLogin();
             }
             else
             {
-                // TODO: Display errors
+                OverlayControl = new AuthErrorsOverlayViewModel(this, "Unable to log in", resp.Errors);
             }
+        }
+
+        public void OverlayOk()
+        {
+            OverlayControl = null;
         }
     }
 }

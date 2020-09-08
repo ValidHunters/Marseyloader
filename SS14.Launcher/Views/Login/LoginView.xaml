@@ -34,7 +34,7 @@
         </Button>
 
         <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Forgot your password?"
-                Command="{Binding OnForgotPasswordPressed}" IsEnabled="{Binding !Busy}" />
+                Command="{Binding ParentVM.SwitchToForgotPassword}" IsEnabled="{Binding !Busy}" />
       </DockPanel>
 
 
@@ -45,7 +45,7 @@
         -->
 
       <Button DockPanel.Dock="Bottom" Classes="BigButton" Margin="0 4" HorizontalAlignment="Center"
-              Content="Don't have an account? Register!" Command="{Binding OnRegisterButtonPressed}"
+              Content="Don't have an account? Register!" Command="{Binding ParentVM.SwitchToRegister}"
               IsEnabled="{Binding !Busy}" />
     </DockPanel>
   </Panel>

@@ -6,9 +6,9 @@ namespace SS14.Launcher.ViewModels.Login
         public string Title { get; }
         public string[] Errors { get; }
 
-        public AuthErrorsOverlayViewModel(IErrorOverlayOwner parentVm, string title, string[] errors)
+        public AuthErrorsOverlayViewModel(IErrorOverlayOwner parentVM, string title, string[] errors)
         {
-            ParentVm = parentVm;
+            ParentVm = parentVM;
             Title = title;
             Errors = errors;
         }

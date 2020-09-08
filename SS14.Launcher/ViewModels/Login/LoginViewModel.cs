@@ -9,7 +9,7 @@ namespace SS14.Launcher.ViewModels.Login
     public class LoginViewModel : BaseLoginViewModel, IErrorOverlayOwner
     {
         private readonly ConfigurationManager _cfg;
-        private readonly MainWindowLoginViewModel _parentVm;
+        public MainWindowLoginViewModel ParentVM { get; }
         private readonly AuthApi _authApi;
 
         [Reactive] public string EditingUsername { get; set; } = "";
@@ -21,7 +21,7 @@ namespace SS14.Launcher.ViewModels.Login
         {
             _authApi = authApi;
             _cfg = cfg;
-            _parentVm = parentVm;
+            ParentVM = parentVm;
 
             this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword)
                 .Subscribe(s => { IsInputValid = !string.IsNullOrEmpty(s.Item1) && !string.IsNullOrEmpty(s.Item2); });
@@ -64,21 +64,6 @@ namespace SS14.Launcher.ViewModels.Login
             {
                 Busy = false;
             }
-        }
-
-        public void OnRegisterButtonPressed()
-        {
-            _parentVm.SwitchToRegister();
-        }
-
-        public void OnForgotPasswordPressed()
-        {
-            _parentVm.SwitchToForgotPassword();
-        }
-
-        public void OnResendConfirmationPressed()
-        {
-            _parentVm.SwitchToResendConfirmation();
         }
 
         public void OverlayOk()
