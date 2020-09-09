@@ -12,13 +12,13 @@ namespace SS14.Launcher.ViewModels
 {
     public class AccountDropDownViewModel : ViewModelBase
     {
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         private readonly AuthApi _authApi;
         private readonly ReadOnlyObservableCollection<LoginInfo> _accounts;
 
         public ReadOnlyObservableCollection<LoginInfo> Accounts => _accounts;
 
-        public AccountDropDownViewModel(ConfigurationManager cfg, AuthApi authApi)
+        public AccountDropDownViewModel(DataManager cfg, AuthApi authApi)
         {
             _cfg = cfg;
             _authApi = authApi;

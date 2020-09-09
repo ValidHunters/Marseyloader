@@ -10,7 +10,7 @@ namespace SS14.Launcher.ViewModels.Login
 {
     public class RegisterViewModel : BaseLoginViewModel, IErrorOverlayOwner
     {
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         public MainWindowLoginViewModel ParentVM { get; }
         private readonly AuthApi _authApi;
 
@@ -23,7 +23,7 @@ namespace SS14.Launcher.ViewModels.Login
         [Reactive] public string InvalidReason { get; private set; } = " ";
 
 
-        public RegisterViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
+        public RegisterViewModel(DataManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
         {
             _cfg = cfg;
             ParentVM = parentVm;

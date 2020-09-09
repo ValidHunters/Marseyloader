@@ -43,7 +43,7 @@ namespace SS14.Launcher
         // container, etc.
         private static void AppMain(Application app, string[] args)
         {
-            var cfg = new ConfigurationManager();
+            var cfg = new DataManager();
             cfg.Load();
             var statusCache = new ServerStatusCache();
             var updater = new Updater(cfg);

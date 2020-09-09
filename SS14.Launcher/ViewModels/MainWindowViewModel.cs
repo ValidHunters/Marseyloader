@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
@@ -11,29 +12,35 @@ namespace SS14.Launcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly ConfigurationManager _cfg;
-        private const string CurrentLauncherVersion = "5";
+        private readonly DataManager _cfg;
 
         private int _selectedIndex;
 
         [Reactive] public bool OutOfDate { get; private set; }
 
-        public MainWindowViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
+        public HomePageViewModel HomeTab { get; }
+        public ServerListTabViewModel ServersTab { get; }
+        public NewsTabViewModel NewsTab { get; }
+        public OptionsTabViewModel OptionsTab { get; }
+
+
+        public MainWindowViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater)
         {
             _cfg = cfg;
             var authApi = new AuthApi(cfg);
+            var loginManager = new LoginManager(cfg, authApi);
 
-            var servers = new ServerListTabViewModel(cfg, statusCache, updater);
-            var news = new NewsTabViewModel();
-            var home = new HomePageViewModel(cfg, statusCache, updater);
-            var options = new OptionsTabViewModel();
+            ServersTab = new ServerListTabViewModel(cfg, statusCache, updater);
+            NewsTab = new NewsTabViewModel();
+            HomeTab = new HomePageViewModel(this, cfg, statusCache, updater);
+            OptionsTab = new OptionsTabViewModel();
 
             Tabs = new MainWindowTabViewModel[]
             {
-                home,
-                servers,
-                news,
-                options
+                HomeTab,
+                ServersTab,
+                NewsTab,
+                OptionsTab
             };
 
             this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
@@ -107,7 +114,7 @@ namespace SS14.Launcher.ViewModels
                 new Uri($"{Updater.JenkinsBaseUrl}/userContent/current_launcher_version.txt");
             var versionRequest = await Global.GlobalHttpClient.GetAsync(launcherVersionUri);
             versionRequest.EnsureSuccessStatusCode();
-            OutOfDate = CurrentLauncherVersion != (await versionRequest.Content.ReadAsStringAsync()).Trim();
+            OutOfDate = ConfigConstants.CurrentLauncherVersion != (await versionRequest.Content.ReadAsStringAsync()).Trim();
         }
 
         public void ExitPressed()
@@ -118,6 +125,11 @@ namespace SS14.Launcher.ViewModels
         public void DownloadPressed()
         {
             Helpers.OpenUri(new Uri(ConfigConstants.DownloadUrl));
+        }
+
+        public void SelectTabServers()
+        {
+            SelectedIndex = Tabs.IndexOf(ServersTab);
         }
     }
 }

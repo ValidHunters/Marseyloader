@@ -13,13 +13,13 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         private readonly ServerStatusCache _cache;
         private readonly IServerStatusData _cacheData;
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         private readonly Updater _updater;
         private bool _isAltBackground;
         private string Address => _cacheData.Address;
         private string _fallbackName = string.Empty;
 
-        public ServerEntryViewModel(ServerStatusCache cache, ConfigurationManager cfg, Updater updater, string address)
+        public ServerEntryViewModel(ServerStatusCache cache, DataManager cfg, Updater updater, string address)
         {
             _cache = cache;
             _cacheData = cache.GetStatusFor(address);
@@ -49,7 +49,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 .Subscribe(_ => { this.RaisePropertyChanged(nameof(FavoriteButtonText)); });
         }
 
-        public ServerEntryViewModel(ServerStatusCache cache, ConfigurationManager cfg, Updater updater,
+        public ServerEntryViewModel(ServerStatusCache cache, DataManager cfg, Updater updater,
             FavoriteServer favorite)
             : this(cache, cfg, updater, favorite.Address)
         {

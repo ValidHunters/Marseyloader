@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.VisualTree;
 using DynamicData;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
 using SS14.Launcher.Views;
 
@@ -14,13 +15,16 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class HomePageViewModel : MainWindowTabViewModel
     {
+        public MainWindowViewModel MainWindowViewModel { get; }
         private readonly List<ServerEntryViewModel> _favorites = new List<ServerEntryViewModel>();
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         private readonly ServerStatusCache _statusCache;
         private readonly Updater _updater;
 
-        public HomePageViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
+        public HomePageViewModel(MainWindowViewModel mainWindowViewModel, DataManager cfg,
+            ServerStatusCache statusCache, Updater updater)
         {
+            MainWindowViewModel = mainWindowViewModel;
             _cfg = cfg;
             _statusCache = statusCache;
             _updater = updater;
@@ -32,6 +36,8 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public ObservableCollection<ServerEntryViewModel> Favorites { get; }
             = new ObservableCollection<ServerEntryViewModel>();
+
+        [Reactive] public bool FavoritesEmpty { get; private set; } = true;
 
         public override string Name => "Home";
         public Control? Control { get; set; }
@@ -108,6 +114,8 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
             Favorites.Clear();
             Favorites.AddRange(_favorites);
+
+            FavoritesEmpty = Favorites.Count == 0;
         }
 
         public void RefreshPressed()

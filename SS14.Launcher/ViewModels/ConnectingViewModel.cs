@@ -119,7 +119,7 @@ namespace SS14.Launcher.ViewModels
                 _ => ""
             };
 
-        public static void StartConnect(Updater updater, ConfigurationManager cfg, Window window, string address)
+        public static void StartConnect(Updater updater, DataManager cfg, Window window, string address)
         {
             var connector = new Connector(updater, cfg);
             var connectionViewModel = new ConnectingViewModel(connector, updater);

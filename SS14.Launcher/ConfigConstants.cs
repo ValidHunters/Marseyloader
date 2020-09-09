@@ -4,6 +4,8 @@ namespace SS14.Launcher
 {
     public static class ConfigConstants
     {
+        public const string CurrentLauncherVersion = "5";
+
         // Refresh login tokens if they're within <this much> of expiry.
         public static readonly TimeSpan TokenRefreshThreshold = TimeSpan.FromDays(15);
 

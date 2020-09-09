@@ -17,7 +17,7 @@
   </Design.DataContext>
 
   <Window.Resources>
-    <SolidColorBrush x:Key="OverlayBrush" Color="#99000000" />
+    <SolidColorBrush x:Key="OverlayBrush" Color="#AA000000" />
   </Window.Resources>
 
   <Panel>

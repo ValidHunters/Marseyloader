@@ -6,7 +6,7 @@ namespace SS14.Launcher.ViewModels.Login
 {
     public sealed class ForgotPasswordViewModel : BaseLoginViewModel, IErrorOverlayOwner
     {
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         private readonly AuthApi _authApi;
         public MainWindowLoginViewModel ParentVM { get; }
 
@@ -14,7 +14,7 @@ namespace SS14.Launcher.ViewModels.Login
 
         private bool _errored;
 
-        public ForgotPasswordViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVM, AuthApi authApi)
+        public ForgotPasswordViewModel(DataManager cfg, MainWindowLoginViewModel parentVM, AuthApi authApi)
         {
             _cfg = cfg;
             _authApi = authApi;

@@ -14,7 +14,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class ServerListTabViewModel : MainWindowTabViewModel
     {
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         private readonly ServerStatusCache _statusCache;
         private readonly Updater _updater;
 
@@ -60,7 +60,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
         }
 
-        public ServerListTabViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
+        public ServerListTabViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater)
         {
             _cfg = cfg;
             _statusCache = statusCache;

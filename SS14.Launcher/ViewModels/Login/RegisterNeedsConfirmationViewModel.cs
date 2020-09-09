@@ -11,7 +11,7 @@ namespace SS14.Launcher.ViewModels.Login
     {
         private const int TimeoutSeconds = 5;
 
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         public MainWindowLoginViewModel ParentVM { get; }
         private readonly AuthApi _authApi;
 
@@ -35,7 +35,7 @@ namespace SS14.Launcher.ViewModels.Login
 
         [Reactive] private int TimeoutSecondsLeft { get; set; }
 
-        public RegisterNeedsConfirmationViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm,
+        public RegisterNeedsConfirmationViewModel(DataManager cfg, MainWindowLoginViewModel parentVm,
             AuthApi authApi, string username, string password)
         {
             BusyText = "Logging in...";

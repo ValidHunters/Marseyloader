@@ -11,10 +11,10 @@ namespace SS14.Launcher
 {
     public sealed class AuthApi
     {
-        private readonly ConfigurationManager _config;
+        private readonly DataManager _config;
         private readonly HttpClient _httpClient;
 
-        public AuthApi(ConfigurationManager config)
+        public AuthApi(DataManager config)
         {
             _config = config;
 

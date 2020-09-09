@@ -8,7 +8,7 @@ namespace SS14.Launcher.ViewModels.Login
 {
     public class LoginViewModel : BaseLoginViewModel, IErrorOverlayOwner
     {
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         public MainWindowLoginViewModel ParentVM { get; }
         private readonly AuthApi _authApi;
 
@@ -17,7 +17,7 @@ namespace SS14.Launcher.ViewModels.Login
 
         [Reactive] public bool IsInputValid { get; private set; }
 
-        public LoginViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
+        public LoginViewModel(DataManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
         {
             BusyText = "Logging in...";
             _authApi = authApi;

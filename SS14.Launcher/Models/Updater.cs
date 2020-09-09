@@ -16,10 +16,10 @@ namespace SS14.Launcher.Models
 {
     public sealed partial class Updater : ReactiveObject
     {
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         private bool _updating = false;
 
-        public Updater(ConfigurationManager cfg)
+        public Updater(DataManager cfg)
         {
             _cfg = cfg;
         }

@@ -6,7 +6,7 @@ namespace SS14.Launcher.ViewModels
 {
     public class MainWindowLoginViewModel : ViewModelBase
     {
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
         private readonly AuthApi _authApi;
         private BaseLoginViewModel _screen;
 
@@ -20,7 +20,7 @@ namespace SS14.Launcher.ViewModels
             }
         }
 
-        public MainWindowLoginViewModel(ConfigurationManager cfg, AuthApi authApi)
+        public MainWindowLoginViewModel(DataManager cfg, AuthApi authApi)
         {
             _cfg = cfg;
             _authApi = authApi;

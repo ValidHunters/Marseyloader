@@ -13,13 +13,8 @@ namespace SS14.Launcher.Models
     ///     Handles storage of all permanent data,
     ///     like username, current build, favorite servers...
     /// </summary>
-    public sealed class ConfigurationManager : ReactiveObject
+    public sealed class DataManager : ReactiveObject
     {
-        private static readonly (string name, string addr)[] DefaultFavorites =
-        {
-            ("Wizard's Den [US West]", "ss14s://builds.spacestation14.io/ss14_server")
-        };
-
         private readonly object _configWriteLock = new object();
 
         private readonly SourceCache<FavoriteServer, string> _favoriteServers
@@ -36,7 +31,7 @@ namespace SS14.Launcher.Models
         private Guid _fingerprint;
         private Guid? _selectedLogin;
 
-        public ConfigurationManager()
+        public DataManager()
         {
             // Save when anything about the favorite servers list changes.
             _favoriteServers
@@ -217,11 +212,7 @@ namespace SS14.Launcher.Models
 
         private void LoadDefaultConfig()
         {
-            _favoriteServers.Edit(x =>
-            {
-                x.Clear();
-                x.AddOrUpdate(DefaultFavorites.Select(p => new FavoriteServer(p.name, p.addr)));
-            });
+            // Nop for now
         }
 
         private void Save()

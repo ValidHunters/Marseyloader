@@ -16,12 +16,12 @@ namespace SS14.Launcher.Models
     public class Connector : ReactiveObject
     {
         private readonly Updater _updater;
-        private readonly ConfigurationManager _cfg;
+        private readonly DataManager _cfg;
 
         private ConnectionStatus _status = ConnectionStatus.None;
         private bool _clientExitedBadly;
 
-        public Connector(Updater updater, ConfigurationManager cfg)
+        public Connector(Updater updater, DataManager cfg)
         {
             _updater = updater;
             _cfg = cfg;
