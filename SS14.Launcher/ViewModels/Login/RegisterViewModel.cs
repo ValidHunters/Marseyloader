@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Net.Mail;
-using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Robust.Shared.AuthLib;
@@ -95,7 +94,6 @@ namespace SS14.Launcher.ViewModels.Login
             Busy = true;
             try
             {
-                await Task.Delay(1000);
                 var result = await _authApi.RegisterAsync(EditingUsername, EditingEmail, EditingPassword);
                 if (result.IsSuccess)
                 {
@@ -119,8 +117,7 @@ namespace SS14.Launcher.ViewModels.Login
                         }
                         else
                         {
-
-                            // TODO: Display errors
+                            OverlayControl = new AuthErrorsOverlayViewModel(this, "Error while logging in", resp.Errors);
                         }
                     }
                     else

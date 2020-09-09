@@ -180,6 +180,35 @@ namespace SS14.Launcher
             }
         }
 
+        public async Task LogoutTokenAsync(string token)
+        {
+            try
+            {
+                var request = new LogoutRequest
+                {
+                    Token = token
+                };
+
+                const string authUrl = UrlConstants.AuthUrl + "api/auth/logout";
+
+                using var resp = await _httpClient.PostAsync(authUrl, request);
+
+                if (resp.IsSuccessStatusCode)
+                {
+                    return;
+                }
+
+                // Unknown error? uh oh.
+                Log.Error("Server returned unexpected HTTP status code: {responseCode}", resp.StatusCode);
+                Log.Debug("Response for error:\n{response}\n{content}", resp, await resp.Content.ReadAsStringAsync());
+            }
+            catch (HttpRequestException httpE)
+            {
+                // Does it make sense to just... swallow this exception? The token will stay "active" until it expires.
+                Log.Error(httpE, "HttpRequestException in LogoutTokenAsync");
+            }
+        }
+
         public sealed class AuthenticateRequest
         {
             public string Username { get; set; } = default!;
@@ -223,6 +252,11 @@ namespace SS14.Launcher
         public sealed class ResendConfirmationRequest
         {
             public string Email { get; set; }
+        }
+
+        public sealed class LogoutRequest
+        {
+            public string Token { get; set; }
         }
     }
 

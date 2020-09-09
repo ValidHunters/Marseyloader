@@ -68,8 +68,6 @@ namespace SS14.Launcher.ViewModels.Login
         public async void ConfirmButtonPressed()
         {
             Busy = true;
-            // TODO: Remove Task.Delay here.
-            await Task.Delay(1000);
             var resp = await _authApi.AuthenticateAsync(_loginUsername, _loginPassword);
 
             if (resp.IsSuccess)
@@ -78,7 +76,8 @@ namespace SS14.Launcher.ViewModels.Login
                 if (_cfg.Logins.Lookup(loginInfo.UserId).HasValue)
                 {
                     // Already had a login like this??
-                    // TODO: Immediately sign out the token here.
+                    await _authApi.LogoutTokenAsync(loginInfo.Token);
+
                     _cfg.SelectedLoginId = loginInfo.UserId;
                     ParentVM.SwitchToLogin();
                     return;

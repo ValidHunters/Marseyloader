@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
@@ -37,8 +36,6 @@ namespace SS14.Launcher.ViewModels.Login
             Busy = true;
             try
             {
-                // TODO: Remove Task.Delay here.
-                await Task.Delay(1000);
                 var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
 
                 if (resp.IsSuccess)
@@ -46,8 +43,11 @@ namespace SS14.Launcher.ViewModels.Login
                     var loginInfo = resp.LoginInfo;
                     if (_cfg.Logins.Lookup(loginInfo.UserId).HasValue)
                     {
-                        // Already had a login like this??
-                        // TODO: Immediately sign out the token here.
+                        // Already had this login, apparently.
+                        // Thanks user.
+                        // Log the token out since we don't need it.
+
+                        await _authApi.LogoutTokenAsync(loginInfo.Token);
                         _cfg.SelectedLoginId = loginInfo.UserId;
                         return;
                     }

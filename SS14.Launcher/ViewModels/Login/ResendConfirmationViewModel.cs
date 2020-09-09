@@ -23,8 +23,6 @@ namespace SS14.Launcher.ViewModels.Login
             Busy = true;
             try
             {
-                // TODO: Remove Task.Delay here.
-                await Task.Delay(1000);
                 var errors = await _authApi.ResendConfirmationAsync(EditingEmail);
 
                 _errored = errors != null;

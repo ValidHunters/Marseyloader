@@ -20,10 +20,10 @@ namespace SS14.Launcher.ViewModels
             }
         }
 
-        public MainWindowLoginViewModel(ConfigurationManager cfg)
+        public MainWindowLoginViewModel(ConfigurationManager cfg, AuthApi authApi)
         {
             _cfg = cfg;
-            _authApi = new AuthApi(cfg);
+            _authApi = authApi;
 
             _screen = default!;
             SwitchToLogin();

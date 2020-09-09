@@ -18,6 +18,7 @@ namespace SS14.Launcher.ViewModels
         public MainWindowViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
         {
             _cfg = cfg;
+            var authApi = new AuthApi(cfg);
 
             var servers = new ServerListTabViewModel(cfg, statusCache, updater);
             var news = new NewsTabViewModel();
@@ -46,8 +47,8 @@ namespace SS14.Launcher.ViewModels
             _cfg.Logins.Connect()
                 .Subscribe(_ => { this.RaisePropertyChanged(nameof(AccountDropDownVisible)); });
 
-            AccountDropDown = new AccountDropDownViewModel(cfg);
-            LoginViewModel = new MainWindowLoginViewModel(cfg);
+            AccountDropDown = new AccountDropDownViewModel(cfg, authApi);
+            LoginViewModel = new MainWindowLoginViewModel(cfg, authApi);
         }
 
         public MainWindow? Control { get; set; }

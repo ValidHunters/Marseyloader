@@ -13,13 +13,15 @@ namespace SS14.Launcher.ViewModels
     public class AccountDropDownViewModel : ViewModelBase
     {
         private readonly ConfigurationManager _cfg;
+        private readonly AuthApi _authApi;
         private readonly ReadOnlyObservableCollection<LoginInfo> _accounts;
 
         public ReadOnlyObservableCollection<LoginInfo> Accounts => _accounts;
 
-        public AccountDropDownViewModel(ConfigurationManager cfg)
+        public AccountDropDownViewModel(ConfigurationManager cfg, AuthApi authApi)
         {
             _cfg = cfg;
+            _authApi = authApi;
 
             this.WhenAnyValue(x => x._cfg.SelectedLogin)
                 .Subscribe(_ =>
@@ -63,14 +65,15 @@ namespace SS14.Launcher.ViewModels
 
         [Reactive] public bool IsDropDownOpen { get; set; }
 
-        public void ManageAccountPressed()
+        public async void LogoutPressed()
         {
+            IsDropDownOpen = false;
+
             if (_cfg.SelectedLogin != null)
             {
+                await _authApi.LogoutTokenAsync(_cfg.SelectedLogin.Token);
                 _cfg.RemoveLogin(_cfg.SelectedLogin);
             }
-
-            IsDropDownOpen = false;
         }
 
         [UsedImplicitly]
