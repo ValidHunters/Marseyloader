@@ -38,6 +38,7 @@ namespace SS14.Launcher.ViewModels.Login
         public RegisterNeedsConfirmationViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm,
             AuthApi authApi, string username, string password)
         {
+            BusyText = "Logging in...";
             _cfg = cfg;
             ParentVM = parentVm;
             _authApi = authApi;

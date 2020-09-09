@@ -91,6 +91,7 @@ namespace SS14.Launcher.ViewModels.Login
                 return;
             }
 
+            BusyText = "Registering account...";
             Busy = true;
             try
             {
@@ -100,6 +101,7 @@ namespace SS14.Launcher.ViewModels.Login
                     var status = result.Status;
                     if (status == RegisterResponseStatus.Registered)
                     {
+                        BusyText = "Logging in...";
                         // No confirmation needed, log in immediately.
                         var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
 

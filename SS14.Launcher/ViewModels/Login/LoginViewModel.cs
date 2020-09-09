@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
@@ -18,6 +19,7 @@ namespace SS14.Launcher.ViewModels.Login
 
         public LoginViewModel(ConfigurationManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
         {
+            BusyText = "Logging in...";
             _authApi = authApi;
             _cfg = cfg;
             ParentVM = parentVm;

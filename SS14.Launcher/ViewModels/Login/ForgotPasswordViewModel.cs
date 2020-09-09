@@ -26,6 +26,7 @@ namespace SS14.Launcher.ViewModels.Login
             Busy = true;
             try
             {
+                BusyText = "Sending email...";
                 var errors = await _authApi.ForgotPasswordAsync(EditingEmail);
 
                 _errored = errors != null;

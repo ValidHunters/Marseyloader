@@ -72,11 +72,12 @@
       <Panel.Background>
         <SolidColorBrush Color="#99000000" />
       </Panel.Background>
-      <Viewbox Width="72" Height="72" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <v:DungSpinner DockPanel.Dock="Top" />
-      </Viewbox>
+      <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+        <Viewbox Width="72" Height="72" HorizontalAlignment="Center" >
+          <v:DungSpinner DockPanel.Dock="Top" />
+        </Viewbox>
+        <TextBlock Text="{Binding LoginViewModel.Screen.BusyText}" HorizontalAlignment="Center" />
+      </StackPanel>
     </Panel>
   </Panel>
-
-
 </Window>

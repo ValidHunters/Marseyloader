@@ -23,6 +23,7 @@ namespace SS14.Launcher.ViewModels.Login
             Busy = true;
             try
             {
+                BusyText = "Resending email...";
                 var errors = await _authApi.ResendConfirmationAsync(EditingEmail);
 
                 _errored = errors != null;
