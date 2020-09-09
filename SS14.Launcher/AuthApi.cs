@@ -251,12 +251,12 @@ namespace SS14.Launcher
 
         public sealed class ResendConfirmationRequest
         {
-            public string Email { get; set; }
+            public string Email { get; set; } = default!;
         }
 
         public sealed class LogoutRequest
         {
-            public string Token { get; set; }
+            public string Token { get; set; } = default!;
         }
     }
 
