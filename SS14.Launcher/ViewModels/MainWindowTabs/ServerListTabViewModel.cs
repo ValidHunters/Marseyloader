@@ -135,7 +135,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
             try
             {
-                var response = await Global.GlobalHttpClient.GetStringAsync(UrlConstants.HubUrl + "api/servers");
+                var response = await Global.GlobalHttpClient.GetStringAsync(ConfigConstants.HubUrl + "api/servers");
 
                 var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(response);
 

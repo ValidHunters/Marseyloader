@@ -35,7 +35,7 @@ namespace SS14.Launcher
                     Password = password
                 };
 
-                const string authUrl = UrlConstants.AuthUrl + "api/auth/authenticate";
+                const string authUrl = ConfigConstants.AuthUrl + "api/auth/authenticate";
 
                 using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -85,7 +85,7 @@ namespace SS14.Launcher
                     Password = password
                 };
 
-                const string authUrl = UrlConstants.AuthUrl + "api/auth/register";
+                const string authUrl = ConfigConstants.AuthUrl + "api/auth/register";
 
                 using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -129,7 +129,7 @@ namespace SS14.Launcher
                     Email = email,
                 };
 
-                const string authUrl = UrlConstants.AuthUrl + "api/auth/resetPassword";
+                const string authUrl = ConfigConstants.AuthUrl + "api/auth/resetPassword";
 
                 using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -159,7 +159,7 @@ namespace SS14.Launcher
                     Email = email,
                 };
 
-                const string authUrl = UrlConstants.AuthUrl + "api/auth/resendConfirmation";
+                const string authUrl = ConfigConstants.AuthUrl + "api/auth/resendConfirmation";
 
                 using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -189,7 +189,7 @@ namespace SS14.Launcher
                     Token = token
                 };
 
-                const string authUrl = UrlConstants.AuthUrl + "api/auth/logout";
+                const string authUrl = ConfigConstants.AuthUrl + "api/auth/logout";
 
                 using var resp = await _httpClient.PostAsync(authUrl, request);
 

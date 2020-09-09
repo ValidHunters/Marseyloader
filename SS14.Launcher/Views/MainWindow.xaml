@@ -16,6 +16,10 @@
     <vm:MainWindowViewModel />
   </Design.DataContext>
 
+  <Window.Resources>
+    <SolidColorBrush x:Key="OverlayBrush" Color="#99000000" />
+  </Window.Resources>
+
   <Panel>
     <DockPanel LastChildFill="true">
       <!-- Header -->
@@ -61,22 +65,38 @@
           DataContext="{Binding LoginViewModel}" />
       </Grid>
     </DockPanel>
-    <Panel IsVisible="{Binding LoginViewModel.Screen.OverlayControl, Converter={x:Static ObjectConverters.IsNotNull}}">
-      <Panel.Background>
-        <SolidColorBrush Color="#99000000" />
-      </Panel.Background>
-
+    <Panel Background="{StaticResource OverlayBrush}"
+           IsVisible="{Binding LoginViewModel.Screen.OverlayControl, Converter={x:Static ObjectConverters.IsNotNull}}">
       <ContentControl Content="{Binding LoginViewModel.Screen.OverlayControl}" />
     </Panel>
-    <Panel IsVisible="{Binding LoginViewModel.Screen.Busy}">
-      <Panel.Background>
-        <SolidColorBrush Color="#99000000" />
-      </Panel.Background>
+    <Panel Background="{StaticResource OverlayBrush}" IsVisible="{Binding LoginViewModel.Screen.Busy}">
       <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-        <Viewbox Width="72" Height="72" HorizontalAlignment="Center" >
+        <Viewbox Width="72" Height="72" HorizontalAlignment="Center">
           <v:DungSpinner DockPanel.Dock="Top" />
         </Viewbox>
         <TextBlock Text="{Binding LoginViewModel.Screen.BusyText}" HorizontalAlignment="Center" />
+      </StackPanel>
+    </Panel>
+
+    <Panel Background="{StaticResource OverlayBrush}"
+           IsVisible="{Binding BusyTask,Converter={x:Static ObjectConverters.IsNotNull}}">
+      <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+        <Viewbox Width="72" Height="72" HorizontalAlignment="Center">
+          <v:DungSpinner DockPanel.Dock="Top" />
+        </Viewbox>
+        <TextBlock Text="{Binding BusyTask}" HorizontalAlignment="Center" />
+      </StackPanel>
+    </Panel>
+
+    <Panel Background="{StaticResource OverlayBrush}" IsVisible="{Binding OutOfDate}">
+      <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock HorizontalAlignment="Center" Classes="NanoHeadingMedium" Text="Launcher out of date" />
+        <TextBlock Margin="0, 10" TextAlignment="Center"
+                   Text="This launcher is out of date.&#x0a;Please download a new version from our website." />
+        <DockPanel LastChildFill="False">
+          <Button DockPanel.Dock="Right" Content="Exit" Command="{Binding ExitPressed}" />
+          <Button DockPanel.Dock="Left" Content="Download (manual)" Command="{Binding DownloadPressed}" />
+        </DockPanel>
       </StackPanel>
     </Panel>
   </Panel>

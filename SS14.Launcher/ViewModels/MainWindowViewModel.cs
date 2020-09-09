@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
 using SS14.Launcher.ViewModels.MainWindowTabs;
 using SS14.Launcher.Views;
@@ -14,6 +15,8 @@ namespace SS14.Launcher.ViewModels
         private const string CurrentLauncherVersion = "5";
 
         private int _selectedIndex;
+
+        [Reactive] public bool OutOfDate { get; private set; }
 
         public MainWindowViewModel(ConfigurationManager cfg, ServerStatusCache statusCache, Updater updater)
         {
@@ -65,6 +68,8 @@ namespace SS14.Launcher.ViewModels
 
         public MainWindowLoginViewModel LoginViewModel { get; }
 
+        [Reactive] public string? BusyTask { get; private set; }
+
         public int SelectedIndex
         {
             get => _selectedIndex;
@@ -73,45 +78,46 @@ namespace SS14.Launcher.ViewModels
 
         public async void OnWindowInitialized()
         {
+            BusyTask = "Checking for launcher update...";
             await CheckLauncherUpdate();
+            BusyTask = "Refreshing login status...";
+            await CheckAccounts();
+            BusyTask = null;
+        }
+
+        private async Task CheckAccounts()
+        {
+            // Check if accounts are still valid and refresh their tokens if necessary.
         }
 
         public void OnDiscordButtonPressed()
         {
-            Helpers.OpenUri(new Uri(UrlConstants.DiscordUrl));
+            Helpers.OpenUri(new Uri(ConfigConstants.DiscordUrl));
         }
 
         public void OnWebsiteButtonPressed()
         {
-            Helpers.OpenUri(new Uri(UrlConstants.WebsiteUrl));
+            Helpers.OpenUri(new Uri(ConfigConstants.WebsiteUrl));
         }
 
-        private async Task<bool> CheckLauncherUpdate()
+        private async Task CheckLauncherUpdate()
         {
+            await Task.Delay(1000);
             var launcherVersionUri =
                 new Uri($"{Updater.JenkinsBaseUrl}/userContent/current_launcher_version.txt");
             var versionRequest = await Global.GlobalHttpClient.GetAsync(launcherVersionUri);
             versionRequest.EnsureSuccessStatusCode();
-            var outOfDate = CurrentLauncherVersion != (await versionRequest.Content.ReadAsStringAsync()).Trim();
+            OutOfDate = CurrentLauncherVersion != (await versionRequest.Content.ReadAsStringAsync()).Trim();
+        }
 
-            if (!outOfDate)
-            {
-                return true;
-            }
+        public void ExitPressed()
+        {
+            Control?.Close();
+        }
 
-            async void ShowDialog()
-            {
-                // I seriously had an issue where the dialog opened too quickly so it didn't get placed correctly.
-                await Task.Delay(100);
-
-                await new OutOfDateDialog().ShowDialog(Control);
-
-                Control?.Close();
-            }
-
-            ShowDialog();
-
-            return false;
+        public void DownloadPressed()
+        {
+            Helpers.OpenUri(new Uri(ConfigConstants.DownloadUrl));
         }
     }
 }
