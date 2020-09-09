@@ -9,6 +9,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Launcher.Tests", "SS14
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Launcher.Bootstrap", "SS14.Launcher.Bootstrap\SS14.Launcher.Bootstrap.csproj", "{505C4E21-0B62-4F1E-82C6-8FDBA914757A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{74308C97-2AE3-47FC-9FD8-011EA9A597D3}"
+ProjectSection(SolutionItems) = preProject
+	.editorconfig = .editorconfig
+	.gitattributes = .gitattributes
+	.gitignore = .gitignore
+	nuget.config = nuget.config
+	Readme.md = Readme.md
+	LICENSE.txt = LICENSE.txt
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
