@@ -5,6 +5,7 @@ using Avalonia.ReactiveUI;
 using Serilog;
 using Serilog.Events;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
 

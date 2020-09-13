@@ -5,6 +5,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Robust.Shared.AuthLib;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.ViewModels.Login
 {
@@ -13,6 +14,7 @@ namespace SS14.Launcher.ViewModels.Login
         private readonly DataManager _cfg;
         public MainWindowLoginViewModel ParentVM { get; }
         private readonly AuthApi _authApi;
+        private readonly LoginManager _loginMgr;
 
         [Reactive] public string EditingUsername { get; set; } = "";
         [Reactive] public string EditingPassword { get; set; } = "";
@@ -23,11 +25,12 @@ namespace SS14.Launcher.ViewModels.Login
         [Reactive] public string InvalidReason { get; private set; } = " ";
 
 
-        public RegisterViewModel(DataManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
+        public RegisterViewModel(DataManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi, LoginManager loginMgr)
         {
             _cfg = cfg;
             ParentVM = parentVm;
             _authApi = authApi;
+            _loginMgr = loginMgr;
 
             this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword, x => x.EditingPasswordConfirm,
                     x => x.EditingEmail)
@@ -115,7 +118,7 @@ namespace SS14.Launcher.ViewModels.Login
                             }
 
                             _cfg.AddLogin(loginInfo);
-                            _cfg.SelectedLoginId = loginInfo.UserId;
+                            _loginMgr.ActiveAccountId = loginInfo.UserId;
                         }
                         else
                         {

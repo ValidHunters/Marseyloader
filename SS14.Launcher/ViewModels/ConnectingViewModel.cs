@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using ReactiveUI;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Views;
 
 namespace SS14.Launcher.ViewModels
@@ -119,9 +120,9 @@ namespace SS14.Launcher.ViewModels
                 _ => ""
             };
 
-        public static void StartConnect(Updater updater, DataManager cfg, Window window, string address)
+        public static void StartConnect(Updater updater, DataManager cfg, LoginManager loginMgr, Window window, string address)
         {
-            var connector = new Connector(updater, cfg);
+            var connector = new Connector(updater, cfg, loginMgr);
             var connectionViewModel = new ConnectingViewModel(connector, updater);
             var dialog = new ConnectingDialog {DataContext = connectionViewModel};
             connectionViewModel.Window = dialog;

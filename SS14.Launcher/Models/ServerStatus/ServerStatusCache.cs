@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models.ServerStatus
 {
     /// <summary>
     ///     Caches information pulled from servers and updates it asynchronously.

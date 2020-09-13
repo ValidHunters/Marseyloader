@@ -9,6 +9,8 @@ using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
+using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.Views;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
@@ -20,14 +22,16 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly DataManager _cfg;
         private readonly ServerStatusCache _statusCache;
         private readonly Updater _updater;
+        private readonly LoginManager _loginMgr;
 
         public HomePageViewModel(MainWindowViewModel mainWindowViewModel, DataManager cfg,
-            ServerStatusCache statusCache, Updater updater)
+            ServerStatusCache statusCache, Updater updater, LoginManager loginMgr)
         {
             MainWindowViewModel = mainWindowViewModel;
             _cfg = cfg;
             _statusCache = statusCache;
             _updater = updater;
+            _loginMgr = loginMgr;
 
             _cfg.FavoriteServers
                 .Connect()
@@ -55,7 +59,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 return;
             }
 
-            ConnectingViewModel.StartConnect(_updater, _cfg, window!, res);
+            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, window!, res);
         }
 
         public async void AddFavoritePressed()
@@ -97,7 +101,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                     continue;
                 }
 
-                var serverEntryViewModel = new ServerEntryViewModel(_statusCache, _cfg, _updater, favoriteServer);
+                var serverEntryViewModel = new ServerEntryViewModel(_statusCache, _cfg, _updater, _loginMgr, favoriteServer);
                 serverEntryViewModel.DoInitialUpdate();
                 _favorites.Add(serverEntryViewModel);
             }

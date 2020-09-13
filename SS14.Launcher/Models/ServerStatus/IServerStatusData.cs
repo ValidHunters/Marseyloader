@@ -1,7 +1,7 @@
 using System;
 using ReactiveUI;
 
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models.ServerStatus
 {
     /// <summary>
     ///     Contains data about the status of a single server.

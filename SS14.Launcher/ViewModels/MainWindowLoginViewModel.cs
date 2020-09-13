@@ -1,5 +1,6 @@
 using ReactiveUI;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
 using SS14.Launcher.ViewModels.Login;
 
 namespace SS14.Launcher.ViewModels
@@ -8,6 +9,7 @@ namespace SS14.Launcher.ViewModels
     {
         private readonly DataManager _cfg;
         private readonly AuthApi _authApi;
+        private readonly LoginManager _loginMgr;
         private BaseLoginViewModel _screen;
 
         public BaseLoginViewModel Screen
@@ -20,10 +22,11 @@ namespace SS14.Launcher.ViewModels
             }
         }
 
-        public MainWindowLoginViewModel(DataManager cfg, AuthApi authApi)
+        public MainWindowLoginViewModel(DataManager cfg, AuthApi authApi, LoginManager loginMgr)
         {
             _cfg = cfg;
             _authApi = authApi;
+            _loginMgr = loginMgr;
 
             _screen = default!;
             SwitchToLogin();
@@ -33,12 +36,17 @@ namespace SS14.Launcher.ViewModels
 
         public void SwitchToLogin()
         {
-            Screen = new LoginViewModel(_cfg, this, _authApi);
+            Screen = new LoginViewModel(_cfg, this, _authApi, _loginMgr);
+        }
+
+        public void SwitchToExpiredLogin(LoggedInAccount account)
+        {
+            Screen = new ExpiredLoginViewModel(_cfg, this, _authApi, _loginMgr, account);
         }
 
         public void SwitchToRegister()
         {
-            Screen = new RegisterViewModel(_cfg, this, _authApi);
+            Screen = new RegisterViewModel(_cfg, this, _authApi, _loginMgr);
         }
 
         public void SwitchToForgotPassword()
@@ -53,7 +61,7 @@ namespace SS14.Launcher.ViewModels
 
         public void SwitchToRegisterNeedsConfirmation(string username, string password)
         {
-            Screen = new RegisterNeedsConfirmationViewModel(_cfg, this, _authApi, username, password);
+            Screen = new RegisterNeedsConfirmationViewModel(_cfg, this, _authApi, username, password, _loginMgr);
         }
     }
 }

@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:SS14.Launcher.ViewModels"
              xmlns:v="clr-namespace:SS14.Launcher.Views"
-             xmlns:models="clr-namespace:SS14.Launcher.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.AccountDropDown">
 
@@ -24,10 +23,10 @@
 
         <ItemsControl Name="Items" Items="{Binding Accounts}">
           <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="models:LoginInfo">
-              <Button Content="{Binding Username}" Margin="4"
+            <DataTemplate DataType="vm:AvailableAccountViewModel">
+              <Button Content="{Binding StatusText}" Margin="4"
                       Command="{Binding #Items.DataContext.AccountButtonPressed}"
-                      CommandParameter="{Binding UserId}" />
+                      CommandParameter="{Binding Account}" />
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>

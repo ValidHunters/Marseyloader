@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.ViewModels.Login
 {
@@ -11,16 +12,18 @@ namespace SS14.Launcher.ViewModels.Login
         private readonly DataManager _cfg;
         public MainWindowLoginViewModel ParentVM { get; }
         private readonly AuthApi _authApi;
+        private readonly LoginManager _loginMgr;
 
         [Reactive] public string EditingUsername { get; set; } = "";
         [Reactive] public string EditingPassword { get; set; } = "";
 
         [Reactive] public bool IsInputValid { get; private set; }
 
-        public LoginViewModel(DataManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi)
+        public LoginViewModel(DataManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi, LoginManager loginMgr)
         {
             BusyText = "Logging in...";
             _authApi = authApi;
+            _loginMgr = loginMgr;
             _cfg = cfg;
             ParentVM = parentVm;
 
@@ -49,13 +52,13 @@ namespace SS14.Launcher.ViewModels.Login
                         // Thanks user.
                         // Log the token out since we don't need it.
 
-                        await _authApi.LogoutTokenAsync(loginInfo.Token);
-                        _cfg.SelectedLoginId = loginInfo.UserId;
+                        await _authApi.LogoutTokenAsync(loginInfo.Token.Token);
+                        _loginMgr.ActiveAccountId = loginInfo.UserId;
                         return;
                     }
 
                     _cfg.AddLogin(loginInfo);
-                    _cfg.SelectedLoginId = loginInfo.UserId;
+                    _loginMgr.ActiveAccountId = loginInfo.UserId;
                 }
                 else
                 {

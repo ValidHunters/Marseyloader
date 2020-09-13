@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.ViewModels.Login
 {
@@ -17,6 +18,7 @@ namespace SS14.Launcher.ViewModels.Login
 
         private readonly string _loginUsername;
         private readonly string _loginPassword;
+        private readonly LoginManager _loginMgr;
 
         public bool ConfirmButtonEnabled => TimeoutSecondsLeft == 0;
         public string ConfirmButtonText
@@ -36,7 +38,7 @@ namespace SS14.Launcher.ViewModels.Login
         [Reactive] private int TimeoutSecondsLeft { get; set; }
 
         public RegisterNeedsConfirmationViewModel(DataManager cfg, MainWindowLoginViewModel parentVm,
-            AuthApi authApi, string username, string password)
+            AuthApi authApi, string username, string password, LoginManager loginMgr)
         {
             BusyText = "Logging in...";
             _cfg = cfg;
@@ -45,6 +47,7 @@ namespace SS14.Launcher.ViewModels.Login
 
             _loginUsername = username;
             _loginPassword = password;
+            _loginMgr = loginMgr;
 
             this.WhenAnyValue(p => p.TimeoutSecondsLeft)
                 .Subscribe(_ =>
@@ -77,19 +80,20 @@ namespace SS14.Launcher.ViewModels.Login
                 if (_cfg.Logins.Lookup(loginInfo.UserId).HasValue)
                 {
                     // Already had a login like this??
-                    await _authApi.LogoutTokenAsync(loginInfo.Token);
+                    await _authApi.LogoutTokenAsync(loginInfo.Token.Token);
 
-                    _cfg.SelectedLoginId = loginInfo.UserId;
+                    _loginMgr.ActiveAccountId = loginInfo.UserId;
                     ParentVM.SwitchToLogin();
                     return;
                 }
 
                 _cfg.AddLogin(loginInfo);
-                _cfg.SelectedLoginId = loginInfo.UserId;
+                _loginMgr.ActiveAccountId = loginInfo.UserId;
                 ParentVM.SwitchToLogin();
             }
             else
             {
+                Busy = false;
                 OverlayControl = new AuthErrorsOverlayViewModel(this, "Unable to log in", resp.Errors);
             }
         }

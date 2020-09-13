@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Serilog;
@@ -25,16 +26,32 @@ namespace SS14.Launcher
             _httpClient.DefaultRequestHeaders.Add("SS14-Launcher-Fingerprint", _config.Fingerprint.ToString());
         }
 
-        public async Task<AuthenticateResult> AuthenticateAsync(string username, string password)
+        public Task<AuthenticateResult> AuthenticateAsync(Guid userId, string password)
+        {
+            var request = new AuthenticateRequest
+            {
+                UserId = userId,
+                Password = password
+            };
+
+            return AuthenticateImpl(request);
+        }
+
+        public Task<AuthenticateResult> AuthenticateAsync(string username, string password)
+        {
+            var request = new AuthenticateRequest
+            {
+                Username = username,
+                Password = password
+            };
+
+            return AuthenticateImpl(request);
+        }
+
+        private async Task<AuthenticateResult> AuthenticateImpl(AuthenticateRequest request)
         {
             try
             {
-                var request = new AuthenticateRequest
-                {
-                    Username = username,
-                    Password = password
-                };
-
                 const string authUrl = ConfigConstants.AuthUrl + "api/auth/authenticate";
 
                 using var resp = await _httpClient.PostAsync(authUrl, request);
@@ -42,10 +59,11 @@ namespace SS14.Launcher
                 if (resp.IsSuccessStatusCode)
                 {
                     var respJson = await resp.Content.AsJson<AuthenticateResponse>();
+                    var token = new LoginToken(respJson.Token, DateTimeOffset.Parse(respJson.ExpireTime));
                     return new AuthenticateResult(new LoginInfo
                     {
                         UserId = respJson.UserId,
-                        Token = respJson.Token,
+                        Token = token,
                         Username = respJson.Username
                     });
                 }
@@ -180,6 +198,56 @@ namespace SS14.Launcher
             }
         }
 
+        /// <returns>Null if the server refused to refresh the token (it expired).</returns>
+        /// <exception cref="AuthApiException">
+        ///     Thrown if an unexpected error occured.
+        /// </exception>
+        public async Task<LoginToken?> RefreshTokenAsync(string token)
+        {
+            try
+            {
+                var request = new RefreshRequest
+                {
+                    Token = token
+                };
+
+                const string authUrl = ConfigConstants.AuthUrl + "api/auth/refresh";
+
+                using var resp = await _httpClient.PostAsync(authUrl, request);
+
+                if (resp.IsSuccessStatusCode)
+                {
+                    var response = await resp.Content.AsJson<RefreshResponse>();
+                    var time = DateTimeOffset.Parse(response.ExpireTime);
+
+                    return new LoginToken(response.NewToken, time);
+                }
+
+                if (resp.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Log.Warning("Got unauthorized while trying to refresh token. Guess it expired.");
+
+                    return null;
+                }
+
+                // Unknown error? uh oh.
+                Log.Error("Server returned unexpected HTTP status code: {responseCode}", resp.StatusCode);
+                Log.Debug("Response for error:\n{response}\n{content}", resp, await resp.Content.ReadAsStringAsync());
+
+                throw new AuthApiException($"Server returned unexpected HTTP status code: {resp.StatusCode}");
+            }
+            catch (HttpRequestException httpE)
+            {
+                Log.Error(httpE, "HttpRequestException in ResendConfirmationAsync");
+                throw new AuthApiException("HttpRequestException thrown", httpE);
+            }
+            catch (JsonException jsonE)
+            {
+                Log.Error(jsonE, "JsonException in ResendConfirmationAsync");
+                throw new AuthApiException("JsonException thrown", jsonE);
+            }
+        }
+
         public async Task LogoutTokenAsync(string token)
         {
             try
@@ -209,9 +277,50 @@ namespace SS14.Launcher
             }
         }
 
+        /// <summary>
+        ///     Check if a token is still valid.
+        /// </summary>
+        /// <returns>True if the token is still valid.</returns>
+        /// <exception cref="AuthApiException">
+        ///     Thrown if an unexpected error occured.
+        /// </exception>
+        public async Task<bool> CheckTokenAsync(string token)
+        {
+            try
+            {
+                const string authUrl = ConfigConstants.AuthUrl + "api/auth/ping";
+
+                using var requestMessage = new HttpRequestMessage(HttpMethod.Get, authUrl);
+                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("SS14Auth", token);
+                using var resp = await _httpClient.SendAsync(requestMessage);
+
+                if (resp.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+
+                if (resp.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return false;
+                }
+
+                // Unknown error? uh oh.
+                Log.Error("Server returned unexpected HTTP status code: {responseCode}", resp.StatusCode);
+                Log.Debug("Response for error:\n{response}\n{content}", resp, await resp.Content.ReadAsStringAsync());
+                throw new AuthApiException($"Server returned unexpected HTTP status code: {resp.StatusCode}");
+            }
+            catch (HttpRequestException httpE)
+            {
+                // Does it make sense to just... swallow this exception? The token will stay "active" until it expires.
+                Log.Error(httpE, "HttpRequestException in CheckTokenAsync");
+                throw new AuthApiException("HttpRequestException thrown", httpE);
+            }
+        }
+
         public sealed class AuthenticateRequest
         {
-            public string Username { get; set; } = default!;
+            public string? Username { get; set; }
+            public Guid? UserId { get; set; }
             public string Password { get; set; } = default!;
         }
 
@@ -220,6 +329,7 @@ namespace SS14.Launcher
             public string Token { get; set; } = default!;
             public string Username { get; set; } = default!;
             public Guid UserId { get; set; }
+            public string ExpireTime { get; set; } = default!;
         }
 
         public sealed class AuthenticateDenyResponse
@@ -257,6 +367,17 @@ namespace SS14.Launcher
         public sealed class LogoutRequest
         {
             public string Token { get; set; } = default!;
+        }
+
+        public sealed class RefreshRequest
+        {
+            public string Token { get; set; }
+        }
+
+        public sealed class RefreshResponse
+        {
+            public string NewToken { get; set; }
+            public string ExpireTime { get; set; }
         }
     }
 
@@ -318,5 +439,27 @@ namespace SS14.Launcher
     {
         Registered,
         RegisteredNeedConfirmation
+    }
+
+    [Serializable]
+    public class AuthApiException : Exception
+    {
+        public AuthApiException()
+        {
+        }
+
+        public AuthApiException(string message) : base(message)
+        {
+        }
+
+        public AuthApiException(string message, Exception inner) : base(message, inner)
+        {
+        }
+
+        protected AuthApiException(
+            SerializationInfo info,
+            StreamingContext context) : base(info, context)
+        {
+        }
     }
 }

@@ -1,4 +1,4 @@
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models.ServerStatus
 {
     public enum ServerStatusCode
     {

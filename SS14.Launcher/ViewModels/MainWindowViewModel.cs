@@ -5,6 +5,8 @@ using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
+using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.ViewModels.MainWindowTabs;
 using SS14.Launcher.Views;
 
@@ -13,6 +15,7 @@ namespace SS14.Launcher.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly DataManager _cfg;
+        private readonly LoginManager _loginMgr;
 
         private int _selectedIndex;
 
@@ -28,11 +31,11 @@ namespace SS14.Launcher.ViewModels
         {
             _cfg = cfg;
             var authApi = new AuthApi(cfg);
-            var loginManager = new LoginManager(cfg, authApi);
+            _loginMgr = new LoginManager(cfg, authApi);
 
-            ServersTab = new ServerListTabViewModel(cfg, statusCache, updater);
+            ServersTab = new ServerListTabViewModel(cfg, statusCache, updater, _loginMgr);
             NewsTab = new NewsTabViewModel();
-            HomeTab = new HomePageViewModel(this, cfg, statusCache, updater);
+            HomeTab = new HomePageViewModel(this, cfg, statusCache, updater, _loginMgr);
             OptionsTab = new OptionsTabViewModel();
 
             Tabs = new MainWindowTabViewModel[]
@@ -45,7 +48,7 @@ namespace SS14.Launcher.ViewModels
 
             this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
 
-            this.WhenAnyValue(x => x._cfg.SelectedLogin)
+            this.WhenAnyValue(x => x._loginMgr.ActiveAccount)
                 .Subscribe(_ =>
                 {
                     this.RaisePropertyChanged(nameof(Username));
@@ -57,19 +60,19 @@ namespace SS14.Launcher.ViewModels
             _cfg.Logins.Connect()
                 .Subscribe(_ => { this.RaisePropertyChanged(nameof(AccountDropDownVisible)); });
 
-            AccountDropDown = new AccountDropDownViewModel(cfg, authApi);
-            LoginViewModel = new MainWindowLoginViewModel(cfg, authApi);
+            AccountDropDown = new AccountDropDownViewModel(this, cfg, authApi, _loginMgr);
+            LoginViewModel = new MainWindowLoginViewModel(cfg, authApi, _loginMgr);
         }
 
         public MainWindow? Control { get; set; }
 
         public IReadOnlyList<MainWindowTabViewModel> Tabs { get; }
 
-        public bool LoggedIn => _cfg.SelectedLoginId != null;
+        public bool LoggedIn => _loginMgr.ActiveAccount != null;
         public string LoginText => LoggedIn ? $"'Logged in' as {Username}." : "Not logged in.";
         public string ManageAccountText => LoggedIn ? "Change Account..." : "Log in...";
-        private string? Username => _cfg.SelectedLogin?.Username;
-        public bool AccountDropDownVisible => _cfg.Logins.Count != 0;
+        private string? Username => _loginMgr.ActiveAccount?.Username;
+        public bool AccountDropDownVisible => _loginMgr.Logins.Count != 0;
 
         public AccountDropDownViewModel AccountDropDown { get; }
 
@@ -95,6 +98,7 @@ namespace SS14.Launcher.ViewModels
         private async Task CheckAccounts()
         {
             // Check if accounts are still valid and refresh their tokens if necessary.
+            await _loginMgr.Initialize();
         }
 
         public void OnDiscordButtonPressed()
@@ -109,7 +113,7 @@ namespace SS14.Launcher.ViewModels
 
         private async Task CheckLauncherUpdate()
         {
-            await Task.Delay(1000);
+            // await Task.Delay(1000);
             var launcherVersionUri =
                 new Uri($"{Updater.JenkinsBaseUrl}/userContent/current_launcher_version.txt");
             var versionRequest = await Global.GlobalHttpClient.GetAsync(launcherVersionUri);

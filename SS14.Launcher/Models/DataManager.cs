@@ -53,6 +53,11 @@ namespace SS14.Launcher.Models
 
             _logins.Connect()
                 .Subscribe(_ => Save());
+
+            _logins
+                .Connect()
+                .WhenAnyPropertyChanged()
+                .Subscribe(_ => Save());
         }
 
         public Guid Fingerprint => _fingerprint;
@@ -68,21 +73,7 @@ namespace SS14.Launcher.Models
                 }
 
                 this.RaiseAndSetIfChanged(ref _selectedLogin, value, nameof(SelectedLoginId));
-                this.RaisePropertyChanged(nameof(SelectedLogin));
                 Save();
-            }
-        }
-
-        public LoginInfo? SelectedLogin
-        {
-            get
-            {
-                if (_selectedLogin == null)
-                {
-                    return null;
-                }
-
-                return _logins.Lookup(_selectedLogin.Value).Value;
             }
         }
 
@@ -165,7 +156,8 @@ namespace SS14.Launcher.Models
 
                 using var changeSuppress = SuppressChangeNotifications();
 
-                var data = JsonConvert.DeserializeObject<JsonData>(File.ReadAllText(path));
+                var text = File.ReadAllText(path);
+                var data = JsonConvert.DeserializeObject<JsonData>(text);
 
                 _nextInstallationId = data.NextInstallationId;
 

@@ -10,6 +10,7 @@ using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
+using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.Models
 {
@@ -17,14 +18,16 @@ namespace SS14.Launcher.Models
     {
         private readonly Updater _updater;
         private readonly DataManager _cfg;
+        private readonly LoginManager _loginManager;
 
         private ConnectionStatus _status = ConnectionStatus.None;
         private bool _clientExitedBadly;
 
-        public Connector(Updater updater, DataManager cfg)
+        public Connector(Updater updater, DataManager cfg, LoginManager loginManager)
         {
             _updater = updater;
             _cfg = cfg;
+            _loginManager = loginManager;
         }
 
         public ConnectionStatus Status
@@ -108,7 +111,7 @@ namespace SS14.Launcher.Models
 
                 // Pass username to launched client.
                 // We don't load username from client_config.toml when launched via launcher.
-                "--username", _cfg.SelectedLogin?.Username ?? "JoeGenero",
+                "--username", _loginManager.ActiveAccount?.Username ?? "JoeGenero",
 
                 // Connection address
                 "--connect-address", connectAddress.ToString(),

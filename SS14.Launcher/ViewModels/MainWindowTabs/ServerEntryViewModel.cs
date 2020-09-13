@@ -4,6 +4,8 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using ReactiveUI;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
+using SS14.Launcher.Models.ServerStatus;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
@@ -15,16 +17,18 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly IServerStatusData _cacheData;
         private readonly DataManager _cfg;
         private readonly Updater _updater;
+        private readonly LoginManager _loginMgr;
         private bool _isAltBackground;
         private string Address => _cacheData.Address;
         private string _fallbackName = string.Empty;
 
-        public ServerEntryViewModel(ServerStatusCache cache, DataManager cfg, Updater updater, string address)
+        public ServerEntryViewModel(ServerStatusCache cache, DataManager cfg, Updater updater, LoginManager loginMgr, string address)
         {
             _cache = cache;
             _cacheData = cache.GetStatusFor(address);
             _cfg = cfg;
             _updater = updater;
+            _loginMgr = loginMgr;
 
             this.WhenAnyValue(x => x.IsAltBackground)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(BackgroundColor)));
@@ -49,9 +53,9 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 .Subscribe(_ => { this.RaisePropertyChanged(nameof(FavoriteButtonText)); });
         }
 
-        public ServerEntryViewModel(ServerStatusCache cache, DataManager cfg, Updater updater,
+        public ServerEntryViewModel(ServerStatusCache cache, DataManager cfg, Updater updater, LoginManager loginMgr,
             FavoriteServer favorite)
-            : this(cache, cfg, updater, favorite.Address)
+            : this(cache, cfg, updater, loginMgr, favorite.Address)
         {
             Favorite = favorite;
         }
@@ -65,7 +69,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public void ConnectPressed()
         {
-            ConnectingViewModel.StartConnect(_updater, _cfg, (Window) Control?.GetVisualRoot()!, Address);
+            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, (Window) Control?.GetVisualRoot()!, Address);
         }
 
         public FavoriteServer? Favorite { get; }

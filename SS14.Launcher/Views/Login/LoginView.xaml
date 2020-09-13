@@ -10,39 +10,37 @@
     <vml:LoginViewModel />
   </Design.DataContext>
 
-  <Panel>
-    <DockPanel LastChildFill="False">
-      <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium" Text="Log in" />
+  <DockPanel LastChildFill="False">
+    <TextBlock HorizontalAlignment="Center" DockPanel.Dock="Top" Classes="NanoHeadingMedium" Text="Log in" />
 
-      <TextBox DockPanel.Dock="Top" Name="NameBox" MaxWidth="300" Margin="0, 10, 0, 0"
-               Watermark="Username or email"
-               Text="{Binding EditingUsername, Mode=TwoWay}" IsEnabled="{Binding !Busy}" />
+    <TextBox DockPanel.Dock="Top" Name="NameBox" MaxWidth="300" Margin="0, 10, 0, 0"
+             Watermark="Username or email"
+             Text="{Binding EditingUsername, Mode=TwoWay}" IsEnabled="{Binding !Busy}" />
 
-      <TextBox DockPanel.Dock="Top" Name="PasswordBox" MaxWidth="300" Margin="0, 20, 0, 0" Watermark="Password"
-               Text="{Binding EditingPassword, Mode=TwoWay}" PasswordChar="•" IsEnabled="{Binding !Busy}" />
+    <TextBox DockPanel.Dock="Top" Name="PasswordBox" MaxWidth="300" Margin="0, 4, 0, 0" Watermark="Password"
+             Text="{Binding EditingPassword, Mode=TwoWay}" PasswordChar="•" IsEnabled="{Binding !Busy}" />
 
-      <DockPanel DockPanel.Dock="Top" LastChildFill="False" MaxWidth="300" Margin="0 20 0 0">
-        <Button DockPanel.Dock="Right" HorizontalAlignment="Center"
-                Content="Log in" Command="{Binding OnLogInButtonPressed}">
-          <Button.IsEnabled>
-            <MultiBinding Converter="{x:Static BoolConverters.And}">
-              <Binding Path="IsInputValid" />
-              <Binding Path="!Busy" />
-            </MultiBinding>
-          </Button.IsEnabled>
-        </Button>
+    <DockPanel DockPanel.Dock="Top" LastChildFill="False" MaxWidth="300" Margin="0 20 0 0">
+      <Button DockPanel.Dock="Right" HorizontalAlignment="Center"
+              Content="Log in" Command="{Binding OnLogInButtonPressed}">
+        <Button.IsEnabled>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="IsInputValid" />
+            <Binding Path="!Busy" />
+          </MultiBinding>
+        </Button.IsEnabled>
+      </Button>
 
-        <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Forgot your password?"
-                Command="{Binding ParentVM.SwitchToForgotPassword}" IsEnabled="{Binding !Busy}" />
-      </DockPanel>
-
-      <DockPanel DockPanel.Dock="Top" LastChildFill="False" MaxWidth="300">
-          <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Resend email confirmation" Command="{Binding ParentVM.SwitchToResendConfirmation}"/>
-      </DockPanel>
-
-      <Button DockPanel.Dock="Bottom" Classes="BigButton" Margin="0 4" HorizontalAlignment="Center"
-              Content="Don't have an account? Register!" Command="{Binding ParentVM.SwitchToRegister}"
-              IsEnabled="{Binding !Busy}" />
+      <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Forgot your password?"
+              Command="{Binding ParentVM.SwitchToForgotPassword}" IsEnabled="{Binding !Busy}" />
     </DockPanel>
-  </Panel>
+
+    <DockPanel DockPanel.Dock="Top" LastChildFill="False" MaxWidth="300">
+        <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Resend email confirmation" Command="{Binding ParentVM.SwitchToResendConfirmation}"/>
+    </DockPanel>
+
+    <Button DockPanel.Dock="Bottom" Classes="BigButton" Margin="0 4" HorizontalAlignment="Center"
+            Content="Don't have an account? Register!" Command="{Binding ParentVM.SwitchToRegister}"
+            IsEnabled="{Binding !Busy}" />
+  </DockPanel>
 </UserControl>

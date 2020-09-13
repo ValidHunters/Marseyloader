@@ -9,6 +9,8 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Logins;
+using SS14.Launcher.Models.ServerStatus;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
@@ -17,6 +19,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly DataManager _cfg;
         private readonly ServerStatusCache _statusCache;
         private readonly Updater _updater;
+        private readonly LoginManager _loginMgr;
 
         public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
             = new ObservableCollection<ServerEntryViewModel>();
@@ -60,11 +63,12 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
         }
 
-        public ServerListTabViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater)
+        public ServerListTabViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater, LoginManager loginMgr)
         {
             _cfg = cfg;
             _statusCache = statusCache;
             _updater = updater;
+            _loginMgr = loginMgr;
 
             AllServers.CollectionChanged += (s, e) =>
             {
@@ -142,7 +146,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 Status = RefreshListStatus.Updated;
 
                 AllServers.AddRange(entries.Select(e =>
-                    new ServerEntryViewModel(_statusCache, _cfg, _updater, e.Address)
+                    new ServerEntryViewModel(_statusCache, _cfg, _updater, _loginMgr, e.Address)
                     {
                         FallbackName = e.Name
                     }));
