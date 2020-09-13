@@ -62,8 +62,6 @@ namespace SS14.Launcher.ViewModels
 
         public string LoginText => _loginMgr.ActiveAccount?.Username ?? "No account selected";
 
-        public AccountDropDown? Control { get; set; }
-
         public string LogoutText => _cfg.Logins.Count == 1 ? "Log out" : $"Log out of {_loginMgr.ActiveAccount?.Username}";
 
         public bool AccountSwitchVisible => _cfg.Logins.Count > 1 || _loginMgr.ActiveAccount == null;

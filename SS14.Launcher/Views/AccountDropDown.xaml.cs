@@ -1,9 +1,6 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using ReactiveUI.Fody.Helpers;
-using SS14.Launcher.ViewModels;
 
 namespace SS14.Launcher.Views
 {
@@ -18,8 +15,6 @@ namespace SS14.Launcher.Views
             set => SetValue(IsDropDownOpenProperty, value);
         }
 
-        [Reactive] private AccountDropDownViewModel? _viewModel { get; set; }
-
         public AccountDropDown()
         {
             InitializeComponent();
@@ -28,23 +23,6 @@ namespace SS14.Launcher.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-        }
-
-        protected override void OnDataContextChanged(EventArgs e)
-        {
-            if (_viewModel != null)
-            {
-                _viewModel.Control = null;
-            }
-
-            _viewModel = DataContext as AccountDropDownViewModel;
-
-            if (_viewModel != null)
-            {
-                _viewModel.Control = this;
-            }
-
-            base.OnDataContextChanged(e);
         }
     }
 }
