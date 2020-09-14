@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DynamicData;
 using ReactiveUI;
@@ -46,10 +47,13 @@ namespace SS14.Launcher.ViewModels
                 OptionsTab
             };
 
+            AccountDropDown = new AccountDropDownViewModel(this, cfg, authApi, _loginMgr);
+            LoginViewModel = new MainWindowLoginViewModel(cfg, authApi, _loginMgr);
+
             this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
 
             this.WhenAnyValue(x => x._loginMgr.ActiveAccount)
-                .Subscribe(_ =>
+                .Subscribe(s =>
                 {
                     this.RaisePropertyChanged(nameof(Username));
                     this.RaisePropertyChanged(nameof(LoggedIn));
@@ -60,8 +64,12 @@ namespace SS14.Launcher.ViewModels
             _cfg.Logins.Connect()
                 .Subscribe(_ => { this.RaisePropertyChanged(nameof(AccountDropDownVisible)); });
 
-            AccountDropDown = new AccountDropDownViewModel(this, cfg, authApi, _loginMgr);
-            LoginViewModel = new MainWindowLoginViewModel(cfg, authApi, _loginMgr);
+            // If we leave the login view model (by an account getting selected)
+            // we reset it to login state
+            this.WhenAnyValue(x => x.LoggedIn)
+                .DistinctUntilChanged() // Only when change.
+                .Where(p => !p)
+                .Subscribe(x => LoginViewModel.SwitchToLogin());
         }
 
         public MainWindow? Control { get; set; }
