@@ -11,7 +11,7 @@
     <mainWindowTabs:OptionsTabViewModel />
   </Design.DataContext>
 
-  <Button Content="Do a flip!" Name="Flip" />
+  <Button Content="*flip" Name="Flip" />
 
 
   <!--<Grid Margin="4" VerticalAlignment="Top" ColumnDefinitions="Auto, *">
