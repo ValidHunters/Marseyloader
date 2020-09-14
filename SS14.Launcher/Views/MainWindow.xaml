@@ -79,6 +79,11 @@
     </Panel>
 
     <Panel Background="{StaticResource OverlayBrush}"
+           IsVisible="{Binding OverlayViewModel, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <ContentControl Content="{Binding OverlayViewModel}" />
+    </Panel>
+
+    <Panel Background="{StaticResource OverlayBrush}"
            IsVisible="{Binding BusyTask,Converter={x:Static ObjectConverters.IsNotNull}}">
       <StackPanel Orientation="Vertical" VerticalAlignment="Center">
         <Viewbox Width="72" Height="72" HorizontalAlignment="Center">
@@ -99,5 +104,8 @@
         </DockPanel>
       </StackPanel>
     </Panel>
+
+    <!-- Yes I realize the absurdity of having literally 5 of these error overlay controls defined get off my back. -->
+
   </Panel>
 </Window>

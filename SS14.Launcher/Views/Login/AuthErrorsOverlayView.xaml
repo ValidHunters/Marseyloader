@@ -16,7 +16,7 @@
 
     <Button DockPanel.Dock="Bottom" Content="Ok" MinWidth="60" HorizontalAlignment="Center"
             Command="{Binding ParentVm.OverlayOk}" />
-    <ItemsControl Items="{Binding Errors}" Margin="0, 20" MaxWidth="400">
+    <ItemsControl Items="{Binding Errors}" Margin="0, 20" HorizontalAlignment="Center" MaxWidth="400">
       <ItemsControl.ItemTemplate>
         <DataTemplate DataType="system:String">
           <TextBlock Text="{Binding}" TextWrapping="Wrap" />

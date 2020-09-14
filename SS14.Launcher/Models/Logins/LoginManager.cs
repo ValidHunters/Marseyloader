@@ -122,31 +122,7 @@ namespace SS14.Launcher.Models.Logins
 
                 try
                 {
-                    if (l.LoginInfo.Token.ShouldRefresh())
-                    {
-                        Log.Debug("Refreshing token for {login}", l.LoginInfo);
-                        // If we need to refresh the token anyways we'll just
-                        // implicitly do the "is it still valid" with the refresh request.
-                        var newTokenHopefully = await _authApi.RefreshTokenAsync(l.LoginInfo.Token.Token);
-                        if (newTokenHopefully == null)
-                        {
-                            // Token expired or whatever?
-                            l.SetStatus(AccountLoginStatus.Expired);
-                            Log.Debug("Token for {login} expired while refreshing it", l.LoginInfo);
-                        }
-                        else
-                        {
-                            Log.Debug("Refreshed token for {login}", l.LoginInfo);
-                            l.LoginInfo.Token = newTokenHopefully.Value;
-                            l.SetStatus(AccountLoginStatus.Available);
-                        }
-                    }
-                    else if (l.Status == AccountLoginStatus.Unsure)
-                    {
-                        var valid = await _authApi.CheckTokenAsync(l.LoginInfo.Token.Token);
-                        Log.Debug("Token for {login} still valid? {valid}", l.LoginInfo, valid);
-                        l.SetStatus(valid ? AccountLoginStatus.Available : AccountLoginStatus.Expired);
-                    }
+                    await UpdateSingleAccountStatus(l);
                 }
                 catch (AuthApiException e)
                 {
@@ -169,6 +145,41 @@ namespace SS14.Launcher.Models.Logins
             var cast = (ActiveLoginData) account;
             cast.SetStatus(AccountLoginStatus.Available);
             account.LoginInfo.Token = token;
+        }
+
+        /// <exception cref="AuthApiException">Thrown if an API error occured.</exception>
+        public Task UpdateSingleAccountStatus(LoggedInAccount account)
+        {
+            return UpdateSingleAccountStatus((ActiveLoginData) account);
+        }
+
+        private async Task UpdateSingleAccountStatus(ActiveLoginData data)
+        {
+            if (data.LoginInfo.Token.ShouldRefresh())
+            {
+                Log.Debug("Refreshing token for {login}", data.LoginInfo);
+                // If we need to refresh the token anyways we'll just
+                // implicitly do the "is it still valid" with the refresh request.
+                var newTokenHopefully = await _authApi.RefreshTokenAsync(data.LoginInfo.Token.Token);
+                if (newTokenHopefully == null)
+                {
+                    // Token expired or whatever?
+                    data.SetStatus(AccountLoginStatus.Expired);
+                    Log.Debug("Token for {login} expired while refreshing it", data.LoginInfo);
+                }
+                else
+                {
+                    Log.Debug("Refreshed token for {login}", data.LoginInfo);
+                    data.LoginInfo.Token = newTokenHopefully.Value;
+                    data.SetStatus(AccountLoginStatus.Available);
+                }
+            }
+            else if (data.Status == AccountLoginStatus.Unsure)
+            {
+                var valid = await _authApi.CheckTokenAsync(data.LoginInfo.Token.Token);
+                Log.Debug("Token for {login} still valid? {valid}", data.LoginInfo, valid);
+                data.SetStatus(valid ? AccountLoginStatus.Available : AccountLoginStatus.Expired);
+            }
         }
 
         private sealed class ActiveLoginData : LoggedInAccount

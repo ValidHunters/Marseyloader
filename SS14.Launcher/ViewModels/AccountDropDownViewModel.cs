@@ -7,7 +7,6 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Logins;
-using SS14.Launcher.Views;
 
 namespace SS14.Launcher.ViewModels
 {
@@ -86,20 +85,7 @@ namespace SS14.Launcher.ViewModels
         {
             IsDropDownOpen = false;
 
-            switch (account.Status)
-            {
-                case AccountLoginStatus.Unsure:
-                    throw new NotImplementedException();
-                case AccountLoginStatus.Available:
-                    _loginMgr.ActiveAccount = account;
-                    break;
-                case AccountLoginStatus.Expired:
-                    _loginMgr.ActiveAccount = null;
-                    _mainVm.LoginViewModel.SwitchToExpiredLogin(account);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            _mainVm.TrySwitchToAccount(account);
         }
 
         public void AddAccountPressed()
