@@ -86,22 +86,36 @@ namespace SS14.Launcher.Models.Logins
             // his tokens don't expire.
             _timer = DispatcherTimer.Run(() =>
             {
-                DoTokenRefresh();
+                async void Impl()
+                {
+                    await RefreshAllTokens();
+                }
+
+                Impl();
                 return true;
             }, ConfigConstants.TokenRefreshInterval, DispatcherPriority.Background);
 
             // Refresh all tokens we got.
+            await RefreshAllTokens();
+        }
+
+        private async Task RefreshAllTokens()
+        {
+            Log.Debug("Refreshing all tokens.");
+
             await Task.WhenAll(_logins.Items.Select(async l =>
             {
                 if (l.Status == AccountLoginStatus.Expired)
                 {
                     // Literally don't even bother we already know it's dead and the user has to solve it.
+                    Log.Debug("Token for {login} is already expired", l.LoginInfo);
                     return;
                 }
 
                 if (l.LoginInfo.Token.IsTimeExpired())
                 {
                     // Oh hey, time expiry.
+                    Log.Debug("Token for {login} expired due to time", l.LoginInfo);
                     l.SetStatus(AccountLoginStatus.Expired);
                     return;
                 }
@@ -110,6 +124,7 @@ namespace SS14.Launcher.Models.Logins
                 {
                     if (l.LoginInfo.Token.ShouldRefresh())
                     {
+                        Log.Debug("Refreshing token for {login}", l.LoginInfo);
                         // If we need to refresh the token anyways we'll just
                         // implicitly do the "is it still valid" with the refresh request.
                         var newTokenHopefully = await _authApi.RefreshTokenAsync(l.LoginInfo.Token.Token);
@@ -117,9 +132,11 @@ namespace SS14.Launcher.Models.Logins
                         {
                             // Token expired or whatever?
                             l.SetStatus(AccountLoginStatus.Expired);
+                            Log.Debug("Token for {login} expired while refreshing it", l.LoginInfo);
                         }
                         else
                         {
+                            Log.Debug("Refreshed token for {login}", l.LoginInfo);
                             l.LoginInfo.Token = newTokenHopefully.Value;
                             l.SetStatus(AccountLoginStatus.Available);
                         }
@@ -127,6 +144,7 @@ namespace SS14.Launcher.Models.Logins
                     else if (l.Status == AccountLoginStatus.Unsure)
                     {
                         var valid = await _authApi.CheckTokenAsync(l.LoginInfo.Token.Token);
+                        Log.Debug("Token for {login} still valid? {valid}", l.LoginInfo, valid);
                         l.SetStatus(valid ? AccountLoginStatus.Available : AccountLoginStatus.Expired);
                     }
                 }
@@ -137,10 +155,6 @@ namespace SS14.Launcher.Models.Logins
                     Log.Warning(e, "AuthApiException while trying to refresh token for {login}", l.LoginInfo);
                 }
             }));
-        }
-
-        private async void DoTokenRefresh()
-        {
         }
 
         public void AddFreshLogin(LoginInfo info)
