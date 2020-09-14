@@ -108,22 +108,7 @@ namespace SS14.Launcher.ViewModels.Login
                         // No confirmation needed, log in immediately.
                         var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
 
-                        if (resp.IsSuccess)
-                        {
-                            var loginInfo = resp.LoginInfo;
-                            if (_cfg.Logins.Lookup(loginInfo.UserId).HasValue)
-                            {
-                                throw new InvalidOperationException(
-                                    "We just registered this account but also already had it??");
-                            }
-
-                            _cfg.AddLogin(loginInfo);
-                            _loginMgr.ActiveAccountId = loginInfo.UserId;
-                        }
-                        else
-                        {
-                            OverlayControl = new AuthErrorsOverlayViewModel(this, "Error while logging in", resp.Errors);
-                        }
+                        await LoginViewModel.DoLogin(this, resp, _loginMgr, _authApi);
                     }
                     else
                     {

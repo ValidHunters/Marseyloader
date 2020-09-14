@@ -36,7 +36,7 @@ namespace SS14.Launcher.ViewModels
 
         public void SwitchToLogin()
         {
-            Screen = new LoginViewModel(_cfg, this, _authApi, _loginMgr);
+            Screen = new LoginViewModel(this, _authApi, _loginMgr);
         }
 
         public void SwitchToExpiredLogin(LoggedInAccount account)
@@ -61,7 +61,7 @@ namespace SS14.Launcher.ViewModels
 
         public void SwitchToRegisterNeedsConfirmation(string username, string password)
         {
-            Screen = new RegisterNeedsConfirmationViewModel(_cfg, this, _authApi, username, password, _loginMgr);
+            Screen = new RegisterNeedsConfirmationViewModel(this, _authApi, username, password, _loginMgr);
         }
     }
 }

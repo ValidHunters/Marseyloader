@@ -40,24 +40,12 @@ namespace SS14.Launcher.ViewModels.Login
             {
                 var resp = await _authApi.AuthenticateAsync(Account.UserId, EditingPassword);
 
-                if (resp.IsSuccess)
-                {
-                    // Hooray we have a new token!
-                    var token = resp.LoginInfo.Token;
-                    _loginMgr.UpdateToNewToken(Account, token);
-                    _loginMgr.ActiveAccount = Account;
-                    _parentVm.SwitchToLogin();
-                }
-                else
-                {
-                    OverlayControl = new AuthErrorsOverlayViewModel(this, "Unable to log in", resp.Errors);
-                }
+                await LoginViewModel.DoLogin(this, resp, _loginMgr, _authApi);
             }
             finally
             {
                 Busy = false;
             }
-
         }
 
         public void OnLogOutButtonPressed()

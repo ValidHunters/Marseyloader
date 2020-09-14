@@ -6,7 +6,7 @@ namespace SS14.Launcher.ViewModels.Login
     {
         [Reactive] public bool Busy { get; protected set; }
         [Reactive] public string? BusyText { get; protected set; }
-        [Reactive] public ViewModelBase? OverlayControl { get; protected set; }
+        [Reactive] public ViewModelBase? OverlayControl { get; set; }
 
         public virtual void Activated()
         {
