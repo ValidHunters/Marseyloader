@@ -371,13 +371,13 @@ namespace SS14.Launcher
 
         public sealed class RefreshRequest
         {
-            public string Token { get; set; }
+            public string Token { get; set; } = default!;
         }
 
         public sealed class RefreshResponse
         {
-            public string NewToken { get; set; }
-            public string ExpireTime { get; set; }
+            public string NewToken { get; set; } = default!;
+            public string ExpireTime { get; set; } = default!;
         }
     }
 
