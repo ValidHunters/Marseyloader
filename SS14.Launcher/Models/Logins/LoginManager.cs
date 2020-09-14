@@ -121,6 +121,7 @@ namespace SS14.Launcher.Models.Logins
                         else
                         {
                             l.LoginInfo.Token = newTokenHopefully.Value;
+                            l.SetStatus(AccountLoginStatus.Available);
                         }
                     }
                     else if (l.Status == AccountLoginStatus.Unsure)
