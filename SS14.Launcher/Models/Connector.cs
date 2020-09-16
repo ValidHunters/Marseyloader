@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -103,6 +104,18 @@ namespace SS14.Launcher.Models
 
             Status = ConnectionStatus.StartingClient;
 
+            var cVars = new List<(string, string)>();
+
+            if (info.AuthInformation.Mode != AuthMode.Disabled && _loginManager.ActiveAccount != null)
+            {
+                var account = _loginManager.ActiveAccount;
+
+                cVars.Add(("auth.token", account.LoginInfo.Token.Token));
+                cVars.Add(("auth.userid", account.LoginInfo.UserId.ToString()));
+                cVars.Add(("auth.serverpubkey", info.AuthInformation.PublicKey));
+                cVars.Add(("auth.server", ConfigConstants.AuthUrl));
+            }
+
             // Launch client.
             var proc = LaunchClient(installation, new[]
             {
@@ -117,8 +130,8 @@ namespace SS14.Launcher.Models
                 "--connect-address", connectAddress.ToString(),
 
                 // ss14(s):// address passed in. Only used for feedback in the client.
-                "--ss14-address", parsedAddress.ToString(),
-            });
+                "--ss14-address", parsedAddress.ToString()
+            }, cVars);
 
             // Wait 300ms, if the client exits with a bad error code before that it's probably fucked.
             var waitClient = proc.WaitForExitAsync();
@@ -137,16 +150,17 @@ namespace SS14.Launcher.Models
             Status = ConnectionStatus.ClientExited;
         }
 
-        private static Process LaunchClient(Installation installation, IEnumerable<string> extraArgs)
+        private static Process LaunchClient(Installation installation, IEnumerable<string> extraArgs, List<(string, string)> cVars)
         {
-            var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "installations",
-                installation.DiskId.ToString(CultureInfo.InvariantCulture));
+            var binPath = "/ssdhome/pj/Projects/space-station-14-content/bin/Content.Client/";
+            //var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "installations",
+            //    installation.DiskId.ToString(CultureInfo.InvariantCulture));
             ProcessStartInfo startInfo;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 startInfo = new ProcessStartInfo
                 {
-                    FileName = Path.Combine(binPath, "Robust.Client")
+                    FileName = Path.Combine(binPath, "Content.Client")
                 };
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -169,6 +183,12 @@ namespace SS14.Launcher.Models
             else
             {
                 throw new NotSupportedException("Unsupported platform.");
+            }
+
+            if (cVars.Count != 0)
+            {
+                var envVarValue = string.Join(';', cVars.Select(p => $"{p.Item1}={p.Item2}"));
+                startInfo.EnvironmentVariables["ROBUST_CVARS"] = envVarValue;
             }
 
             startInfo.UseShellExecute = false;

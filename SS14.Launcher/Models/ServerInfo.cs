@@ -13,6 +13,16 @@ namespace SS14.Launcher.Models
         public string? ConnectAddress { get; set; }
 
         [JsonProperty(PropertyName = "build")] public ServerBuildInformation? BuildInformation { get; set; }
+        [JsonProperty(PropertyName = "auth")] public ServerAuthInformation AuthInformation { get; set; } = default!;
+    }
+
+    [JsonObject(ItemRequired = Required.Always)]
+    public class ServerAuthInformation
+    {
+        [JsonProperty(PropertyName = "mode")] public AuthMode Mode { get; set; }
+
+        [JsonProperty(PropertyName = "public_key")]
+        public string PublicKey { get; set; } = default!;
     }
 
     [JsonObject(ItemRequired = Required.Always)]
@@ -60,5 +70,12 @@ namespace SS14.Launcher.Models
                 throw new PlatformNotSupportedException();
             }
         }
+    }
+
+    public enum AuthMode
+    {
+        Optional = 0,
+        Required = 1,
+        Disabled = 2
     }
 }
