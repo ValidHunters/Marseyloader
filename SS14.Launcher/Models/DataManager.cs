@@ -30,6 +30,7 @@ namespace SS14.Launcher.Models
         private int _nextInstallationId = 1;
         private Guid _fingerprint;
         private Guid? _selectedLogin;
+        private bool _forceGLES2;
 
         public DataManager()
         {
@@ -80,6 +81,20 @@ namespace SS14.Launcher.Models
         public IObservableCache<FavoriteServer, string> FavoriteServers => _favoriteServers;
         public IObservableCache<Installation, string> Installations => _installations;
         public IObservableCache<LoginInfo, Guid> Logins => _logins;
+
+        /// <summary>
+        ///     If true, whenever SS14 is started, the cvar will be set to force GLES2 rendering. (See Models/Connector.cs:LaunchClient)
+        ///     Otherwise, it'll be set to the default fallback chain.
+        /// </summary>
+        public bool ForceGLES2
+        {
+            get => _forceGLES2;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _forceGLES2, value);
+                Save();
+            }
+        }
 
         public void AddFavoriteServer(FavoriteServer server)
         {
@@ -187,6 +202,8 @@ namespace SS14.Launcher.Models
 
                 _fingerprint = data.Fingerprint;
                 _selectedLogin = data.SelectedLogin;
+
+                ForceGLES2 = data.ForceGLES2 ?? false;
             }
             finally
             {
@@ -220,6 +237,7 @@ namespace SS14.Launcher.Models
             {
                 SelectedLogin = _selectedLogin,
                 Logins = _logins.Items.ToList(),
+                ForceGLES2 = _forceGLES2,
                 Favorites = _favoriteServers.Items.ToList(),
                 NextInstallationId = _nextInstallationId,
                 Installations = _installations.Items.ToList(),
@@ -261,6 +279,9 @@ namespace SS14.Launcher.Models
 
             [JsonProperty(PropertyName = "fingerprint")]
             public Guid Fingerprint { get; set; }
-        }
+
+            [JsonProperty(PropertyName = "force_gles2")]
+            public bool? ForceGLES2 { get; set; }
+       }
     }
 }

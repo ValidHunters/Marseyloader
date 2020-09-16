@@ -41,7 +41,7 @@ namespace SS14.Launcher.ViewModels
             ServersTab = new ServerListTabViewModel(cfg, statusCache, updater, _loginMgr);
             NewsTab = new NewsTabViewModel();
             HomeTab = new HomePageViewModel(this, cfg, statusCache, updater, _loginMgr);
-            OptionsTab = new OptionsTabViewModel();
+            OptionsTab = new OptionsTabViewModel(cfg);
 
             Tabs = new MainWindowTabViewModel[]
             {

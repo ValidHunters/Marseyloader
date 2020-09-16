@@ -130,7 +130,10 @@ namespace SS14.Launcher.Models
                 "--connect-address", connectAddress.ToString(),
 
                 // ss14(s):// address passed in. Only used for feedback in the client.
-                "--ss14-address", parsedAddress.ToString()
+                "--ss14-address", parsedAddress.ToString(),
+
+                // GLES2 forcing or using default fallback
+                "--cvar", "display.renderer=" + (_cfg.ForceGLES2 ? "3" : "0"),
             }, cVars);
 
             // Wait 300ms, if the client exits with a bad error code before that it's probably fucked.
