@@ -31,6 +31,7 @@ namespace SS14.Launcher.Models
         private Guid _fingerprint;
         private Guid? _selectedLogin;
         private bool _forceGLES2;
+        private bool _hasDismissedEarlyAccessWarning;
 
         public DataManager()
         {
@@ -92,6 +93,17 @@ namespace SS14.Launcher.Models
             set
             {
                 this.RaiseAndSetIfChanged(ref _forceGLES2, value);
+                Save();
+            }
+        }
+
+
+        public bool HasDismissedEarlyAccessWarning
+        {
+            get => _hasDismissedEarlyAccessWarning;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _hasDismissedEarlyAccessWarning, value);
                 Save();
             }
         }
@@ -204,6 +216,7 @@ namespace SS14.Launcher.Models
                 _selectedLogin = data.SelectedLogin;
 
                 ForceGLES2 = data.ForceGLES2 ?? false;
+                _hasDismissedEarlyAccessWarning = data.DismissedEarlyAccessWarning ?? false;
             }
             finally
             {
@@ -241,7 +254,8 @@ namespace SS14.Launcher.Models
                 Favorites = _favoriteServers.Items.ToList(),
                 NextInstallationId = _nextInstallationId,
                 Installations = _installations.Items.ToList(),
-                Fingerprint = _fingerprint
+                Fingerprint = _fingerprint,
+                DismissedEarlyAccessWarning = _hasDismissedEarlyAccessWarning
             });
 
             // Save config asynchronously to avoid potential disk hangs.
@@ -282,6 +296,9 @@ namespace SS14.Launcher.Models
 
             [JsonProperty(PropertyName = "force_gles2")]
             public bool? ForceGLES2 { get; set; }
+
+            [JsonProperty(PropertyName = "dismissed_early_access_warning")]
+            public bool? DismissedEarlyAccessWarning { get; set; }
        }
     }
 }

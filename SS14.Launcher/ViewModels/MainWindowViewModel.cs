@@ -24,6 +24,7 @@ namespace SS14.Launcher.ViewModels
 
         private int _selectedIndex;
 
+        public DataManager Cfg => _cfg;
         [Reactive] public bool OutOfDate { get; private set; }
 
         public HomePageViewModel HomeTab { get; }
@@ -148,6 +149,11 @@ namespace SS14.Launcher.ViewModels
         public void DownloadPressed()
         {
             Helpers.OpenUri(new Uri(ConfigConstants.DownloadUrl));
+        }
+
+        public void DismissEarlyAccessPressed()
+        {
+            Cfg.HasDismissedEarlyAccessWarning = true;
         }
 
         public void SelectTabServers()
