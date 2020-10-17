@@ -24,6 +24,7 @@
                                TextAlignment="Left" Text="{Binding ServerStatusString}"
                                MinWidth="150"
                                Margin="10, 0" />
+                    <!-- TODO: Enable text trimming here when Avalonia 0.10 is out of preview and we switch to it. -->
                     <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
                 </DockPanel>
             </Expander.Header>
