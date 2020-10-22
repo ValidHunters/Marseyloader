@@ -78,7 +78,7 @@ namespace SS14.Launcher.Models
             Debug.Assert(installation != null);
 
             Uri connectAddress;
-            if (info.ConnectAddress == null)
+            if (string.IsNullOrEmpty(info.ConnectAddress))
             {
                 // No connect address specified, use same address/port as base address.
                 connectAddress = new UriBuilder

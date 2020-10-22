@@ -9,14 +9,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Launcher.Tests", "SS14
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Launcher.Bootstrap", "SS14.Launcher.Bootstrap\SS14.Launcher.Bootstrap.csproj", "{505C4E21-0B62-4F1E-82C6-8FDBA914757A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{74308C97-2AE3-47FC-9FD8-011EA9A597D3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12BB41B7-34BA-44EF-9ECA-434A276D83BD}"
 ProjectSection(SolutionItems) = preProject
-	.editorconfig = .editorconfig
-	.gitattributes = .gitattributes
-	.gitignore = .gitignore
-	nuget.config = nuget.config
 	Readme.md = Readme.md
+	nuget.config = nuget.config
 	LICENSE.txt = LICENSE.txt
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{31D3CCC5-36F4-48C3-8885-E029A2026B57}"
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\build-test.yml = .github\workflows\build-test.yml
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build Scripts", "Build Scripts", "{DBA9443D-A94E-4CD4-8603-ACC2F1434F0F}"
+ProjectSection(SolutionItems) = preProject
+	publish.sh = publish.sh
+	publish_linux.sh = publish_linux.sh
+	publish_osx.sh = publish_osx.sh
+	publish_windows.sh = publish_windows.sh
+	download_net_runtime.py = download_net_runtime.py
 EndProjectSection
 EndProject
 Global
@@ -68,5 +79,9 @@ Global
 		{505C4E21-0B62-4F1E-82C6-8FDBA914757A}.Release|x64.Build.0 = Release|Any CPU
 		{505C4E21-0B62-4F1E-82C6-8FDBA914757A}.Release|x86.ActiveCfg = Release|Any CPU
 		{505C4E21-0B62-4F1E-82C6-8FDBA914757A}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31D3CCC5-36F4-48C3-8885-E029A2026B57} = {12BB41B7-34BA-44EF-9ECA-434A276D83BD}
+		{DBA9443D-A94E-4CD4-8603-ACC2F1434F0F} = {12BB41B7-34BA-44EF-9ECA-434A276D83BD}
 	EndGlobalSection
 EndGlobal
