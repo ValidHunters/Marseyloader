@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DynamicData;
 using Newtonsoft.Json;
@@ -20,6 +21,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly ServerStatusCache _statusCache;
         private readonly Updater _updater;
         private readonly LoginManager _loginMgr;
+        private CancellationTokenSource? _refreshCancel;
 
         public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
             = new ObservableCollection<ServerEntryViewModel>();
@@ -63,7 +65,8 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
         }
 
-        public ServerListTabViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater, LoginManager loginMgr)
+        public ServerListTabViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater,
+            LoginManager loginMgr)
         {
             _cfg = cfg;
             _statusCache = statusCache;
@@ -122,26 +125,38 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         {
             if (Status == RefreshListStatus.NotUpdated)
             {
-                await RefreshServerList();
+                _refreshCancel?.Cancel();
+                _refreshCancel = new CancellationTokenSource();
+                await RefreshServerList(_refreshCancel.Token);
             }
         }
 
         public async void RefreshPressed()
         {
-            await RefreshServerList();
+            _refreshCancel?.Cancel();
+            _refreshCancel = new CancellationTokenSource();
+            await RefreshServerList(_refreshCancel.Token);
             _statusCache.Refresh();
         }
 
-        private async Task RefreshServerList()
+        private async Task RefreshServerList(CancellationToken cancel)
         {
             AllServers.Clear();
             Status = RefreshListStatus.Updating;
 
             try
             {
-                var response = await Global.GlobalHttpClient.GetStringAsync(ConfigConstants.HubUrl + "api/servers");
+                using var response =
+                    await Global.GlobalHttpClient.GetAsync(ConfigConstants.HubUrl + "api/servers", cancel);
 
-                var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(response);
+                response.EnsureSuccessStatusCode();
+
+                // TODO: .NET 5 has an overload of ReadAsStringAsync with cancellation support.
+                var respStr = await response.Content.ReadAsStringAsync();
+
+                cancel.ThrowIfCancellationRequested();
+
+                var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(respStr);
 
                 Status = RefreshListStatus.Updated;
 
@@ -150,6 +165,10 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                     {
                         FallbackName = e.Name
                     }));
+            }
+            catch (TaskCanceledException)
+            {
+                Status = RefreshListStatus.NotUpdated;
             }
             catch (Exception e)
             {
