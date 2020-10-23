@@ -14,11 +14,13 @@ ProjectSection(SolutionItems) = preProject
 	Readme.md = Readme.md
 	nuget.config = nuget.config
 	LICENSE.txt = LICENSE.txt
+	.editorconfig = .editorconfig
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{31D3CCC5-36F4-48C3-8885-E029A2026B57}"
 ProjectSection(SolutionItems) = preProject
 	.github\workflows\build-test.yml = .github\workflows\build-test.yml
+	.github\workflows\publish-release.yml = .github\workflows\publish-release.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build Scripts", "Build Scripts", "{DBA9443D-A94E-4CD4-8603-ACC2F1434F0F}"
