@@ -14,6 +14,10 @@ dotnet publish SS14.Launcher/SS14.Launcher.csproj -c Release --no-self-contained
 mkdir -p bin/publish/macOS
 
 cp -r "PublishFiles/Space Station 14 Launcher.app" bin/publish/macOS
+
+mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/dotnet/"
+mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/bin/"
+
 cp -r Dependencies/dotnet/mac/* "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/dotnet/"
 cp -r SS14.Launcher/bin/Release/netcoreapp3.1/osx-x64/publish/* "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/bin/"
 pushd bin/publish/macOS
