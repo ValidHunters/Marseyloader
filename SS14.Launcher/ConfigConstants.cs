@@ -12,8 +12,8 @@ namespace SS14.Launcher
         // If the user leaves the launcher running for absolute ages, this is how often we'll update his login tokens.
         public static readonly TimeSpan TokenRefreshInterval = TimeSpan.FromDays(7);
 
-        public const string HubUrl = "https://builds.spacestation14.io/hub/";
-        public const string AuthUrl = "http://localhost:5000/";
+        public const string HubUrl = "https://central.spacestation14.io/hub/";
+        public const string AuthUrl = "https://central.spacestation14.io/auth/";
         public const string DiscordUrl = "https://discord.gg/t2jac3p";
         public const string WebsiteUrl = "https://spacestation14.io";
         public const string DownloadUrl = "https://spacestation14.io/about/nightlies/";
