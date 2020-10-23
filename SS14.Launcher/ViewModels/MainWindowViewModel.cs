@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DynamicData;
@@ -133,12 +134,23 @@ namespace SS14.Launcher.ViewModels
         private async Task CheckLauncherUpdate()
         {
             // await Task.Delay(1000);
-            var launcherVersionUri =
-                new Uri($"{Updater.JenkinsBaseUrl}/userContent/current_launcher_version.txt");
-            var versionRequest = await Global.GlobalHttpClient.GetAsync(launcherVersionUri);
-            versionRequest.EnsureSuccessStatusCode();
-            OutOfDate = ConfigConstants.CurrentLauncherVersion !=
-                        (await versionRequest.Content.ReadAsStringAsync()).Trim();
+            if (!ConfigConstants.DoVersionCheck)
+            {
+                return;
+            }
+
+            try
+            {
+                var versionRequest = await Global.GlobalHttpClient.GetAsync(ConfigConstants.LauncherVersionUrl);
+                versionRequest.EnsureSuccessStatusCode();
+                OutOfDate = ConfigConstants.CurrentLauncherVersion !=
+                            (await versionRequest.Content.ReadAsStringAsync()).Trim();
+            }
+            catch (HttpRequestException e)
+            {
+                Log.Warning(e, "Unable to check for launcher update due to error, assuming up-to-date.");
+                OutOfDate = false;
+            }
         }
 
         public void ExitPressed()
