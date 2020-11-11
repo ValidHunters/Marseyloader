@@ -193,6 +193,8 @@ namespace SS14.Launcher.Models
                 startInfo.EnvironmentVariables["ROBUST_CVARS"] = envVarValue;
             }
 
+            startInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "LatestMajor";
+
             startInfo.UseShellExecute = false;
             startInfo.WorkingDirectory = binPath;
             startInfo.ArgumentList.AddRange(extraArgs);
