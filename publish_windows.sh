@@ -11,6 +11,8 @@ rm SS14.Launcher_Windows.zip
 dotnet publish SS14.Launcher/SS14.Launcher.csproj -c Release --no-self-contained -r win-x64 /nologo
 dotnet publish SS14.Launcher.Bootstrap/SS14.Launcher.Bootstrap.csproj -c Release /nologo
 
+./exe_set_subsystem.py "SS14.Launcher/bin/Release/net5.0/win-x64/publish/SS14.Launcher.exe" 2
+
 # Create intermediate directories.
 mkdir -p bin/publish/Windows/bin
 mkdir -p bin/publish/Windows/dotnet
