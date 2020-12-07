@@ -20,6 +20,8 @@
     <AvaloniaResource Update="Views\MainWindowLogin.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
+
+    <AdditionalFiles Include="**\*.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.9.12" />
@@ -31,5 +33,6 @@
     <PackageReference Include="Robust.Shared.AuthLib" Version="0.1.2" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="XamlNameReferenceGenerator" Version="0.1.4" />
   </ItemGroup>
 </Project>
