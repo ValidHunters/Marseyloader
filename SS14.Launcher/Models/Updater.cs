@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using DynamicData.Kernel;
@@ -27,7 +28,7 @@ namespace SS14.Launcher.Models
         [Reactive] public UpdateStatus Status { get; private set; }
         [Reactive] public (long downloaded, long total)? Progress { get; private set; }
 
-        public async Task<Installation?> RunUpdateForLaunchAsync(ServerBuildInformation? buildInformation)
+        public async Task<Installation?> RunUpdateForLaunchAsync(ServerBuildInformation buildInformation)
         {
             if (_updating)
             {
@@ -39,10 +40,6 @@ namespace SS14.Launcher.Models
             try
             {
                 Status = UpdateStatus.CheckingClientUpdate;
-                if (buildInformation == null)
-                {
-                    buildInformation = await GetDefaultBuildInformation();
-                }
 
                 var install = await RunUpdate(buildInformation);
                 Status = UpdateStatus.Ready;
@@ -56,29 +53,6 @@ namespace SS14.Launcher.Models
             finally
             {
                 _updating = false;
-            }
-
-            return null;
-        }
-
-        private async Task<Installation?> RunUpdatesInternal(ServerBuildInformation? buildInformation)
-        {
-            try
-            {
-                Status = UpdateStatus.CheckingClientUpdate;
-                if (buildInformation == null)
-                {
-                    buildInformation = await GetDefaultBuildInformation();
-                }
-
-                var install = await RunUpdate(buildInformation);
-                Status = UpdateStatus.Ready;
-                return install;
-            }
-            catch (Exception e)
-            {
-                Status = UpdateStatus.Error;
-                Log.Error(e, "Exception while trying to run updates.");
             }
 
             return null;
@@ -257,11 +231,11 @@ namespace SS14.Launcher.Models
             return installation;
         }
 
-        private async Task<string> DownloadArtifactToTempFile(Uri downloadUri)
+        private async Task<string> DownloadArtifactToTempFile(Uri downloadUri, CancellationToken cancel = default)
         {
             var tmpFile = Path.GetTempFileName();
             await Global.GlobalHttpClient.DownloadToFile(downloadUri, tmpFile,
-                f => Dispatcher.UIThread.Post(() => Progress = f));
+                f => Dispatcher.UIThread.Post(() => Progress = f), cancel);
 
             return tmpFile;
         }

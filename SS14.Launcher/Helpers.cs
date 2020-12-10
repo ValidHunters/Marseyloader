@@ -35,15 +35,15 @@ namespace SS14.Launcher
         }
 
         public static async Task DownloadToFile(this HttpClient client, Uri uri, string filePath,
-            Action<(long downloaded, long total)>? progress = null)
+            Action<(long downloaded, long total)>? progress = null, CancellationToken cancel = default)
         {
             await Task.Run(async () =>
             {
-                using var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
+                using var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancel);
                 response.EnsureSuccessStatusCode();
 
-                await using var contentStream = await response.Content.ReadAsStreamAsync();
-                await using var fileStream = File.OpenWrite(filePath);
+                await using var contentStream = await response.Content.ReadAsStreamAsync(cancel);
+                await using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: true);
                 var totalLength = response.Content.Headers.ContentLength;
                 if (totalLength.HasValue)
                 {
@@ -58,14 +58,14 @@ namespace SS14.Launcher
 
                 do
                 {
-                    var read = await contentStream.ReadAsync(buffer, 0, bufferLength);
+                    var read = await contentStream.ReadAsync(buffer, 0, bufferLength, cancel);
                     if (read == 0)
                     {
                         isMoreToRead = false;
                     }
                     else
                     {
-                        await fileStream.WriteAsync(buffer, 0, read);
+                        await fileStream.WriteAsync(buffer, 0, read, cancel);
 
                         reads += 1;
                         totalRead += read;
@@ -75,7 +75,7 @@ namespace SS14.Launcher
                         }
                     }
                 } while (isMoreToRead);
-            });
+            }, cancel);
         }
 
         public static void OpenUri(Uri uri)
