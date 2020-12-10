@@ -11,6 +11,10 @@ namespace SS14.Launcher.ViewModels
         private readonly Updater _updater;
         private readonly MainWindowViewModel _windowVm;
 
+        public bool IsErrored => _connector.Status == Connector.ConnectionStatus.ConnectionFailed ||
+                                 _connector.Status == Connector.ConnectionStatus.ClientExited &&
+                                 _connector.ClientExitedBadly;
+
         public ConnectingViewModel(Connector connector, Updater updater, MainWindowViewModel windowVm)
         {
             _connector = connector;
@@ -34,6 +38,7 @@ namespace SS14.Launcher.ViewModels
                     this.RaisePropertyChanged(nameof(ProgressIndeterminate));
                     this.RaisePropertyChanged(nameof(StatusText));
                     this.RaisePropertyChanged(nameof(ProgressBarVisible));
+                    this.RaisePropertyChanged(nameof(IsErrored));
 
                     if (val == Connector.ConnectionStatus.ClientRunning
                         || val == Connector.ConnectionStatus.ClientExited && !_connector.ClientExitedBadly)
@@ -43,7 +48,11 @@ namespace SS14.Launcher.ViewModels
                 });
 
             this.WhenAnyValue(x => x._connector.ClientExitedBadly)
-                .Subscribe(_ => this.RaisePropertyChanged(StatusText));
+                .Subscribe(_ =>
+                {
+                    this.RaisePropertyChanged(nameof(StatusText));
+                    this.RaisePropertyChanged(nameof(IsErrored));
+                });
         }
 
         public float Progress
