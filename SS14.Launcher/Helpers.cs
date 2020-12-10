@@ -43,7 +43,7 @@ namespace SS14.Launcher
                 response.EnsureSuccessStatusCode();
 
                 await using var contentStream = await response.Content.ReadAsStreamAsync(cancel);
-                await using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, useAsync: true);
+                await using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, 4096, useAsync: true);
                 var totalLength = response.Content.Headers.ContentLength;
                 if (totalLength.HasValue)
                 {
