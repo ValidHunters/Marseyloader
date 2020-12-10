@@ -45,65 +45,54 @@ namespace SS14.Launcher.Models
 
         public async void Connect(string address)
         {
-            Status = ConnectionStatus.Connecting;
-
-            var parsedAddress = UriHelper.ParseSs14Uri(address);
-
-            // Fetch server connect info.
-            var infoAddr = UriHelper.GetServerInfoAddress(parsedAddress);
-            ServerInfo info;
-
             try
             {
-                var resp = await Global.GlobalHttpClient.GetStringAsync(infoAddr);
-                info = JsonConvert.DeserializeObject<ServerInfo>(resp);
+                await ConnectInternalAsync(address);
             }
-            catch (Exception e) when (e is JsonException || e is HttpRequestException)
+            catch (ConnectException e)
             {
-                Log.Error(e, "Failed to connect");
-                Status = ConnectionStatus.ConnectionFailed;
+                Log.Error(e, "Failed to connect: {status}", e.Status);
+                Status = e.Status;
                 return;
             }
+        }
+
+        private async Task ConnectInternalAsync(string address)
+        {
+            Status = ConnectionStatus.Connecting;
+
+            var (info, parsedAddr, infoAddr) = await GetServerInfoAsync(address);
 
             // Run update.
             Status = ConnectionStatus.Updating;
-            var installation = await _updater.RunUpdateForLaunchAsync(info.BuildInformation);
 
-            if (_updater.Status == Updater.UpdateStatus.Error)
-            {
-                Status = ConnectionStatus.UpdateError;
-                return;
-            }
+            var installation = await RunUpdateAsync(info);
 
-            Debug.Assert(installation != null);
-
-            Uri connectAddress;
-            if (string.IsNullOrEmpty(info.ConnectAddress))
-            {
-                // No connect address specified, use same address/port as base address.
-                connectAddress = new UriBuilder
-                {
-                    Scheme = "udp",
-                    Host = infoAddr.Host,
-                    Port = infoAddr.Port
-                }.Uri;
-            }
-            else
-            {
-                try
-                {
-                    connectAddress = new Uri(info.ConnectAddress);
-                }
-                catch (FormatException e)
-                {
-                    Log.Error(e, "Failed to parse ConnectAddress");
-                    Status = ConnectionStatus.ConnectionFailed;
-                    return;
-                }
-            }
+            var connectAddress = GetConnectAddress(info, infoAddr);
 
             Status = ConnectionStatus.StartingClient;
 
+            var clientProc = ConnectLaunchClient(info, installation, connectAddress, parsedAddr);
+
+            // Wait 300ms, if the client exits with a bad error code before that it's probably fucked.
+            var waitClient = clientProc.WaitForExitAsync();
+            var waitDelay = Task.Delay(300);
+
+            await Task.WhenAny(waitDelay, waitClient);
+
+            if (!clientProc.HasExited)
+            {
+                Status = ConnectionStatus.ClientRunning;
+                await waitClient;
+                return;
+            }
+
+            ClientExitedBadly = clientProc.ExitCode != 0;
+            Status = ConnectionStatus.ClientExited;
+        }
+
+        private Process ConnectLaunchClient(ServerInfo info, Installation installation, Uri connectAddress, Uri parsedAddr)
+        {
             var cVars = new List<(string, string)>();
 
             if (info.AuthInformation.Mode != AuthMode.Disabled && _loginManager.ActiveAccount != null)
@@ -130,30 +119,72 @@ namespace SS14.Launcher.Models
                 "--connect-address", connectAddress.ToString(),
 
                 // ss14(s):// address passed in. Only used for feedback in the client.
-                "--ss14-address", parsedAddress.ToString(),
+                "--ss14-address", parsedAddr.ToString(),
 
                 // GLES2 forcing or using default fallback
                 "--cvar", "display.renderer=" + (_cfg.ForceGLES2 ? "3" : "0"),
             }, cVars);
-
-            // Wait 300ms, if the client exits with a bad error code before that it's probably fucked.
-            var waitClient = proc.WaitForExitAsync();
-            var waitDelay = Task.Delay(300);
-
-            await Task.WhenAny(waitDelay, waitClient);
-
-            if (!proc.HasExited)
-            {
-                Status = ConnectionStatus.ClientRunning;
-                await waitClient;
-                return;
-            }
-
-            ClientExitedBadly = proc.ExitCode != 0;
-            Status = ConnectionStatus.ClientExited;
+            return proc;
         }
 
-        private static Process LaunchClient(Installation installation, IEnumerable<string> extraArgs, List<(string, string)> cVars)
+        private static Uri GetConnectAddress(ServerInfo info, Uri infoAddr)
+        {
+            if (string.IsNullOrEmpty(info.ConnectAddress))
+            {
+                // No connect address specified, use same address/port as base address.
+                return new UriBuilder
+                {
+                    Scheme = "udp",
+                    Host = infoAddr.Host,
+                    Port = infoAddr.Port
+                }.Uri;
+            }
+
+            try
+            {
+                return new Uri(info.ConnectAddress);
+            }
+            catch (FormatException e)
+            {
+                Log.Error(e, "Failed to parse ConnectAddress");
+                throw new ConnectException(ConnectionStatus.ConnectionFailed);
+            }
+        }
+
+        private async Task<Installation> RunUpdateAsync(ServerInfo info)
+        {
+            var installation = await _updater.RunUpdateForLaunchAsync(info.BuildInformation);
+            if (installation == null)
+            {
+                throw new ConnectException(ConnectionStatus.UpdateError);
+            }
+
+            return installation;
+        }
+
+        private async Task<(ServerInfo, Uri, Uri)> GetServerInfoAsync(string address)
+        {
+            var parsedAddress = UriHelper.ParseSs14Uri(address);
+
+            // Fetch server connect info.
+            var infoAddr = UriHelper.GetServerInfoAddress(parsedAddress);
+
+            try
+            {
+                var resp = await Global.GlobalHttpClient.GetStringAsync(infoAddr);
+                var info = JsonConvert.DeserializeObject<ServerInfo>(resp);
+                return (info, parsedAddress, infoAddr);
+            }
+            catch (Exception e) when (e is JsonException || e is HttpRequestException)
+            {
+                throw new ConnectException(ConnectionStatus.ConnectionFailed, e);
+            }
+        }
+
+        private static Process LaunchClient(
+            Installation installation,
+            IEnumerable<string> extraArgs,
+            List<(string, string)> cVars)
         {
             var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "installations",
                 installation.DiskId.ToString(CultureInfo.InvariantCulture));
@@ -211,6 +242,22 @@ namespace SS14.Launcher.Models
             StartingClient,
             ClientRunning,
             ClientExited
+        }
+
+        private sealed class ConnectException : Exception
+        {
+            public ConnectionStatus Status { get; }
+
+            public ConnectException(ConnectionStatus status)
+            {
+                Status = status;
+            }
+
+            public ConnectException(ConnectionStatus status, Exception inner)
+                : base($"Failed to connect: {status}", inner)
+            {
+                Status = status;
+            }
         }
     }
 }
