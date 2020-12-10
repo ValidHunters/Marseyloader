@@ -39,5 +39,7 @@
       <ImageBrush.SourceRect>0, 0, 32, 32</ImageBrush.SourceRect>
       <ImageBrush.DestinationRect>0, 0, 32, 32</ImageBrush.DestinationRect>
     </ImageBrush>
+
+    <SolidColorBrush x:Key="WindowOverlayBrush" Color="#AA000000" />
   </Style.Resources>
 </Style>

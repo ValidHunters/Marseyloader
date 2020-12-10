@@ -1,7 +1,5 @@
 using System;
-using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.VisualTree;
 using ReactiveUI;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Logins;
@@ -18,17 +16,25 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly DataManager _cfg;
         private readonly Updater _updater;
         private readonly LoginManager _loginMgr;
+        private readonly MainWindowViewModel _windowVm;
         private bool _isAltBackground;
         private string Address => _cacheData.Address;
         private string _fallbackName = string.Empty;
 
-        public ServerEntryViewModel(ServerStatusCache cache, DataManager cfg, Updater updater, LoginManager loginMgr, string address)
+        public ServerEntryViewModel(
+            ServerStatusCache cache,
+            DataManager cfg,
+            Updater updater,
+            LoginManager loginMgr,
+            MainWindowViewModel windowVm,
+            string address)
         {
             _cache = cache;
             _cacheData = cache.GetStatusFor(address);
             _cfg = cfg;
             _updater = updater;
             _loginMgr = loginMgr;
+            _windowVm = windowVm;
 
             this.WhenAnyValue(x => x.IsAltBackground)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(BackgroundColor)));
@@ -53,14 +59,17 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 .Subscribe(_ => { this.RaisePropertyChanged(nameof(FavoriteButtonText)); });
         }
 
-        public ServerEntryViewModel(ServerStatusCache cache, DataManager cfg, Updater updater, LoginManager loginMgr,
+        public ServerEntryViewModel(
+            ServerStatusCache cache,
+            DataManager cfg,
+            Updater updater,
+            LoginManager loginMgr,
+            MainWindowViewModel windowVm,
             FavoriteServer favorite)
-            : this(cache, cfg, updater, loginMgr, favorite.Address)
+            : this(cache, cfg, updater, loginMgr, windowVm, favorite.Address)
         {
             Favorite = favorite;
         }
-
-        public Control? Control { get; set; }
 
         public void DoInitialUpdate()
         {
@@ -69,7 +78,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public void ConnectPressed()
         {
-            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, (Window) Control?.GetVisualRoot()!, Address);
+            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, _windowVm, Address);
         }
 
         public FavoriteServer? Favorite { get; }

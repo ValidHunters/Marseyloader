@@ -21,6 +21,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly ServerStatusCache _statusCache;
         private readonly Updater _updater;
         private readonly LoginManager _loginMgr;
+        private readonly MainWindowViewModel _windowVm;
         private CancellationTokenSource? _refreshCancel;
 
         public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
@@ -65,13 +66,18 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
         }
 
-        public ServerListTabViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater,
-            LoginManager loginMgr)
+        public ServerListTabViewModel(
+            DataManager cfg,
+            ServerStatusCache statusCache,
+            Updater updater,
+            LoginManager loginMgr,
+            MainWindowViewModel windowVm)
         {
             _cfg = cfg;
             _statusCache = statusCache;
             _updater = updater;
             _loginMgr = loginMgr;
+            _windowVm = windowVm;
 
             AllServers.CollectionChanged += (s, e) =>
             {
@@ -161,7 +167,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 Status = RefreshListStatus.Updated;
 
                 AllServers.AddRange(entries.Select(e =>
-                    new ServerEntryViewModel(_statusCache, _cfg, _updater, _loginMgr, e.Address)
+                    new ServerEntryViewModel(_statusCache, _cfg, _updater, _loginMgr, _windowVm, e.Address)
                     {
                         FallbackName = e.Name
                     }));

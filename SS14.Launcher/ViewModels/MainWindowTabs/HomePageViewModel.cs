@@ -6,7 +6,6 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.VisualTree;
 using DynamicData;
-using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Logins;
@@ -59,7 +58,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 return;
             }
 
-            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, window!, res);
+            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, MainWindowViewModel, res);
         }
 
         public async void AddFavoritePressed()
@@ -101,7 +100,14 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                     continue;
                 }
 
-                var serverEntryViewModel = new ServerEntryViewModel(_statusCache, _cfg, _updater, _loginMgr, favoriteServer);
+                var serverEntryViewModel = new ServerEntryViewModel(
+                    _statusCache,
+                    _cfg,
+                    _updater,
+                    _loginMgr,
+                    MainWindowViewModel,
+                    favoriteServer);
+
                 serverEntryViewModel.DoInitialUpdate();
                 _favorites.Add(serverEntryViewModel);
             }

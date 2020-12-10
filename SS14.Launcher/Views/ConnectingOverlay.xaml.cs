@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views
 {
-    public class ConnectingDialog : Window
+    public class ConnectingOverlay : UserControl
     {
-        public ConnectingDialog()
+        public ConnectingOverlay()
         {
             InitializeComponent();
         }

@@ -33,14 +33,13 @@ namespace SS14.Launcher.ViewModels
         public NewsTabViewModel NewsTab { get; }
         public OptionsTabViewModel OptionsTab { get; }
 
-
         public MainWindowViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater)
         {
             _cfg = cfg;
             var authApi = new AuthApi(cfg);
             _loginMgr = new LoginManager(cfg, authApi);
 
-            ServersTab = new ServerListTabViewModel(cfg, statusCache, updater, _loginMgr);
+            ServersTab = new ServerListTabViewModel(cfg, statusCache, updater, _loginMgr, this);
             NewsTab = new NewsTabViewModel();
             HomeTab = new HomePageViewModel(this, cfg, statusCache, updater, _loginMgr);
             OptionsTab = new OptionsTabViewModel(cfg);
@@ -91,6 +90,8 @@ namespace SS14.Launcher.ViewModels
         public AccountDropDownViewModel AccountDropDown { get; }
 
         public MainWindowLoginViewModel LoginViewModel { get; }
+
+        [Reactive] public ConnectingViewModel? ConnectingVM { get; set; }
 
         [Reactive] public string? BusyTask { get; private set; }
         [Reactive] public ViewModelBase? OverlayViewModel { get; private set; }

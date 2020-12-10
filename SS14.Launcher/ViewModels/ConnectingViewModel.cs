@@ -1,9 +1,7 @@
 using System;
-using Avalonia.Controls;
 using ReactiveUI;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Logins;
-using SS14.Launcher.Views;
 
 namespace SS14.Launcher.ViewModels
 {
@@ -11,11 +9,13 @@ namespace SS14.Launcher.ViewModels
     {
         private readonly Connector _connector;
         private readonly Updater _updater;
+        private readonly MainWindowViewModel _windowVm;
 
-        public ConnectingViewModel(Connector connector, Updater updater)
+        public ConnectingViewModel(Connector connector, Updater updater, MainWindowViewModel windowVm)
         {
             _connector = connector;
             _updater = updater;
+            _windowVm = windowVm;
 
             this.WhenAnyValue(x => x._updater.Progress)
                 .Subscribe(_ =>
@@ -38,15 +38,13 @@ namespace SS14.Launcher.ViewModels
                     if (val == Connector.ConnectionStatus.ClientRunning
                         || val == Connector.ConnectionStatus.ClientExited && !_connector.ClientExitedBadly)
                     {
-                        Window!.Close();
+                        CloseOverlay();
                     }
                 });
 
             this.WhenAnyValue(x => x._connector.ClientExitedBadly)
                 .Subscribe(_ => this.RaisePropertyChanged(StatusText));
         }
-
-        private Window? Window { get; set; }
 
         public float Progress
         {
@@ -101,7 +99,7 @@ namespace SS14.Launcher.ViewModels
             {
                 Connector.ConnectionStatus.None => "Starting connection...",
                 Connector.ConnectionStatus.UpdateError =>
-                "There was an error while updating the client. Please ensure you can access builds.spacestation14.io and try again. Or ask on Discord since it's probably our fault anyways.",
+                    "There was an error while updating the client. Please ensure you can access builds.spacestation14.io and try again. Or ask on Discord since it's probably our fault anyways.",
                 Connector.ConnectionStatus.Updating => "Updating: " + _updater.Status switch
                 {
                     Updater.UpdateStatus.CheckingClientUpdate => "Checking for client update...",
@@ -120,19 +118,32 @@ namespace SS14.Launcher.ViewModels
                 _ => ""
             };
 
-        public static void StartConnect(Updater updater, DataManager cfg, LoginManager loginMgr, Window window, string address)
+        public static void StartConnect(
+            Updater updater,
+            DataManager cfg,
+            LoginManager loginMgr,
+            MainWindowViewModel windowVm,
+            string address)
         {
             var connector = new Connector(updater, cfg, loginMgr);
-            var connectionViewModel = new ConnectingViewModel(connector, updater);
-            var dialog = new ConnectingDialog {DataContext = connectionViewModel};
-            connectionViewModel.Window = dialog;
-            connectionViewModel.Start(address);
-            dialog.ShowDialog(window);
+            var vm = new ConnectingViewModel(connector, updater, windowVm);
+            windowVm.ConnectingVM = vm;
+            vm.Start(address);
         }
 
         private void Start(string address)
         {
             _connector.Connect(address);
+        }
+
+        public void ErrorDismissed()
+        {
+            CloseOverlay();
+        }
+
+        private void CloseOverlay()
+        {
+            _windowVm.ConnectingVM = null;
         }
     }
 }
