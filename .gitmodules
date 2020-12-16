@@ -1,0 +1,3 @@
+[submodule "Robust.LoaderApi"]
+	path = Robust.LoaderApi
+	url = https://github.com/space-wizards/Robust.LoaderApi.git
