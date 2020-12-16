@@ -10,6 +10,8 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Models.ServerStatus;
 
@@ -22,6 +24,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly Updater _updater;
         private readonly LoginManager _loginMgr;
         private readonly MainWindowViewModel _windowVm;
+        private readonly IEngineManager _engineMgr;
         private CancellationTokenSource? _refreshCancel;
 
         public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
@@ -66,18 +69,19 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
         }
 
-        public ServerListTabViewModel(
-            DataManager cfg,
+        public ServerListTabViewModel(DataManager cfg,
             ServerStatusCache statusCache,
             Updater updater,
             LoginManager loginMgr,
-            MainWindowViewModel windowVm)
+            MainWindowViewModel windowVm,
+            IEngineManager engineMgr)
         {
             _cfg = cfg;
             _statusCache = statusCache;
             _updater = updater;
             _loginMgr = loginMgr;
             _windowVm = windowVm;
+            _engineMgr = engineMgr;
 
             AllServers.CollectionChanged += (s, e) =>
             {
@@ -167,7 +171,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 Status = RefreshListStatus.Updated;
 
                 AllServers.AddRange(entries.Select(e =>
-                    new ServerEntryViewModel(_statusCache, _cfg, _updater, _loginMgr, _windowVm, e.Address)
+                    new ServerEntryViewModel(_statusCache, _cfg, _updater, _loginMgr, _windowVm, _engineMgr, e.Address)
                     {
                         FallbackName = e.Name
                     }));

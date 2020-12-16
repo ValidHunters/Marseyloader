@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Serilog;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
 
 namespace SS14.Launcher
 {

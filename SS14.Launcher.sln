@@ -32,6 +32,10 @@ ProjectSection(SolutionItems) = preProject
 	download_net_runtime.py = download_net_runtime.py
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Loader", "SS14.Loader\SS14.Loader.csproj", "{4480C40E-ABCE-4012-8481-021A9ACCF9BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robust.LoaderApi", "Robust.LoaderApi\Robust.LoaderApi\Robust.LoaderApi.csproj", "{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,30 @@ Global
 		{505C4E21-0B62-4F1E-82C6-8FDBA914757A}.Release|x64.Build.0 = Release|Any CPU
 		{505C4E21-0B62-4F1E-82C6-8FDBA914757A}.Release|x86.ActiveCfg = Release|Any CPU
 		{505C4E21-0B62-4F1E-82C6-8FDBA914757A}.Release|x86.Build.0 = Release|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Debug|x64.Build.0 = Debug|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Debug|x86.Build.0 = Debug|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Release|x64.ActiveCfg = Release|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Release|x64.Build.0 = Release|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Release|x86.ActiveCfg = Release|Any CPU
+		{4480C40E-ABCE-4012-8481-021A9ACCF9BB}.Release|x86.Build.0 = Release|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Debug|x64.Build.0 = Debug|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Debug|x86.Build.0 = Debug|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Release|x64.ActiveCfg = Release|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Release|x64.Build.0 = Release|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Release|x86.ActiveCfg = Release|Any CPU
+		{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{31D3CCC5-36F4-48C3-8885-E029A2026B57} = {12BB41B7-34BA-44EF-9ECA-434A276D83BD}

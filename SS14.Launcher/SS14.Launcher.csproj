@@ -35,4 +35,16 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="0.1.4" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Utility\runtime.json" />
+    <EmbeddedResource Include="Utility\runtime.json">
+        <LogicalName>Utility.runtime.json</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="signing_key" />
+    <Content Include="signing_key">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@ using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models.Data
 {
     /// <summary>
     ///     Handles storage of all permanent data,
@@ -17,14 +17,11 @@ namespace SS14.Launcher.Models
     {
         private readonly object _configWriteLock = new object();
 
-        private readonly SourceCache<FavoriteServer, string> _favoriteServers
-            = new SourceCache<FavoriteServer, string>(f => f.Address);
-
-        private readonly SourceCache<Installation, string> _installations
-            = new SourceCache<Installation, string>(i => i.ForkId);
-
-        private readonly SourceCache<LoginInfo, Guid> _logins
-            = new SourceCache<LoginInfo, Guid>(l => l.UserId);
+        private readonly SourceCache<FavoriteServer, string> _favoriteServers = new(f => f.Address);
+        private readonly SourceCache<InstalledServerContent, string> _serverContent = new(i => i.ForkId);
+        private readonly SourceCache<LoginInfo, Guid> _logins = new(l => l.UserId);
+        // When using dynamic engine management, this is used to keep track of installed engine versions.
+        private readonly SourceCache<InstalledEngineVersion, string> _engineInstallations = new(v => v.Version);
 
         private bool _ignoreSave = true;
         private int _nextInstallationId = 1;
@@ -45,12 +42,12 @@ namespace SS14.Launcher.Models
                 .Subscribe(_ => Save());
 
             // Also the installations list.
-            _installations
+            _serverContent
                 .Connect()
                 .WhenAnyPropertyChanged()
                 .Subscribe(_ => Save());
 
-            _installations.Connect()
+            _serverContent.Connect()
                 .Subscribe(_ => Save());
 
             _logins.Connect()
@@ -59,6 +56,9 @@ namespace SS14.Launcher.Models
             _logins
                 .Connect()
                 .WhenAnyPropertyChanged()
+                .Subscribe(_ => Save());
+
+            _engineInstallations.Connect()
                 .Subscribe(_ => Save());
         }
 
@@ -80,8 +80,9 @@ namespace SS14.Launcher.Models
         }
 
         public IObservableCache<FavoriteServer, string> FavoriteServers => _favoriteServers;
-        public IObservableCache<Installation, string> Installations => _installations;
+        public IObservableCache<InstalledServerContent, string> ServerContent => _serverContent;
         public IObservableCache<LoginInfo, Guid> Logins => _logins;
+        public IObservableCache<InstalledEngineVersion, string> EngineInstallations => _engineInstallations;
 
         /// <summary>
         ///     If true, whenever SS14 is started, the cvar will be set to force GLES2 rendering. (See Models/Connector.cs:LaunchClient)
@@ -123,19 +124,29 @@ namespace SS14.Launcher.Models
             _favoriteServers.Remove(server);
         }
 
-        public void AddInstallation(Installation installation)
+        public void AddInstallation(InstalledServerContent installedServerContent)
         {
-            if (_favoriteServers.Lookup(installation.ForkId).HasValue)
+            if (_favoriteServers.Lookup(installedServerContent.ForkId).HasValue)
             {
                 throw new ArgumentException("An installation with that fork ID already exists.");
             }
 
-            _installations.AddOrUpdate(installation); // Will do a save.
+            _serverContent.AddOrUpdate(installedServerContent); // Will do a save.
         }
 
-        public void RemoveInstallation(Installation installation)
+        public void RemoveInstallation(InstalledServerContent installedServerContent)
         {
-            _installations.Remove(installation);
+            _serverContent.Remove(installedServerContent);
+        }
+
+        public void AddEngineInstallation(InstalledEngineVersion version)
+        {
+            _engineInstallations.AddOrUpdate(version);
+        }
+
+        public void RemoveEngineInstallation(InstalledEngineVersion version)
+        {
+            _engineInstallations.Remove(version);
         }
 
         public void AddLogin(LoginInfo login)
@@ -203,12 +214,22 @@ namespace SS14.Launcher.Models
                     }
                 });
 
-                if (data.Installations != null)
+                _engineInstallations.Edit(p =>
                 {
-                    _installations.Edit(a =>
+                    p.Clear();
+
+                    if (data.Engines != null)
+                    {
+                        p.AddOrUpdate(data.Engines);
+                    }
+                });
+
+                if (data.ServerContent != null)
+                {
+                    _serverContent.Edit(a =>
                     {
                         a.Clear();
-                        a.AddOrUpdate(data.Installations);
+                        a.AddOrUpdate(data.ServerContent);
                     });
                 }
 
@@ -253,7 +274,8 @@ namespace SS14.Launcher.Models
                 ForceGLES2 = _forceGLES2,
                 Favorites = _favoriteServers.Items.ToList(),
                 NextInstallationId = _nextInstallationId,
-                Installations = _installations.Items.ToList(),
+                Engines = _engineInstallations.Items.ToList(),
+                ServerContent = _serverContent.Items.ToList(),
                 Fingerprint = _fingerprint,
                 DismissedEarlyAccessWarning = _hasDismissedEarlyAccessWarning
             });
@@ -270,7 +292,7 @@ namespace SS14.Launcher.Models
 
         private static string GetCfgPath()
         {
-            return Path.Combine(UserDataDir.GetUserDataDir(), "launcher_config.json");
+            return Path.Combine(LauncherPaths.DirUserData, "launcher_config.json");
         }
 
         [Serializable]
@@ -282,8 +304,11 @@ namespace SS14.Launcher.Models
             [JsonProperty(PropertyName = "favorites")]
             public List<FavoriteServer>? Favorites { get; set; }
 
-            [JsonProperty(PropertyName = "installations")]
-            public List<Installation>? Installations { get; set; }
+            [JsonProperty(PropertyName = "server_content")]
+            public List<InstalledServerContent>? ServerContent { get; set; }
+
+            [JsonProperty(PropertyName = "engines")]
+            public List<InstalledEngineVersion>? Engines { get; set; }
 
             [JsonProperty(PropertyName = "logins")]
             public List<LoginInfo>? Logins { get; set; }
@@ -299,6 +324,6 @@ namespace SS14.Launcher.Models
 
             [JsonProperty(PropertyName = "dismissed_early_access_warning")]
             public bool? DismissedEarlyAccessWarning { get; set; }
-       }
+        }
     }
 }

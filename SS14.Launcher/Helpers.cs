@@ -12,8 +12,10 @@ using Newtonsoft.Json;
 
 namespace SS14.Launcher
 {
-    internal static class Helpers
+    public static class Helpers
     {
+        public delegate void DownloadProgressCallback(long downloaded, long total);
+
         public static void ExtractZipToDirectory(string directory, Stream zipStream)
         {
             using var zipArchive = new ZipArchive(zipStream);
@@ -34,8 +36,14 @@ namespace SS14.Launcher
             }
         }
 
-        public static async Task DownloadToFile(this HttpClient client, Uri uri, string filePath,
-            Action<(long downloaded, long total)>? progress = null, CancellationToken cancel = default)
+        public static void EnsureDirectoryExists(string dir)
+        {
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+        }
+
+        public static async Task DownloadToStream(this HttpClient client, string uri, Stream stream,
+            DownloadProgressCallback? progress = null, CancellationToken cancel = default)
         {
             await Task.Run(async () =>
             {
@@ -43,11 +51,11 @@ namespace SS14.Launcher
                 response.EnsureSuccessStatusCode();
 
                 await using var contentStream = await response.Content.ReadAsStreamAsync(cancel);
-                await using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, 4096, useAsync: true);
+                // await using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite, 4096, useAsync: true);
                 var totalLength = response.Content.Headers.ContentLength;
                 if (totalLength.HasValue)
                 {
-                    progress?.Invoke((0, totalLength.Value));
+                    progress?.Invoke(0, totalLength.Value);
                 }
 
                 var totalRead = 0L;
@@ -58,20 +66,20 @@ namespace SS14.Launcher
 
                 do
                 {
-                    var read = await contentStream.ReadAsync(buffer, 0, bufferLength, cancel);
+                    var read = await contentStream.ReadAsync(buffer.AsMemory(0, bufferLength), cancel);
                     if (read == 0)
                     {
                         isMoreToRead = false;
                     }
                     else
                     {
-                        await fileStream.WriteAsync(buffer, 0, read, cancel);
+                        await stream.WriteAsync(buffer.AsMemory(0, read), cancel);
 
                         reads += 1;
                         totalRead += read;
                         if (totalLength.HasValue && reads % 20 == 0)
                         {
-                            progress?.Invoke((totalRead, totalLength.Value));
+                            progress?.Invoke(totalRead, totalLength.Value);
                         }
                     }
                 } while (isMoreToRead);

@@ -8,6 +8,8 @@ using Avalonia.VisualTree;
 using DynamicData;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.Views;
@@ -22,15 +24,17 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly ServerStatusCache _statusCache;
         private readonly Updater _updater;
         private readonly LoginManager _loginMgr;
+        private readonly IEngineManager _engineMgr;
 
         public HomePageViewModel(MainWindowViewModel mainWindowViewModel, DataManager cfg,
-            ServerStatusCache statusCache, Updater updater, LoginManager loginMgr)
+            ServerStatusCache statusCache, Updater updater, LoginManager loginMgr, IEngineManager engineMgr)
         {
             MainWindowViewModel = mainWindowViewModel;
             _cfg = cfg;
             _statusCache = statusCache;
             _updater = updater;
             _loginMgr = loginMgr;
+            _engineMgr = engineMgr;
 
             _cfg.FavoriteServers
                 .Connect()
@@ -58,7 +62,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 return;
             }
 
-            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, MainWindowViewModel, res);
+            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, MainWindowViewModel, _engineMgr, res);
         }
 
         public async void AddFavoritePressed()
@@ -106,6 +110,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                     _updater,
                     _loginMgr,
                     MainWindowViewModel,
+                    _engineMgr,
                     favoriteServer);
 
                 serverEntryViewModel.DoInitialUpdate();

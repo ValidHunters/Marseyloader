@@ -5,6 +5,8 @@ using Avalonia.ReactiveUI;
 using Serilog;
 using Serilog.Events;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
@@ -46,10 +48,11 @@ namespace SS14.Launcher
         {
             var cfg = new DataManager();
             cfg.Load();
+            var engineManager = new EngineManagerDynamic(cfg);
             var statusCache = new ServerStatusCache();
-            var updater = new Updater(cfg);
+            var updater = new Updater(cfg, engineManager);
 
-            var viewModel = new MainWindowViewModel(cfg, statusCache, updater);
+            var viewModel = new MainWindowViewModel(cfg, statusCache, updater, engineManager);
             var window = new MainWindow
             {
                 DataContext = viewModel

@@ -2,6 +2,8 @@ using System;
 using Avalonia.Media;
 using ReactiveUI;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Models.ServerStatus;
 
@@ -17,6 +19,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly Updater _updater;
         private readonly LoginManager _loginMgr;
         private readonly MainWindowViewModel _windowVm;
+        private readonly IEngineManager _engineMgr;
         private bool _isAltBackground;
         private string Address => _cacheData.Address;
         private string _fallbackName = string.Empty;
@@ -27,6 +30,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             Updater updater,
             LoginManager loginMgr,
             MainWindowViewModel windowVm,
+            IEngineManager engineMgr,
             string address)
         {
             _cache = cache;
@@ -35,6 +39,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             _updater = updater;
             _loginMgr = loginMgr;
             _windowVm = windowVm;
+            _engineMgr = engineMgr;
 
             this.WhenAnyValue(x => x.IsAltBackground)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(BackgroundColor)));
@@ -65,8 +70,9 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             Updater updater,
             LoginManager loginMgr,
             MainWindowViewModel windowVm,
+            IEngineManager engineMgr,
             FavoriteServer favorite)
-            : this(cache, cfg, updater, loginMgr, windowVm, favorite.Address)
+            : this(cache, cfg, updater, loginMgr, windowVm, engineMgr, favorite.Address)
         {
             Favorite = favorite;
         }
@@ -78,7 +84,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public void ConnectPressed()
         {
-            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, _windowVm, Address);
+            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, _windowVm, _engineMgr, Address);
         }
 
         public FavoriteServer? Favorite { get; }

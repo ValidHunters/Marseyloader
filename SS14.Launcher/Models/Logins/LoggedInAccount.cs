@@ -1,5 +1,6 @@
 using System;
 using ReactiveUI;
+using SS14.Launcher.Models.Data;
 
 namespace SS14.Launcher.Models.Logins
 {

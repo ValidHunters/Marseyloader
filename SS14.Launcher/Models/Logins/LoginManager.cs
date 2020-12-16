@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using DynamicData;
 using ReactiveUI;
 using Serilog;
+using SS14.Launcher.Models.Data;
 
 namespace SS14.Launcher.Models.Logins
 {

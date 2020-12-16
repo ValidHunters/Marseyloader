@@ -9,6 +9,8 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.Utility;
@@ -33,15 +35,19 @@ namespace SS14.Launcher.ViewModels
         public NewsTabViewModel NewsTab { get; }
         public OptionsTabViewModel OptionsTab { get; }
 
-        public MainWindowViewModel(DataManager cfg, ServerStatusCache statusCache, Updater updater)
+        public MainWindowViewModel(
+            DataManager cfg,
+            ServerStatusCache statusCache,
+            Updater updater,
+            IEngineManager engineMgr)
         {
             _cfg = cfg;
             var authApi = new AuthApi(cfg);
             _loginMgr = new LoginManager(cfg, authApi);
 
-            ServersTab = new ServerListTabViewModel(cfg, statusCache, updater, _loginMgr, this);
+            ServersTab = new ServerListTabViewModel(cfg, statusCache, updater, _loginMgr, this, engineMgr);
             NewsTab = new NewsTabViewModel();
-            HomeTab = new HomePageViewModel(this, cfg, statusCache, updater, _loginMgr);
+            HomeTab = new HomePageViewModel(this, cfg, statusCache, updater, _loginMgr, engineMgr);
             OptionsTab = new OptionsTabViewModel(cfg);
 
             Tabs = new MainWindowTabViewModel[]

@@ -28,48 +28,20 @@ namespace SS14.Launcher.Models
     [JsonObject(ItemRequired = Required.Always)]
     public class ServerBuildInformation
     {
-        [JsonProperty(PropertyName = "download_urls")]
-        public PlatformList DownloadUrls { get; set; } = default!;
+        [JsonProperty(PropertyName = "download_url")]
+        public string DownloadUrl = default!;
+
+        [JsonProperty(PropertyName = "engine_version")]
+        public string EngineVersion = default!;
 
         [JsonProperty(PropertyName = "version")]
-        public string Version { get; set; } = default!;
+        public string Version = default!;
 
         [JsonProperty(PropertyName = "fork_id")]
-        public string ForkId { get; set; } = default!;
+        public string ForkId = default!;
 
-        [JsonProperty(PropertyName = "hashes")]
-        public PlatformList Hashes { get; set; } = default!;
-    }
-
-    [JsonObject]
-    public class PlatformList
-    {
-        public string? Windows { get; set; }
-        public string? Linux { get; set; }
-        public string? MacOS { get; set; }
-
-        public string? ForCurrentPlatform
-        {
-            get
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return Windows;
-                }
-
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    return Linux;
-                }
-
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    return MacOS;
-                }
-
-                throw new PlatformNotSupportedException();
-            }
-        }
+        [JsonProperty(PropertyName = "hash", Required = Required.AllowNull)]
+        public string? Hash;
     }
 
     public enum AuthMode

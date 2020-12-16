@@ -1,34 +1,35 @@
 using System;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
-using DynamicData.Kernel;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Models.EngineManager;
 
 namespace SS14.Launcher.Models
 {
-    public sealed partial class Updater : ReactiveObject
+    public sealed class Updater : ReactiveObject
     {
         private readonly DataManager _cfg;
-        private bool _updating = false;
+        private readonly IEngineManager _engineManager;
+        private bool _updating;
 
-        public Updater(DataManager cfg)
+        public Updater(DataManager cfg, IEngineManager engineManager)
         {
             _cfg = cfg;
+            _engineManager = engineManager;
         }
 
         [Reactive] public UpdateStatus Status { get; private set; }
         [Reactive] public (long downloaded, long total)? Progress { get; private set; }
 
-        public async Task<Installation?> RunUpdateForLaunchAsync(ServerBuildInformation buildInformation)
+        public async Task<InstalledServerContent?> RunUpdateForLaunchAsync(ServerBuildInformation buildInformation)
         {
             if (_updating)
             {
@@ -39,8 +40,6 @@ namespace SS14.Launcher.Models
 
             try
             {
-                Status = UpdateStatus.CheckingClientUpdate;
-
                 var install = await RunUpdate(buildInformation);
                 Status = UpdateStatus.Ready;
                 return install;
@@ -58,92 +57,46 @@ namespace SS14.Launcher.Models
             return null;
         }
 
-        private async Task<Installation> RunUpdate(ServerBuildInformation buildInformation)
+        private async Task<InstalledServerContent> RunUpdate(ServerBuildInformation buildInformation)
         {
-            bool needsUpdate;
-            var existingInstallation = _cfg.Installations.Lookup(buildInformation.ForkId);
-            if (existingInstallation.HasValue)
-            {
-                var currentVersion = existingInstallation.Value.CurrentVersion;
-                if (buildInformation.Version != currentVersion)
-                {
-                    Log.Information("Current version ({currentVersion}) is out of date, updating to {newVersion}.",
-                        currentVersion, buildInformation.Version);
+            Status = UpdateStatus.CheckingClientUpdate;
 
-                    needsUpdate = true;
-                }
-                else
-                {
-                    // Check SHA.
-                    var currentHash = existingInstallation.Value.CurrentHash;
-                    if (buildInformation.Hashes.ForCurrentPlatform != null &&
-                        currentHash != null &&
-                        !currentHash.Equals(buildInformation.Hashes.ForCurrentPlatform,
-                            StringComparison.OrdinalIgnoreCase))
-                    {
-                        Log.Information("Hash mismatch, re-downloading anyways.");
-                        needsUpdate = true;
-                    }
-                    else
-                    {
-                        needsUpdate = false;
-                    }
-                }
-            }
-            else
-            {
-                Log.Information("As it turns out, we don't have any version yet. Time to update.");
+            await InstallEngineVersionIfMissing(buildInformation.EngineVersion);
 
-                needsUpdate = true;
-            }
+            Status = UpdateStatus.CheckingClientUpdate;
 
-            if (!needsUpdate)
+            if (!CheckNeedUpdate(buildInformation, out var existingInstallation))
             {
-                return existingInstallation.Value;
+                return existingInstallation;
             }
 
             Status = UpdateStatus.DownloadingClientUpdate;
 
-            var diskId = existingInstallation.Convert(x => x.DiskId).ValueOr(() => _cfg.GetNewInstallationId());
-            var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "installations",
-                diskId.ToString(CultureInfo.InvariantCulture));
+            var diskId = existingInstallation?.DiskId ?? _cfg.GetNewInstallationId();
+            var binPath = Path.Combine(LauncherPaths.DirEngineInstallations,
+                diskId.ToString(CultureInfo.InvariantCulture) + ".zip");
 
-            await Task.Run(() =>
-            {
-                // If your disk feels like being a pain this could actually stutter so..
-                // Task.Run() it!
-                if (!Directory.Exists(binPath))
-                {
-                    Directory.CreateDirectory(binPath);
-                }
-                else
-                {
-                    Helpers.ClearDirectory(binPath);
-                }
-            });
+            await using var file = File.Create(binPath, 4096, FileOptions.Asynchronous);
 
-            var buildUri = new Uri(buildInformation.DownloadUrls.ForCurrentPlatform!);
+            await Global.GlobalHttpClient.DownloadToStream(
+                buildInformation.DownloadUrl,
+                file,
+                DownloadProgressCallback);
 
-            // We download the artifact to a temporary file on disk.
-            // This is to avoid having to load the entire thing into memory.
-            // (.NET's zip code loads it into a memory stream if the stream you give it doesn't support seeking.)
-            // (this makes a lot of sense due to how the zip file format works.)
-            var tmpFile = await DownloadArtifactToTempFile(buildUri);
+            file.Position = 0;
+
+            Progress = null;
 
             Status = UpdateStatus.Verifying;
 
-            if (buildInformation.Hashes.ForCurrentPlatform != null)
+            if (buildInformation.Hash != null)
             {
-                var expectHash = buildInformation.Hashes.ForCurrentPlatform;
+                var hash = await Task.Run(() => HashFile(file));
+                file.Position = 0;
 
-                var newFileHash = await Task.Run(() =>
-                {
-                    using var f = File.OpenRead(tmpFile);
+                var expectHash = buildInformation.Hash;
 
-                    return HashFile(f);
-                });
-
-                var newFileHashString = ByteArrayToString(newFileHash);
+                var newFileHashString = ByteArrayToString(hash);
                 if (!expectHash.Equals(newFileHashString, StringComparison.OrdinalIgnoreCase))
                 {
                     throw new InvalidOperationException(
@@ -151,93 +104,51 @@ namespace SS14.Launcher.Models
                 }
             }
 
-            Status = UpdateStatus.Extracting;
-            Progress = null;
-
-            await Task.Run(() =>
-            {
-                using (var file = File.OpenRead(tmpFile))
-                {
-                    Helpers.ExtractZipToDirectory(binPath, file);
-                }
-
-                File.Delete(tmpFile);
-            });
-
-            // .NET's zip extraction system doesn't seem to preserve +x.
-            // Technically can't blame it because there's no "official" way to store that,
-            // since zip files are DOS-centric.
-            // Anyways we have to handle this on macOS and Linux.
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                // Manually chmod +x the App bundle's startup script.
-                var processA = Process.Start(new ProcessStartInfo
-                {
-                    FileName = "chmod",
-                    ArgumentList =
-                    {
-                        "+x",
-                        Path.Combine("Space Station 14.app", "Contents", "MacOS", "SS14")
-                    },
-                    WorkingDirectory = binPath
-                });
-                // And also chmod +x the Robust.Client executable.
-                var processB = Process.Start(new ProcessStartInfo
-                {
-                    FileName = "chmod",
-                    ArgumentList =
-                    {
-                        "+x",
-                        Path.Combine("Space Station 14.app", "Contents", "Resources", "Robust.Client")
-                    },
-                    WorkingDirectory = binPath
-                });
-
-                processA?.WaitForExit();
-                processB?.WaitForExit();
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                var process = Process.Start(new ProcessStartInfo
-                {
-                    FileName = "chmod",
-                    ArgumentList =
-                    {
-                        "+x",
-                        "Robust.Client"
-                    },
-                    WorkingDirectory = binPath
-                });
-                process?.WaitForExit();
-            }
-
             // Write version to disk.
-            Installation installation;
-            if (existingInstallation.HasValue)
+            string? oldEngineVersion = null;
+            if (existingInstallation != null)
             {
-                installation = existingInstallation.Value;
-                installation.CurrentVersion = buildInformation.Version;
-                installation.CurrentHash = buildInformation.Hashes.ForCurrentPlatform;
+                oldEngineVersion = existingInstallation.CurrentEngineVersion;
+                existingInstallation.CurrentVersion = buildInformation.Version;
+                existingInstallation.CurrentHash = buildInformation.Hash;
+                existingInstallation.CurrentEngineVersion = buildInformation.EngineVersion;
             }
             else
             {
-                installation = new Installation(buildInformation.Version,
-                    buildInformation.Hashes.ForCurrentPlatform, buildInformation.ForkId, diskId);
-                _cfg.AddInstallation(installation);
+                existingInstallation = new InstalledServerContent(
+                    buildInformation.Version,
+                    buildInformation.Hash,
+                    buildInformation.ForkId,
+                    diskId,
+                    buildInformation.EngineVersion);
+                _cfg.AddInstallation(existingInstallation);
             }
 
+            if (oldEngineVersion != null)
+            {
+                await CullEngineVersionMaybe(oldEngineVersion);
+            }
+
+
             Log.Information("Update done!");
-            return installation;
+            return existingInstallation;
         }
 
-        private async Task<string> DownloadArtifactToTempFile(Uri downloadUri, CancellationToken cancel = default)
+        private async Task CullEngineVersionMaybe(string oldEngineVersion)
         {
-            var tmpFile = Path.GetTempFileName();
-            await Global.GlobalHttpClient.DownloadToFile(downloadUri, tmpFile,
-                f => Dispatcher.UIThread.Post(() => Progress = f), cancel);
+            await _engineManager.DoEngineCullMaybeAsync(oldEngineVersion);
+        }
 
-            return tmpFile;
+        private async Task InstallEngineVersionIfMissing(string engineVer)
+        {
+            await _engineManager.DownloadEngineIfNecessary(engineVer, DownloadProgressCallback);
+
+            Progress = null;
+        }
+
+        private void DownloadProgressCallback(long downloaded, long total)
+        {
+            Dispatcher.UIThread.Post(() => Progress = (downloaded, total));
         }
 
         internal static byte[] HashFile(Stream stream)
@@ -258,12 +169,47 @@ namespace SS14.Launcher.Models
             return hex.ToString();
         }
 
+        private bool CheckNeedUpdate(
+            ServerBuildInformation buildInfo,
+            [NotNullWhen(false)] out InstalledServerContent? installation)
+        {
+            var existingInstallation = _cfg.ServerContent.Lookup(buildInfo.ForkId);
+            if (existingInstallation.HasValue)
+            {
+                installation = existingInstallation.Value;
+                var currentVersion = existingInstallation.Value.CurrentVersion;
+                if (buildInfo.Version != currentVersion)
+                {
+                    Log.Information("Current version ({currentVersion}) is out of date, updating to {newVersion}.",
+                        currentVersion, buildInfo.Version);
+
+                    return true;
+                }
+
+                // Check hash.
+                var currentHash = existingInstallation.Value.CurrentHash;
+                if (buildInfo.Hash != null && !buildInfo.Hash.Equals(currentHash, StringComparison.OrdinalIgnoreCase))
+                {
+                    Log.Information("Hash mismatch, re-downloading.");
+                    return true;
+                }
+
+                return false;
+            }
+
+            Log.Information("As it turns out, we don't have any version yet. Time to update.");
+
+            installation = null;
+            return true;
+        }
+
         public enum UpdateStatus
         {
             CheckingClientUpdate,
+            DownloadingEngineVersion,
             DownloadingClientUpdate,
             Verifying,
-            Extracting,
+            CullingEngine,
             Ready,
             Error,
         }

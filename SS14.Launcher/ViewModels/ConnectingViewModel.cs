@@ -1,6 +1,8 @@
 using System;
 using ReactiveUI;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.ViewModels
@@ -113,7 +115,6 @@ namespace SS14.Launcher.ViewModels
                 {
                     Updater.UpdateStatus.CheckingClientUpdate => "Checking for client update...",
                     Updater.UpdateStatus.DownloadingClientUpdate => "Downloading client update...",
-                    Updater.UpdateStatus.Extracting => "Extracting update...",
                     Updater.UpdateStatus.Verifying => "Verifying download integrity...",
                     Updater.UpdateStatus.Ready => "Update done!",
                     _ => "You shouldn't see this"
@@ -132,9 +133,10 @@ namespace SS14.Launcher.ViewModels
             DataManager cfg,
             LoginManager loginMgr,
             MainWindowViewModel windowVm,
+            IEngineManager engineMgr,
             string address)
         {
-            var connector = new Connector(updater, cfg, loginMgr);
+            var connector = new Connector(updater, cfg, loginMgr, engineMgr);
             var vm = new ConnectingViewModel(connector, updater, windowVm);
             windowVm.ConnectingVM = vm;
             vm.Start(address);

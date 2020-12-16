@@ -1,14 +1,29 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using JetBrains.Annotations;
 
 namespace SS14.Launcher
 {
-    public static class UserDataDir
+    /// <summary>
+    ///     Contains file paths used by the launcher to manage data.
+    /// </summary>
+    public static class LauncherPaths
     {
-        [Pure]
-        public static string GetUserDataDir()
+        public static readonly string AppDataPath = Path.Combine("Space Station 14", "launcher");
+        public static readonly string EngineInstallationsDirName = "engines";
+        public static readonly string ServerContentDirName = "server content";
+
+        public static readonly string DirLauncherInstall = GetInstallDir();
+        public static readonly string DirUserData = GetUserDataDir();
+        public static readonly string DirEngineInstallations = Path.Combine(DirUserData, EngineInstallationsDirName);
+        public static readonly string DirServerContent = Path.Combine(DirUserData, ServerContentDirName);
+
+        private static string GetInstallDir()
+        {
+            return Path.GetDirectoryName(typeof(LauncherPaths).Assembly.Location)!;
+        }
+
+        private static string GetUserDataDir()
         {
             string appDataDir;
 
@@ -35,7 +50,7 @@ namespace SS14.Launcher
                 appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             }
 
-            return Path.Combine(appDataDir, "Space Station 14", "launcher");
+            return Path.Combine(appDataDir, AppDataPath);
         }
     }
 }

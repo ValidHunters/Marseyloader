@@ -1,11 +1,11 @@
 using Newtonsoft.Json;
 using ReactiveUI;
 
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models.Data
 {
     // Without OptIn JSON.NET chokes on ReactiveObject.
     [JsonObject(MemberSerialization.OptIn)]
-    public sealed class Installation : ReactiveObject
+    public sealed class InstalledServerContent : ReactiveObject
     {
         [JsonProperty(PropertyName = "current_version")]
         private string _currentVersion;
@@ -13,12 +13,21 @@ namespace SS14.Launcher.Models
         [JsonProperty(PropertyName = "current_hash")]
         private string? _currentHash;
 
-        public Installation(string currentVersion, string? currentHash, string forkId, int diskId)
+        [JsonProperty(PropertyName = "current_engine_version")]
+        private string _currentEngineVersion;
+
+        public InstalledServerContent(
+            string currentVersion,
+            string? currentHash,
+            string forkId,
+            int diskId,
+            string currentEngineVersion)
         {
             _currentVersion = currentVersion;
             _currentHash = currentHash;
             ForkId = forkId;
             DiskId = diskId;
+            _currentEngineVersion = currentEngineVersion;
         }
 
         [JsonProperty(PropertyName = "fork_id")]
@@ -37,6 +46,12 @@ namespace SS14.Launcher.Models
         {
             get => _currentHash;
             set => this.RaiseAndSetIfChanged(ref _currentHash, value);
+        }
+
+        public string CurrentEngineVersion
+        {
+            get => _currentEngineVersion;
+            set => this.RaiseAndSetIfChanged(ref _currentEngineVersion, value);
         }
     }
 }

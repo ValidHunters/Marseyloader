@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using ReactiveUI.Fody.Helpers;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
 
 namespace SS14.Launcher.ViewModels.Login
 {

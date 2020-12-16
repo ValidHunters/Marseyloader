@@ -1,5 +1,6 @@
 using ReactiveUI;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.ViewModels.Login;
 

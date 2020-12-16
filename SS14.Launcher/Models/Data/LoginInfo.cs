@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models.Data
 {
     [Serializable]
     // Without OptIn JSON.NET chokes on ReactiveObject.

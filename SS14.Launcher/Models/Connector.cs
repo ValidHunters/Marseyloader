@@ -11,6 +11,8 @@ using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.Models
@@ -20,15 +22,17 @@ namespace SS14.Launcher.Models
         private readonly Updater _updater;
         private readonly DataManager _cfg;
         private readonly LoginManager _loginManager;
+        private readonly IEngineManager _engineManager;
 
         private ConnectionStatus _status = ConnectionStatus.None;
         private bool _clientExitedBadly;
 
-        public Connector(Updater updater, DataManager cfg, LoginManager loginManager)
+        public Connector(Updater updater, DataManager cfg, LoginManager loginManager, IEngineManager engineManager)
         {
             _updater = updater;
             _cfg = cfg;
             _loginManager = loginManager;
+            _engineManager = engineManager;
         }
 
         public ConnectionStatus Status
@@ -53,7 +57,6 @@ namespace SS14.Launcher.Models
             {
                 Log.Error(e, "Failed to connect: {status}", e.Status);
                 Status = e.Status;
-                return;
             }
         }
 
@@ -91,7 +94,8 @@ namespace SS14.Launcher.Models
             Status = ConnectionStatus.ClientExited;
         }
 
-        private Process ConnectLaunchClient(ServerInfo info, Installation installation, Uri connectAddress, Uri parsedAddr)
+        private Process? ConnectLaunchClient(ServerInfo info, InstalledServerContent installedServerContent,
+            Uri connectAddress, Uri parsedAddr)
         {
             var cVars = new List<(string, string)>();
 
@@ -105,26 +109,33 @@ namespace SS14.Launcher.Models
                 cVars.Add(("auth.server", ConfigConstants.AuthUrl));
             }
 
-            // Launch client.
-            var proc = LaunchClient(installation, new[]
+            try
             {
-                // We are using the launcher. Don't show main menu etc..
-                "--launcher",
+                // Launch client.
+                return LaunchClient(info.BuildInformation.EngineVersion, installedServerContent, new[]
+                {
+                    // We are using the launcher. Don't show main menu etc..
+                    "--launcher",
 
-                // Pass username to launched client.
-                // We don't load username from client_config.toml when launched via launcher.
-                "--username", _loginManager.ActiveAccount?.Username ?? "JoeGenero",
+                    // Pass username to launched client.
+                    // We don't load username from client_config.toml when launched via launcher.
+                    "--username", _loginManager.ActiveAccount?.Username ?? "JoeGenero",
 
-                // Connection address
-                "--connect-address", connectAddress.ToString(),
+                    // Connection address
+                    "--connect-address", connectAddress.ToString(),
 
-                // ss14(s):// address passed in. Only used for feedback in the client.
-                "--ss14-address", parsedAddr.ToString(),
+                    // ss14(s):// address passed in. Only used for feedback in the client.
+                    "--ss14-address", parsedAddr.ToString(),
 
-                // GLES2 forcing or using default fallback
-                "--cvar", "display.renderer=" + (_cfg.ForceGLES2 ? "3" : "0"),
-            }, cVars);
-            return proc;
+                    // GLES2 forcing or using default fallback
+                    "--cvar", "display.renderer=" + (_cfg.ForceGLES2 ? "3" : "0"),
+                }, cVars);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Exception while starting client");
+                return null;
+            }
         }
 
         private static Uri GetConnectAddress(ServerInfo info, Uri infoAddr)
@@ -151,7 +162,7 @@ namespace SS14.Launcher.Models
             }
         }
 
-        private async Task<Installation> RunUpdateAsync(ServerInfo info)
+        private async Task<InstalledServerContent> RunUpdateAsync(ServerInfo info)
         {
             var installation = await _updater.RunUpdateForLaunchAsync(info.BuildInformation);
             if (installation == null)
@@ -181,42 +192,26 @@ namespace SS14.Launcher.Models
             }
         }
 
-        private static Process LaunchClient(
-            Installation installation,
+        private Process? LaunchClient(
+            string engineVersion,
+            InstalledServerContent installedServerContent,
             IEnumerable<string> extraArgs,
             List<(string, string)> cVars)
         {
-            var binPath = Path.Combine(UserDataDir.GetUserDataDir(), "installations",
-                installation.DiskId.ToString(CultureInfo.InvariantCulture));
-            ProcessStartInfo startInfo;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = Path.Combine(binPath, "Robust.Client")
-                };
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = Path.Combine(binPath, "Robust.Client.exe"),
-                };
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                // TODO: does this cause macOS to make a security warning?
-                // If it does we'll have to manually launch the contents, which is simple enough.
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = "open",
-                    ArgumentList = {"Space Station 14.app", "--args"},
-                };
-            }
-            else
-            {
-                throw new NotSupportedException("Unsupported platform.");
-            }
+            var pubKey = Path.Combine(LauncherPaths.DirLauncherInstall, "signing_key");
+            var binPath = _engineManager.GetEnginePath(engineVersion);
+            var sig = _engineManager.GetEngineSignature(engineVersion);
+            var contentPath = Path.Combine(LauncherPaths.DirServerContent,
+                installedServerContent.DiskId.ToString(CultureInfo.InvariantCulture) + ".zip");
+
+            var startInfo = GetLoaderStartInfo();
+
+            startInfo.ArgumentList.Add(binPath);
+            startInfo.ArgumentList.Add(sig);
+            startInfo.ArgumentList.Add(pubKey);
+
+            startInfo.ArgumentList.Add("--mount-zip");
+            startInfo.ArgumentList.Add(contentPath);
 
             if (cVars.Count != 0)
             {
@@ -227,9 +222,68 @@ namespace SS14.Launcher.Models
             startInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "LatestMajor";
 
             startInfo.UseShellExecute = false;
-            startInfo.WorkingDirectory = binPath;
             startInfo.ArgumentList.AddRange(extraArgs);
             return Process.Start(startInfo);
+        }
+
+        private static ProcessStartInfo GetLoaderStartInfo()
+        {
+            string basePath;
+
+#if FULL_RELEASE
+            const bool release = true;
+#else
+            const bool release = false;
+#endif
+
+            if (release)
+            {
+                basePath = Path.Combine(LauncherPaths.DirLauncherInstall, "loader");
+            }
+            else
+            {
+                basePath = Path.GetFullPath(Path.Combine(
+                    LauncherPaths.DirLauncherInstall,
+                    "..", "..", "..", "..",
+                    "SS14.Loader", "bin", "Debug", "net5.0"));
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return new ProcessStartInfo
+                {
+                    FileName = Path.Combine(basePath, "SS14.Loader")
+                };
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return new ProcessStartInfo
+                {
+                    FileName = Path.Combine(basePath, "SS14.Loader.exe"),
+                };
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                if (release)
+                {
+                    return new ProcessStartInfo
+                    {
+                        FileName = "open",
+                        ArgumentList = {Path.Combine(basePath, "Space Station 14.app"), "--args"},
+                    };
+                }
+                else
+                {
+                    return new ProcessStartInfo
+                    {
+                        FileName = Path.Combine(basePath, "SS14.Loader"),
+                    };
+                }
+            }
+
+            throw new NotSupportedException("Unsupported platform.");
         }
 
         public enum ConnectionStatus

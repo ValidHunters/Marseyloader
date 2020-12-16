@@ -5,6 +5,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Robust.Shared.AuthLib;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.ViewModels.Login
