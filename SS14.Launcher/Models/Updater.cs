@@ -73,9 +73,10 @@ namespace SS14.Launcher.Models
             Status = UpdateStatus.DownloadingClientUpdate;
 
             var diskId = existingInstallation?.DiskId ?? _cfg.GetNewInstallationId();
-            var binPath = Path.Combine(LauncherPaths.DirEngineInstallations,
+            var binPath = Path.Combine(LauncherPaths.DirServerContent,
                 diskId.ToString(CultureInfo.InvariantCulture) + ".zip");
 
+            Helpers.EnsureDirectoryExists(LauncherPaths.DirServerContent);
             await using var file = File.Create(binPath, 4096, FileOptions.Asynchronous);
 
             await Global.GlobalHttpClient.DownloadToStream(
