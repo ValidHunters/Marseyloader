@@ -14,6 +14,7 @@ namespace SS14.Launcher.ViewModels
         private readonly MainWindowViewModel _windowVm;
 
         public bool IsErrored => _connector.Status == Connector.ConnectionStatus.ConnectionFailed ||
+                                 _connector.Status == Connector.ConnectionStatus.UpdateError ||
                                  _connector.Status == Connector.ConnectionStatus.ClientExited &&
                                  _connector.ClientExitedBadly;
 
