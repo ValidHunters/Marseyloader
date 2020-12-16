@@ -42,20 +42,21 @@ namespace SS14.Loader
             return NativeLibrary.Load(a);
         }
 
-        private void Run()
+        private bool Run()
         {
             if (!TryOpenAssembly(RobustAssemblyName, out var clientAssembly))
             {
                 Console.WriteLine("Unable to locate Robust.Client.dll in engine build!");
-                return;
+                return false;
             }
 
             if (!TryGetLoader(clientAssembly, out var loader))
-                return;
+                return false;
 
             var args = new MainArgs(_engineArgs, _fileApi);
 
             loader.Main(args);
+            return true;
         }
 
         private static bool TryGetLoader(Assembly clientAssembly, [NotNullWhen(true)] out ILoaderEntryPoint? loader)
@@ -135,7 +136,10 @@ namespace SS14.Loader
             }
 
             var program = new Program(robustPath, args[3..]);
-            program.Run();
+            if (!program.Run())
+            {
+                return 3;
+            }
 
             /*Console.WriteLine("lsasm dump:");
             foreach (var asmLoadContext in AssemblyLoadContext.All)
