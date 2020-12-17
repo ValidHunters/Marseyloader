@@ -13,6 +13,7 @@
     <StyleInclude Source="/Theme/ThemeResources.xaml" />
     <StyleInclude Source="/Theme/ThemeTabControl.xaml" />
     <StyleInclude Source="/Theme/ThemeExpander.xaml" />
+    <StyleInclude Source="/Theme/ThemeOverlayBox.xaml" />
     <StyleInclude Source="/Theme/ThemeButton.xaml" />
     <StyleInclude Source="/Theme/ThemeDungSpinner.xaml" />
     <StyleInclude Source="/Theme/ThemeDropDown.xaml" />
