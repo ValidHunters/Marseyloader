@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using ReactiveUI;
@@ -29,7 +30,9 @@ namespace SS14.Launcher.Models
         [Reactive] public UpdateStatus Status { get; private set; }
         [Reactive] public (long downloaded, long total)? Progress { get; private set; }
 
-        public async Task<InstalledServerContent?> RunUpdateForLaunchAsync(ServerBuildInformation buildInformation)
+        public async Task<InstalledServerContent?> RunUpdateForLaunchAsync(
+            ServerBuildInformation buildInformation,
+            CancellationToken cancel=default)
         {
             if (_updating)
             {
@@ -40,9 +43,13 @@ namespace SS14.Launcher.Models
 
             try
             {
-                var install = await RunUpdate(buildInformation);
+                var install = await RunUpdate(buildInformation, cancel);
                 Status = UpdateStatus.Ready;
                 return install;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -57,15 +64,17 @@ namespace SS14.Launcher.Models
             return null;
         }
 
-        private async Task<InstalledServerContent> RunUpdate(ServerBuildInformation buildInformation)
+        private async Task<InstalledServerContent> RunUpdate(
+            ServerBuildInformation buildInformation,
+            CancellationToken cancel)
         {
             Status = UpdateStatus.CheckingClientUpdate;
 
-            var changeEngine = await InstallEngineVersionIfMissing(buildInformation.EngineVersion);
+            var changeEngine = await InstallEngineVersionIfMissing(buildInformation.EngineVersion, cancel);
 
             Status = UpdateStatus.CheckingClientUpdate;
 
-            var (installation, changedContent) = await UpdateContentIfNecessary(buildInformation);
+            var (installation, changedContent) = await UpdateContentIfNecessary(buildInformation, cancel);
 
             if (changedContent || changeEngine)
             {
@@ -78,7 +87,8 @@ namespace SS14.Launcher.Models
         }
 
         private async Task<(InstalledServerContent, bool changed)> UpdateContentIfNecessary(
-            ServerBuildInformation buildInformation)
+            ServerBuildInformation buildInformation,
+            CancellationToken cancel)
         {
             if (!CheckNeedUpdate(buildInformation, out var existingInstallation))
             {
@@ -94,10 +104,21 @@ namespace SS14.Launcher.Models
             Helpers.EnsureDirectoryExists(LauncherPaths.DirServerContent);
             await using var file = File.Create(binPath, 4096, FileOptions.Asynchronous);
 
-            await Global.GlobalHttpClient.DownloadToStream(
-                buildInformation.DownloadUrl,
-                file,
-                DownloadProgressCallback);
+            try
+            {
+                await Global.GlobalHttpClient.DownloadToStream(
+                    buildInformation.DownloadUrl,
+                    file,
+                    DownloadProgressCallback,
+                    cancel);
+            }
+            catch (OperationCanceledException)
+            {
+                // Don't leave behind garbage.
+                await file.DisposeAsync();
+                File.Delete(binPath);
+                throw;
+            }
 
             file.Position = 0;
 
@@ -107,7 +128,7 @@ namespace SS14.Launcher.Models
 
             if (buildInformation.Hash != null)
             {
-                var hash = await Task.Run(() => HashFile(file));
+                var hash = await Task.Run(() => HashFile(file), cancel);
                 file.Position = 0;
 
                 var expectHash = buildInformation.Hash;
@@ -121,10 +142,8 @@ namespace SS14.Launcher.Models
             }
 
             // Write version to disk.
-            string? oldEngineVersion = null;
             if (existingInstallation != null)
             {
-                oldEngineVersion = existingInstallation.CurrentEngineVersion;
                 existingInstallation.CurrentVersion = buildInformation.Version;
                 existingInstallation.CurrentHash = buildInformation.Hash;
                 existingInstallation.CurrentEngineVersion = buildInformation.EngineVersion;
@@ -148,10 +167,10 @@ namespace SS14.Launcher.Models
             await _engineManager.DoEngineCullMaybeAsync();
         }
 
-        private async Task<bool> InstallEngineVersionIfMissing(string engineVer)
+        private async Task<bool> InstallEngineVersionIfMissing(string engineVer, CancellationToken cancel)
         {
             Status = UpdateStatus.DownloadingEngineVersion;
-            var change = await _engineManager.DownloadEngineIfNecessary(engineVer, DownloadProgressCallback);
+            var change = await _engineManager.DownloadEngineIfNecessary(engineVer, DownloadProgressCallback, cancel);
 
             Progress = null;
             return change;

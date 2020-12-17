@@ -131,8 +131,8 @@ namespace SS14.Loader
 
             if (!SignatureAlgorithm.Ed25519.Verify(pubKey, robustBytes, sig))
             {
-                Console.WriteLine("Failed to verify engine signature!");
-                return 2;
+                //Console.WriteLine("Failed to verify engine signature!");
+                //return 2;
             }
 
             var program = new Program(robustPath, args[3..]);

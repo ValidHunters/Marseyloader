@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SS14.Launcher.Models.EngineManager
@@ -13,7 +14,11 @@ namespace SS14.Launcher.Models.EngineManager
         string GetEnginePath(string engineVersion);
         string GetEngineSignature(string engineVersion);
 
-        Task<bool> DownloadEngineIfNecessary(string engineVersion, Helpers.DownloadProgressCallback? progress = null);
+        Task<bool> DownloadEngineIfNecessary(
+            string engineVersion,
+            Helpers.DownloadProgressCallback? progress = null,
+            CancellationToken cancel = default);
+
         Task DoEngineCullMaybeAsync();
     }
 }

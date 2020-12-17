@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using ReactiveUI;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
@@ -12,6 +13,8 @@ namespace SS14.Launcher.ViewModels
         private readonly Connector _connector;
         private readonly Updater _updater;
         private readonly MainWindowViewModel _windowVm;
+
+        private readonly CancellationTokenSource _cancelSource = new CancellationTokenSource();
 
         public bool IsErrored => _connector.Status == Connector.ConnectionStatus.ConnectionFailed ||
                                  _connector.Status == Connector.ConnectionStatus.UpdateError ||
@@ -44,6 +47,7 @@ namespace SS14.Launcher.ViewModels
                     this.RaisePropertyChanged(nameof(IsErrored));
 
                     if (val == Connector.ConnectionStatus.ClientRunning
+                        || val == Connector.ConnectionStatus.Cancelled
                         || val == Connector.ConnectionStatus.ClientExited && !_connector.ClientExitedBadly)
                     {
                         CloseOverlay();
@@ -114,9 +118,11 @@ namespace SS14.Launcher.ViewModels
                     "There was an error while updating the client. Please ensure you can access builds.spacestation14.io and try again. Or ask on Discord since it's probably our fault anyways.",
                 Connector.ConnectionStatus.Updating => "Updating: " + _updater.Status switch
                 {
-                    Updater.UpdateStatus.CheckingClientUpdate => "Checking for client update...",
-                    Updater.UpdateStatus.DownloadingClientUpdate => "Downloading client update...",
+                    Updater.UpdateStatus.CheckingClientUpdate => "Checking for server content update...",
+                    Updater.UpdateStatus.DownloadingEngineVersion => "Downloading server content...",
+                    Updater.UpdateStatus.DownloadingClientUpdate => "Downloading server content...",
                     Updater.UpdateStatus.Verifying => "Verifying download integrity...",
+                    Updater.UpdateStatus.CullingEngine => "Clearing old content...",
                     Updater.UpdateStatus.Ready => "Update done!",
                     _ => "You shouldn't see this"
                 },
@@ -145,7 +151,7 @@ namespace SS14.Launcher.ViewModels
 
         private void Start(string address)
         {
-            _connector.Connect(address);
+            _connector.Connect(address, _cancelSource.Token);
         }
 
         public void ErrorDismissed()
@@ -156,6 +162,11 @@ namespace SS14.Launcher.ViewModels
         private void CloseOverlay()
         {
             _windowVm.ConnectingVM = null;
+        }
+
+        public void Cancel()
+        {
+            _cancelSource.Cancel();
         }
     }
 }

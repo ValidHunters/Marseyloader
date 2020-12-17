@@ -23,9 +23,7 @@
               Command="{Binding ErrorDismissed}" MinWidth="75" />
 
       <DockPanel LastChildFill="False">
-        <Button DockPanel.Dock="Left" Content="Cancel" IsVisible="False">
-          <!-- TODO -->
-        </Button>
+        <Button DockPanel.Dock="Left" Content="Cancel" Command="{Binding Cancel}" IsVisible="{Binding !IsErrored}" />
 
         <TextBlock DockPanel.Dock="Right" Margin="0 4" Text="{Binding ProgressText}"
                    TextWrapping="Wrap"

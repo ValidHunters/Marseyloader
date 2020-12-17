@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using SS14.Launcher.Models.Data;
@@ -38,8 +39,10 @@ namespace SS14.Launcher.Models.EngineManager
             return _cfg.EngineInstallations.Lookup(engineVersion).Value.Signature;
         }
 
-        public async Task<bool> DownloadEngineIfNecessary(string engineVersion,
-            Helpers.DownloadProgressCallback? progress = null)
+        public async Task<bool> DownloadEngineIfNecessary(
+            string engineVersion,
+            Helpers.DownloadProgressCallback? progress = null,
+            CancellationToken cancel = default)
         {
             if (_cfg.EngineInstallations.Lookup(engineVersion).HasValue)
             {
@@ -52,7 +55,7 @@ namespace SS14.Launcher.Models.EngineManager
             Log.Debug("Loading manifest from {manifestUrl}...", ConfigConstants.RobustBuildsManifest);
             var manifest =
                 await Global.GlobalHttpClient.GetFromJsonAsync<Dictionary<string, Dictionary<string, BuildInfo>>>(
-                    ConfigConstants.RobustBuildsManifest);
+                    ConfigConstants.RobustBuildsManifest, cancellationToken: cancel);
 
             if (!manifest!.TryGetValue(engineVersion, out var versionInfo))
             {
@@ -76,7 +79,18 @@ namespace SS14.Launcher.Models.EngineManager
 
             Helpers.EnsureDirectoryExists(LauncherPaths.DirEngineInstallations);
 
-            await Global.GlobalHttpClient.DownloadToStream(buildInfo.Url, file, progress);
+            try
+            {
+                await Global.GlobalHttpClient.DownloadToStream(buildInfo.Url, file, progress, cancel: cancel);
+            }
+            catch (OperationCanceledException)
+            {
+                // Don't leave behind garbage.
+                await file.DisposeAsync();
+                File.Delete(downloadTarget);
+
+                throw;
+            }
 
             _cfg.AddEngineInstallation(new InstalledEngineVersion(engineVersion, buildInfo.Signature));
             return true;

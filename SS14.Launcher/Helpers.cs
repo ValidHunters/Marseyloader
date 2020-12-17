@@ -67,6 +67,7 @@ namespace SS14.Launcher
                 do
                 {
                     var read = await contentStream.ReadAsync(buffer.AsMemory(0, bufferLength), cancel);
+                    await Task.Delay(1, cancel);
                     if (read == 0)
                     {
                         isMoreToRead = false;

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using DynamicData;
 using Newtonsoft.Json;
@@ -47,29 +48,34 @@ namespace SS14.Launcher.Models
             private set => this.RaiseAndSetIfChanged(ref _clientExitedBadly, value);
         }
 
-        public async void Connect(string address)
+        public async void Connect(string address, CancellationToken cancel = default)
         {
             try
             {
-                await ConnectInternalAsync(address);
+                await ConnectInternalAsync(address, cancel);
             }
             catch (ConnectException e)
             {
                 Log.Error(e, "Failed to connect: {status}", e.Status);
                 Status = e.Status;
             }
+            catch (OperationCanceledException e)
+            {
+                Log.Information(e, "Cancelled connect");
+                Status = ConnectionStatus.Cancelled;
+            }
         }
 
-        private async Task ConnectInternalAsync(string address)
+        private async Task ConnectInternalAsync(string address, CancellationToken cancel)
         {
             Status = ConnectionStatus.Connecting;
 
-            var (info, parsedAddr, infoAddr) = await GetServerInfoAsync(address);
+            var (info, parsedAddr, infoAddr) = await GetServerInfoAsync(address, cancel);
 
             // Run update.
             Status = ConnectionStatus.Updating;
 
-            var installation = await RunUpdateAsync(info);
+            var installation = await RunUpdateAsync(info, cancel);
 
             var connectAddress = GetConnectAddress(info, infoAddr);
 
@@ -77,20 +83,28 @@ namespace SS14.Launcher.Models
 
             var clientProc = ConnectLaunchClient(info, installation, connectAddress, parsedAddr);
 
-            // Wait 300ms, if the client exits with a bad error code before that it's probably fucked.
-            var waitClient = clientProc.WaitForExitAsync();
-            var waitDelay = Task.Delay(300);
-
-            await Task.WhenAny(waitDelay, waitClient);
-
-            if (!clientProc.HasExited)
+            if (clientProc != null)
             {
-                Status = ConnectionStatus.ClientRunning;
-                await waitClient;
-                return;
+                // Wait 300ms, if the client exits with a bad error code before that it's probably fucked.
+                var waitClient = clientProc.WaitForExitAsync(cancel);
+                var waitDelay = Task.Delay(300, cancel);
+
+                await Task.WhenAny(waitDelay, waitClient);
+
+                if (!clientProc.HasExited)
+                {
+                    Status = ConnectionStatus.ClientRunning;
+                    await waitClient;
+                    return;
+                }
+
+                ClientExitedBadly = clientProc.ExitCode != 0;
+            }
+            else
+            {
+                ClientExitedBadly = true;
             }
 
-            ClientExitedBadly = clientProc.ExitCode != 0;
             Status = ConnectionStatus.ClientExited;
         }
 
@@ -162,9 +176,9 @@ namespace SS14.Launcher.Models
             }
         }
 
-        private async Task<InstalledServerContent> RunUpdateAsync(ServerInfo info)
+        private async Task<InstalledServerContent> RunUpdateAsync(ServerInfo info, CancellationToken cancel)
         {
-            var installation = await _updater.RunUpdateForLaunchAsync(info.BuildInformation);
+            var installation = await _updater.RunUpdateForLaunchAsync(info.BuildInformation, cancel);
             if (installation == null)
             {
                 throw new ConnectException(ConnectionStatus.UpdateError);
@@ -173,7 +187,7 @@ namespace SS14.Launcher.Models
             return installation;
         }
 
-        private async Task<(ServerInfo, Uri, Uri)> GetServerInfoAsync(string address)
+        private static async Task<(ServerInfo, Uri, Uri)> GetServerInfoAsync(string address, CancellationToken cancel)
         {
             var parsedAddress = UriHelper.ParseSs14Uri(address);
 
@@ -182,7 +196,7 @@ namespace SS14.Launcher.Models
 
             try
             {
-                var resp = await Global.GlobalHttpClient.GetStringAsync(infoAddr);
+                var resp = await Global.GlobalHttpClient.GetStringAsync(infoAddr, cancel);
                 var info = JsonConvert.DeserializeObject<ServerInfo>(resp);
                 return (info, parsedAddress, infoAddr);
             }
@@ -295,7 +309,8 @@ namespace SS14.Launcher.Models
             ConnectionFailed,
             StartingClient,
             ClientRunning,
-            ClientExited
+            ClientExited,
+            Cancelled
         }
 
         private sealed class ConnectException : Exception
