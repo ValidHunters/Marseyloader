@@ -62,9 +62,7 @@ namespace SS14.Launcher.Models.EngineManager
                 throw new UpdateException("Unable to find engine version in manifest!");
             }
 
-            var rid = RidUtility.GetRid();
-            Log.Debug("Current RID is {rid}", rid);
-            var bestRid = RidUtility.FindBestRid(versionInfo.Keys, rid);
+            var bestRid = RidUtility.FindBestRid(versionInfo.Keys);
             if (bestRid == null)
             {
                 throw new UpdateException("No engine version available for our platform!");
@@ -112,6 +110,19 @@ namespace SS14.Launcher.Models.EngineManager
                 _cfg.RemoveEngineInstallation(installation);
 
                 await Task.Run(() => File.Delete(path));
+            }
+        }
+
+        public void ClearAllEngines()
+        {
+            foreach (var install in _cfg.EngineInstallations.Items.ToArray())
+            {
+                _cfg.RemoveEngineInstallation(install);
+            }
+
+            foreach (var file in Directory.EnumerateFiles(LauncherPaths.DirEngineInstallations))
+            {
+                File.Delete(file);
             }
         }
 

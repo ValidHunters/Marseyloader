@@ -4,58 +4,30 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Serilog;
 
 namespace SS14.Launcher.Utility
 {
     public static class RidUtility
     {
-        public static string GetRid()
-        {
-            var rid = RuntimeInformation.RuntimeIdentifier;
-            if (rid != "unknown")
-                return rid;
-
-            // Not sure what could cause it to return unknown but if it does we'll make a decent educated guess.
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return RuntimeInformation.ProcessArchitecture switch
-                {
-                    Architecture.X86 => "linux-x86",
-                    Architecture.X64 => "linux-x64",
-                    Architecture.Arm => "linux-arm",
-                    Architecture.Arm64 => "linux-arm64",
-                    _ => "unknown"
-                };
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return RuntimeInformation.ProcessArchitecture switch
-                {
-                    Architecture.X86 => "win-x86",
-                    Architecture.X64 => "win-x64",
-                    Architecture.Arm => "win-arm",
-                    Architecture.Arm64 => "win-arm64",
-                    _ => "unknown"
-                };
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return RuntimeInformation.ProcessArchitecture switch
-                {
-                    Architecture.X64 => "osx-x64",
-                    Architecture.Arm64 => "osx-arm64",
-                    _ => "unknown"
-                };
-            }
-
-            return "unknown";
-        }
-
-        public static string? FindBestRid(ICollection<string> runtimes, string currentRid)
+        public static string? FindBestRid(ICollection<string> runtimes, string? currentRid=null)
         {
             var catalog = LoadRidCatalog();
+
+            if (currentRid == null)
+            {
+                var reportedRid = RuntimeInformation.RuntimeIdentifier;
+                if (!catalog.Runtimes.ContainsKey(reportedRid))
+                {
+                    currentRid = GuessRid();
+                    Log.Debug(".NET reported unknown RID: {reported}, guessing: {guessed}", reportedRid, currentRid);
+                }
+                else
+                {
+                    currentRid = reportedRid;
+                    Log.Debug("Current RID is: {reported}", currentRid);
+                }
+            }
 
             // Breadth-first search.
             var q = new Queue<string>();
@@ -85,6 +57,54 @@ namespace SS14.Launcher.Utility
             }
 
             return null;
+        }
+
+        private static string GuessRid()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return RuntimeInformation.ProcessArchitecture switch
+                {
+                    Architecture.X86 => "linux-x86",
+                    Architecture.X64 => "linux-x64",
+                    Architecture.Arm => "linux-arm",
+                    Architecture.Arm64 => "linux-arm64",
+                    _ => "unknown"
+                };
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                return RuntimeInformation.ProcessArchitecture switch
+                {
+                    Architecture.X64 => "freebsd-x64",
+                    _ => "unknown"
+                };
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return RuntimeInformation.ProcessArchitecture switch
+                {
+                    Architecture.X86 => "win-x86",
+                    Architecture.X64 => "win-x64",
+                    Architecture.Arm => "win-arm",
+                    Architecture.Arm64 => "win-arm64",
+                    _ => "unknown"
+                };
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return RuntimeInformation.ProcessArchitecture switch
+                {
+                    Architecture.X64 => "osx-x64",
+                    Architecture.Arm64 => "osx-arm64",
+                    _ => "unknown"
+                };
+            }
+
+            return "unknown";
         }
 
         private static RidCatalog LoadRidCatalog()

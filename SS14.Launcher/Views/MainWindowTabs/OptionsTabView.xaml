@@ -13,6 +13,10 @@
 
   <DockPanel>
     <Button Content="*flip" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Name="Flip" />
+    <Button Content="Clear installed engines" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
+            Command="{Binding ClearEngines}"/>
+    <Button Content="Clear installed server content" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
+            Command="{Binding ClearServerContent}"/>
     <StackPanel Orientation="Vertical">
       <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForceGLES2,Mode=TwoWay}">Compatibility Mode</CheckBox>
       <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"

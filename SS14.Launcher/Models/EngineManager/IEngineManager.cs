@@ -20,5 +20,6 @@ namespace SS14.Launcher.Models.EngineManager
             CancellationToken cancel = default);
 
         Task DoEngineCullMaybeAsync();
+        void ClearAllEngines();
     }
 }
