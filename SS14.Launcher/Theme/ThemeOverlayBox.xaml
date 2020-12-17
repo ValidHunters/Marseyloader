@@ -47,4 +47,6 @@
   <Setter Property="Background">
     <DynamicResource ResourceKey="ThemeBackgroundBrush" />
   </Setter>
+
+  <Setter Property="Padding" Value="0 0 0 6" />
 </Style>
