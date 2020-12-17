@@ -115,7 +115,7 @@ namespace SS14.Launcher.ViewModels
             {
                 Connector.ConnectionStatus.None => "Starting connection...",
                 Connector.ConnectionStatus.UpdateError =>
-                    "There was an error while downloading server content. Please ask on Discord for support of the problem persists.",
+                    "There was an error while downloading server content. Please ask on Discord for support if the problem persists.",
                 Connector.ConnectionStatus.Updating => "Updating: " + _updater.Status switch
                 {
                     Updater.UpdateStatus.CheckingClientUpdate => "Checking for server content update...",
