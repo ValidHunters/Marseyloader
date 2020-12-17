@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -38,13 +38,13 @@ namespace SS14.Launcher.Models.EngineManager
             return _cfg.EngineInstallations.Lookup(engineVersion).Value.Signature;
         }
 
-        public async Task DownloadEngineIfNecessary(string engineVersion,
+        public async Task<bool> DownloadEngineIfNecessary(string engineVersion,
             Helpers.DownloadProgressCallback? progress = null)
         {
             if (_cfg.EngineInstallations.Lookup(engineVersion).HasValue)
             {
                 // Already have the engine version, we're good.
-                return;
+                return false;
             }
 
             Log.Information("Installing engine version {version}...", engineVersion);
@@ -79,31 +79,26 @@ namespace SS14.Launcher.Models.EngineManager
             await Global.GlobalHttpClient.DownloadToStream(buildInfo.Url, file, progress);
 
             _cfg.AddEngineInstallation(new InstalledEngineVersion(engineVersion, buildInfo.Signature));
+            return true;
         }
 
-        public async Task DoEngineCullMaybeAsync(string engineVersion)
+        public async Task DoEngineCullMaybeAsync()
         {
-            var lookup = _cfg.EngineInstallations.Lookup(engineVersion);
-            Debug.Assert(lookup.HasValue);
+            Log.Debug("Checking to cull engine versions.");
 
-            // Check if the engine version is no longer used by any server install and if so, remove it.
-            Log.Debug("Checking cull for engine {engineVersion}", engineVersion);
+            var usedVersions = _cfg.ServerContent.Items.Select(c => c.CurrentEngineVersion).ToHashSet();
+            var toCull = _cfg.EngineInstallations.Items.Where(i => !usedVersions.Contains(i.Version)).ToArray();
 
-            foreach (var item in _cfg.ServerContent.Items)
+            foreach (var installation in toCull)
             {
-                if (item.CurrentEngineVersion == engineVersion)
-                {
-                    Log.Debug("Engine version still in use by {forkId}v{version}, not culling", item.ForkId,
-                        item.CurrentVersion);
-                    return;
-                }
+                Log.Debug("Culling unused version {engineVersion}", installation.Version);
+
+                var path = GetEnginePath(installation.Version);
+
+                _cfg.RemoveEngineInstallation(installation);
+
+                await Task.Run(() => File.Delete(path));
             }
-
-            var path = GetEnginePath(engineVersion);
-
-            _cfg.RemoveEngineInstallation(lookup.Value);
-
-            await Task.Run(() => File.Delete(path));
         }
 
         private sealed class BuildInfo

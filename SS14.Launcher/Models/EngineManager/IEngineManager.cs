@@ -13,7 +13,7 @@ namespace SS14.Launcher.Models.EngineManager
         string GetEnginePath(string engineVersion);
         string GetEngineSignature(string engineVersion);
 
-        Task DownloadEngineIfNecessary(string engineVersion, Helpers.DownloadProgressCallback? progress = null);
-        Task DoEngineCullMaybeAsync(string engineVersion);
+        Task<bool> DownloadEngineIfNecessary(string engineVersion, Helpers.DownloadProgressCallback? progress = null);
+        Task DoEngineCullMaybeAsync();
     }
 }

@@ -61,13 +61,28 @@ namespace SS14.Launcher.Models
         {
             Status = UpdateStatus.CheckingClientUpdate;
 
-            await InstallEngineVersionIfMissing(buildInformation.EngineVersion);
+            var changeEngine = await InstallEngineVersionIfMissing(buildInformation.EngineVersion);
 
             Status = UpdateStatus.CheckingClientUpdate;
 
+            var (installation, changedContent) = await UpdateContentIfNecessary(buildInformation);
+
+            if (changedContent || changeEngine)
+            {
+                Status = UpdateStatus.CullingEngine;
+                await CullEngineVersionsMaybe();
+            }
+
+            Log.Information("Update done!");
+            return installation;
+        }
+
+        private async Task<(InstalledServerContent, bool changed)> UpdateContentIfNecessary(
+            ServerBuildInformation buildInformation)
+        {
             if (!CheckNeedUpdate(buildInformation, out var existingInstallation))
             {
-                return existingInstallation;
+                return (existingInstallation, false);
             }
 
             Status = UpdateStatus.DownloadingClientUpdate;
@@ -125,26 +140,21 @@ namespace SS14.Launcher.Models
                 _cfg.AddInstallation(existingInstallation);
             }
 
-            if (oldEngineVersion != null)
-            {
-                await CullEngineVersionMaybe(oldEngineVersion);
-            }
-
-
-            Log.Information("Update done!");
-            return existingInstallation;
+            return (existingInstallation, true);
         }
 
-        private async Task CullEngineVersionMaybe(string oldEngineVersion)
+        private async Task CullEngineVersionsMaybe()
         {
-            await _engineManager.DoEngineCullMaybeAsync(oldEngineVersion);
+            await _engineManager.DoEngineCullMaybeAsync();
         }
 
-        private async Task InstallEngineVersionIfMissing(string engineVer)
+        private async Task<bool> InstallEngineVersionIfMissing(string engineVer)
         {
-            await _engineManager.DownloadEngineIfNecessary(engineVer, DownloadProgressCallback);
+            Status = UpdateStatus.DownloadingEngineVersion;
+            var change = await _engineManager.DownloadEngineIfNecessary(engineVer, DownloadProgressCallback);
 
             Progress = null;
+            return change;
         }
 
         private void DownloadProgressCallback(long downloaded, long total)
