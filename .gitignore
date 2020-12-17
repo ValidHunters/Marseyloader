@@ -8,3 +8,5 @@ cmake-build*
 publish_test
 Dependencies
 SS14.Launcher/FodyWeavers.xsd
+
+!PublishFiles/Space Station 14 Launcher.app/Contents/Resources/bin/
