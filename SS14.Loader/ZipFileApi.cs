@@ -45,6 +45,16 @@ namespace SS14.Loader
             return true;
         }
 
-        public IEnumerable<string> AllFiles => _archive.Entries.Select(entry => entry.FullName);
+        public IEnumerable<string> AllFiles
+        {
+            get
+            {
+                if (_prefix != null)
+                {
+                    return _archive.Entries.Where(e => e.FullName.StartsWith(_prefix)).Select(e => e.FullName[_prefix.Length..]);
+                }
+                return _archive.Entries.Select(entry => entry.FullName);
+            }
+        }
     }
 }
