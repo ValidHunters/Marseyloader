@@ -115,7 +115,7 @@ namespace SS14.Launcher.ViewModels
             {
                 Connector.ConnectionStatus.None => "Starting connection...",
                 Connector.ConnectionStatus.UpdateError =>
-                    "There was an error while updating the client. Please ensure you can access builds.spacestation14.io and try again. Or ask on Discord since it's probably our fault anyways.",
+                    "There was an error while downloading server content. Please ask on Discord for support of the problem persists.",
                 Connector.ConnectionStatus.Updating => "Updating: " + _updater.Status switch
                 {
                     Updater.UpdateStatus.CheckingClientUpdate => "Checking for server content update...",
