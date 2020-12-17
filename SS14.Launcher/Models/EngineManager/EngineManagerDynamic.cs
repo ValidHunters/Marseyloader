@@ -72,10 +72,10 @@ namespace SS14.Launcher.Models.EngineManager
 
             var buildInfo = versionInfo[bestRid];
 
+            Helpers.EnsureDirectoryExists(LauncherPaths.DirEngineInstallations);
+
             var downloadTarget = Path.Combine(LauncherPaths.DirEngineInstallations, $"{engineVersion}.zip");
             await using var file = File.Create(downloadTarget, 4096, FileOptions.Asynchronous);
-
-            Helpers.EnsureDirectoryExists(LauncherPaths.DirEngineInstallations);
 
             try
             {
