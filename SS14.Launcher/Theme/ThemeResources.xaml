@@ -30,15 +30,21 @@
     <SolidColorBrush x:Key="ThemeTabItemSelectedBrush" Color="{StaticResource ThemeTabItemSelectedColor}" />
     <SolidColorBrush x:Key="ThemeTabItemHoveredBrush" Color="{StaticResource ThemeTabItemHoveredColor}" />
 
-    <ImageBrush x:Key="ThemeStripeBackBrush">
-      <ImageBrush.Source>/Assets/stripeback.svg.96dpi.png</ImageBrush.Source>
-      <ImageBrush.TileMode>Tile</ImageBrush.TileMode>
-      <ImageBrush.Stretch>Fill</ImageBrush.Stretch>
+    <VisualBrush x:Key="ThemeStripeBackBrush">
+      <VisualBrush.Visual>
+        <Panel Height="32" Width="32" Background="#1e1e22">
+          <Path Data="M 0 8 L 24 32 L 8 32 L 0 24 Z" Fill="#262626" />
+          <Path Data="M 8 0 L 24 0 L 32 8 L 32 24 Z" Fill="#262626" />
+        </Panel>
+      </VisualBrush.Visual>
+
+      <TileBrush.TileMode>Tile</TileBrush.TileMode>
+      <TileBrush.Stretch>Fill</TileBrush.Stretch>
 
       <!-- Need to specify these to make tiling work. -->
-      <ImageBrush.SourceRect>0, 0, 32, 32</ImageBrush.SourceRect>
-      <ImageBrush.DestinationRect>0, 0, 32, 32</ImageBrush.DestinationRect>
-    </ImageBrush>
+      <TileBrush.SourceRect>0, 0, 32, 32</TileBrush.SourceRect>
+      <TileBrush.DestinationRect>0, 0, 32, 32</TileBrush.DestinationRect>
+    </VisualBrush>
 
     <SolidColorBrush x:Key="WindowOverlayBrush" Color="#AA000000" />
   </Style.Resources>
