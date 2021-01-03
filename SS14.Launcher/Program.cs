@@ -1,15 +1,15 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Logging.Serilog;
+using Avalonia.Logging;
 using Avalonia.ReactiveUI;
 using Serilog;
-using Serilog.Events;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
+using LogEventLevel = Serilog.Events.LogEventLevel;
 
 namespace SS14.Launcher
 {
@@ -26,7 +26,7 @@ namespace SS14.Launcher
                 .CreateLogger();
 
 #if DEBUG
-            SerilogLogger.Initialize(new LoggerConfiguration()
+            Logger.Sink = new AvaloniaSeriLogger(new LoggerConfiguration()
                 .MinimumLevel.Is(LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console(outputTemplate: "[{Area}] {Message} ({SourceType} #{SourceHash})\n")

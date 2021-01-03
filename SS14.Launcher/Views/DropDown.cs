@@ -74,7 +74,7 @@ namespace SS14.Launcher.Views
         {
             if (!e.Handled)
             {
-                if (_popup?.IsInsidePopup((IVisual) e.Source) == false)
+                if (e.Source != null && _popup?.IsInsidePopup((IVisual) e.Source) == false)
                 {
                     IsDropDownOpen ^= true;
                     e.Handled = true;
@@ -84,11 +84,11 @@ namespace SS14.Launcher.Views
             base.OnPointerPressed(e);
         }
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             _popup = e.NameScope.Get<Popup>("PART_Popup");
 
-            base.OnTemplateApplied(e);
+            base.OnApplyTemplate(e);
         }
     }
 }
