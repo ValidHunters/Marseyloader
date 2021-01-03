@@ -24,8 +24,7 @@
           <SolidColorBrush Color="#212126" />
         </DockPanel.Background>
         <!-- Logo -->
-        <Image Source="/Assets/logo.png" HorizontalAlignment="Left" Margin="0, 8" Stretch="None"
-               DockPanel.Dock="Left" />
+        <v:Logo DockPanel.Dock="Left" Height="60" HorizontalAlignment="Left" Margin="0, 8"></v:Logo>
         <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
               ColumnDefinitions="Auto, Auto" RowDefinitions="Auto, Auto">
           <!-- Discord link -->
