@@ -1,0 +1,9 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:SS14.Launcher.Views">
+
+  <Style Selector="v|AngleBox">
+    <Setter Property="CornerSize" Value="10" />
+  </Style>
+
+</Styles>

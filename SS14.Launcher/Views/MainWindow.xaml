@@ -120,5 +120,7 @@
     <v:ConnectingOverlay DataContext="{Binding ConnectingVM}"
                          IsVisible="{Binding $parent.DataContext.ConnectingVM, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
+    <v:AngleBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
   </Panel>
 </Window>

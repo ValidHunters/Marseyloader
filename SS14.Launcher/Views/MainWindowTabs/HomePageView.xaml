@@ -19,8 +19,8 @@
     <!-- Favorites -->
     <DockPanel DockPanel.Dock="Top" LastChildFill="False" Margin="4, 0, 4, 2">
       <TextBlock DockPanel.Dock="Left" Text="Favorite Servers:" Classes="NanoHeadingMedium" />
-      <Button DockPanel.Dock="Right" Content="Add Favorite..." Command="{Binding AddFavoritePressed}" />
-      <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding RefreshPressed}" />
+      <Button DockPanel.Dock="Right" Content="Add Favorite..." Classes="OpenLeft" Command="{Binding AddFavoritePressed}" />
+      <Button DockPanel.Dock="Right" Content="Refresh" Classes="OpenRight" Command="{Binding RefreshPressed}" />
     </DockPanel>
 
     <Button DockPanel.Dock="Bottom" Margin="0, 5, 5, 1" HorizontalAlignment="Right"
