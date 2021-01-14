@@ -235,9 +235,69 @@ namespace SS14.Launcher.Models
 
             startInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "LatestMajor";
 
+            if (_cfg.DisableSigning)
+                startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = "true";
+
+            // ReSharper disable once ReplaceWithSingleAssignment.False
+            var manualPipeLogging = false;
+            if (_cfg.LogClient)
+            {
+                manualPipeLogging = true;
+
+#if FULL_RELEASE
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    startInfo.Environment["SS14_LOG_CLIENT"] = LauncherPaths.PathClientLog;
+
+                    manualPipeLogging = false;
+                }
+#endif
+            }
+
+            if (manualPipeLogging)
+            {
+                startInfo.RedirectStandardOutput = true;
+            }
+
             startInfo.UseShellExecute = false;
             startInfo.ArgumentList.AddRange(extraArgs);
-            return Process.Start(startInfo);
+            var process = Process.Start(startInfo);
+
+            if (manualPipeLogging && process != null)
+            {
+                Log.Debug("Setting up manual-pipe logging for new client with PID {pid}.", process.Id);
+
+                var file = new FileStream(
+                    LauncherPaths.PathClientLog,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.Delete | FileShare.ReadWrite,
+                    4096,
+                    FileOptions.Asynchronous);
+
+                PipeOutput(process, file);
+            }
+
+            return process;
+        }
+
+        private static async void PipeOutput(Process process, Stream target)
+        {
+            await using var writer = new StreamWriter(target);
+            writer.AutoFlush = true;
+
+            while (true)
+            {
+                var read = await process.StandardOutput.ReadLineAsync();
+
+                if (read == null)
+                {
+                    Log.Debug("EOF, ending pipe logging for {pid}.", process.Id);
+                    return;
+                }
+
+                await writer.WriteLineAsync(read);
+            }
         }
 
         private static ProcessStartInfo GetLoaderStartInfo()

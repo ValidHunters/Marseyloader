@@ -29,6 +29,9 @@ namespace SS14.Launcher.Models.Data
         private Guid? _selectedLogin;
         private bool _forceGLES2;
         private bool _hasDismissedEarlyAccessWarning;
+        private bool _disableSigning;
+        private bool _logClient;
+        private bool _logLauncher;
 
         public DataManager()
         {
@@ -105,6 +108,36 @@ namespace SS14.Launcher.Models.Data
             set
             {
                 this.RaiseAndSetIfChanged(ref _hasDismissedEarlyAccessWarning, value);
+                Save();
+            }
+        }
+
+        public bool DisableSigning
+        {
+            get => _disableSigning;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _disableSigning, value);
+                Save();
+            }
+        }
+
+        public bool LogClient
+        {
+            get => _logClient;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _logClient, value);
+                Save();
+            }
+        }
+
+        public bool LogLauncher
+        {
+            get => _logLauncher;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _logLauncher, value);
                 Save();
             }
         }
@@ -238,6 +271,9 @@ namespace SS14.Launcher.Models.Data
 
                 ForceGLES2 = data.ForceGLES2 ?? false;
                 _hasDismissedEarlyAccessWarning = data.DismissedEarlyAccessWarning ?? false;
+                _disableSigning = data.DisableSigning;
+                _logClient = data.LogClient;
+                _logLauncher = data.LogLauncher;
             }
             finally
             {
@@ -277,7 +313,10 @@ namespace SS14.Launcher.Models.Data
                 Engines = _engineInstallations.Items.ToList(),
                 ServerContent = _serverContent.Items.ToList(),
                 Fingerprint = _fingerprint,
-                DismissedEarlyAccessWarning = _hasDismissedEarlyAccessWarning
+                DismissedEarlyAccessWarning = _hasDismissedEarlyAccessWarning,
+                LogClient = _logClient,
+                DisableSigning = _disableSigning,
+                LogLauncher = _logLauncher
             });
 
             // Save config asynchronously to avoid potential disk hangs.
@@ -324,6 +363,15 @@ namespace SS14.Launcher.Models.Data
 
             [JsonProperty(PropertyName = "dismissed_early_access_warning")]
             public bool? DismissedEarlyAccessWarning { get; set; }
+
+            [JsonProperty(PropertyName = "disable_signing")]
+            public bool DisableSigning { get; set; }
+
+            [JsonProperty(PropertyName = "log_client")]
+            public bool LogClient { get; set; }
+
+            [JsonProperty(PropertyName = "log_launcher")]
+            public bool LogLauncher { get; set; }
         }
     }
 }

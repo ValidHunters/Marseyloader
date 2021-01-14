@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.IO;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Logging;
 using Avalonia.ReactiveUI;
@@ -20,10 +21,21 @@ namespace SS14.Launcher
         // yet and stuff might break.
         public static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
+            var cfg = new DataManager();
+            cfg.Load();
+
+            LauncherPaths.CreateDirs();
+
+            var logCfg = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .CreateLogger();
+                .WriteTo.Console();
+
+            if (cfg.LogLauncher)
+            {
+                logCfg = logCfg.WriteTo.File(LauncherPaths.PathLauncherLog);
+            }
+
+            Log.Logger = logCfg.CreateLogger();
 
 #if DEBUG
             Logger.Sink = new AvaloniaSeriLogger(new LoggerConfiguration()
@@ -33,7 +45,7 @@ namespace SS14.Launcher
                 .CreateLogger());
 #endif
 
-            BuildAvaloniaApp().Start(AppMain, args);
+            BuildAvaloniaApp().Start((app, args) => AppMain(app, args, cfg), args);
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
@@ -44,10 +56,8 @@ namespace SS14.Launcher
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI
         // container, etc.
-        private static void AppMain(Application app, string[] args)
+        private static void AppMain(Application app, string[] args, DataManager cfg)
         {
-            var cfg = new DataManager();
-            cfg.Load();
             var engineManager = new EngineManagerDynamic(cfg);
             var statusCache = new ServerStatusCache();
             var updater = new Updater(cfg, engineManager);

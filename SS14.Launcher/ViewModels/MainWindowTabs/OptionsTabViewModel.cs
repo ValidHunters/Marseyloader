@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 
@@ -7,7 +9,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class OptionsTabViewModel : MainWindowTabViewModel
     {
-        public readonly DataManager Cfg;
+        public DataManager Cfg { get; }
         private readonly IEngineManager _engineManager;
 
         public OptionsTabViewModel(DataManager cfg, IEngineManager engineManager)
@@ -16,17 +18,11 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             _engineManager = engineManager;
         }
 
-        public bool ForceGLES2
-        {
-            get
-            {
-                return Cfg.ForceGLES2;
-            }
-            set
-            {
-                Cfg.ForceGLES2 = value;
-            }
-        }
+#if RELEASE
+        public bool HideDisableSigning => true;
+#else
+        public bool HideDisableSigning => false;
+#endif
 
         public override string Name => "Options";
 
@@ -46,6 +42,15 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             {
                 File.Delete(file);
             }
+        }
+
+        public void OpenLogDirectory()
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = LauncherPaths.DirLogs
+            });
         }
     }
 }

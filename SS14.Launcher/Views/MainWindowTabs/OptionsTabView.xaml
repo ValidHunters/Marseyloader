@@ -11,17 +11,38 @@
     <mainWindowTabs:OptionsTabViewModel />
   </Design.DataContext>
 
-  <DockPanel>
-    <Button Content="*flip" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Name="Flip" />
-    <Button Content="Clear installed engines" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
-            Command="{Binding ClearEngines}"/>
-    <Button Content="Clear installed server content" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
-            Command="{Binding ClearServerContent}"/>
-    <StackPanel Orientation="Vertical">
-      <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForceGLES2,Mode=TwoWay}">Compatibility Mode</CheckBox>
-      <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                 Text="This uses OpenGL ES 2 (via ANGLE if necessary), which is less likely to suffer from driver bugs. Use this if you are experiencing graphical issues."
-                 Margin="8" />
-    </StackPanel>
-  </DockPanel>
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <DockPanel>
+      <Button Content="*flip" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Name="Flip" />
+      <Button Content="Clear installed engines" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
+              Command="{Binding ClearEngines}"/>
+      <Button Content="Clear installed server content" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
+              Command="{Binding ClearServerContent}"/>
+      <Button Content="Open log directory" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
+              Command="{Binding OpenLogDirectory}"/>
+
+      <StackPanel Orientation="Vertical">
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Cfg.ForceGLES2}">Compatibility Mode</CheckBox>
+        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                   Text="This uses OpenGL ES 2 (via ANGLE if necessary), which is less likely to suffer from driver bugs. Try this if you are experiencing graphical issues or crashes."
+                   Margin="8" />
+
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Cfg.LogClient}">Log Client</CheckBox>
+        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                   Text="Enables logging of any game client output. Useful for developers."
+                   Margin="8" />
+
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Cfg.LogLauncher}">Log Launcher</CheckBox>
+        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                   Text="Enables logging of the launcher. Useful for developers. (requires launcher restart)"
+                   Margin="8" />
+
+        <CheckBox VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" Margin="4" IsChecked="{Binding Cfg.DisableSigning}">Disable Engine Signature Checks</CheckBox>
+        <TextBlock VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" TextWrapping="Wrap"
+                   Text="[DEV ONLY] Disables verification of engine signatures. DO NOT ENABLE UNLESS YOU KNOW EXACTLY WHAT YOU'RE DOING."
+                   Margin="8" />
+      </StackPanel>
+    </DockPanel>
+
+  </ScrollViewer>
 </UserControl>
