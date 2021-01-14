@@ -300,6 +300,7 @@ namespace SS14.Launcher.Models
             }
         }
 
+#pragma warning disable 162
         private static ProcessStartInfo GetLoaderStartInfo()
         {
             string basePath;
@@ -359,6 +360,7 @@ namespace SS14.Launcher.Models
 
             throw new NotSupportedException("Unsupported platform.");
         }
+#pragma warning restore 162
 
         public enum ConnectionStatus
         {
