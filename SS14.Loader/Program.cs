@@ -131,8 +131,19 @@ namespace SS14.Loader
 
             if (!SignatureAlgorithm.Ed25519.Verify(pubKey, robustBytes, sig))
             {
-                //Console.WriteLine("Failed to verify engine signature!");
-                //return 2;
+                // ONLY allow disabling signing on debug mode.
+#if !RELEASE
+                var disableVar = Environment.GetEnvironmentVariable("SS14_DISABLE_SIGNING");
+                if (!string.IsNullOrEmpty(disableVar) && bool.Parse(disableVar))
+                {
+                    Console.WriteLine("Failed to verify engine signature, ignoring because signing is disabled.");
+                }
+                else
+#endif
+                {
+                    Console.WriteLine("Failed to verify engine signature!");
+                    return 2;
+                }
             }
 
             var program = new Program(robustPath, args[3..]);
