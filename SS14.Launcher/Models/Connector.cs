@@ -343,10 +343,13 @@ namespace SS14.Launcher.Models
             {
                 if (release)
                 {
+                    var appPath = Path.Combine(basePath, "Space Station 14.app");
+                    Log.Debug("Running app bundle: {appPath}", appPath);
+
                     return new ProcessStartInfo
                     {
                         FileName = "open",
-                        ArgumentList = {Path.Combine(basePath, "Space Station 14.app"), "--args"},
+                        ArgumentList = {appPath, "--args"},
                     };
                 }
                 else

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # cd to file containing script or something?
 BASEDIR=$(dirname "$0")
@@ -9,6 +9,6 @@ if [[ -z ${SS14_LOG_CLIENT} ]]; then
     # No log path
     exec ../Resources/bin/SS14.Loader "$@"
 else
-    exec ../Resources/bin/SS14.Loader "$@" > "$(SS14_LOG_CLIENT)" 2>&1
+    exec ../Resources/bin/SS14.Loader "$@" > "$SS14_LOG_CLIENT" 2>&1
 fi
 
