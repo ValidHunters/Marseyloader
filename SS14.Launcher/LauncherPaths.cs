@@ -14,7 +14,9 @@ namespace SS14.Launcher
         public static readonly string ServerContentDirName = "server content";
         public static readonly string LogsDirName = "logs";
         public static readonly string LauncherLogName = "launcher.log";
-        public static readonly string ClientLogName = "client.log";
+        public static readonly string ClientMacLogName = "client.mac.log";
+        public static readonly string ClientStdoutLogName = "client.stdout.log";
+        public static readonly string ClientStderrLogName = "client.stderr.log";
 
         public static readonly string DirLauncherInstall = GetInstallDir();
         public static readonly string DirUserData = GetUserDataDir();
@@ -22,7 +24,9 @@ namespace SS14.Launcher
         public static readonly string DirServerContent = Path.Combine(DirUserData, ServerContentDirName);
         public static readonly string DirLogs = Path.Combine(DirUserData, LogsDirName);
         public static readonly string PathLauncherLog = Path.Combine(DirLogs, LauncherLogName);
-        public static readonly string PathClientLog = Path.Combine(DirLogs, ClientLogName);
+        public static readonly string PathClientMacLog = Path.Combine(DirLogs, ClientMacLogName);
+        public static readonly string PathClientStdoutLog = Path.Combine(DirLogs, ClientStdoutLogName);
+        public static readonly string PathClientStderrLog = Path.Combine(DirLogs, ClientStderrLogName);
 
         public static void CreateDirs()
         {

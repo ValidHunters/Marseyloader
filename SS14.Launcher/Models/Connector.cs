@@ -244,19 +244,13 @@ namespace SS14.Launcher.Models
             {
                 manualPipeLogging = true;
 
-#if FULL_RELEASE
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    startInfo.Environment["SS14_LOG_CLIENT"] = LauncherPaths.PathClientLog;
-
-                    manualPipeLogging = false;
+                    startInfo.Environment["SS14_LOG_CLIENT"] = LauncherPaths.PathClientMacLog;
                 }
-#endif
-            }
 
-            if (manualPipeLogging)
-            {
                 startInfo.RedirectStandardOutput = true;
+                startInfo.RedirectStandardError = true;
             }
 
             startInfo.UseShellExecute = false;
@@ -267,37 +261,52 @@ namespace SS14.Launcher.Models
             {
                 Log.Debug("Setting up manual-pipe logging for new client with PID {pid}.", process.Id);
 
-                var file = new FileStream(
-                    LauncherPaths.PathClientLog,
+                var fileStdout = new FileStream(
+                    LauncherPaths.PathClientStdoutLog,
                     FileMode.Create,
                     FileAccess.Write,
                     FileShare.Delete | FileShare.ReadWrite,
                     4096,
                     FileOptions.Asynchronous);
 
-                PipeOutput(process, file);
+                var fileStderr = new FileStream(
+                    LauncherPaths.PathClientStderrLog,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.Delete | FileShare.ReadWrite,
+                    4096,
+                    FileOptions.Asynchronous);
+
+                PipeOutput(process, fileStdout, fileStderr);
             }
 
             return process;
         }
 
-        private static async void PipeOutput(Process process, Stream target)
+        private static async void PipeOutput(Process process, Stream targetStdout, Stream targetStderr)
         {
-            await using var writer = new StreamWriter(target);
-            writer.AutoFlush = true;
+            await using var writerOut = new StreamWriter(targetStdout) {AutoFlush = true};
+            await using var writerErr = new StreamWriter(targetStderr) {AutoFlush = true};
 
-            while (true)
+            async Task DoPipe(TextReader reader, TextWriter writer)
             {
-                var read = await process.StandardOutput.ReadLineAsync();
-
-                if (read == null)
+                while (true)
                 {
-                    Log.Debug("EOF, ending pipe logging for {pid}.", process.Id);
-                    return;
-                }
+                    var read = await reader.ReadLineAsync();
 
-                await writer.WriteLineAsync(read);
+                    if (read == null)
+                    {
+                        Log.Debug("EOF, ending pipe logging for {pid}.", process.Id);
+                        return;
+                    }
+
+                    await writer.WriteLineAsync(read);
+                }
             }
+
+            await Task.WhenAll(
+                DoPipe(process.StandardOutput, writerErr),
+                DoPipe(process.StandardError, writerErr));
         }
 
 #pragma warning disable 162
