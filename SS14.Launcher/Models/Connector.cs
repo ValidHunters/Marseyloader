@@ -81,7 +81,7 @@ namespace SS14.Launcher.Models
 
             Status = ConnectionStatus.StartingClient;
 
-            var clientProc = ConnectLaunchClient(info, installation, connectAddress, parsedAddr);
+            var clientProc = await ConnectLaunchClient(info, installation, connectAddress, parsedAddr);
 
             if (clientProc != null)
             {
@@ -108,7 +108,7 @@ namespace SS14.Launcher.Models
             Status = ConnectionStatus.ClientExited;
         }
 
-        private Process? ConnectLaunchClient(ServerInfo info, InstalledServerContent installedServerContent,
+        private async Task<Process?> ConnectLaunchClient(ServerInfo info, InstalledServerContent installedServerContent,
             Uri connectAddress, Uri parsedAddr)
         {
             var cVars = new List<(string, string)>();
@@ -126,7 +126,7 @@ namespace SS14.Launcher.Models
             try
             {
                 // Launch client.
-                return LaunchClient(info.BuildInformation.EngineVersion, installedServerContent, new[]
+                return await LaunchClient(info.BuildInformation.EngineVersion, installedServerContent, new[]
                 {
                     // We are using the launcher. Don't show main menu etc..
                     "--launcher",
@@ -206,7 +206,7 @@ namespace SS14.Launcher.Models
             }
         }
 
-        private Process? LaunchClient(
+        private async Task<Process?> LaunchClient(
             string engineVersion,
             InstalledServerContent installedServerContent,
             IEnumerable<string> extraArgs,
@@ -218,7 +218,7 @@ namespace SS14.Launcher.Models
             var contentPath = Path.Combine(LauncherPaths.DirServerContent,
                 installedServerContent.DiskId.ToString(CultureInfo.InvariantCulture) + ".zip");
 
-            var startInfo = GetLoaderStartInfo();
+            var startInfo = await GetLoaderStartInfo();
 
             startInfo.ArgumentList.Add(binPath);
             startInfo.ArgumentList.Add(sig);
@@ -309,8 +309,32 @@ namespace SS14.Launcher.Models
                 DoPipe(process.StandardError, writerErr));
         }
 
+        private static void PipeLogOutput(Process process)
+        {
+            Log.Debug("Piping output for process {pid} straight to logs", process.Id);
+
+            async void DoPipe(TextReader reader)
+            {
+                while (true)
+                {
+                    var read = await reader.ReadLineAsync();
+
+                    if (read == null)
+                    {
+                        Log.Debug("EOF, ending pipe logging for {pid}", process.Id);
+                        return;
+                    }
+
+                    Log.Information("piped: {content}", read);
+                }
+            }
+
+            DoPipe(process.StandardError);
+            DoPipe(process.StandardOutput);
+        }
+
 #pragma warning disable 162
-        private static ProcessStartInfo GetLoaderStartInfo()
+        private static async Task<ProcessStartInfo> GetLoaderStartInfo()
         {
             string basePath;
 
@@ -353,7 +377,27 @@ namespace SS14.Launcher.Models
                 if (release)
                 {
                     var appPath = Path.Combine(basePath, "Space Station 14.app");
-                    Log.Debug("Running app bundle: {appPath}", appPath);
+                    Log.Debug("Using app bundle: {appPath}", appPath);
+
+                    Log.Debug("Clearing quarantine on loader.");
+
+                    // Clear the quarantine attribute off the loader to avoid any funny business with failing to start it.
+                    // This seemed to ONLY BE A PROBLEM if the quarantined file in question
+                    // is inside a secured location like ~/Desktop is now on Catalina.
+                    // Fucking stupid since we can clearly just work around it like this...
+                    // Thank you, Blaisorblade on Ask Different
+                    // https://apple.stackexchange.com/questions/105155/denied-file-read-access-on-file-i-own-and-have-full-r-w-permissions-on
+                    var xattr = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "xattr",
+                        ArgumentList = {"-d", "com.apple.quarantine", appPath},
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = true
+                    });
+
+                    PipeLogOutput(xattr);
+
+                    await xattr.WaitForExitAsync();
 
                     return new ProcessStartInfo
                     {
