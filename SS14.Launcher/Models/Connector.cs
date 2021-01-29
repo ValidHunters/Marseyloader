@@ -305,7 +305,7 @@ namespace SS14.Launcher.Models
             }
 
             await Task.WhenAll(
-                DoPipe(process.StandardOutput, writerErr),
+                DoPipe(process.StandardOutput, writerOut),
                 DoPipe(process.StandardError, writerErr));
         }
 
