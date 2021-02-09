@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -117,10 +116,10 @@ namespace SS14.Launcher.Models
             {
                 var account = _loginManager.ActiveAccount;
 
-                cVars.Add(("auth.token", account.LoginInfo.Token.Token));
-                cVars.Add(("auth.userid", account.LoginInfo.UserId.ToString()));
-                cVars.Add(("auth.serverpubkey", info.AuthInformation.PublicKey));
-                cVars.Add(("auth.server", ConfigConstants.AuthUrl));
+                cVars.Add(("ROBUST_AUTH_TOKEN", account.LoginInfo.Token.Token));
+                cVars.Add(("ROBUST_AUTH_USERID", account.LoginInfo.UserId.ToString()));
+                cVars.Add(("ROBUST_AUTH_PUBKEY", info.AuthInformation.PublicKey));
+                cVars.Add(("ROBUST_AUTH_SERVER", ConfigConstants.AuthUrl));
             }
 
             try
@@ -210,7 +209,7 @@ namespace SS14.Launcher.Models
             string engineVersion,
             InstalledServerContent installedServerContent,
             IEnumerable<string> extraArgs,
-            List<(string, string)> cVars)
+            List<(string, string)> env)
         {
             var pubKey = Path.Combine(LauncherPaths.DirLauncherInstall, "signing_key");
             var binPath = _engineManager.GetEnginePath(engineVersion);
@@ -227,10 +226,9 @@ namespace SS14.Launcher.Models
             startInfo.ArgumentList.Add("--mount-zip");
             startInfo.ArgumentList.Add(contentPath);
 
-            if (cVars.Count != 0)
+            foreach (var (k, v) in env)
             {
-                var envVarValue = string.Join(';', cVars.Select(p => $"{p.Item1}={p.Item2}"));
-                startInfo.EnvironmentVariables["ROBUST_CVARS"] = envVarValue;
+                startInfo.EnvironmentVariables[k] = v;
             }
 
             startInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "LatestMajor";
