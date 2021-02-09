@@ -54,7 +54,7 @@ namespace SS14.Launcher.Models.EngineManager
 
             Log.Debug("Loading manifest from {manifestUrl}...", ConfigConstants.RobustBuildsManifest);
             var manifest =
-                await Global.GlobalHttpClient.GetFromJsonAsync<Dictionary<string, Dictionary<string, BuildInfo>>>(
+                await Global.GlobalHttpClient.GetFromJsonAsync<Dictionary<string, VersionInfo>>(
                     ConfigConstants.RobustBuildsManifest, cancellationToken: cancel);
 
             if (!manifest!.TryGetValue(engineVersion, out var versionInfo))
@@ -62,7 +62,12 @@ namespace SS14.Launcher.Models.EngineManager
                 throw new UpdateException("Unable to find engine version in manifest!");
             }
 
-            var bestRid = RidUtility.FindBestRid(versionInfo.Keys);
+            if (versionInfo.Insecure)
+            {
+                throw new UpdateException("Specified engine version is insecure!");
+            }
+
+            var bestRid = RidUtility.FindBestRid(versionInfo.Platforms.Keys);
             if (bestRid == null)
             {
                 throw new UpdateException("No engine version available for our platform!");
@@ -70,7 +75,7 @@ namespace SS14.Launcher.Models.EngineManager
 
             Log.Debug("Selecting RID {rid}", bestRid);
 
-            var buildInfo = versionInfo[bestRid];
+            var buildInfo = versionInfo.Platforms[bestRid];
 
             Helpers.EnsureDirectoryExists(LauncherPaths.DirEngineInstallations);
 
@@ -124,6 +129,15 @@ namespace SS14.Launcher.Models.EngineManager
             {
                 File.Delete(file);
             }
+        }
+
+        private sealed class VersionInfo
+        {
+            [JsonInclude] [JsonPropertyName("insecure")]
+            public bool Insecure;
+
+            [JsonInclude] [JsonPropertyName("platforms")]
+            public Dictionary<string, BuildInfo> Platforms = default!;
         }
 
         private sealed class BuildInfo
