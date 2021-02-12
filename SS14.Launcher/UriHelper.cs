@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
 namespace SS14.Launcher
@@ -24,18 +25,33 @@ namespace SS14.Launcher
         [Pure]
         public static Uri ParseSs14Uri(string address)
         {
+            if (!TryParseSs14Uri(address, out var uri))
+            {
+                throw new FormatException("Not a valid SS14 URI");
+            }
+
+            return uri;
+        }
+
+        [Pure]
+        public static bool TryParseSs14Uri(string address, [NotNullWhen(true)] out Uri? uri)
+        {
             if (!address.Contains("://"))
             {
                 address = "ss14://" + address;
             }
 
-            var uri = new Uri(address);
-            if (uri.Scheme != SchemeSs14 && uri.Scheme != SchemeSs14s)
+            if (!Uri.TryCreate(address, UriKind.Absolute, out uri))
             {
-                throw new FormatException("URI must be ss14://, ss14s:// or have no scheme.");
+                return false;
             }
 
-            return uri;
+            if (uri.Scheme != SchemeSs14 && uri.Scheme != SchemeSs14s)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>

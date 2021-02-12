@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace SS14.Launcher.Models.ServerStatus
 {
@@ -60,7 +61,14 @@ namespace SS14.Launcher.Models.ServerStatus
 
             try
             {
-                var statusAddr = UriHelper.GetServerStatusAddress(data.Address);
+                if (!UriHelper.TryParseSs14Uri(data.Address, out var parsedAddress))
+                {
+                    Log.Warning("Server {Server} has invalid URI {Uri}", data.Name, data.Address);
+                    data.Status = ServerStatusCode.Offline;
+                    return;
+                }
+
+                var statusAddr = UriHelper.GetServerStatusAddress(parsedAddress);
                 data.Status = ServerStatusCode.FetchingStatus;
 
                 var stopwatch = new Stopwatch();

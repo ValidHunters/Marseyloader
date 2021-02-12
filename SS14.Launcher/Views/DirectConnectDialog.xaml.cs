@@ -7,7 +7,8 @@ using ReactiveUI;
 
 namespace SS14.Launcher.Views
 {
-    public class DirectConnectDialog : Window
+    [GenerateTypedNameReferences]
+    public partial class DirectConnectDialog : Window
     {
         private readonly TextBox _addressBox;
 
@@ -15,8 +16,8 @@ namespace SS14.Launcher.Views
         {
             InitializeComponent();
 
-            _addressBox = this.FindControl<TextBox>("AddressBox");
-            _addressBox.KeyDown += (sender, args) =>
+            _addressBox = AddressBox;
+            _addressBox.KeyDown += (_, args) =>
             {
                 if (args.Key == Key.Enter)
                 {
@@ -24,12 +25,15 @@ namespace SS14.Launcher.Views
                 }
             };
 
-            var submitButton = this.FindControl<Button>("SubmitButton");
-            submitButton.Command = ReactiveCommand.Create(TrySubmit);
+            SubmitButton.Command = ReactiveCommand.Create(TrySubmit);
 
             this.WhenAnyValue(x => x._addressBox.Text)
                 .Select(IsAddressValid)
-                .Subscribe(b => submitButton.IsEnabled = b);
+                .Subscribe(b =>
+                {
+                    InvalidLabel.IsVisible = !b;
+                    SubmitButton.IsEnabled = b;
+                });
         }
 
         protected override void OnOpened(EventArgs e)
@@ -61,12 +65,12 @@ namespace SS14.Launcher.Views
                 return;
             }
 
-            Close(_addressBox.Text);
+            Close(_addressBox.Text.Trim());
         }
 
         internal static bool IsAddressValid(string address)
         {
-            return !string.IsNullOrWhiteSpace(address);
+            return !string.IsNullOrWhiteSpace(address) && UriHelper.TryParseSs14Uri(address, out _);
         }
     }
 }

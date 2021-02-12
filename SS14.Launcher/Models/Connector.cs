@@ -188,7 +188,11 @@ namespace SS14.Launcher.Models
 
         private static async Task<(ServerInfo, Uri, Uri)> GetServerInfoAsync(string address, CancellationToken cancel)
         {
-            var parsedAddress = UriHelper.ParseSs14Uri(address);
+            if (!UriHelper.TryParseSs14Uri(address, out var parsedAddress))
+            {
+                Log.Error("Invalid URI in GetServerInfoAsync: {Uri}", address);
+                throw new ConnectException(ConnectionStatus.ConnectionFailed);
+            }
 
             // Fetch server connect info.
             var infoAddr = UriHelper.GetServerInfoAddress(parsedAddress);

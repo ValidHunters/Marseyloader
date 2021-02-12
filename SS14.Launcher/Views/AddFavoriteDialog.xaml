@@ -12,7 +12,10 @@
         WindowStartupLocation="CenterOwner">
 
   <DockPanel LastChildFill="true">
-    <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Name="SubmitButton" Content="Add" />
+    <DockPanel DockPanel.Dock="Bottom">
+      <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Name="SubmitButton" Content="Add" />
+      <TextBlock Text="Address is invalid"  VerticalAlignment="Center" Name="TxtInvalid" />
+    </DockPanel>
     <Grid Margin="4" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
       <TextBlock VerticalAlignment="Center" Margin="0,0,4,0" Grid.Column="0" Grid.Row="0" Text="Name:" />
       <TextBlock VerticalAlignment="Center" Margin="0,0,4,0" Grid.Column="0" Grid.Row="1" Text="Address:" />
