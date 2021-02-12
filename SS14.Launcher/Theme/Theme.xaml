@@ -18,9 +18,7 @@
     <Setter Property="Foreground" Value="{DynamicResource ThemeSubTextBrush}" />
   </Style>
 
-  <!-- Also catch the text presenter used by TextBox -->
-  <Style Selector=":is(TextBlock)">
-    <Setter Property="FontSize" Value="15" />
+  <Style Selector="Window">
     <Setter Property="FontFamily" Value="/Assets/Fonts/noto_sans/*.ttf#Noto Sans" />
   </Style>
 

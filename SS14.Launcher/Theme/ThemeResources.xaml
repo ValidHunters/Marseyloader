@@ -30,6 +30,8 @@
     <SolidColorBrush x:Key="ThemeTabItemSelectedBrush" Color="{StaticResource ThemeTabItemSelectedColor}" />
     <SolidColorBrush x:Key="ThemeTabItemHoveredBrush" Color="{StaticResource ThemeTabItemHoveredColor}" />
 
+    <sys:Double x:Key="FontSizeNormal">15</sys:Double>
+
     <VisualBrush x:Key="ThemeStripeBackBrush">
       <VisualBrush.Visual>
         <Panel Height="32" Width="32" Background="#1e1e22">
