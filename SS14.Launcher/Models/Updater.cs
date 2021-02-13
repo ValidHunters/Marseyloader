@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -10,6 +11,7 @@ using Avalonia.Threading;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
+using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 
@@ -19,12 +21,14 @@ namespace SS14.Launcher.Models
     {
         private readonly DataManager _cfg;
         private readonly IEngineManager _engineManager;
+        private readonly HttpClient _http;
         private bool _updating;
 
-        public Updater(DataManager cfg, IEngineManager engineManager)
+        public Updater()
         {
-            _cfg = cfg;
-            _engineManager = engineManager;
+            _cfg = Locator.Current.GetService<DataManager>();
+            _engineManager = Locator.Current.GetService<IEngineManager>();
+            _http = Locator.Current.GetService<HttpClient>();
         }
 
         [Reactive] public UpdateStatus Status { get; private set; }
@@ -106,7 +110,7 @@ namespace SS14.Launcher.Models
 
             try
             {
-                await Global.GlobalHttpClient.DownloadToStream(
+                await _http.DownloadToStream(
                     buildInformation.DownloadUrl,
                     file,
                     DownloadProgressCallback,

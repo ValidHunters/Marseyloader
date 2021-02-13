@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 
@@ -12,10 +12,10 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public DataManager Cfg { get; }
         private readonly IEngineManager _engineManager;
 
-        public OptionsTabViewModel(DataManager cfg, IEngineManager engineManager)
+        public OptionsTabViewModel()
         {
-            Cfg = cfg;
-            _engineManager = engineManager;
+            Cfg = Locator.Current.GetService<DataManager>();
+            _engineManager = Locator.Current.GetService<IEngineManager>();
         }
 
 #if RELEASE

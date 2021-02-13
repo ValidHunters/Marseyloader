@@ -1,10 +1,8 @@
 using System;
 using Avalonia.Media;
 using ReactiveUI;
-using SS14.Launcher.Models;
+using Splat;
 using SS14.Launcher.Models.Data;
-using SS14.Launcher.Models.EngineManager;
-using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Models.ServerStatus;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
@@ -16,30 +14,17 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly ServerStatusCache _cache;
         private readonly IServerStatusData _cacheData;
         private readonly DataManager _cfg;
-        private readonly Updater _updater;
-        private readonly LoginManager _loginMgr;
         private readonly MainWindowViewModel _windowVm;
-        private readonly IEngineManager _engineMgr;
         private bool _isAltBackground;
         private string Address => _cacheData.Address;
         private string _fallbackName = string.Empty;
 
-        public ServerEntryViewModel(
-            ServerStatusCache cache,
-            DataManager cfg,
-            Updater updater,
-            LoginManager loginMgr,
-            MainWindowViewModel windowVm,
-            IEngineManager engineMgr,
-            string address)
+        public ServerEntryViewModel(MainWindowViewModel windowVm,string address)
         {
-            _cache = cache;
-            _cacheData = cache.GetStatusFor(address);
-            _cfg = cfg;
-            _updater = updater;
-            _loginMgr = loginMgr;
+            _cache = Locator.Current.GetService<ServerStatusCache>();
+            _cfg = Locator.Current.GetService<DataManager>();
             _windowVm = windowVm;
-            _engineMgr = engineMgr;
+            _cacheData = _cache.GetStatusFor(address);
 
             this.WhenAnyValue(x => x.IsAltBackground)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(BackgroundColor)));
@@ -64,15 +49,8 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 .Subscribe(_ => { this.RaisePropertyChanged(nameof(FavoriteButtonText)); });
         }
 
-        public ServerEntryViewModel(
-            ServerStatusCache cache,
-            DataManager cfg,
-            Updater updater,
-            LoginManager loginMgr,
-            MainWindowViewModel windowVm,
-            IEngineManager engineMgr,
-            FavoriteServer favorite)
-            : this(cache, cfg, updater, loginMgr, windowVm, engineMgr, favorite.Address)
+        public ServerEntryViewModel(MainWindowViewModel windowVm, FavoriteServer favorite)
+            : this(windowVm, favorite.Address)
         {
             Favorite = favorite;
         }
@@ -84,7 +62,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public void ConnectPressed()
         {
-            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, _windowVm, _engineMgr, Address);
+            ConnectingViewModel.StartConnect(_windowVm, Address);
         }
 
         public FavoriteServer? Favorite { get; }

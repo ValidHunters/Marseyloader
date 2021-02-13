@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
+using Splat;
 
 namespace SS14.Launcher.Models.ServerStatus
 {
@@ -19,6 +20,13 @@ namespace SS14.Launcher.Models.ServerStatus
         // Oh well!
         private readonly Dictionary<string, Data> _cachedData
             = new Dictionary<string, Data>();
+
+        private readonly HttpClient _http;
+
+        public ServerStatusCache()
+        {
+            _http = Locator.Current.GetService<HttpClient>();
+        }
 
         /// <summary>
         ///     Gets an uninitialized status for a server address.
@@ -78,7 +86,7 @@ namespace SS14.Launcher.Models.ServerStatus
                     // BUG: This ping stat is completely wrong currently.
                     // TCP/TLS need multiple round trips, which we are measuring.
                     stopwatch.Start();
-                    using var response = await Global.GlobalHttpClient.GetAsync(statusAddr, cancel);
+                    using var response = await _http.GetAsync(statusAddr, cancel);
                     stopwatch.Stop();
                     response.EnsureSuccessStatusCode();
                     status = JsonConvert.DeserializeObject<ServerStatus>(await response.Content.ReadAsStringAsync());

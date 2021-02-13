@@ -5,7 +5,7 @@ using DynamicData;
 using JetBrains.Annotations;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using SS14.Launcher.Models;
+using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 
@@ -21,12 +21,12 @@ namespace SS14.Launcher.ViewModels
 
         public ReadOnlyObservableCollection<AvailableAccountViewModel> Accounts => _accounts;
 
-        public AccountDropDownViewModel(MainWindowViewModel mainVm, DataManager cfg, AuthApi authApi, LoginManager loginMgr)
+        public AccountDropDownViewModel(MainWindowViewModel mainVm)
         {
             _mainVm = mainVm;
-            _cfg = cfg;
-            _authApi = authApi;
-            _loginMgr = loginMgr;
+            _cfg = Locator.Current.GetService<DataManager>();
+            _authApi = Locator.Current.GetService<AuthApi>();
+            _loginMgr = Locator.Current.GetService<LoginManager>();
 
             this.WhenAnyValue(x => x._loginMgr.ActiveAccount)
                 .Subscribe(_ =>

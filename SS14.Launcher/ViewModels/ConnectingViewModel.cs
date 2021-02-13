@@ -1,10 +1,8 @@
 using System;
 using System.Threading;
 using ReactiveUI;
+using Splat;
 using SS14.Launcher.Models;
-using SS14.Launcher.Models.Data;
-using SS14.Launcher.Models.EngineManager;
-using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.ViewModels
 {
@@ -21,10 +19,10 @@ namespace SS14.Launcher.ViewModels
                                  _connector.Status == Connector.ConnectionStatus.ClientExited &&
                                  _connector.ClientExitedBadly;
 
-        public ConnectingViewModel(Connector connector, Updater updater, MainWindowViewModel windowVm)
+        public ConnectingViewModel(Connector connector, MainWindowViewModel windowVm)
         {
+            _updater = Locator.Current.GetService<Updater>();
             _connector = connector;
-            _updater = updater;
             _windowVm = windowVm;
 
             this.WhenAnyValue(x => x._updater.Progress)
@@ -135,16 +133,10 @@ namespace SS14.Launcher.ViewModels
                 _ => ""
             };
 
-        public static void StartConnect(
-            Updater updater,
-            DataManager cfg,
-            LoginManager loginMgr,
-            MainWindowViewModel windowVm,
-            IEngineManager engineMgr,
-            string address)
+        public static void StartConnect(MainWindowViewModel windowVm, string address)
         {
-            var connector = new Connector(updater, cfg, loginMgr, engineMgr);
-            var vm = new ConnectingViewModel(connector, updater, windowVm);
+            var connector = new Connector();
+            var vm = new ConnectingViewModel(connector, windowVm);
             windowVm.ConnectingVM = vm;
             vm.Start(address);
         }

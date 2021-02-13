@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using DynamicData;
 using ReactiveUI;
 using Serilog;
+using Splat;
 using SS14.Launcher.Models.Data;
 
 namespace SS14.Launcher.Models.Logins
@@ -58,12 +59,12 @@ namespace SS14.Launcher.Models.Logins
 
         public IObservableCache<LoggedInAccount, Guid> Logins { get; }
 
-        public LoginManager(DataManager cfg, AuthApi authApi)
+        public LoginManager()
         {
-            _cfg = cfg;
-            _authApi = authApi;
+            _cfg = Locator.Current.GetService<DataManager>();
+            _authApi = Locator.Current.GetService<AuthApi>();
 
-            _logins = cfg.Logins
+            _logins = _cfg.Logins
                 .Connect()
                 .Transform(p => new ActiveLoginData(p))
                 .OnItemRemoved(p =>

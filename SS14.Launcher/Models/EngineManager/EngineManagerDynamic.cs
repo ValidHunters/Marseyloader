@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Utility;
 
@@ -18,10 +20,12 @@ namespace SS14.Launcher.Models.EngineManager
     public sealed class EngineManagerDynamic : IEngineManager
     {
         private readonly DataManager _cfg;
+        private readonly HttpClient _http;
 
-        public EngineManagerDynamic(DataManager cfg)
+        public EngineManagerDynamic()
         {
-            _cfg = cfg;
+            _cfg = Locator.Current.GetService<DataManager>();
+            _http = Locator.Current.GetService<HttpClient>();
         }
 
         public string GetEnginePath(string engineVersion)
@@ -54,7 +58,7 @@ namespace SS14.Launcher.Models.EngineManager
 
             Log.Debug("Loading manifest from {manifestUrl}...", ConfigConstants.RobustBuildsManifest);
             var manifest =
-                await Global.GlobalHttpClient.GetFromJsonAsync<Dictionary<string, VersionInfo>>(
+                await _http.GetFromJsonAsync<Dictionary<string, VersionInfo>>(
                     ConfigConstants.RobustBuildsManifest, cancellationToken: cancel);
 
             if (!manifest!.TryGetValue(engineVersion, out var versionInfo))
@@ -84,7 +88,7 @@ namespace SS14.Launcher.Models.EngineManager
 
             try
             {
-                await Global.GlobalHttpClient.DownloadToStream(buildInfo.Url, file, progress, cancel: cancel);
+                await _http.DownloadToStream(buildInfo.Url, file, progress, cancel: cancel);
             }
             catch (OperationCanceledException)
             {

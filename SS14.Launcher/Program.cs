@@ -1,12 +1,15 @@
-﻿using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Logging;
 using Avalonia.ReactiveUI;
 using Serilog;
+using Splat;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
+using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
@@ -23,6 +26,13 @@ namespace SS14.Launcher
         {
             var cfg = new DataManager();
             cfg.Load();
+            Locator.CurrentMutable.RegisterConstant(cfg);
+
+            var http = new HttpClient();
+            http.DefaultRequestHeaders.UserAgent.Add(
+                new ProductInfoHeaderValue(LauncherVersion.Name, LauncherVersion.Version?.ToString()));
+            http.DefaultRequestHeaders.Add("SS14-Launcher-Fingerprint", cfg.Fingerprint.ToString());
+            Locator.CurrentMutable.RegisterConstant(http);
 
             LauncherPaths.CreateDirs();
 
@@ -45,7 +55,7 @@ namespace SS14.Launcher
                 .CreateLogger());
 #endif
 
-            BuildAvaloniaApp().Start((app, args) => AppMain(app, args, cfg), args);
+            BuildAvaloniaApp().Start(AppMain, args);
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
@@ -56,13 +66,16 @@ namespace SS14.Launcher
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI
         // container, etc.
-        private static void AppMain(Application app, string[] args, DataManager cfg)
+        private static void AppMain(Application app, string[] args)
         {
-            var engineManager = new EngineManagerDynamic(cfg);
-            var statusCache = new ServerStatusCache();
-            var updater = new Updater(cfg, engineManager);
+            var cfg = Locator.Current.GetService<DataManager>();
+            Locator.CurrentMutable.RegisterConstant<IEngineManager>(new EngineManagerDynamic());
+            Locator.CurrentMutable.RegisterConstant(new ServerStatusCache());
+            Locator.CurrentMutable.RegisterConstant(new Updater());
+            Locator.CurrentMutable.RegisterConstant(new AuthApi());
+            Locator.CurrentMutable.RegisterConstant(new LoginManager());
 
-            var viewModel = new MainWindowViewModel(cfg, statusCache, updater, engineManager);
+            var viewModel = new MainWindowViewModel();
             var window = new MainWindow
             {
                 DataContext = viewModel

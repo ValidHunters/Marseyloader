@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Serilog;
+using Splat;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
 
@@ -13,18 +14,11 @@ namespace SS14.Launcher
 {
     public sealed class AuthApi
     {
-        private readonly DataManager _config;
         private readonly HttpClient _httpClient;
 
-        public AuthApi(DataManager config)
+        public AuthApi()
         {
-            _config = config;
-
-            _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.UserAgent.Add(
-                new ProductInfoHeaderValue(LauncherVersion.Name, LauncherVersion.Version?.ToString()));
-
-            _httpClient.DefaultRequestHeaders.Add("SS14-Launcher-Fingerprint", _config.Fingerprint.ToString());
+            _httpClient = Locator.Current.GetService<HttpClient>();
         }
 
         public Task<AuthenticateResult> AuthenticateAsync(Guid userId, string password)

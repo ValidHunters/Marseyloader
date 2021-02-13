@@ -8,11 +8,9 @@ using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
-using SS14.Launcher.Models;
+using Splat;
 using SS14.Launcher.Models.Data;
-using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
-using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.Utility;
 using SS14.Launcher.ViewModels.Login;
 using SS14.Launcher.ViewModels.MainWindowTabs;
@@ -24,6 +22,7 @@ namespace SS14.Launcher.ViewModels
     {
         private readonly DataManager _cfg;
         private readonly LoginManager _loginMgr;
+        private readonly HttpClient _http;
 
         private int _selectedIndex;
 
@@ -35,20 +34,16 @@ namespace SS14.Launcher.ViewModels
         public NewsTabViewModel NewsTab { get; }
         public OptionsTabViewModel OptionsTab { get; }
 
-        public MainWindowViewModel(
-            DataManager cfg,
-            ServerStatusCache statusCache,
-            Updater updater,
-            IEngineManager engineMgr)
+        public MainWindowViewModel()
         {
-            _cfg = cfg;
-            var authApi = new AuthApi(cfg);
-            _loginMgr = new LoginManager(cfg, authApi);
+            _cfg = Locator.Current.GetService<DataManager>();
+            _loginMgr = Locator.Current.GetService<LoginManager>();
+            _http = Locator.Current.GetService<HttpClient>();
 
-            ServersTab = new ServerListTabViewModel(cfg, statusCache, updater, _loginMgr, this, engineMgr);
+            ServersTab = new ServerListTabViewModel(this);
             NewsTab = new NewsTabViewModel();
-            HomeTab = new HomePageViewModel(this, cfg, statusCache, updater, _loginMgr, engineMgr);
-            OptionsTab = new OptionsTabViewModel(cfg, engineMgr);
+            HomeTab = new HomePageViewModel(this);
+            OptionsTab = new OptionsTabViewModel();
 
             Tabs = new MainWindowTabViewModel[]
             {
@@ -58,8 +53,8 @@ namespace SS14.Launcher.ViewModels
                 OptionsTab
             };
 
-            AccountDropDown = new AccountDropDownViewModel(this, cfg, authApi, _loginMgr);
-            LoginViewModel = new MainWindowLoginViewModel(cfg, authApi, _loginMgr);
+            AccountDropDown = new AccountDropDownViewModel(this);
+            LoginViewModel = new MainWindowLoginViewModel();
 
             this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
 
@@ -148,7 +143,7 @@ namespace SS14.Launcher.ViewModels
 
             try
             {
-                var versionRequest = await Global.GlobalHttpClient.GetAsync(ConfigConstants.LauncherVersionUrl);
+                var versionRequest = await _http.GetAsync(ConfigConstants.LauncherVersionUrl);
                 versionRequest.EnsureSuccessStatusCode();
                 OutOfDate = ConfigConstants.CurrentLauncherVersion !=
                             (await versionRequest.Content.ReadAsStringAsync()).Trim();

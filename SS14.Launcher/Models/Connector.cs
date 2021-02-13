@@ -11,6 +11,7 @@ using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
+using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
@@ -26,13 +27,15 @@ namespace SS14.Launcher.Models
 
         private ConnectionStatus _status = ConnectionStatus.None;
         private bool _clientExitedBadly;
+        private readonly HttpClient _http;
 
-        public Connector(Updater updater, DataManager cfg, LoginManager loginManager, IEngineManager engineManager)
+        public Connector()
         {
-            _updater = updater;
-            _cfg = cfg;
-            _loginManager = loginManager;
-            _engineManager = engineManager;
+            _updater = Locator.Current.GetService<Updater>();
+            _cfg = Locator.Current.GetService<DataManager>();
+            _loginManager = Locator.Current.GetService<LoginManager>();
+            _engineManager = Locator.Current.GetService<IEngineManager>();
+            _http = Locator.Current.GetService<HttpClient>();
         }
 
         public ConnectionStatus Status
@@ -186,7 +189,7 @@ namespace SS14.Launcher.Models
             return installation;
         }
 
-        private static async Task<(ServerInfo, Uri, Uri)> GetServerInfoAsync(string address, CancellationToken cancel)
+        private async Task<(ServerInfo, Uri, Uri)> GetServerInfoAsync(string address, CancellationToken cancel)
         {
             if (!UriHelper.TryParseSs14Uri(address, out var parsedAddress))
             {
@@ -199,7 +202,7 @@ namespace SS14.Launcher.Models
 
             try
             {
-                var resp = await Global.GlobalHttpClient.GetStringAsync(infoAddr, cancel);
+                var resp = await _http.GetStringAsync(infoAddr, cancel);
                 var info = JsonConvert.DeserializeObject<ServerInfo>(resp);
                 return (info, parsedAddress, infoAddr);
             }

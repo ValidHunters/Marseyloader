@@ -7,10 +7,8 @@ using Avalonia.Controls;
 using Avalonia.VisualTree;
 using DynamicData;
 using ReactiveUI.Fody.Helpers;
-using SS14.Launcher.Models;
+using Splat;
 using SS14.Launcher.Models.Data;
-using SS14.Launcher.Models.EngineManager;
-using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.Views;
 
@@ -22,19 +20,12 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private readonly List<ServerEntryViewModel> _favorites = new List<ServerEntryViewModel>();
         private readonly DataManager _cfg;
         private readonly ServerStatusCache _statusCache;
-        private readonly Updater _updater;
-        private readonly LoginManager _loginMgr;
-        private readonly IEngineManager _engineMgr;
 
-        public HomePageViewModel(MainWindowViewModel mainWindowViewModel, DataManager cfg,
-            ServerStatusCache statusCache, Updater updater, LoginManager loginMgr, IEngineManager engineMgr)
+        public HomePageViewModel(MainWindowViewModel mainWindowViewModel)
         {
             MainWindowViewModel = mainWindowViewModel;
-            _cfg = cfg;
-            _statusCache = statusCache;
-            _updater = updater;
-            _loginMgr = loginMgr;
-            _engineMgr = engineMgr;
+            _cfg = Locator.Current.GetService<DataManager>();
+            _statusCache = Locator.Current.GetService<ServerStatusCache>();
 
             _cfg.FavoriteServers
                 .Connect()
@@ -62,7 +53,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 return;
             }
 
-            ConnectingViewModel.StartConnect(_updater, _cfg, _loginMgr, MainWindowViewModel, _engineMgr, res);
+            ConnectingViewModel.StartConnect(MainWindowViewModel, res);
         }
 
         public async void AddFavoritePressed()
@@ -104,14 +95,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                     continue;
                 }
 
-                var serverEntryViewModel = new ServerEntryViewModel(
-                    _statusCache,
-                    _cfg,
-                    _updater,
-                    _loginMgr,
-                    MainWindowViewModel,
-                    _engineMgr,
-                    favoriteServer);
+                var serverEntryViewModel = new ServerEntryViewModel(MainWindowViewModel, favoriteServer);
 
                 serverEntryViewModel.DoInitialUpdate();
                 _favorites.Add(serverEntryViewModel);

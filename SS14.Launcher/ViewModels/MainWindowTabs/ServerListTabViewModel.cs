@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using DynamicData;
@@ -9,22 +10,16 @@ using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
-using SS14.Launcher.Models;
-using SS14.Launcher.Models.Data;
-using SS14.Launcher.Models.EngineManager;
-using SS14.Launcher.Models.Logins;
+using Splat;
 using SS14.Launcher.Models.ServerStatus;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
     public class ServerListTabViewModel : MainWindowTabViewModel
     {
-        private readonly DataManager _cfg;
         private readonly ServerStatusCache _statusCache;
-        private readonly Updater _updater;
-        private readonly LoginManager _loginMgr;
         private readonly MainWindowViewModel _windowVm;
-        private readonly IEngineManager _engineMgr;
+        private readonly HttpClient _http;
         private CancellationTokenSource? _refreshCancel;
 
         public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
@@ -69,19 +64,11 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
         }
 
-        public ServerListTabViewModel(DataManager cfg,
-            ServerStatusCache statusCache,
-            Updater updater,
-            LoginManager loginMgr,
-            MainWindowViewModel windowVm,
-            IEngineManager engineMgr)
+        public ServerListTabViewModel(MainWindowViewModel windowVm)
         {
-            _cfg = cfg;
-            _statusCache = statusCache;
-            _updater = updater;
-            _loginMgr = loginMgr;
             _windowVm = windowVm;
-            _engineMgr = engineMgr;
+            _statusCache = Locator.Current.GetService<ServerStatusCache>();
+            _http = Locator.Current.GetService<HttpClient>();
 
             AllServers.CollectionChanged += (s, e) =>
             {
@@ -157,7 +144,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             try
             {
                 using var response =
-                    await Global.GlobalHttpClient.GetAsync(ConfigConstants.HubUrl + "api/servers", cancel);
+                    await _http.GetAsync(ConfigConstants.HubUrl + "api/servers", cancel);
 
                 response.EnsureSuccessStatusCode();
 
@@ -168,7 +155,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                 Status = RefreshListStatus.Updated;
 
                 AllServers.AddRange(entries.Select(e =>
-                    new ServerEntryViewModel(_statusCache, _cfg, _updater, _loginMgr, _windowVm, _engineMgr, e.Address)
+                    new ServerEntryViewModel(_windowVm, e.Address)
                     {
                         FallbackName = e.Name
                     }));
