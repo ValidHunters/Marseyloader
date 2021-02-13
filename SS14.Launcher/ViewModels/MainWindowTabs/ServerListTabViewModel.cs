@@ -161,10 +161,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
                 response.EnsureSuccessStatusCode();
 
-                // TODO: .NET 5 has an overload of ReadAsStringAsync with cancellation support.
-                var respStr = await response.Content.ReadAsStringAsync();
-
-                cancel.ThrowIfCancellationRequested();
+                var respStr = await response.Content.ReadAsStringAsync(cancel);
 
                 var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(respStr);
 
