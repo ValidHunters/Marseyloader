@@ -49,6 +49,7 @@ namespace SS14.Launcher.ViewModels.Login
                 {
                     UsernameHelpers.UsernameInvalidReason.Empty => "Username is empty",
                     UsernameHelpers.UsernameInvalidReason.TooLong => "Username is too long",
+                    UsernameHelpers.UsernameInvalidReason.TooShort => "Username is too short",
                     UsernameHelpers.UsernameInvalidReason.InvalidCharacter => "Username contains an invalid character",
                     _ => "???"
                 };
