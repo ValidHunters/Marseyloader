@@ -26,6 +26,9 @@
              Watermark="Confirm Password" PasswordChar="•"
              Text="{Binding EditingPasswordConfirm, Mode=TwoWay}" />
 
+    <CheckBox DockPanel.Dock="Top" Content="I am 13 years of age or older"
+              IsChecked="{Binding Is13OrOlder, Mode=TwoWay}" MaxWidth="300" HorizontalAlignment="Center" />
+
     <TextBlock DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="SubText"
                Text="{Binding InvalidReason}" />
     <Button DockPanel.Dock="Top" IsEnabled="{Binding IsInputValid}" HorizontalAlignment="Center"

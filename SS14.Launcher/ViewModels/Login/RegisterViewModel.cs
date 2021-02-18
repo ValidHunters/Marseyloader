@@ -4,7 +4,6 @@ using System.Net.Mail;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Robust.Shared.AuthLib;
-using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 
@@ -25,6 +24,8 @@ namespace SS14.Launcher.ViewModels.Login
         [Reactive] public bool IsInputValid { get; private set; }
         [Reactive] public string InvalidReason { get; private set; } = " ";
 
+        [Reactive] public bool Is13OrOlder { get; set; }
+
 
         public RegisterViewModel(DataManager cfg, MainWindowLoginViewModel parentVm, AuthApi authApi, LoginManager loginMgr)
         {
@@ -34,13 +35,13 @@ namespace SS14.Launcher.ViewModels.Login
             _loginMgr = loginMgr;
 
             this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword, x => x.EditingPasswordConfirm,
-                    x => x.EditingEmail)
+                    x => x.EditingEmail, x => x.Is13OrOlder)
                 .Subscribe(UpdateInputValid);
         }
 
-        private void UpdateInputValid((string user, string pass, string passConfirm, string email) s)
+        private void UpdateInputValid((string user, string pass, string passConfirm, string email, bool is13OrOlder) s)
         {
-            var (user, pass, passConfirm, email) = s;
+            var (user, pass, passConfirm, email, is13OrOlder) = s;
 
             IsInputValid = false;
             if (!UsernameHelpers.IsNameValid(user, out var reason))
@@ -62,12 +63,7 @@ namespace SS14.Launcher.ViewModels.Login
                 return;
             }
 
-            try
-            {
-                // TODO: .NET 5 has a Try* version of this, switch to that when .NET 5 is available.
-                var unused = new MailAddress(email);
-            }
-            catch (FormatException)
+            if (!MailAddress.TryCreate(email, out _))
             {
                 InvalidReason = "Email is invalid";
                 return;
@@ -82,6 +78,12 @@ namespace SS14.Launcher.ViewModels.Login
             if (pass != passConfirm)
             {
                 InvalidReason = "Confirm password does not match";
+                return;
+            }
+
+            if (!is13OrOlder)
+            {
+                InvalidReason = "You must be 13 or older";
                 return;
             }
 
