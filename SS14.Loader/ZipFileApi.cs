@@ -51,9 +51,13 @@ namespace SS14.Loader
             {
                 if (_prefix != null)
                 {
-                    return _archive.Entries.Where(e => e.FullName.StartsWith(_prefix)).Select(e => e.FullName[_prefix.Length..]);
+                    return _archive.Entries
+                        .Where(e => e.Name != "" && e.FullName.StartsWith(_prefix))
+                        .Select(e => e.FullName[_prefix.Length..]);
                 }
-                return _archive.Entries.Select(entry => entry.FullName);
+                return _archive.Entries
+                    .Where(e => e.Name != "")
+                    .Select(entry => entry.FullName);
             }
         }
     }
