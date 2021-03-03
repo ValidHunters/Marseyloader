@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
@@ -119,7 +118,7 @@ namespace SS14.Loader
             }
 
             var robustPath = args[0];
-            var sig = HexToBytes(args[1]);
+            var sig = Convert.FromHexString(args[1]);
             var keyPath = args[2];
 
             var pubKey = PublicKey.Import(
@@ -163,18 +162,6 @@ namespace SS14.Loader
             }*/
 
             return 0;
-        }
-
-        private static byte[] HexToBytes(ReadOnlySpan<char> hex)
-        {
-            var ret = new byte[hex.Length >> 1];
-            for (var i = 0; i < ret.Length; i++)
-            {
-                var strIdx = i << 1;
-                ret[i] = byte.Parse(hex[strIdx..(strIdx + 2)], NumberStyles.HexNumber);
-            }
-
-            return ret;
         }
     }
 }

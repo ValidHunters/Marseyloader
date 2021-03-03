@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
@@ -137,7 +136,7 @@ namespace SS14.Launcher.Models
 
                 var expectHash = buildInformation.Hash;
 
-                var newFileHashString = ByteArrayToString(hash);
+                var newFileHashString = Convert.ToHexString(hash);
                 if (!expectHash.Equals(newFileHashString, StringComparison.OrdinalIgnoreCase))
                 {
                     throw new InvalidOperationException(
@@ -191,17 +190,6 @@ namespace SS14.Launcher.Models
             return sha.ComputeHash(stream);
         }
 
-        // https://stackoverflow.com/a/311179/4678631
-        public static string ByteArrayToString(byte[] ba)
-        {
-            var hex = new StringBuilder(ba.Length * 2);
-            foreach (var b in ba)
-            {
-                hex.AppendFormat("{0:x2}", b);
-            }
-
-            return hex.ToString();
-        }
 
         private bool CheckNeedUpdate(
             ServerBuildInformation buildInfo,
