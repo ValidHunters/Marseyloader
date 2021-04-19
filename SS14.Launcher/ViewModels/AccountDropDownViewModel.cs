@@ -21,6 +21,8 @@ namespace SS14.Launcher.ViewModels
 
         public ReadOnlyObservableCollection<AvailableAccountViewModel> Accounts => _accounts;
 
+        public bool EnableMultiAccounts => _cfg.ActuallyMultiAccounts;
+
         public AccountDropDownViewModel(MainWindowViewModel mainVm)
         {
             _mainVm = mainVm;
@@ -60,7 +62,8 @@ namespace SS14.Launcher.ViewModels
             return l => l != selected;
         }
 
-        public string LoginText => _loginMgr.ActiveAccount?.Username ?? "No account selected";
+        public string LoginText => _loginMgr.ActiveAccount?.Username ??
+                                   (EnableMultiAccounts ? "No account selected" : "Not logged in");
 
         public string LogoutText => _cfg.Logins.Count == 1 ? "Log out" : $"Log out of {_loginMgr.ActiveAccount?.Username}";
 
@@ -107,7 +110,7 @@ namespace SS14.Launcher.ViewModels
         {
             Account = account;
 
-            this.WhenAnyValue(p => p.Account.Status, p => p.Account.Username)
+            this.WhenAnyValue<AvailableAccountViewModel, AccountLoginStatus, string>(p => p.Account.Status, p => p.Account.Username)
                 .Select(p => p.Item1 switch
                 {
                     AccountLoginStatus.Available => $"{p.Item2}",

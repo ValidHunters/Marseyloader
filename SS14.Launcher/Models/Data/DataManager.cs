@@ -32,6 +32,7 @@ namespace SS14.Launcher.Models.Data
         private bool _disableSigning;
         private bool _logClient;
         private bool _logLauncher;
+        private bool _enableMultiAccounts;
 
         public DataManager()
         {
@@ -141,6 +142,23 @@ namespace SS14.Launcher.Models.Data
                 Save();
             }
         }
+
+        public bool EnableMultiAccounts
+        {
+            get => _enableMultiAccounts;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _enableMultiAccounts, value);
+                Save();
+            }
+        }
+
+        public bool ActuallyMultiAccounts =>
+#if DEBUG
+            true;
+#else
+            EnableMultiAccounts;
+#endif
 
         public void AddFavoriteServer(FavoriteServer server)
         {
@@ -274,6 +292,7 @@ namespace SS14.Launcher.Models.Data
                 _disableSigning = data.DisableSigning;
                 _logClient = data.LogClient;
                 _logLauncher = data.LogLauncher;
+                _enableMultiAccounts = data.MultiAccounts;
             }
             finally
             {
@@ -316,7 +335,8 @@ namespace SS14.Launcher.Models.Data
                 DismissedEarlyAccessWarning = _hasDismissedEarlyAccessWarning,
                 LogClient = _logClient,
                 DisableSigning = _disableSigning,
-                LogLauncher = _logLauncher
+                LogLauncher = _logLauncher,
+                MultiAccounts = _enableMultiAccounts
             });
 
             // Save config asynchronously to avoid potential disk hangs.
@@ -372,6 +392,9 @@ namespace SS14.Launcher.Models.Data
 
             [JsonProperty(PropertyName = "log_launcher")]
             public bool LogLauncher { get; set; }
+
+            [JsonProperty(PropertyName = "multi_accounts")]
+            public bool MultiAccounts { get; set; }
         }
     }
 }
