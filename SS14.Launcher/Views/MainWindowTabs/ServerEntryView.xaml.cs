@@ -3,7 +3,7 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views.MainWindowTabs
 {
-    public class ServerEntryView : UserControl
+    public partial class ServerEntryView : UserControl
     {
         public ServerEntryView()
         {

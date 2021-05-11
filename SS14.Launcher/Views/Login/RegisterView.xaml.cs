@@ -5,7 +5,7 @@ using SS14.Launcher.ViewModels.Login;
 
 namespace SS14.Launcher.Views.Login
 {
-    public class RegisterView : UserControl
+    public partial class RegisterView : UserControl
     {
         public RegisterView()
         {

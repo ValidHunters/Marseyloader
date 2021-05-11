@@ -6,7 +6,7 @@ using Avalonia.Media;
 
 namespace SS14.Launcher.Views
 {
-    public sealed class DungSpinner : UserControl
+    public sealed partial class DungSpinner : UserControl
     {
         public static readonly StyledProperty<double> AnimationProgressProperty =
             AvaloniaProperty.Register<DungSpinner, double>(nameof(AnimationProgress));

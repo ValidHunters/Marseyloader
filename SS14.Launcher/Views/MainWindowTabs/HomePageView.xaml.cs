@@ -5,7 +5,7 @@ using SS14.Launcher.ViewModels.MainWindowTabs;
 
 namespace SS14.Launcher.Views.MainWindowTabs
 {
-    public class HomePageView : UserControl
+    public partial class HomePageView : UserControl
     {
         private HomePageViewModel? _viewModel;
 

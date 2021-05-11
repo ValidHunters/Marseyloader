@@ -3,7 +3,7 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views
 {
-    public class ConnectingOverlay : UserControl
+    public partial class ConnectingOverlay : UserControl
     {
         public ConnectingOverlay()
         {

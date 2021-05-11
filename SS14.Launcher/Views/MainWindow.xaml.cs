@@ -6,7 +6,7 @@ using SS14.Launcher.ViewModels;
 
 namespace SS14.Launcher.Views
 {
-    public class MainWindow : Window
+    public partial class MainWindow : Window
     {
         private MainWindowViewModel? _viewModel;
 

@@ -5,7 +5,7 @@ using SS14.Launcher.ViewModels.Login;
 
 namespace SS14.Launcher.Views.Login
 {
-    public sealed class ForgotPasswordView : UserControl
+    public sealed partial class ForgotPasswordView : UserControl
     {
         public ForgotPasswordView()
         {

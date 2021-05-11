@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views
 {
-    public class AccountDropDown : UserControl
+    public partial class AccountDropDown : UserControl
     {
         public static readonly StyledProperty<bool> IsDropDownOpenProperty =
             AvaloniaProperty.Register<AccountDropDown, bool>(nameof(IsDropDownOpen));

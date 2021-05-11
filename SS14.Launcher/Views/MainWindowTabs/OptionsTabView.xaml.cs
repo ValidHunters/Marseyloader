@@ -6,7 +6,7 @@ using ReactiveUI;
 
 namespace SS14.Launcher.Views.MainWindowTabs
 {
-    public class OptionsTabView : UserControl
+    public partial class OptionsTabView : UserControl
     {
         public OptionsTabView()
         {

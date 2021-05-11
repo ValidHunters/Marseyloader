@@ -1,12 +1,10 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using ReactiveUI;
 
 namespace SS14.Launcher.Views
 {
-    [GenerateTypedNameReferences]
     public partial class AddFavoriteDialog : Window
     {
         private readonly TextBox _nameBox;
@@ -39,11 +37,6 @@ namespace SS14.Launcher.Views
             base.OnOpened(e);
 
             _nameBox.Focus();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private void TrySubmit()

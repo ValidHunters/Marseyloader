@@ -3,7 +3,7 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views.MainWindowTabs
 {
-    public class NewsTabView : UserControl
+    public partial class NewsTabView : UserControl
     {
         public NewsTabView()
         {

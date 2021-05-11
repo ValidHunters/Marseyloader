@@ -3,7 +3,7 @@ using Avalonia.Markup.Xaml;
 
 namespace SS14.Launcher.Views
 {
-    public class Logo : UserControl
+    public partial class Logo : UserControl
     {
         public Logo()
         {

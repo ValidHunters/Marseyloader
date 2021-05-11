@@ -2,12 +2,10 @@ using System;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using ReactiveUI;
 
 namespace SS14.Launcher.Views
 {
-    [GenerateTypedNameReferences]
     public partial class DirectConnectDialog : Window
     {
         private readonly TextBox _addressBox;
@@ -51,11 +49,6 @@ namespace SS14.Launcher.Views
             }
 
             base.OnKeyDown(e);
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private void TrySubmit()
