@@ -91,36 +91,6 @@ namespace SS14.Launcher
             Process.Start(new ProcessStartInfo(uri.ToString()) {UseShellExecute = true});
         }
 
-        public static async Task WaitForExitAsync(this Process process, CancellationToken cancellationToken = default)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-
-            void ProcessExited(object? sender, EventArgs e)
-            {
-                tcs.TrySetResult(true);
-            }
-
-            process.EnableRaisingEvents = true;
-            process.Exited += ProcessExited;
-
-            try
-            {
-                if (process.HasExited)
-                {
-                    return;
-                }
-
-                await using (cancellationToken.Register(() => tcs.TrySetCanceled()))
-                {
-                    await tcs.Task;
-                }
-            }
-            finally
-            {
-                process.Exited -= ProcessExited;
-            }
-        }
-
         private static readonly string[] ByteSuffixes =
         {
             "B",
