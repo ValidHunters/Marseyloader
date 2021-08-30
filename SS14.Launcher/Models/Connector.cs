@@ -144,7 +144,7 @@ namespace SS14.Launcher.Models
                     "--ss14-address", parsedAddr.ToString(),
 
                     // GLES2 forcing or using default fallback
-                    "--cvar", "display.renderer=" + (_cfg.ForceGLES2 ? "3" : "0"),
+                    "--cvar", $"display.compat={_cfg.ForceGLES2}",
                 }, cVars);
             }
             catch (Exception e)
