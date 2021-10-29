@@ -24,6 +24,8 @@ namespace SS14.Launcher
         // yet and stuff might break.
         public static void Main(string[] args)
         {
+            VcRedistCheck.Check();
+
             var cfg = new DataManager();
             cfg.Load();
             Locator.CurrentMutable.RegisterConstant(cfg);
