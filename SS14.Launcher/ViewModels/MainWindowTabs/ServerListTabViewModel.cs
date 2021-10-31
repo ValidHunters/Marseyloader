@@ -160,7 +160,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
                         FallbackName = e.Name
                     }));
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
                 Status = RefreshListStatus.NotUpdated;
             }

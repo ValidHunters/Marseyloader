@@ -107,7 +107,7 @@ namespace SS14.Launcher.Models.ServerStatus
                 data.Name = status.Name;
                 data.PlayerCount = status.PlayerCount;
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
                 // Do nothing.
             }
