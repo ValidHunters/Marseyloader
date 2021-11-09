@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <!--<PublishTrimmed>true</PublishTrimmed>
         <PublishSingleFile>true</PublishSingleFile>-->
-        <Version>0.8.0</Version>
+        <Version>0.8.1</Version>
         <IsPackable>false</IsPackable>
         <DefineConstants Condition="'$(FullRelease)' == 'True'">FULL_RELEASE;$(DefineConstants)</DefineConstants>
     </PropertyGroup>
