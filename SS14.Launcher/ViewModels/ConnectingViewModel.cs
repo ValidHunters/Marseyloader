@@ -4,161 +4,160 @@ using ReactiveUI;
 using Splat;
 using SS14.Launcher.Models;
 
-namespace SS14.Launcher.ViewModels
+namespace SS14.Launcher.ViewModels;
+
+public class ConnectingViewModel : ViewModelBase
 {
-    public class ConnectingViewModel : ViewModelBase
+    private readonly Connector _connector;
+    private readonly Updater _updater;
+    private readonly MainWindowViewModel _windowVm;
+
+    private readonly CancellationTokenSource _cancelSource = new CancellationTokenSource();
+
+    public bool IsErrored => _connector.Status == Connector.ConnectionStatus.ConnectionFailed ||
+                             _connector.Status == Connector.ConnectionStatus.UpdateError ||
+                             _connector.Status == Connector.ConnectionStatus.ClientExited &&
+                             _connector.ClientExitedBadly;
+
+    public ConnectingViewModel(Connector connector, MainWindowViewModel windowVm)
     {
-        private readonly Connector _connector;
-        private readonly Updater _updater;
-        private readonly MainWindowViewModel _windowVm;
+        _updater = Locator.Current.GetService<Updater>();
+        _connector = connector;
+        _windowVm = windowVm;
 
-        private readonly CancellationTokenSource _cancelSource = new CancellationTokenSource();
-
-        public bool IsErrored => _connector.Status == Connector.ConnectionStatus.ConnectionFailed ||
-                                 _connector.Status == Connector.ConnectionStatus.UpdateError ||
-                                 _connector.Status == Connector.ConnectionStatus.ClientExited &&
-                                 _connector.ClientExitedBadly;
-
-        public ConnectingViewModel(Connector connector, MainWindowViewModel windowVm)
-        {
-            _updater = Locator.Current.GetService<Updater>();
-            _connector = connector;
-            _windowVm = windowVm;
-
-            this.WhenAnyValue(x => x._updater.Progress)
-                .Subscribe(_ =>
-                {
-                    this.RaisePropertyChanged(nameof(Progress));
-                    this.RaisePropertyChanged(nameof(ProgressIndeterminate));
-                    this.RaisePropertyChanged(nameof(ProgressText));
-                });
-
-            this.WhenAnyValue(x => x._updater.Status)
-                .Subscribe(_ => { this.RaisePropertyChanged(nameof(StatusText)); });
-
-            this.WhenAnyValue(x => x._connector.Status)
-                .Subscribe(val =>
-                {
-                    this.RaisePropertyChanged(nameof(ProgressIndeterminate));
-                    this.RaisePropertyChanged(nameof(StatusText));
-                    this.RaisePropertyChanged(nameof(ProgressBarVisible));
-                    this.RaisePropertyChanged(nameof(IsErrored));
-
-                    if (val == Connector.ConnectionStatus.ClientRunning
-                        || val == Connector.ConnectionStatus.Cancelled
-                        || val == Connector.ConnectionStatus.ClientExited && !_connector.ClientExitedBadly)
-                    {
-                        CloseOverlay();
-                    }
-                });
-
-            this.WhenAnyValue(x => x._connector.ClientExitedBadly)
-                .Subscribe(_ =>
-                {
-                    this.RaisePropertyChanged(nameof(StatusText));
-                    this.RaisePropertyChanged(nameof(IsErrored));
-                });
-        }
-
-        public float Progress
-        {
-            get
+        this.WhenAnyValue(x => x._updater.Progress)
+            .Subscribe(_ =>
             {
-                if (_updater.Progress == null)
+                this.RaisePropertyChanged(nameof(Progress));
+                this.RaisePropertyChanged(nameof(ProgressIndeterminate));
+                this.RaisePropertyChanged(nameof(ProgressText));
+            });
+
+        this.WhenAnyValue(x => x._updater.Status)
+            .Subscribe(_ => { this.RaisePropertyChanged(nameof(StatusText)); });
+
+        this.WhenAnyValue(x => x._connector.Status)
+            .Subscribe(val =>
+            {
+                this.RaisePropertyChanged(nameof(ProgressIndeterminate));
+                this.RaisePropertyChanged(nameof(StatusText));
+                this.RaisePropertyChanged(nameof(ProgressBarVisible));
+                this.RaisePropertyChanged(nameof(IsErrored));
+
+                if (val == Connector.ConnectionStatus.ClientRunning
+                    || val == Connector.ConnectionStatus.Cancelled
+                    || val == Connector.ConnectionStatus.ClientExited && !_connector.ClientExitedBadly)
                 {
-                    return 0;
+                    CloseOverlay();
                 }
+            });
 
-                var (downloaded, total) = _updater.Progress.Value;
-
-                return downloaded / (float) total;
-            }
-        }
-
-        public string ProgressText
-        {
-            get
+        this.WhenAnyValue(x => x._connector.ClientExitedBadly)
+            .Subscribe(_ =>
             {
-                if (_updater.Progress == null)
-                {
-                    return "";
-                }
+                this.RaisePropertyChanged(nameof(StatusText));
+                this.RaisePropertyChanged(nameof(IsErrored));
+            });
+    }
 
-                var (downloaded, total) = _updater.Progress.Value;
-
-                return $"{Helpers.FormatBytes(downloaded)} / {Helpers.FormatBytes(total)}";
-            }
-        }
-
-        public bool ProgressIndeterminate
+    public float Progress
+    {
+        get
         {
-            get
+            if (_updater.Progress == null)
             {
-                if (_connector.Status == Connector.ConnectionStatus.Updating)
-                {
-                    return !_updater.Progress.HasValue;
-                }
-
-                return true;
+                return 0;
             }
+
+            var (downloaded, total) = _updater.Progress.Value;
+
+            return downloaded / (float) total;
         }
+    }
 
-        public bool ProgressBarVisible => _connector.Status != Connector.ConnectionStatus.ClientExited &&
-                                          _connector.Status != Connector.ConnectionStatus.ClientRunning &&
-                                          _connector.Status != Connector.ConnectionStatus.ConnectionFailed &&
-                                          _connector.Status != Connector.ConnectionStatus.UpdateError;
-
-        public string StatusText =>
-            _connector.Status switch
+    public string ProgressText
+    {
+        get
+        {
+            if (_updater.Progress == null)
             {
-                Connector.ConnectionStatus.None => "Starting connection...",
-                Connector.ConnectionStatus.UpdateError =>
-                    "There was an error while downloading server content. Please ask on Discord for support if the problem persists.",
-                Connector.ConnectionStatus.Updating => "Updating: " + _updater.Status switch
-                {
-                    Updater.UpdateStatus.CheckingClientUpdate => "Checking for server content update...",
-                    Updater.UpdateStatus.DownloadingEngineVersion => "Downloading server content...",
-                    Updater.UpdateStatus.DownloadingClientUpdate => "Downloading server content...",
-                    Updater.UpdateStatus.Verifying => "Verifying download integrity...",
-                    Updater.UpdateStatus.CullingEngine => "Clearing old content...",
-                    Updater.UpdateStatus.Ready => "Update done!",
-                    _ => "You shouldn't see this"
-                },
-                Connector.ConnectionStatus.Connecting => "Fetching connection info from server...",
-                Connector.ConnectionStatus.ConnectionFailed => "Failed to connect to server!",
-                Connector.ConnectionStatus.StartingClient => "Starting client...",
-                Connector.ConnectionStatus.ClientExited => _connector.ClientExitedBadly
-                    ? "Client seems to have crashed while starting. If this persists, please ask on Discord or GitHub for support."
-                    : "",
-                _ => ""
-            };
+                return "";
+            }
 
-        public static void StartConnect(MainWindowViewModel windowVm, string address)
-        {
-            var connector = new Connector();
-            var vm = new ConnectingViewModel(connector, windowVm);
-            windowVm.ConnectingVM = vm;
-            vm.Start(address);
-        }
+            var (downloaded, total) = _updater.Progress.Value;
 
-        private void Start(string address)
-        {
-            _connector.Connect(address, _cancelSource.Token);
+            return $"{Helpers.FormatBytes(downloaded)} / {Helpers.FormatBytes(total)}";
         }
+    }
 
-        public void ErrorDismissed()
+    public bool ProgressIndeterminate
+    {
+        get
         {
-            CloseOverlay();
-        }
+            if (_connector.Status == Connector.ConnectionStatus.Updating)
+            {
+                return !_updater.Progress.HasValue;
+            }
 
-        private void CloseOverlay()
-        {
-            _windowVm.ConnectingVM = null;
+            return true;
         }
+    }
 
-        public void Cancel()
+    public bool ProgressBarVisible => _connector.Status != Connector.ConnectionStatus.ClientExited &&
+                                      _connector.Status != Connector.ConnectionStatus.ClientRunning &&
+                                      _connector.Status != Connector.ConnectionStatus.ConnectionFailed &&
+                                      _connector.Status != Connector.ConnectionStatus.UpdateError;
+
+    public string StatusText =>
+        _connector.Status switch
         {
-            _cancelSource.Cancel();
-        }
+            Connector.ConnectionStatus.None => "Starting connection...",
+            Connector.ConnectionStatus.UpdateError =>
+                "There was an error while downloading server content. Please ask on Discord for support if the problem persists.",
+            Connector.ConnectionStatus.Updating => "Updating: " + _updater.Status switch
+            {
+                Updater.UpdateStatus.CheckingClientUpdate => "Checking for server content update...",
+                Updater.UpdateStatus.DownloadingEngineVersion => "Downloading server content...",
+                Updater.UpdateStatus.DownloadingClientUpdate => "Downloading server content...",
+                Updater.UpdateStatus.Verifying => "Verifying download integrity...",
+                Updater.UpdateStatus.CullingEngine => "Clearing old content...",
+                Updater.UpdateStatus.Ready => "Update done!",
+                _ => "You shouldn't see this"
+            },
+            Connector.ConnectionStatus.Connecting => "Fetching connection info from server...",
+            Connector.ConnectionStatus.ConnectionFailed => "Failed to connect to server!",
+            Connector.ConnectionStatus.StartingClient => "Starting client...",
+            Connector.ConnectionStatus.ClientExited => _connector.ClientExitedBadly
+                ? "Client seems to have crashed while starting. If this persists, please ask on Discord or GitHub for support."
+                : "",
+            _ => ""
+        };
+
+    public static void StartConnect(MainWindowViewModel windowVm, string address)
+    {
+        var connector = new Connector();
+        var vm = new ConnectingViewModel(connector, windowVm);
+        windowVm.ConnectingVM = vm;
+        vm.Start(address);
+    }
+
+    private void Start(string address)
+    {
+        _connector.Connect(address, _cancelSource.Token);
+    }
+
+    public void ErrorDismissed()
+    {
+        CloseOverlay();
+    }
+
+    private void CloseOverlay()
+    {
+        _windowVm.ConnectingVM = null;
+    }
+
+    public void Cancel()
+    {
+        _cancelSource.Cancel();
     }
 }

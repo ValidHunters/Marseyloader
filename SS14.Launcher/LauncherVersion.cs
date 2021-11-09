@@ -1,10 +1,9 @@
 using System;
 
-namespace SS14.Launcher
+namespace SS14.Launcher;
+
+public static class LauncherVersion
 {
-    public static class LauncherVersion
-    {
-        public const string Name = "SS14.Laucher";
-        public static Version? Version => typeof(LauncherVersion).Assembly.GetName().Version;
-    }
+    public const string Name = "SS14.Laucher";
+    public static Version? Version => typeof(LauncherVersion).Assembly.GetName().Version;
 }

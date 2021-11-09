@@ -3,37 +3,36 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using SS14.Launcher.ViewModels.MainWindowTabs;
 
-namespace SS14.Launcher.Views.MainWindowTabs
+namespace SS14.Launcher.Views.MainWindowTabs;
+
+public partial class HomePageView : UserControl
 {
-    public partial class HomePageView : UserControl
+    private HomePageViewModel? _viewModel;
+
+    public HomePageView()
     {
-        private HomePageViewModel? _viewModel;
+        InitializeComponent();
+    }
 
-        public HomePageView()
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        if (_viewModel != null)
         {
-            InitializeComponent();
+            _viewModel.Control = null;
         }
 
-        protected override void OnDataContextChanged(EventArgs e)
+        _viewModel = DataContext as HomePageViewModel;
+
+        if (_viewModel != null)
         {
-            if (_viewModel != null)
-            {
-                _viewModel.Control = null;
-            }
-
-            _viewModel = DataContext as HomePageViewModel;
-
-            if (_viewModel != null)
-            {
-                _viewModel.Control = this;
-            }
-
-            base.OnDataContextChanged(e);
+            _viewModel.Control = this;
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        base.OnDataContextChanged(e);
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 }

@@ -12,148 +12,147 @@ using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Utility;
 
-namespace SS14.Launcher.Models.EngineManager
+namespace SS14.Launcher.Models.EngineManager;
+
+/// <summary>
+///     Downloads engine versions from the website.
+/// </summary>
+public sealed class EngineManagerDynamic : IEngineManager
 {
-    /// <summary>
-    ///     Downloads engine versions from the website.
-    /// </summary>
-    public sealed class EngineManagerDynamic : IEngineManager
+    private readonly DataManager _cfg;
+    private readonly HttpClient _http;
+
+    public EngineManagerDynamic()
     {
-        private readonly DataManager _cfg;
-        private readonly HttpClient _http;
+        _cfg = Locator.Current.GetService<DataManager>();
+        _http = Locator.Current.GetService<HttpClient>();
+    }
 
-        public EngineManagerDynamic()
+    public string GetEnginePath(string engineVersion)
+    {
+        if (!_cfg.EngineInstallations.Lookup(engineVersion).HasValue)
         {
-            _cfg = Locator.Current.GetService<DataManager>();
-            _http = Locator.Current.GetService<HttpClient>();
+            throw new ArgumentException("We do not have that engine version!");
         }
 
-        public string GetEnginePath(string engineVersion)
-        {
-            if (!_cfg.EngineInstallations.Lookup(engineVersion).HasValue)
-            {
-                throw new ArgumentException("We do not have that engine version!");
-            }
+        return Path.Combine(LauncherPaths.DirEngineInstallations, $"{engineVersion}.zip");
+    }
 
-            return Path.Combine(LauncherPaths.DirEngineInstallations, $"{engineVersion}.zip");
+    public string GetEngineSignature(string engineVersion)
+    {
+        return _cfg.EngineInstallations.Lookup(engineVersion).Value.Signature;
+    }
+
+    public async Task<bool> DownloadEngineIfNecessary(
+        string engineVersion,
+        Helpers.DownloadProgressCallback? progress = null,
+        CancellationToken cancel = default)
+    {
+        if (_cfg.EngineInstallations.Lookup(engineVersion).HasValue)
+        {
+            // Already have the engine version, we're good.
+            return false;
         }
 
-        public string GetEngineSignature(string engineVersion)
+        Log.Information("Installing engine version {version}...", engineVersion);
+
+        Log.Debug("Loading manifest from {manifestUrl}...", ConfigConstants.RobustBuildsManifest);
+        var manifest =
+            await _http.GetFromJsonAsync<Dictionary<string, VersionInfo>>(
+                ConfigConstants.RobustBuildsManifest, cancellationToken: cancel);
+
+        if (!manifest!.TryGetValue(engineVersion, out var versionInfo))
         {
-            return _cfg.EngineInstallations.Lookup(engineVersion).Value.Signature;
+            throw new UpdateException("Unable to find engine version in manifest!");
         }
 
-        public async Task<bool> DownloadEngineIfNecessary(
-            string engineVersion,
-            Helpers.DownloadProgressCallback? progress = null,
-            CancellationToken cancel = default)
+        if (versionInfo.Insecure)
         {
-            if (_cfg.EngineInstallations.Lookup(engineVersion).HasValue)
-            {
-                // Already have the engine version, we're good.
-                return false;
-            }
-
-            Log.Information("Installing engine version {version}...", engineVersion);
-
-            Log.Debug("Loading manifest from {manifestUrl}...", ConfigConstants.RobustBuildsManifest);
-            var manifest =
-                await _http.GetFromJsonAsync<Dictionary<string, VersionInfo>>(
-                    ConfigConstants.RobustBuildsManifest, cancellationToken: cancel);
-
-            if (!manifest!.TryGetValue(engineVersion, out var versionInfo))
-            {
-                throw new UpdateException("Unable to find engine version in manifest!");
-            }
-
-            if (versionInfo.Insecure)
-            {
-                throw new UpdateException("Specified engine version is insecure!");
-            }
-
-            var bestRid = RidUtility.FindBestRid(versionInfo.Platforms.Keys);
-            if (bestRid == null)
-            {
-                throw new UpdateException("No engine version available for our platform!");
-            }
-
-            Log.Debug("Selecting RID {rid}", bestRid);
-
-            var buildInfo = versionInfo.Platforms[bestRid];
-
-            Helpers.EnsureDirectoryExists(LauncherPaths.DirEngineInstallations);
-
-            var downloadTarget = Path.Combine(LauncherPaths.DirEngineInstallations, $"{engineVersion}.zip");
-            await using var file = File.Create(downloadTarget, 4096, FileOptions.Asynchronous);
-
-            try
-            {
-                await _http.DownloadToStream(buildInfo.Url, file, progress, cancel: cancel);
-            }
-            catch (OperationCanceledException)
-            {
-                // Don't leave behind garbage.
-                await file.DisposeAsync();
-                File.Delete(downloadTarget);
-
-                throw;
-            }
-
-            _cfg.AddEngineInstallation(new InstalledEngineVersion(engineVersion, buildInfo.Signature));
-            return true;
+            throw new UpdateException("Specified engine version is insecure!");
         }
 
-        public async Task DoEngineCullMaybeAsync()
+        var bestRid = RidUtility.FindBestRid(versionInfo.Platforms.Keys);
+        if (bestRid == null)
         {
-            Log.Debug("Checking to cull engine versions.");
-
-            var usedVersions = _cfg.ServerContent.Items.Select(c => c.CurrentEngineVersion).ToHashSet();
-            var toCull = _cfg.EngineInstallations.Items.Where(i => !usedVersions.Contains(i.Version)).ToArray();
-
-            foreach (var installation in toCull)
-            {
-                Log.Debug("Culling unused version {engineVersion}", installation.Version);
-
-                var path = GetEnginePath(installation.Version);
-
-                _cfg.RemoveEngineInstallation(installation);
-
-                await Task.Run(() => File.Delete(path));
-            }
+            throw new UpdateException("No engine version available for our platform!");
         }
 
-        public void ClearAllEngines()
-        {
-            foreach (var install in _cfg.EngineInstallations.Items.ToArray())
-            {
-                _cfg.RemoveEngineInstallation(install);
-            }
+        Log.Debug("Selecting RID {rid}", bestRid);
 
-            foreach (var file in Directory.EnumerateFiles(LauncherPaths.DirEngineInstallations))
-            {
-                File.Delete(file);
-            }
+        var buildInfo = versionInfo.Platforms[bestRid];
+
+        Helpers.EnsureDirectoryExists(LauncherPaths.DirEngineInstallations);
+
+        var downloadTarget = Path.Combine(LauncherPaths.DirEngineInstallations, $"{engineVersion}.zip");
+        await using var file = File.Create(downloadTarget, 4096, FileOptions.Asynchronous);
+
+        try
+        {
+            await _http.DownloadToStream(buildInfo.Url, file, progress, cancel: cancel);
+        }
+        catch (OperationCanceledException)
+        {
+            // Don't leave behind garbage.
+            await file.DisposeAsync();
+            File.Delete(downloadTarget);
+
+            throw;
         }
 
-        private sealed class VersionInfo
-        {
-            [JsonInclude] [JsonPropertyName("insecure")]
-            public bool Insecure;
+        _cfg.AddEngineInstallation(new InstalledEngineVersion(engineVersion, buildInfo.Signature));
+        return true;
+    }
 
-            [JsonInclude] [JsonPropertyName("platforms")]
-            public Dictionary<string, BuildInfo> Platforms = default!;
+    public async Task DoEngineCullMaybeAsync()
+    {
+        Log.Debug("Checking to cull engine versions.");
+
+        var usedVersions = _cfg.ServerContent.Items.Select(c => c.CurrentEngineVersion).ToHashSet();
+        var toCull = _cfg.EngineInstallations.Items.Where(i => !usedVersions.Contains(i.Version)).ToArray();
+
+        foreach (var installation in toCull)
+        {
+            Log.Debug("Culling unused version {engineVersion}", installation.Version);
+
+            var path = GetEnginePath(installation.Version);
+
+            _cfg.RemoveEngineInstallation(installation);
+
+            await Task.Run(() => File.Delete(path));
+        }
+    }
+
+    public void ClearAllEngines()
+    {
+        foreach (var install in _cfg.EngineInstallations.Items.ToArray())
+        {
+            _cfg.RemoveEngineInstallation(install);
         }
 
-        private sealed class BuildInfo
+        foreach (var file in Directory.EnumerateFiles(LauncherPaths.DirEngineInstallations))
         {
-            [JsonInclude] [JsonPropertyName("url")]
-            public string Url = default!;
-
-            [JsonInclude] [JsonPropertyName("sha256")]
-            public string Sha256 = default!;
-
-            [JsonInclude] [JsonPropertyName("sig")]
-            public string Signature = default!;
+            File.Delete(file);
         }
+    }
+
+    private sealed class VersionInfo
+    {
+        [JsonInclude] [JsonPropertyName("insecure")]
+        public bool Insecure;
+
+        [JsonInclude] [JsonPropertyName("platforms")]
+        public Dictionary<string, BuildInfo> Platforms = default!;
+    }
+
+    private sealed class BuildInfo
+    {
+        [JsonInclude] [JsonPropertyName("url")]
+        public string Url = default!;
+
+        [JsonInclude] [JsonPropertyName("sha256")]
+        public string Sha256 = default!;
+
+        [JsonInclude] [JsonPropertyName("sig")]
+        public string Signature = default!;
     }
 }

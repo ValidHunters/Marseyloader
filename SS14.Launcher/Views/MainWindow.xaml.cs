@@ -4,41 +4,40 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using SS14.Launcher.ViewModels;
 
-namespace SS14.Launcher.Views
-{
-    public partial class MainWindow : Window
-    {
-        private MainWindowViewModel? _viewModel;
+namespace SS14.Launcher.Views;
 
-        public MainWindow()
-        {
-            InitializeComponent();
+public partial class MainWindow : Window
+{
+    private MainWindowViewModel? _viewModel;
+
+    public MainWindow()
+    {
+        InitializeComponent();
 
 #if DEBUG
-            this.AttachDevTools();
+        this.AttachDevTools();
 #endif
-        }
+    }
 
-        protected override void OnDataContextChanged(EventArgs e)
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        if (_viewModel != null)
         {
-            if (_viewModel != null)
-            {
-                _viewModel.Control = null;
-            }
-
-            _viewModel = DataContext as MainWindowViewModel;
-
-            if (_viewModel != null)
-            {
-                _viewModel.Control = this;
-            }
-
-            base.OnDataContextChanged(e);
+            _viewModel.Control = null;
         }
 
-        private void InitializeComponent()
+        _viewModel = DataContext as MainWindowViewModel;
+
+        if (_viewModel != null)
         {
-            AvaloniaXamlLoader.Load(this);
+            _viewModel.Control = this;
         }
+
+        base.OnDataContextChanged(e);
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 }

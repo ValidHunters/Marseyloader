@@ -14,226 +14,225 @@ using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models;
+
+public sealed class Updater : ReactiveObject
 {
-    public sealed class Updater : ReactiveObject
+    private readonly DataManager _cfg;
+    private readonly IEngineManager _engineManager;
+    private readonly HttpClient _http;
+    private bool _updating;
+
+    public Updater()
     {
-        private readonly DataManager _cfg;
-        private readonly IEngineManager _engineManager;
-        private readonly HttpClient _http;
-        private bool _updating;
+        _cfg = Locator.Current.GetService<DataManager>();
+        _engineManager = Locator.Current.GetService<IEngineManager>();
+        _http = Locator.Current.GetService<HttpClient>();
+    }
 
-        public Updater()
+    [Reactive] public UpdateStatus Status { get; private set; }
+    [Reactive] public (long downloaded, long total)? Progress { get; private set; }
+
+    public async Task<InstalledServerContent?> RunUpdateForLaunchAsync(
+        ServerBuildInformation buildInformation,
+        CancellationToken cancel=default)
+    {
+        if (_updating)
         {
-            _cfg = Locator.Current.GetService<DataManager>();
-            _engineManager = Locator.Current.GetService<IEngineManager>();
-            _http = Locator.Current.GetService<HttpClient>();
+            throw new InvalidOperationException("Update already in progress.");
         }
 
-        [Reactive] public UpdateStatus Status { get; private set; }
-        [Reactive] public (long downloaded, long total)? Progress { get; private set; }
+        _updating = true;
 
-        public async Task<InstalledServerContent?> RunUpdateForLaunchAsync(
-            ServerBuildInformation buildInformation,
-            CancellationToken cancel=default)
+        try
         {
-            if (_updating)
-            {
-                throw new InvalidOperationException("Update already in progress.");
-            }
-
-            _updating = true;
-
-            try
-            {
-                var install = await RunUpdate(buildInformation, cancel);
-                Status = UpdateStatus.Ready;
-                return install;
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Status = UpdateStatus.Error;
-                Log.Error(e, "Exception while trying to run updates");
-            }
-            finally
-            {
-                _updating = false;
-            }
-
-            return null;
+            var install = await RunUpdate(buildInformation, cancel);
+            Status = UpdateStatus.Ready;
+            return install;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            Status = UpdateStatus.Error;
+            Log.Error(e, "Exception while trying to run updates");
+        }
+        finally
+        {
+            _updating = false;
         }
 
-        private async Task<InstalledServerContent> RunUpdate(
-            ServerBuildInformation buildInformation,
-            CancellationToken cancel)
+        return null;
+    }
+
+    private async Task<InstalledServerContent> RunUpdate(
+        ServerBuildInformation buildInformation,
+        CancellationToken cancel)
+    {
+        Status = UpdateStatus.CheckingClientUpdate;
+
+        var changeEngine = await InstallEngineVersionIfMissing(buildInformation.EngineVersion, cancel);
+
+        Status = UpdateStatus.CheckingClientUpdate;
+
+        var (installation, changedContent) = await UpdateContentIfNecessary(buildInformation, cancel);
+
+        if (changedContent || changeEngine)
         {
-            Status = UpdateStatus.CheckingClientUpdate;
-
-            var changeEngine = await InstallEngineVersionIfMissing(buildInformation.EngineVersion, cancel);
-
-            Status = UpdateStatus.CheckingClientUpdate;
-
-            var (installation, changedContent) = await UpdateContentIfNecessary(buildInformation, cancel);
-
-            if (changedContent || changeEngine)
-            {
-                Status = UpdateStatus.CullingEngine;
-                await CullEngineVersionsMaybe();
-            }
-
-            Log.Information("Update done!");
-            return installation;
+            Status = UpdateStatus.CullingEngine;
+            await CullEngineVersionsMaybe();
         }
 
-        private async Task<(InstalledServerContent, bool changed)> UpdateContentIfNecessary(
-            ServerBuildInformation buildInformation,
-            CancellationToken cancel)
+        Log.Information("Update done!");
+        return installation;
+    }
+
+    private async Task<(InstalledServerContent, bool changed)> UpdateContentIfNecessary(
+        ServerBuildInformation buildInformation,
+        CancellationToken cancel)
+    {
+        if (!CheckNeedUpdate(buildInformation, out var existingInstallation))
         {
-            if (!CheckNeedUpdate(buildInformation, out var existingInstallation))
-            {
-                return (existingInstallation, false);
-            }
+            return (existingInstallation, false);
+        }
 
-            Status = UpdateStatus.DownloadingClientUpdate;
+        Status = UpdateStatus.DownloadingClientUpdate;
 
-            var diskId = existingInstallation?.DiskId ?? _cfg.GetNewInstallationId();
-            var binPath = Path.Combine(LauncherPaths.DirServerContent,
-                diskId.ToString(CultureInfo.InvariantCulture) + ".zip");
+        var diskId = existingInstallation?.DiskId ?? _cfg.GetNewInstallationId();
+        var binPath = Path.Combine(LauncherPaths.DirServerContent,
+            diskId.ToString(CultureInfo.InvariantCulture) + ".zip");
 
-            Helpers.EnsureDirectoryExists(LauncherPaths.DirServerContent);
-            await using var file = File.Create(binPath, 4096, FileOptions.Asynchronous);
+        Helpers.EnsureDirectoryExists(LauncherPaths.DirServerContent);
+        await using var file = File.Create(binPath, 4096, FileOptions.Asynchronous);
 
-            try
-            {
-                await _http.DownloadToStream(
-                    buildInformation.DownloadUrl,
-                    file,
-                    DownloadProgressCallback,
-                    cancel);
-            }
-            catch (OperationCanceledException)
-            {
-                // Don't leave behind garbage.
-                await file.DisposeAsync();
-                File.Delete(binPath);
-                throw;
-            }
+        try
+        {
+            await _http.DownloadToStream(
+                buildInformation.DownloadUrl,
+                file,
+                DownloadProgressCallback,
+                cancel);
+        }
+        catch (OperationCanceledException)
+        {
+            // Don't leave behind garbage.
+            await file.DisposeAsync();
+            File.Delete(binPath);
+            throw;
+        }
 
+        file.Position = 0;
+
+        Progress = null;
+
+        Status = UpdateStatus.Verifying;
+
+        if (buildInformation.Hash != null)
+        {
+            var hash = await Task.Run(() => HashFile(file), cancel);
             file.Position = 0;
 
-            Progress = null;
+            var expectHash = buildInformation.Hash;
 
-            Status = UpdateStatus.Verifying;
-
-            if (buildInformation.Hash != null)
+            var newFileHashString = Convert.ToHexString(hash);
+            if (!expectHash.Equals(newFileHashString, StringComparison.OrdinalIgnoreCase))
             {
-                var hash = await Task.Run(() => HashFile(file), cancel);
-                file.Position = 0;
+                throw new InvalidOperationException(
+                    $"Hash mismatch. Expected: {expectHash}, got: {newFileHashString}");
+            }
+        }
 
-                var expectHash = buildInformation.Hash;
+        // Write version to disk.
+        if (existingInstallation != null)
+        {
+            existingInstallation.CurrentVersion = buildInformation.Version;
+            existingInstallation.CurrentHash = buildInformation.Hash;
+            existingInstallation.CurrentEngineVersion = buildInformation.EngineVersion;
+        }
+        else
+        {
+            existingInstallation = new InstalledServerContent(
+                buildInformation.Version,
+                buildInformation.Hash,
+                buildInformation.ForkId,
+                diskId,
+                buildInformation.EngineVersion);
+            _cfg.AddInstallation(existingInstallation);
+        }
 
-                var newFileHashString = Convert.ToHexString(hash);
-                if (!expectHash.Equals(newFileHashString, StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new InvalidOperationException(
-                        $"Hash mismatch. Expected: {expectHash}, got: {newFileHashString}");
-                }
+        return (existingInstallation, true);
+    }
+
+    private async Task CullEngineVersionsMaybe()
+    {
+        await _engineManager.DoEngineCullMaybeAsync();
+    }
+
+    private async Task<bool> InstallEngineVersionIfMissing(string engineVer, CancellationToken cancel)
+    {
+        Status = UpdateStatus.DownloadingEngineVersion;
+        var change = await _engineManager.DownloadEngineIfNecessary(engineVer, DownloadProgressCallback, cancel);
+
+        Progress = null;
+        return change;
+    }
+
+    private void DownloadProgressCallback(long downloaded, long total)
+    {
+        Dispatcher.UIThread.Post(() => Progress = (downloaded, total));
+    }
+
+    internal static byte[] HashFile(Stream stream)
+    {
+        using var sha = SHA256.Create();
+        return sha.ComputeHash(stream);
+    }
+
+
+    private bool CheckNeedUpdate(
+        ServerBuildInformation buildInfo,
+        [NotNullWhen(false)] out InstalledServerContent? installation)
+    {
+        var existingInstallation = _cfg.ServerContent.Lookup(buildInfo.ForkId);
+        if (existingInstallation.HasValue)
+        {
+            installation = existingInstallation.Value;
+            var currentVersion = existingInstallation.Value.CurrentVersion;
+            if (buildInfo.Version != currentVersion)
+            {
+                Log.Information("Current version ({currentVersion}) is out of date, updating to {newVersion}.",
+                    currentVersion, buildInfo.Version);
+
+                return true;
             }
 
-            // Write version to disk.
-            if (existingInstallation != null)
+            // Check hash.
+            var currentHash = existingInstallation.Value.CurrentHash;
+            if (buildInfo.Hash != null && !buildInfo.Hash.Equals(currentHash, StringComparison.OrdinalIgnoreCase))
             {
-                existingInstallation.CurrentVersion = buildInformation.Version;
-                existingInstallation.CurrentHash = buildInformation.Hash;
-                existingInstallation.CurrentEngineVersion = buildInformation.EngineVersion;
-            }
-            else
-            {
-                existingInstallation = new InstalledServerContent(
-                    buildInformation.Version,
-                    buildInformation.Hash,
-                    buildInformation.ForkId,
-                    diskId,
-                    buildInformation.EngineVersion);
-                _cfg.AddInstallation(existingInstallation);
+                Log.Information("Hash mismatch, re-downloading.");
+                return true;
             }
 
-            return (existingInstallation, true);
+            return false;
         }
 
-        private async Task CullEngineVersionsMaybe()
-        {
-            await _engineManager.DoEngineCullMaybeAsync();
-        }
+        Log.Information("As it turns out, we don't have any version yet. Time to update.");
 
-        private async Task<bool> InstallEngineVersionIfMissing(string engineVer, CancellationToken cancel)
-        {
-            Status = UpdateStatus.DownloadingEngineVersion;
-            var change = await _engineManager.DownloadEngineIfNecessary(engineVer, DownloadProgressCallback, cancel);
+        installation = null;
+        return true;
+    }
 
-            Progress = null;
-            return change;
-        }
-
-        private void DownloadProgressCallback(long downloaded, long total)
-        {
-            Dispatcher.UIThread.Post(() => Progress = (downloaded, total));
-        }
-
-        internal static byte[] HashFile(Stream stream)
-        {
-            using var sha = SHA256.Create();
-            return sha.ComputeHash(stream);
-        }
-
-
-        private bool CheckNeedUpdate(
-            ServerBuildInformation buildInfo,
-            [NotNullWhen(false)] out InstalledServerContent? installation)
-        {
-            var existingInstallation = _cfg.ServerContent.Lookup(buildInfo.ForkId);
-            if (existingInstallation.HasValue)
-            {
-                installation = existingInstallation.Value;
-                var currentVersion = existingInstallation.Value.CurrentVersion;
-                if (buildInfo.Version != currentVersion)
-                {
-                    Log.Information("Current version ({currentVersion}) is out of date, updating to {newVersion}.",
-                        currentVersion, buildInfo.Version);
-
-                    return true;
-                }
-
-                // Check hash.
-                var currentHash = existingInstallation.Value.CurrentHash;
-                if (buildInfo.Hash != null && !buildInfo.Hash.Equals(currentHash, StringComparison.OrdinalIgnoreCase))
-                {
-                    Log.Information("Hash mismatch, re-downloading.");
-                    return true;
-                }
-
-                return false;
-            }
-
-            Log.Information("As it turns out, we don't have any version yet. Time to update.");
-
-            installation = null;
-            return true;
-        }
-
-        public enum UpdateStatus
-        {
-            CheckingClientUpdate,
-            DownloadingEngineVersion,
-            DownloadingClientUpdate,
-            Verifying,
-            CullingEngine,
-            Ready,
-            Error,
-        }
+    public enum UpdateStatus
+    {
+        CheckingClientUpdate,
+        DownloadingEngineVersion,
+        DownloadingClientUpdate,
+        Verifying,
+        CullingEngine,
+        Ready,
+        Error,
     }
 }

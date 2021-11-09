@@ -1,18 +1,17 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace SS14.Launcher.Views.Login
-{
-    public partial class RegisterNeedsConfirmationView : UserControl
-    {
-        public RegisterNeedsConfirmationView()
-        {
-            InitializeComponent();
-        }
+namespace SS14.Launcher.Views.Login;
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+public partial class RegisterNeedsConfirmationView : UserControl
+{
+    public RegisterNeedsConfirmationView()
+    {
+        InitializeComponent();
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 }

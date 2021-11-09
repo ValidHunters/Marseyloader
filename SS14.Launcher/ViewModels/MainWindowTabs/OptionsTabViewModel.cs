@@ -5,52 +5,51 @@ using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 
-namespace SS14.Launcher.ViewModels.MainWindowTabs
-{
-    public class OptionsTabViewModel : MainWindowTabViewModel
-    {
-        public DataManager Cfg { get; }
-        private readonly IEngineManager _engineManager;
+namespace SS14.Launcher.ViewModels.MainWindowTabs;
 
-        public OptionsTabViewModel()
-        {
-            Cfg = Locator.Current.GetService<DataManager>();
-            _engineManager = Locator.Current.GetService<IEngineManager>();
-        }
+public class OptionsTabViewModel : MainWindowTabViewModel
+{
+    public DataManager Cfg { get; }
+    private readonly IEngineManager _engineManager;
+
+    public OptionsTabViewModel()
+    {
+        Cfg = Locator.Current.GetService<DataManager>();
+        _engineManager = Locator.Current.GetService<IEngineManager>();
+    }
 
 #if RELEASE
         public bool HideDisableSigning => true;
 #else
-        public bool HideDisableSigning => false;
+    public bool HideDisableSigning => false;
 #endif
 
-        public override string Name => "Options";
+    public override string Name => "Options";
 
-        public void ClearEngines()
+    public void ClearEngines()
+    {
+        _engineManager.ClearAllEngines();
+    }
+
+    public void ClearServerContent()
+    {
+        foreach (var content in Cfg.ServerContent.Items.ToArray())
         {
-            _engineManager.ClearAllEngines();
+            Cfg.RemoveInstallation(content);
         }
 
-        public void ClearServerContent()
+        foreach (var file in Directory.EnumerateFiles(LauncherPaths.DirServerContent))
         {
-            foreach (var content in Cfg.ServerContent.Items.ToArray())
-            {
-                Cfg.RemoveInstallation(content);
-            }
-
-            foreach (var file in Directory.EnumerateFiles(LauncherPaths.DirServerContent))
-            {
-                File.Delete(file);
-            }
+            File.Delete(file);
         }
+    }
 
-        public void OpenLogDirectory()
+    public void OpenLogDirectory()
+    {
+        Process.Start(new ProcessStartInfo
         {
-            Process.Start(new ProcessStartInfo
-            {
-                UseShellExecute = true,
-                FileName = LauncherPaths.DirLogs
-            });
-        }
+            UseShellExecute = true,
+            FileName = LauncherPaths.DirLogs
+        });
     }
 }

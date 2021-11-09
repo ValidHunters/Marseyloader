@@ -1,18 +1,17 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace SS14.Launcher.Views.MainWindowTabs
-{
-    public partial class ServerListTabView : UserControl
-    {
-        public ServerListTabView()
-        {
-            InitializeComponent();
-        }
+namespace SS14.Launcher.Views.MainWindowTabs;
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+public partial class ServerListTabView : UserControl
+{
+    public ServerListTabView()
+    {
+        InitializeComponent();
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 }

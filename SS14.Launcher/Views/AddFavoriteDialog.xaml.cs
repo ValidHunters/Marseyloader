@@ -3,54 +3,53 @@ using Avalonia;
 using Avalonia.Controls;
 using ReactiveUI;
 
-namespace SS14.Launcher.Views
+namespace SS14.Launcher.Views;
+
+public partial class AddFavoriteDialog : Window
 {
-    public partial class AddFavoriteDialog : Window
+    private readonly TextBox _nameBox;
+    private readonly TextBox _addressBox;
+
+    public AddFavoriteDialog()
     {
-        private readonly TextBox _nameBox;
-        private readonly TextBox _addressBox;
+        InitializeComponent();
 
-        public AddFavoriteDialog()
-        {
-            InitializeComponent();
+        _nameBox = NameBox;
+        _addressBox = AddressBox;
 
-            _nameBox = NameBox;
-            _addressBox = AddressBox;
+        SubmitButton.Command = ReactiveCommand.Create(TrySubmit);
 
-            SubmitButton.Command = ReactiveCommand.Create(TrySubmit);
+        this.WhenAnyValue(x => x._nameBox.Text)
+            .Subscribe(_ => UpdateSubmitValid());
 
-            this.WhenAnyValue(x => x._nameBox.Text)
-                .Subscribe(_ => UpdateSubmitValid());
+        this.WhenAnyValue(x => x._addressBox.Text)
+            .Subscribe(_ => UpdateSubmitValid());
 
-            this.WhenAnyValue(x => x._addressBox.Text)
-                .Subscribe(_ => UpdateSubmitValid());
+#if DEBUG
 
-            #if DEBUG
+        this.AttachDevTools();
 
-            this.AttachDevTools();
+#endif
+    }
 
-            #endif
-        }
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
 
-        protected override void OnOpened(EventArgs e)
-        {
-            base.OnOpened(e);
+        _nameBox.Focus();
+    }
 
-            _nameBox.Focus();
-        }
+    private void TrySubmit()
+    {
+        Close((_nameBox.Text.Trim(), _addressBox.Text.Trim()));
+    }
 
-        private void TrySubmit()
-        {
-            Close((_nameBox.Text.Trim(), _addressBox.Text.Trim()));
-        }
+    private void UpdateSubmitValid()
+    {
+        var validAddr = DirectConnectDialog.IsAddressValid(_addressBox.Text);
+        var valid = validAddr && !string.IsNullOrEmpty(_nameBox.Text);
 
-        private void UpdateSubmitValid()
-        {
-            var validAddr = DirectConnectDialog.IsAddressValid(_addressBox.Text);
-            var valid = validAddr && !string.IsNullOrEmpty(_nameBox.Text);
-
-            SubmitButton.IsEnabled = valid;
-            TxtInvalid.IsVisible = !validAddr;
-        }
+        SubmitButton.IsEnabled = valid;
+        TxtInvalid.IsVisible = !validAddr;
     }
 }

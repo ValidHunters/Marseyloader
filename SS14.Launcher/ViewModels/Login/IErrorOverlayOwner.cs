@@ -1,7 +1,6 @@
-namespace SS14.Launcher.ViewModels.Login
+namespace SS14.Launcher.ViewModels.Login;
+
+public interface IErrorOverlayOwner
 {
-    public interface IErrorOverlayOwner
-    {
-        void OverlayOk();
-    }
+    void OverlayOk();
 }

@@ -1,53 +1,50 @@
-using System;
-using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models;
+
+/// <summary>
+///     Basic data type to deserialize from the /info API endpoint on the server.
+/// </summary>
+public sealed class ServerInfo
 {
-    /// <summary>
-    ///     Basic data type to deserialize from the /info API endpoint on the server.
-    /// </summary>
-    public sealed class ServerInfo
-    {
-        [JsonProperty(PropertyName = "connect_address")]
-        public string? ConnectAddress { get; set; }
+    [JsonProperty(PropertyName = "connect_address")]
+    public string? ConnectAddress { get; set; }
 
-        [JsonProperty(PropertyName = "build")] public ServerBuildInformation BuildInformation = default!;
-        [JsonProperty(PropertyName = "auth")] public ServerAuthInformation AuthInformation { get; set; } = default!;
-    }
+    [JsonProperty(PropertyName = "build")] public ServerBuildInformation BuildInformation = default!;
+    [JsonProperty(PropertyName = "auth")] public ServerAuthInformation AuthInformation { get; set; } = default!;
+}
 
-    [JsonObject(ItemRequired = Required.Always)]
-    public class ServerAuthInformation
-    {
-        [JsonProperty(PropertyName = "mode")] public AuthMode Mode { get; set; }
+[JsonObject(ItemRequired = Required.Always)]
+public class ServerAuthInformation
+{
+    [JsonProperty(PropertyName = "mode")] public AuthMode Mode { get; set; }
 
-        [JsonProperty(PropertyName = "public_key")]
-        public string PublicKey { get; set; } = default!;
-    }
+    [JsonProperty(PropertyName = "public_key")]
+    public string PublicKey { get; set; } = default!;
+}
 
-    [JsonObject(ItemRequired = Required.Always)]
-    public class ServerBuildInformation
-    {
-        [JsonProperty(PropertyName = "download_url")]
-        public string DownloadUrl = default!;
+[JsonObject(ItemRequired = Required.Always)]
+public class ServerBuildInformation
+{
+    [JsonProperty(PropertyName = "download_url")]
+    public string DownloadUrl = default!;
 
-        [JsonProperty(PropertyName = "engine_version")]
-        public string EngineVersion = default!;
+    [JsonProperty(PropertyName = "engine_version")]
+    public string EngineVersion = default!;
 
-        [JsonProperty(PropertyName = "version")]
-        public string Version = default!;
+    [JsonProperty(PropertyName = "version")]
+    public string Version = default!;
 
-        [JsonProperty(PropertyName = "fork_id")]
-        public string ForkId = default!;
+    [JsonProperty(PropertyName = "fork_id")]
+    public string ForkId = default!;
 
-        [JsonProperty(PropertyName = "hash", Required = Required.AllowNull)]
-        public string? Hash;
-    }
+    [JsonProperty(PropertyName = "hash", Required = Required.AllowNull)]
+    public string? Hash;
+}
 
-    public enum AuthMode
-    {
-        Optional = 0,
-        Required = 1,
-        Disabled = 2
-    }
+public enum AuthMode
+{
+    Optional = 0,
+    Required = 1,
+    Disabled = 2
 }

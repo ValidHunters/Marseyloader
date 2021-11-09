@@ -4,66 +4,65 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using ReactiveUI;
 
-namespace SS14.Launcher.Views
+namespace SS14.Launcher.Views;
+
+public partial class DirectConnectDialog : Window
 {
-    public partial class DirectConnectDialog : Window
+    private readonly TextBox _addressBox;
+
+    public DirectConnectDialog()
     {
-        private readonly TextBox _addressBox;
+        InitializeComponent();
 
-        public DirectConnectDialog()
+        _addressBox = AddressBox;
+        _addressBox.KeyDown += (_, args) =>
         {
-            InitializeComponent();
-
-            _addressBox = AddressBox;
-            _addressBox.KeyDown += (_, args) =>
+            if (args.Key == Key.Enter)
             {
-                if (args.Key == Key.Enter)
-                {
-                    TrySubmit();
-                }
-            };
-
-            SubmitButton.Command = ReactiveCommand.Create(TrySubmit);
-
-            this.WhenAnyValue(x => x._addressBox.Text)
-                .Select(IsAddressValid)
-                .Subscribe(b =>
-                {
-                    InvalidLabel.IsVisible = !b;
-                    SubmitButton.IsEnabled = b;
-                });
-        }
-
-        protected override void OnOpened(EventArgs e)
-        {
-            base.OnOpened(e);
-
-            _addressBox.Focus();
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-            {
-                Close(null);
+                TrySubmit();
             }
+        };
 
-            base.OnKeyDown(e);
-        }
+        SubmitButton.Command = ReactiveCommand.Create(TrySubmit);
 
-        private void TrySubmit()
-        {
-            if (!IsAddressValid(_addressBox.Text))
+        this.WhenAnyValue(x => x._addressBox.Text)
+            .Select(IsAddressValid)
+            .Subscribe(b =>
             {
-                return;
-            }
+                InvalidLabel.IsVisible = !b;
+                SubmitButton.IsEnabled = b;
+            });
+    }
 
-            Close(_addressBox.Text.Trim());
-        }
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
 
-        internal static bool IsAddressValid(string address)
+        _addressBox.Focus();
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
         {
-            return !string.IsNullOrWhiteSpace(address) && UriHelper.TryParseSs14Uri(address, out _);
+            Close(null);
         }
+
+        base.OnKeyDown(e);
+    }
+
+    private void TrySubmit()
+    {
+        if (!IsAddressValid(_addressBox.Text))
+        {
+            return;
+        }
+
+        Close(_addressBox.Text.Trim());
+    }
+
+    internal static bool IsAddressValid(string address)
+    {
+        return !string.IsNullOrWhiteSpace(address) && UriHelper.TryParseSs14Uri(address, out _);
     }
 }

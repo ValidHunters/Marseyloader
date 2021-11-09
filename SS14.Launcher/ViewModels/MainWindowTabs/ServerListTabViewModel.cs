@@ -13,176 +13,175 @@ using Serilog;
 using Splat;
 using SS14.Launcher.Models.ServerStatus;
 
-namespace SS14.Launcher.ViewModels.MainWindowTabs
+namespace SS14.Launcher.ViewModels.MainWindowTabs;
+
+public class ServerListTabViewModel : MainWindowTabViewModel
 {
-    public class ServerListTabViewModel : MainWindowTabViewModel
+    private readonly ServerStatusCache _statusCache;
+    private readonly MainWindowViewModel _windowVm;
+    private readonly HttpClient _http;
+    private CancellationTokenSource? _refreshCancel;
+
+    public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
+        = new ObservableCollection<ServerEntryViewModel>();
+
+    public ObservableCollection<ServerEntryViewModel> AllServers { get; }
+        = new ObservableCollection<ServerEntryViewModel>();
+
+    [Reactive] private RefreshListStatus Status { get; set; } = RefreshListStatus.NotUpdated;
+
+    public override string Name => "Servers";
+
+    [Reactive] public string? SearchString { get; set; }
+
+    public bool ListVisible => Status == RefreshListStatus.Updated && SearchedServers.Count != 0;
+
+    public string ListEmptyText
     {
-        private readonly ServerStatusCache _statusCache;
-        private readonly MainWindowViewModel _windowVm;
-        private readonly HttpClient _http;
-        private CancellationTokenSource? _refreshCancel;
-
-        public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
-            = new ObservableCollection<ServerEntryViewModel>();
-
-        public ObservableCollection<ServerEntryViewModel> AllServers { get; }
-            = new ObservableCollection<ServerEntryViewModel>();
-
-        [Reactive] private RefreshListStatus Status { get; set; } = RefreshListStatus.NotUpdated;
-
-        public override string Name => "Servers";
-
-        [Reactive] public string? SearchString { get; set; }
-
-        public bool ListVisible => Status == RefreshListStatus.Updated && SearchedServers.Count != 0;
-
-        public string ListEmptyText
+        get
         {
-            get
+            if (Status == RefreshListStatus.Error)
             {
-                if (Status == RefreshListStatus.Error)
-                {
-                    return "There was an error fetching the master server list.";
-                }
-
-                if (Status == RefreshListStatus.Updating)
-                {
-                    return "Updating server list...";
-                }
-
-                if (AllServers.Count != 0)
-                {
-                    return "There's no public servers, apparently?";
-                }
-
-                if (SearchedServers.Count != 0)
-                {
-                    return "No servers match your search.";
-                }
-
-                return "";
+                return "There was an error fetching the master server list.";
             }
-        }
 
-        public ServerListTabViewModel(MainWindowViewModel windowVm)
-        {
-            _windowVm = windowVm;
-            _statusCache = Locator.Current.GetService<ServerStatusCache>();
-            _http = Locator.Current.GetService<HttpClient>();
-
-            AllServers.CollectionChanged += (s, e) =>
+            if (Status == RefreshListStatus.Updating)
             {
-                foreach (var server in AllServers)
-                {
-                    server.DoInitialUpdate();
-                }
+                return "Updating server list...";
+            }
 
-                RepopulateServerList();
-            };
+            if (AllServers.Count != 0)
+            {
+                return "There's no public servers, apparently?";
+            }
 
-            this.WhenAnyValue(x => x.SearchString)
-                .Subscribe(_ => RepopulateServerList());
+            if (SearchedServers.Count != 0)
+            {
+                return "No servers match your search.";
+            }
 
-            this.WhenAnyValue(x => x.Status)
-                .Subscribe(_ =>
-                {
-                    this.RaisePropertyChanged(nameof(ListEmptyText));
-                    this.RaisePropertyChanged(nameof(ListVisible));
-                });
+            return "";
+        }
+    }
 
-            SearchedServers.CollectionChanged += (s, e) =>
+    public ServerListTabViewModel(MainWindowViewModel windowVm)
+    {
+        _windowVm = windowVm;
+        _statusCache = Locator.Current.GetService<ServerStatusCache>();
+        _http = Locator.Current.GetService<HttpClient>();
+
+        AllServers.CollectionChanged += (s, e) =>
+        {
+            foreach (var server in AllServers)
+            {
+                server.DoInitialUpdate();
+            }
+
+            RepopulateServerList();
+        };
+
+        this.WhenAnyValue(x => x.SearchString)
+            .Subscribe(_ => RepopulateServerList());
+
+        this.WhenAnyValue(x => x.Status)
+            .Subscribe(_ =>
             {
                 this.RaisePropertyChanged(nameof(ListEmptyText));
                 this.RaisePropertyChanged(nameof(ListVisible));
-            };
-        }
+            });
 
-        private void RepopulateServerList()
+        SearchedServers.CollectionChanged += (s, e) =>
         {
-            SearchedServers.Clear();
-            if (string.IsNullOrEmpty(SearchString))
-            {
-                SearchedServers.AddRange(AllServers);
-            }
-            else
-            {
-                SearchedServers.AddRange(AllServers.Where(s =>
-                    s.Name.Contains(SearchString, StringComparison.CurrentCultureIgnoreCase)));
-            }
+            this.RaisePropertyChanged(nameof(ListEmptyText));
+            this.RaisePropertyChanged(nameof(ListVisible));
+        };
+    }
 
-            var alt = false;
-            foreach (var server in SearchedServers)
-            {
-                server.IsAltBackground = alt;
-                alt ^= true;
-            }
-        }
-
-        public override async void Selected()
+    private void RepopulateServerList()
+    {
+        SearchedServers.Clear();
+        if (string.IsNullOrEmpty(SearchString))
         {
-            if (Status == RefreshListStatus.NotUpdated)
-            {
-                _refreshCancel?.Cancel();
-                _refreshCancel = new CancellationTokenSource();
-                await RefreshServerList(_refreshCancel.Token);
-            }
+            SearchedServers.AddRange(AllServers);
+        }
+        else
+        {
+            SearchedServers.AddRange(AllServers.Where(s =>
+                s.Name.Contains(SearchString, StringComparison.CurrentCultureIgnoreCase)));
         }
 
-        public async void RefreshPressed()
+        var alt = false;
+        foreach (var server in SearchedServers)
+        {
+            server.IsAltBackground = alt;
+            alt ^= true;
+        }
+    }
+
+    public override async void Selected()
+    {
+        if (Status == RefreshListStatus.NotUpdated)
         {
             _refreshCancel?.Cancel();
             _refreshCancel = new CancellationTokenSource();
             await RefreshServerList(_refreshCancel.Token);
-            _statusCache.Refresh();
         }
+    }
 
-        private async Task RefreshServerList(CancellationToken cancel)
+    public async void RefreshPressed()
+    {
+        _refreshCancel?.Cancel();
+        _refreshCancel = new CancellationTokenSource();
+        await RefreshServerList(_refreshCancel.Token);
+        _statusCache.Refresh();
+    }
+
+    private async Task RefreshServerList(CancellationToken cancel)
+    {
+        AllServers.Clear();
+        Status = RefreshListStatus.Updating;
+
+        try
         {
-            AllServers.Clear();
-            Status = RefreshListStatus.Updating;
+            using var response =
+                await _http.GetAsync(ConfigConstants.HubUrl + "api/servers", cancel);
 
-            try
-            {
-                using var response =
-                    await _http.GetAsync(ConfigConstants.HubUrl + "api/servers", cancel);
+            response.EnsureSuccessStatusCode();
 
-                response.EnsureSuccessStatusCode();
+            var respStr = await response.Content.ReadAsStringAsync(cancel);
 
-                var respStr = await response.Content.ReadAsStringAsync(cancel);
+            var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(respStr);
 
-                var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(respStr);
+            Status = RefreshListStatus.Updated;
 
-                Status = RefreshListStatus.Updated;
-
-                AllServers.AddRange(entries.Select(e =>
-                    new ServerEntryViewModel(_windowVm, e.Address)
-                    {
-                        FallbackName = e.Name
-                    }));
-            }
-            catch (OperationCanceledException)
-            {
-                Status = RefreshListStatus.NotUpdated;
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to fetch server list due to exception.");
-                Status = RefreshListStatus.Error;
-            }
+            AllServers.AddRange(entries.Select(e =>
+                new ServerEntryViewModel(_windowVm, e.Address)
+                {
+                    FallbackName = e.Name
+                }));
         }
-
-        private sealed class ServerListEntry
+        catch (OperationCanceledException)
         {
-            public string Address { get; set; } = default!;
-            public string Name { get; set; } = default!;
+            Status = RefreshListStatus.NotUpdated;
         }
-
-        private enum RefreshListStatus
+        catch (Exception e)
         {
-            NotUpdated,
-            Updating,
-            Updated,
-            Error
+            Log.Error(e, "Failed to fetch server list due to exception.");
+            Status = RefreshListStatus.Error;
         }
+    }
+
+    private sealed class ServerListEntry
+    {
+        public string Address { get; set; } = default!;
+        public string Name { get; set; } = default!;
+    }
+
+    private enum RefreshListStatus
+    {
+        NotUpdated,
+        Updating,
+        Updated,
+        Error
     }
 }

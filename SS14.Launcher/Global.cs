@@ -1,7 +1,6 @@
-namespace SS14.Launcher
+namespace SS14.Launcher;
+
+public static class Global
 {
-    public static class Global
-    {
-        public const ushort DefaultServerPort = 1212;
-    }
+    public const ushort DefaultServerPort = 1212;
 }

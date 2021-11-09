@@ -1,9 +1,8 @@
-namespace SS14.Launcher.Models.ServerStatus
+namespace SS14.Launcher.Models.ServerStatus;
+
+public enum ServerStatusCode
 {
-    public enum ServerStatusCode
-    {
-        Offline,
-        FetchingStatus,
-        Online
-    }
+    Offline,
+    FetchingStatus,
+    Online
 }

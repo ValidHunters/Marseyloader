@@ -1,21 +1,20 @@
 using System;
 
-namespace SS14.Launcher.ViewModels.MainWindowTabs
+namespace SS14.Launcher.ViewModels.MainWindowTabs;
+
+public class NewsEntryViewModel : ViewModelBase
 {
-    public class NewsEntryViewModel : ViewModelBase
+    public NewsEntryViewModel(string headline, Uri link)
     {
-        public NewsEntryViewModel(string headline, Uri link)
-        {
-            Headline = headline;
-            Link = link;
-        }
+        Headline = headline;
+        Link = link;
+    }
 
-        public string Headline { get; }
-        public Uri Link { get; }
+    public string Headline { get; }
+    public Uri Link { get; }
 
-        public void Open()
-        {
-            Helpers.OpenUri(Link);
-        }
+    public void Open()
+    {
+        Helpers.OpenUri(Link);
     }
 }

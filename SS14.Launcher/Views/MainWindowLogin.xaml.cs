@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace SS14.Launcher.Views
+namespace SS14.Launcher.Views;
+
+public partial class MainWindowLogin : UserControl
 {
-    public partial class MainWindowLogin : UserControl
+    public MainWindowLogin()
     {
-        public MainWindowLogin()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

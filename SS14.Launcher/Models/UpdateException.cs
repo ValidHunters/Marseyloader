@@ -1,11 +1,10 @@
 using System;
 
-namespace SS14.Launcher.Models
+namespace SS14.Launcher.Models;
+
+public sealed class UpdateException : Exception
 {
-    public sealed class UpdateException : Exception
+    public UpdateException(string message) : base(message)
     {
-        public UpdateException(string message) : base(message)
-        {
-        }
     }
 }

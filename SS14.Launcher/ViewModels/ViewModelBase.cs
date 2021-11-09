@@ -1,8 +1,7 @@
 ﻿using ReactiveUI;
 
-namespace SS14.Launcher.ViewModels
+namespace SS14.Launcher.ViewModels;
+
+public class ViewModelBase : ReactiveObject
 {
-    public class ViewModelBase : ReactiveObject
-    {
-    }
 }
