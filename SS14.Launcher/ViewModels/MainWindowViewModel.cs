@@ -145,8 +145,9 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         {
             var versionRequest = await _http.GetAsync(ConfigConstants.LauncherVersionUrl);
             versionRequest.EnsureSuccessStatusCode();
-            OutOfDate = ConfigConstants.CurrentLauncherVersion !=
-                        (await versionRequest.Content.ReadAsStringAsync()).Trim();
+            var curVersion = await versionRequest.Content.ReadAsStringAsync();
+            var versions = curVersion.Trim().Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            OutOfDate = Array.IndexOf(versions, ConfigConstants.CurrentLauncherVersion) == -1;
         }
         catch (HttpRequestException e)
         {
