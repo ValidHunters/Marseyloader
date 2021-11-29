@@ -13,6 +13,15 @@ public static class ConfigConstants
     // If the user leaves the launcher running for absolute ages, this is how often we'll update his login tokens.
     public static readonly TimeSpan TokenRefreshInterval = TimeSpan.FromDays(7);
 
+    // Check the command queue this often.
+    public static readonly TimeSpan CommandQueueCheckInterval = TimeSpan.FromSeconds(1);
+
+    public const string LauncherCommandsNamedPipeName = "SS14.Launcher.CommandPipe";
+    // Amount of time to wait before the launcher decides to ignore named pipes entirely to keep the rest of the launcher functional.
+    public const int LauncherCommandsNamedPipeTimeout = 150;
+    // Amount of time to wait to let a redialling client properly die
+    public const int LauncherCommandsRedialWaitTimeout = 1000;
+
     public const string HubUrl = "https://central.spacestation14.io/hub/";
     public const string AuthUrl = "https://central.spacestation14.io/auth/";
     public const string DiscordUrl = "https://discord.gg/t2jac3p";
