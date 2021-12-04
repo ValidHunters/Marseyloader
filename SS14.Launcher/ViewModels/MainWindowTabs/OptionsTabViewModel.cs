@@ -26,6 +26,56 @@ public class OptionsTabViewModel : MainWindowTabViewModel
 
     public override string Name => "Options";
 
+    public bool CompatMode
+    {
+        get => Cfg.GetCVar(CVars.CompatMode);
+        set
+        {
+            Cfg.SetCVar(CVars.CompatMode, value);
+            Cfg.CommitConfig();
+        }
+    }
+
+    public bool DynamicPgo
+    {
+        get => Cfg.GetCVar(CVars.DynamicPgo);
+        set
+        {
+            Cfg.SetCVar(CVars.DynamicPgo, value);
+            Cfg.CommitConfig();
+        }
+    }
+
+    public bool LogClient
+    {
+        get => Cfg.GetCVar(CVars.LogClient);
+        set
+        {
+            Cfg.SetCVar(CVars.LogClient, value);
+            Cfg.CommitConfig();
+        }
+    }
+
+    public bool LogLauncher
+    {
+        get => Cfg.GetCVar(CVars.LogLauncher);
+        set
+        {
+            Cfg.SetCVar(CVars.LogLauncher, value);
+            Cfg.CommitConfig();
+        }
+    }
+
+    public bool DisableSigning
+    {
+        get => Cfg.GetCVar(CVars.DisableSigning);
+        set
+        {
+            Cfg.SetCVar(CVars.DisableSigning, value);
+            Cfg.CommitConfig();
+        }
+    }
+
     public void ClearEngines()
     {
         _engineManager.ClearAllEngines();
@@ -42,6 +92,8 @@ public class OptionsTabViewModel : MainWindowTabViewModel
         {
             File.Delete(file);
         }
+
+        Cfg.CommitConfig();
     }
 
     public void OpenLogDirectory()

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <OutputType>WinExe</OutputType>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <!--<PublishTrimmed>true</PublishTrimmed>
@@ -29,6 +29,9 @@
         <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.10" />
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.10" />
         <PackageReference Include="CodeHollow.FeedReader" Version="1.2.1" />
+        <PackageReference Include="Dapper" Version="2.0.123" />
+        <PackageReference Include="dbup-sqlite" Version="4.5.0" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.11" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="ReactiveUI.Fody" Version="13.2.18" />
         <PackageReference Include="Robust.Shared.AuthLib" Version="0.1.2" />
@@ -42,6 +45,8 @@
         <EmbeddedResource Include="Utility\runtime.json">
             <LogicalName>Utility.runtime.json</LogicalName>
         </EmbeddedResource>
+        <None Remove="Models\Data\Migrations\0000_initial.sql" />
+        <EmbeddedResource Include="Models\Data\Migrations\0000_Initial.sql" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="signing_key" />

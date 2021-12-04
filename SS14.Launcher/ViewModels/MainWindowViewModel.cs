@@ -103,6 +103,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         set => this.RaiseAndSetIfChanged(ref _selectedIndex, value);
     }
 
+    public ICVarEntry<bool> HasDismissedEarlyAccessWarning => Cfg.GetCVarEntry(CVars.HasDismissedEarlyAccessWarning);
+
     public async void OnWindowInitialized()
     {
         BusyTask = "Checking for launcher update...";
@@ -170,7 +172,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
 
     public void DismissEarlyAccessPressed()
     {
-        Cfg.HasDismissedEarlyAccessWarning = true;
+        Cfg.SetCVar(CVars.HasDismissedEarlyAccessWarning, true);
+        Cfg.CommitConfig();
     }
 
     public void SelectTabServers()

@@ -22,27 +22,27 @@
               Command="{Binding OpenLogDirectory}"/>
 
       <StackPanel Orientation="Vertical">
-        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Cfg.ForceGLES2}">Compatibility Mode</CheckBox>
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding CompatMode}">Compatibility Mode</CheckBox>
         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                    Text="This uses OpenGL ES 2 (via ANGLE if necessary), which is less likely to suffer from driver bugs. Try this if you are experiencing graphical issues or crashes."
                    Margin="8" />
 
-        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Cfg.DynamicPGO}">Experimental Performance Options</CheckBox>
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DynamicPgo}">Experimental Performance Options</CheckBox>
         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                    Text="Experimental .NET 6 environment variables that enable full Dynamic PGO. Disable if you experience issues."
                    Margin="8" />
 
-        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Cfg.LogClient}">Log Client</CheckBox>
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogClient}">Log Client</CheckBox>
         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                    Text="Enables logging of any game client output. Useful for developers."
                    Margin="8" />
 
-        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Cfg.LogLauncher}">Log Launcher</CheckBox>
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLauncher}">Log Launcher</CheckBox>
         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                    Text="Enables logging of the launcher. Useful for developers. (requires launcher restart)"
                    Margin="8" />
 
-        <CheckBox VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" Margin="4" IsChecked="{Binding Cfg.DisableSigning}">Disable Engine Signature Checks</CheckBox>
+        <CheckBox VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" Margin="4" IsChecked="{Binding DisableSigning}">Disable Engine Signature Checks</CheckBox>
         <TextBlock VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" TextWrapping="Wrap"
                    Text="[DEV ONLY] Disables verification of engine signatures. DO NOT ENABLE UNLESS YOU KNOW EXACTLY WHAT YOU'RE DOING."
                    Margin="8" />

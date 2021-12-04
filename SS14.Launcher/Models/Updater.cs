@@ -162,6 +162,7 @@ public sealed class Updater : ReactiveObject
                 diskId,
                 buildInformation.EngineVersion);
             _cfg.AddInstallation(existingInstallation);
+            _cfg.CommitConfig();
         }
 
         return (existingInstallation, true);

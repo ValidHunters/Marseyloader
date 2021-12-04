@@ -117,6 +117,7 @@ public sealed class ServerEntryViewModel : ViewModelBase
         {
             var fav = new FavoriteServer(_cacheData.Name ?? FallbackName, Address);
             _cfg.AddFavoriteServer(fav);
+            _cfg.CommitConfig();
         }
     }
 }

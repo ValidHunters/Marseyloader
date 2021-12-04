@@ -16,6 +16,7 @@ public sealed class InstalledServerContent : ReactiveObject
     [JsonProperty(PropertyName = "current_engine_version")]
     private string _currentEngineVersion;
 
+    [JsonConstructor]
     public InstalledServerContent(
         string currentVersion,
         string? currentHash,
@@ -28,6 +29,15 @@ public sealed class InstalledServerContent : ReactiveObject
         ForkId = forkId;
         DiskId = diskId;
         _currentEngineVersion = currentEngineVersion;
+    }
+
+    public InstalledServerContent(
+        string currentVersion,
+        string? currentHash,
+        string forkId,
+        long diskId,
+        string currentEngineVersion) : this(currentVersion, currentHash, forkId, (int)diskId, currentEngineVersion)
+    {
     }
 
     [JsonProperty(PropertyName = "fork_id")]

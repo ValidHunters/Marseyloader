@@ -100,6 +100,7 @@ public sealed class EngineManagerDynamic : IEngineManager
         }
 
         _cfg.AddEngineInstallation(new InstalledEngineVersion(engineVersion, buildInfo.Signature));
+        _cfg.CommitConfig();
         return true;
     }
 
@@ -133,6 +134,8 @@ public sealed class EngineManagerDynamic : IEngineManager
         {
             File.Delete(file);
         }
+
+        _cfg.CommitConfig();
     }
 
     private sealed class VersionInfo

@@ -64,7 +64,14 @@ internal static class Program
         if (msgr.SendCommandsOrClaim(commands, commandSendAnyway))
             return;
 
+        var logCfg = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Console();
+
+        Log.Logger = logCfg.CreateLogger();
+
         VcRedistCheck.Check();
+
         var cfg = new DataManager();
         cfg.Load();
         Locator.CurrentMutable.RegisterConstant(cfg);
@@ -77,16 +84,14 @@ internal static class Program
 
         LauncherPaths.CreateDirs();
 
-        var logCfg = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console();
-
-        if (cfg.LogLauncher)
+        if (cfg.GetCVar(CVars.LogLauncher))
         {
-            logCfg = logCfg.WriteTo.File(LauncherPaths.PathLauncherLog);
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Logger(Log.Logger)
+                .WriteTo.File(LauncherPaths.PathLauncherLog)
+                .CreateLogger();
         }
-
-        Log.Logger = logCfg.CreateLogger();
 
 #if DEBUG
         Logger.Sink = new AvaloniaSeriLogger(new LoggerConfiguration()
@@ -96,12 +101,19 @@ internal static class Program
             .CreateLogger());
 #endif
 
-        using (msgr.PipeServerSelfDestruct)
+        try
         {
-            BuildAvaloniaApp().Start(AppMain, args);
-            msgr.PipeServerSelfDestruct.Cancel();
+            using (msgr.PipeServerSelfDestruct)
+            {
+                BuildAvaloniaApp().Start(AppMain, args);
+                msgr.PipeServerSelfDestruct.Cancel();
+            }
         }
-
+        finally
+        {
+            Log.CloseAndFlush();
+            cfg.Close();
+        }
         // Wait for pipe server to shut down cleanly.
         _serverTask?.Wait();
     }

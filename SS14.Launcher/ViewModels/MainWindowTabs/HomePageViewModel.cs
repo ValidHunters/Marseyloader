@@ -68,6 +68,7 @@ public class HomePageViewModel : MainWindowTabViewModel
         try
         {
             _cfg.AddFavoriteServer(new FavoriteServer(name, address));
+            _cfg.CommitConfig();
         }
         catch (ArgumentException)
         {

@@ -15,6 +15,7 @@ using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.Models;
 
@@ -31,11 +32,11 @@ public class Connector : ReactiveObject
 
     public Connector()
     {
-        _updater = Locator.Current.GetService<Updater>();
-        _cfg = Locator.Current.GetService<DataManager>();
-        _loginManager = Locator.Current.GetService<LoginManager>();
-        _engineManager = Locator.Current.GetService<IEngineManager>();
-        _http = Locator.Current.GetService<HttpClient>();
+        _updater = Locator.Current.GetRequiredService<Updater>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
+        _loginManager = Locator.Current.GetRequiredService<LoginManager>();
+        _engineManager = Locator.Current.GetRequiredService<IEngineManager>();
+        _http = Locator.Current.GetRequiredService<HttpClient>();
     }
 
     public ConnectionStatus Status
@@ -144,7 +145,7 @@ public class Connector : ReactiveObject
                 "--ss14-address", parsedAddr.ToString(),
 
                 // GLES2 forcing or using default fallback
-                "--cvar", $"display.compat={_cfg.ForceGLES2}",
+                "--cvar", $"display.compat={_cfg.GetCVar(CVars.CompatMode)}",
             }, cVars);
         }
         catch (Exception e)
@@ -249,14 +250,14 @@ public class Connector : ReactiveObject
 
         startInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "LatestMajor";
 
-        if (_cfg.DisableSigning)
+        if (_cfg.GetCVar(CVars.DisableSigning))
             startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = "true";
 
         startInfo.EnvironmentVariables["SS14_LAUNCHER_PATH"] = Process.GetCurrentProcess().MainModule.FileName;
 
         // ReSharper disable once ReplaceWithSingleAssignment.False
         var manualPipeLogging = false;
-        if (_cfg.LogClient)
+        if (_cfg.GetCVar(CVars.LogClient))
         {
             manualPipeLogging = true;
 
@@ -269,7 +270,7 @@ public class Connector : ReactiveObject
             startInfo.RedirectStandardError = true;
         }
 
-        if (_cfg.DynamicPGO)
+        if (_cfg.GetCVar(CVars.DynamicPgo))
         {
             Log.Debug("Dynamic PGO is enabled.");
             startInfo.EnvironmentVariables["DOTNET_TieredPGO"] = "1";
