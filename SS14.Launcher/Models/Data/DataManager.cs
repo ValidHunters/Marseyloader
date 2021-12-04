@@ -131,7 +131,7 @@ public sealed class DataManager : ReactiveObject
 #if DEBUG
         true;
 #else
-            GetCVar(CVars.EnableMultiAccounts);
+            GetCVar(CVars.MultiAccounts);
 #endif
 
     public void AddFavoriteServer(FavoriteServer server)
