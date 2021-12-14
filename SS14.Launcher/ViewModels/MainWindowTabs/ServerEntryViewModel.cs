@@ -15,7 +15,6 @@ public sealed class ServerEntryViewModel : ViewModelBase
     private readonly IServerStatusData _cacheData;
     private readonly DataManager _cfg;
     private readonly MainWindowViewModel _windowVm;
-    private bool _isAltBackground;
     private string Address => _cacheData.Address;
     private string _fallbackName = string.Empty;
 
