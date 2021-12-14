@@ -2,8 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
-             xmlns:v="clr-namespace:SS14.Launcher.Views"
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.ServerListTabView">
@@ -27,7 +25,7 @@
         <SolidColorBrush Color="#1e1e22" />
       </Panel.Background>
       <ScrollViewer MinHeight="150" IsVisible="{Binding ListVisible}" HorizontalScrollBarVisibility="Disabled">
-        <ItemsControl Items="{Binding SearchedServers}" />
+        <ItemsControl Items="{Binding SearchedServers}" Classes="ServerList" />
       </ScrollViewer>
       <TextBlock IsVisible="{Binding !ListVisible}" TextAlignment="Center" VerticalAlignment="Center"
                  Text="{Binding ListEmptyText}" />

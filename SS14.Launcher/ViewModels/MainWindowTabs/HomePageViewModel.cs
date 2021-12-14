@@ -105,13 +105,6 @@ public class HomePageViewModel : MainWindowTabViewModel
         _favorites.Sort((a, b) =>
             string.Compare(a.Favorite!.Name, b.Favorite!.Name, StringComparison.CurrentCulture));
 
-        var alt = false;
-        foreach (var favorite in _favorites)
-        {
-            favorite.IsAltBackground = alt;
-            alt ^= true;
-        }
-
         Favorites.Clear();
         Favorites.AddRange(_favorites);
 

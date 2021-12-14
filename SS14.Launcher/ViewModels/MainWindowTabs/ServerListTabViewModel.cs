@@ -12,6 +12,7 @@ using ReactiveUI.Fody.Helpers;
 using Serilog;
 using Splat;
 using SS14.Launcher.Models.ServerStatus;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs;
 
@@ -67,8 +68,8 @@ public class ServerListTabViewModel : MainWindowTabViewModel
     public ServerListTabViewModel(MainWindowViewModel windowVm)
     {
         _windowVm = windowVm;
-        _statusCache = Locator.Current.GetService<ServerStatusCache>();
-        _http = Locator.Current.GetService<HttpClient>();
+        _statusCache = Locator.Current.GetRequiredService<ServerStatusCache>();
+        _http = Locator.Current.GetRequiredService<HttpClient>();
 
         AllServers.CollectionChanged += (s, e) =>
         {
@@ -108,13 +109,6 @@ public class ServerListTabViewModel : MainWindowTabViewModel
         {
             SearchedServers.AddRange(AllServers.Where(s =>
                 s.Name.Contains(SearchString, StringComparison.CurrentCultureIgnoreCase)));
-        }
-
-        var alt = false;
-        foreach (var server in SearchedServers)
-        {
-            server.IsAltBackground = alt;
-            alt ^= true;
         }
     }
 

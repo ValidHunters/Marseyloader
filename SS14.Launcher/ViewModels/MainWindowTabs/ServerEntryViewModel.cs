@@ -26,9 +26,6 @@ public sealed class ServerEntryViewModel : ViewModelBase
         _windowVm = windowVm;
         _cacheData = _cache.GetStatusFor(address);
 
-        this.WhenAnyValue(x => x.IsAltBackground)
-            .Subscribe(_ => this.RaisePropertyChanged(nameof(BackgroundColor)));
-
         this.WhenAnyValue(x => x._cacheData.PlayerCount)
             .Subscribe(_ => this.RaisePropertyChanged(nameof(ServerStatusString)));
 
@@ -85,15 +82,6 @@ public sealed class ServerEntryViewModel : ViewModelBase
     private int PingMs => (int) (_cacheData.Ping?.TotalMilliseconds ?? default);
     public bool IsOnline => _cacheData.Status == ServerStatusCode.Online;
 
-
-    // Avalonia can't currently do alternating backgrounds in ItemsControl easily.
-    // So we have to implement them manually in the view model.
-    public bool IsAltBackground
-    {
-        get => _isAltBackground;
-        set => this.RaiseAndSetIfChanged(ref _isAltBackground, value);
-    }
-
     public string FallbackName
     {
         get => _fallbackName;
@@ -103,8 +91,6 @@ public sealed class ServerEntryViewModel : ViewModelBase
             this.RaisePropertyChanged(nameof(Name));
         }
     }
-
-    public Color BackgroundColor => IsAltBackground ? ColorAltBackground : Colors.Transparent;
 
     public void FavoriteButtonPressed()
     {
