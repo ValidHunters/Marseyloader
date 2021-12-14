@@ -13,7 +13,6 @@ namespace SS14.Launcher;
 
 public class LauncherCommands
 {
-    private static IDisposable? _timer;
     private static string _reason = "";
 
     private MainWindowViewModel _windowVm;

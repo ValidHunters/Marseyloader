@@ -9,6 +9,7 @@ using Serilog;
 using Splat;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher;
 
@@ -18,7 +19,7 @@ public sealed class AuthApi
 
     public AuthApi()
     {
-        _httpClient = Locator.Current.GetService<HttpClient>();
+        _httpClient = Locator.Current.GetRequiredService<HttpClient>();
     }
 
     public Task<AuthenticateResult> AuthenticateAsync(Guid userId, string password)

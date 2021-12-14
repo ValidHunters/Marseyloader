@@ -8,6 +8,7 @@ using ReactiveUI.Fody.Helpers;
 using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.ViewModels;
 
@@ -26,9 +27,9 @@ public class AccountDropDownViewModel : ViewModelBase
     public AccountDropDownViewModel(MainWindowViewModel mainVm)
     {
         _mainVm = mainVm;
-        _cfg = Locator.Current.GetService<DataManager>();
-        _authApi = Locator.Current.GetService<AuthApi>();
-        _loginMgr = Locator.Current.GetService<LoginManager>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
+        _authApi = Locator.Current.GetRequiredService<AuthApi>();
+        _loginMgr = Locator.Current.GetRequiredService<LoginManager>();
 
         this.WhenAnyValue(x => x._loginMgr.ActiveAccount)
             .Subscribe(_ =>

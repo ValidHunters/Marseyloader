@@ -4,6 +4,7 @@ using ReactiveUI;
 using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.ServerStatus;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs;
 
@@ -20,8 +21,8 @@ public sealed class ServerEntryViewModel : ViewModelBase
 
     public ServerEntryViewModel(MainWindowViewModel windowVm,string address)
     {
-        _cache = Locator.Current.GetService<ServerStatusCache>();
-        _cfg = Locator.Current.GetService<DataManager>();
+        _cache = Locator.Current.GetRequiredService<ServerStatusCache>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
         _windowVm = windowVm;
         _cacheData = _cache.GetStatusFor(address);
 

@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using Splat;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.Models.ServerStatus;
 
@@ -25,7 +27,7 @@ public partial class ServerStatusCache
 
     public ServerStatusCache()
     {
-        _http = Locator.Current.GetService<HttpClient>();
+        _http = Locator.Current.GetRequiredService<HttpClient>();
     }
 
     /// <summary>
@@ -89,14 +91,16 @@ public partial class ServerStatusCache
                 using var response = await _http.GetAsync(statusAddr, cancel);
                 stopwatch.Stop();
                 response.EnsureSuccessStatusCode();
-                status = JsonConvert.DeserializeObject<ServerStatus>(await response.Content.ReadAsStringAsync());
+
+                var statusJson = JsonConvert.DeserializeObject<ServerStatus>(await response.Content.ReadAsStringAsync());
+                status = statusJson ?? throw new InvalidDataException();
 
                 if (cancel.IsCancellationRequested)
                 {
                     throw new TaskCanceledException();
                 }
             }
-            catch (Exception e) when (e is JsonException || e is HttpRequestException)
+            catch (Exception e) when (e is JsonException or HttpRequestException or InvalidDataException)
             {
                 data.Status = ServerStatusCode.Offline;
                 return;

@@ -5,8 +5,11 @@ namespace SS14.Launcher.Utility;
 
 public static class DynamicDataExt
 {
-    public static bool TryLookup<TValue, TKey>(this IObservableCache<TValue, TKey> cache, TKey key,
+    public static bool TryLookup<TValue, TKey>(
+        this IObservableCache<TValue, TKey> cache,
+        TKey key,
         [MaybeNullWhen(false)] out TValue value)
+        where TKey : notnull
     {
         var option = cache.Lookup(key);
         if (option.HasValue)
@@ -19,8 +22,11 @@ public static class DynamicDataExt
         return false;
     }
 
-    public static bool TryLookup<TValue, TKey>(this SourceCache<TValue, TKey> cache, TKey key,
+    public static bool TryLookup<TValue, TKey>(
+        this SourceCache<TValue, TKey> cache,
+        TKey key,
         [MaybeNullWhen(false)] out TValue value)
+        where TKey : notnull
     {
         var option = cache.Lookup(key);
         if (option.HasValue)

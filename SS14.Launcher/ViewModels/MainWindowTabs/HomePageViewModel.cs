@@ -10,6 +10,7 @@ using ReactiveUI.Fody.Helpers;
 using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.ServerStatus;
+using SS14.Launcher.Utility;
 using SS14.Launcher.Views;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs;
@@ -24,8 +25,8 @@ public class HomePageViewModel : MainWindowTabViewModel
     public HomePageViewModel(MainWindowViewModel mainWindowViewModel)
     {
         MainWindowViewModel = mainWindowViewModel;
-        _cfg = Locator.Current.GetService<DataManager>();
-        _statusCache = Locator.Current.GetService<ServerStatusCache>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
+        _statusCache = Locator.Current.GetRequiredService<ServerStatusCache>();
 
         _cfg.FavoriteServers
             .Connect()

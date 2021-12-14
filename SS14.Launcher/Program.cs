@@ -13,6 +13,7 @@ using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Models.ServerStatus;
+using SS14.Launcher.Utility;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
 using LogEventLevel = Serilog.Events.LogEventLevel;
@@ -129,7 +130,7 @@ internal static class Program
     private static void AppMain(Application app, string[] args)
     {
         var cfg = Locator.Current.GetService<DataManager>();
-        var msgr = Locator.Current.GetService<LauncherMessaging>();
+        var msgr = Locator.Current.GetRequiredService<LauncherMessaging>();
         Locator.CurrentMutable.RegisterConstant<IEngineManager>(new EngineManagerDynamic());
         Locator.CurrentMutable.RegisterConstant(new ServerStatusCache());
         Locator.CurrentMutable.RegisterConstant(new Updater());

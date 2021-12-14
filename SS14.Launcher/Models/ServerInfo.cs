@@ -10,7 +10,7 @@ public sealed class ServerInfo
     [JsonProperty(PropertyName = "connect_address")]
     public string? ConnectAddress { get; set; }
 
-    [JsonProperty(PropertyName = "build")] public ServerBuildInformation BuildInformation = default!;
+    [JsonProperty(PropertyName = "build")] public ServerBuildInformation? BuildInformation;
     [JsonProperty(PropertyName = "auth")] public ServerAuthInformation AuthInformation { get; set; } = default!;
 }
 

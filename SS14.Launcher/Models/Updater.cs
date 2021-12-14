@@ -13,6 +13,7 @@ using Serilog;
 using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.Models;
 
@@ -25,9 +26,9 @@ public sealed class Updater : ReactiveObject
 
     public Updater()
     {
-        _cfg = Locator.Current.GetService<DataManager>();
-        _engineManager = Locator.Current.GetService<IEngineManager>();
-        _http = Locator.Current.GetService<HttpClient>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
+        _engineManager = Locator.Current.GetRequiredService<IEngineManager>();
+        _http = Locator.Current.GetRequiredService<HttpClient>();
     }
 
     [Reactive] public UpdateStatus Status { get; private set; }

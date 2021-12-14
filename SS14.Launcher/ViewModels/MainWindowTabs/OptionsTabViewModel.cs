@@ -4,6 +4,7 @@ using System.Linq;
 using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs;
 
@@ -14,8 +15,8 @@ public class OptionsTabViewModel : MainWindowTabViewModel
 
     public OptionsTabViewModel()
     {
-        Cfg = Locator.Current.GetService<DataManager>();
-        _engineManager = Locator.Current.GetService<IEngineManager>();
+        Cfg = Locator.Current.GetRequiredService<DataManager>();
+        _engineManager = Locator.Current.GetRequiredService<IEngineManager>();
     }
 
 #if RELEASE

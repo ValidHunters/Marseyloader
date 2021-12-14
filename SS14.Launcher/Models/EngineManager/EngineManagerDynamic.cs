@@ -24,8 +24,8 @@ public sealed class EngineManagerDynamic : IEngineManager
 
     public EngineManagerDynamic()
     {
-        _cfg = Locator.Current.GetService<DataManager>();
-        _http = Locator.Current.GetService<HttpClient>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
+        _http = Locator.Current.GetRequiredService<HttpClient>();
     }
 
     public string GetEnginePath(string engineVersion)
@@ -141,7 +141,9 @@ public sealed class EngineManagerDynamic : IEngineManager
     private sealed class VersionInfo
     {
         [JsonInclude] [JsonPropertyName("insecure")]
+        #pragma warning disable CS0649
         public bool Insecure;
+        #pragma warning restore CS0649
 
         [JsonInclude] [JsonPropertyName("platforms")]
         public Dictionary<string, BuildInfo> Platforms = default!;

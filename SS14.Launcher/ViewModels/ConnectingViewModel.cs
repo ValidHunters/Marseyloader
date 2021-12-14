@@ -3,6 +3,7 @@ using System.Threading;
 using ReactiveUI;
 using Splat;
 using SS14.Launcher.Models;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.ViewModels;
 
@@ -23,7 +24,7 @@ public class ConnectingViewModel : ViewModelBase
 
     public ConnectingViewModel(Connector connector, MainWindowViewModel windowVm, string? givenReason)
     {
-        _updater = Locator.Current.GetService<Updater>();
+        _updater = Locator.Current.GetRequiredService<Updater>();
         _connector = connector;
         _windowVm = windowVm;
         _reasonSuffix = (givenReason != null) ? ("\n" + givenReason) : "";

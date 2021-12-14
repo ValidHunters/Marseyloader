@@ -7,6 +7,7 @@ using ReactiveUI;
 using Serilog;
 using Splat;
 using SS14.Launcher.Models.Data;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.Models.Logins;
 
@@ -61,8 +62,8 @@ public sealed class LoginManager : ReactiveObject
 
     public LoginManager()
     {
-        _cfg = Locator.Current.GetService<DataManager>();
-        _authApi = Locator.Current.GetService<AuthApi>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
+        _authApi = Locator.Current.GetRequiredService<AuthApi>();
 
         _logins = _cfg.Logins
             .Connect()

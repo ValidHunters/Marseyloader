@@ -2,6 +2,7 @@ using ReactiveUI;
 using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
+using SS14.Launcher.Utility;
 using SS14.Launcher.ViewModels.Login;
 
 namespace SS14.Launcher.ViewModels;
@@ -25,9 +26,9 @@ public class MainWindowLoginViewModel : ViewModelBase
 
     public MainWindowLoginViewModel()
     {
-        _cfg = Locator.Current.GetService<DataManager>();
-        _authApi = Locator.Current.GetService<AuthApi>();
-        _loginMgr = Locator.Current.GetService<LoginManager>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
+        _authApi = Locator.Current.GetRequiredService<AuthApi>();
+        _loginMgr = Locator.Current.GetRequiredService<LoginManager>();
 
         _screen = default!;
         SwitchToLogin();

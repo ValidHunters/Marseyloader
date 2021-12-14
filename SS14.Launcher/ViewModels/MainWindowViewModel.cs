@@ -36,9 +36,9 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
 
     public MainWindowViewModel()
     {
-        _cfg = Locator.Current.GetService<DataManager>();
-        _loginMgr = Locator.Current.GetService<LoginManager>();
-        _http = Locator.Current.GetService<HttpClient>();
+        _cfg = Locator.Current.GetRequiredService<DataManager>();
+        _loginMgr = Locator.Current.GetRequiredService<LoginManager>();
+        _http = Locator.Current.GetRequiredService<HttpClient>();
 
         ServersTab = new ServerListTabViewModel(this);
         NewsTab = new NewsTabViewModel();

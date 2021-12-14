@@ -127,9 +127,9 @@ public static class Helpers
         return client.PostAsync(uri, content);
     }
 
-    public static async Task<T> AsJson<T>(this HttpContent content)
+    public static async Task<T> AsJson<T>(this HttpContent content) where T : notnull
     {
         var str = await content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<T>(str);
+        return JsonConvert.DeserializeObject<T>(str) ?? throw new JsonException("AsJson: did not expect null response");
     }
 }

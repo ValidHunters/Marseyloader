@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using DynamicData;
-using Newtonsoft.Json;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
@@ -142,9 +141,7 @@ public class ServerListTabViewModel : MainWindowTabViewModel
 
             response.EnsureSuccessStatusCode();
 
-            var respStr = await response.Content.ReadAsStringAsync(cancel);
-
-            var entries = JsonConvert.DeserializeObject<List<ServerListEntry>>(respStr);
+            var entries = await response.Content.AsJson<List<ServerListEntry>>();
 
             Status = RefreshListStatus.Updated;
 

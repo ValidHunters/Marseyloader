@@ -128,6 +128,9 @@ public class Connector : ReactiveObject
 
         try
         {
+            // Must have been set when retrieving build info (inferred to be automatic zipping).
+            Debug.Assert(info.BuildInformation != null, "info.BuildInformation != null");
+
             // Launch client.
             return await LaunchClient(info.BuildInformation.EngineVersion, installedServerContent, new[]
             {
@@ -181,6 +184,9 @@ public class Connector : ReactiveObject
 
     private async Task<InstalledServerContent> RunUpdateAsync(ServerInfo info, CancellationToken cancel)
     {
+        // Must have been set when retrieving build info (inferred to be automatic zipping).
+        Debug.Assert(info.BuildInformation != null, "info.BuildInformation != null");
+
         var installation = await _updater.RunUpdateForLaunchAsync(info.BuildInformation, cancel);
         if (installation == null)
         {
@@ -204,7 +210,7 @@ public class Connector : ReactiveObject
         try
         {
             var resp = await _http.GetStringAsync(infoAddr, cancel);
-            var info = JsonConvert.DeserializeObject<ServerInfo>(resp);
+            var info = JsonConvert.DeserializeObject<ServerInfo>(resp) ?? throw new InvalidDataException();
             if (info.BuildInformation != null)
             {
                 // Infer download URL to be self-hosted client address if not supplied
@@ -216,7 +222,7 @@ public class Connector : ReactiveObject
             }
             return (info, parsedAddress, infoAddr);
         }
-        catch (Exception e) when (e is JsonException || e is HttpRequestException)
+        catch (Exception e) when (e is JsonException or HttpRequestException or InvalidDataException)
         {
             throw new ConnectException(ConnectionStatus.ConnectionFailed, e);
         }
@@ -253,7 +259,7 @@ public class Connector : ReactiveObject
         if (_cfg.GetCVar(CVars.DisableSigning))
             startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = "true";
 
-        startInfo.EnvironmentVariables["SS14_LAUNCHER_PATH"] = Process.GetCurrentProcess().MainModule.FileName;
+        startInfo.EnvironmentVariables["SS14_LAUNCHER_PATH"] = Process.GetCurrentProcess().MainModule!.FileName;
 
         // ReSharper disable once ReplaceWithSingleAssignment.False
         var manualPipeLogging = false;
