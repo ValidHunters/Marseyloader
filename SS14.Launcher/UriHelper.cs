@@ -51,6 +51,9 @@ public static class UriHelper
             return false;
         }
 
+        if (string.IsNullOrWhiteSpace(uri.Host))
+            return false;
+
         return true;
     }
 
