@@ -12,25 +12,28 @@
   </Design.DataContext>
 
   <v:DropDown HeaderContent="{Binding LoginText}" IsDropDownOpen="{Binding IsDropDownOpen, Mode=TwoWay}">
-    <StackPanel Orientation="Vertical">
-      <StackPanel Orientation="Vertical" IsVisible="{Binding AccountControlsVisible}">
-        <Button Content="{Binding LogoutText}" Command="{Binding LogoutPressed}" Margin="4" />
-        <Button Content="Add account" IsVisible="{Binding EnableMultiAccounts}" Command="{Binding AddAccountPressed}" Margin="4" />
-      </StackPanel>
+    <Panel>
+      <v:AngleBox Fill="{DynamicResource ThemeBackgroundBrush}" SideStyle="OpenRight" />
+      <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical" IsVisible="{Binding AccountControlsVisible}">
+          <Button Content="{Binding LogoutText}" Command="{Binding LogoutPressed}" Margin="4" />
+          <Button Content="Add account" IsVisible="{Binding EnableMultiAccounts}" Command="{Binding AddAccountPressed}" Margin="4" />
+        </StackPanel>
 
-      <StackPanel Orientation="Vertical" IsVisible="{Binding AccountSwitchVisible}">
-        <TextBlock Text="{Binding AccountSwitchText}" Margin="4" />
+        <StackPanel Orientation="Vertical" IsVisible="{Binding AccountSwitchVisible}">
+          <TextBlock Text="{Binding AccountSwitchText}" Margin="4" />
 
-        <ItemsControl Name="Items" Items="{Binding Accounts}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="vm:AvailableAccountViewModel">
-              <Button Content="{Binding StatusText}" Margin="4"
-                      Command="{Binding #Items.DataContext.AccountButtonPressed}"
-                      CommandParameter="{Binding Account}" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
+          <ItemsControl Name="Items" Items="{Binding Accounts}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="vm:AvailableAccountViewModel">
+                <Button Content="{Binding StatusText}" Margin="4"
+                        Command="{Binding #Items.DataContext.AccountButtonPressed}"
+                        CommandParameter="{Binding Account}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
       </StackPanel>
-    </StackPanel>
+    </Panel>
   </v:DropDown>
 </UserControl>
