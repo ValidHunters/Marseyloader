@@ -14,6 +14,7 @@ using DbUp.SQLite.Helpers;
 using DynamicData;
 using JetBrains.Annotations;
 using Microsoft.Data.Sqlite;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
 using ReactiveUI;
 using Serilog;
@@ -72,7 +73,7 @@ public sealed class DataManager : ReactiveObject
 
         _favoriteServers.Connect()
             .ForEachChange(c => ChangeFavoriteServer(c.Reason, c.Current))
-            .Subscribe();
+            .Subscribe(_ => WeakReferenceMessenger.Default.Send(new FavoritesChanged()));
 
         // Server content
         _serverContent.Connect()
@@ -661,3 +662,5 @@ public sealed class DataManager : ReactiveObject
         public bool MultiAccounts { get; set; }
     }
 }
+
+public record FavoritesChanged;

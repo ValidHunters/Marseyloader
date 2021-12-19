@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Avalonia.Controls;
 using Avalonia.VisualTree;
 using DynamicData;
+using DynamicData.Alias;
 using ReactiveUI.Fody.Helpers;
 using Splat;
 using SS14.Launcher.Models.Data;
@@ -20,21 +20,25 @@ public class HomePageViewModel : MainWindowTabViewModel
     public MainWindowViewModel MainWindowViewModel { get; }
     private readonly List<ServerEntryViewModel> _favorites = new List<ServerEntryViewModel>();
     private readonly DataManager _cfg;
-    private readonly ServerStatusCache _statusCache;
+    private readonly ServerStatusCache _statusCache = new ServerStatusCache();
 
     public HomePageViewModel(MainWindowViewModel mainWindowViewModel)
     {
         MainWindowViewModel = mainWindowViewModel;
         _cfg = Locator.Current.GetRequiredService<DataManager>();
-        _statusCache = Locator.Current.GetRequiredService<ServerStatusCache>();
 
         _cfg.FavoriteServers
             .Connect()
-            .Subscribe(_ => UpdateFavoritesList());
+            .Select(x => new ServerEntryViewModel(MainWindowViewModel, _statusCache.GetStatusFor(x.Address), x))
+            .OnItemAdded(a => _statusCache.InitialUpdateStatus(a.CacheData))
+            .Sort(Comparer<ServerEntryViewModel>.Create((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase)))
+            .Bind(out var favorites)
+            .Subscribe(_ => FavoritesEmpty = favorites.Count == 0);
+
+        Favorites = favorites;
     }
 
-    public ObservableCollection<ServerEntryViewModel> Favorites { get; }
-        = new ObservableCollection<ServerEntryViewModel>();
+    public ReadOnlyObservableCollection<ServerEntryViewModel> Favorites { get; }
 
     [Reactive] public bool FavoritesEmpty { get; private set; } = true;
 
@@ -82,34 +86,6 @@ public class HomePageViewModel : MainWindowTabViewModel
     {
         window = Control?.GetVisualRoot() as Window;
         return window != null;
-    }
-
-    private void UpdateFavoritesList()
-    {
-        // TODO: This is O(n^2)
-        _favorites.RemoveAll(p => !_cfg.FavoriteServers.Items.Contains(p.Favorite));
-
-        // TODO: This is also O(n^2)
-        foreach (var favoriteServer in _cfg.FavoriteServers.Items)
-        {
-            if (_favorites.Any(f => f.Favorite == favoriteServer))
-            {
-                continue;
-            }
-
-            var serverEntryViewModel = new ServerEntryViewModel(MainWindowViewModel, favoriteServer);
-
-            serverEntryViewModel.DoInitialUpdate();
-            _favorites.Add(serverEntryViewModel);
-        }
-
-        _favorites.Sort((a, b) =>
-            string.Compare(a.Favorite!.Name, b.Favorite!.Name, StringComparison.CurrentCulture));
-
-        Favorites.Clear();
-        Favorites.AddRange(_favorites);
-
-        FavoritesEmpty = Favorites.Count == 0;
     }
 
     public void RefreshPressed()

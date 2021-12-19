@@ -1,11 +1,12 @@
 using System;
+using System.ComponentModel;
 
 namespace SS14.Launcher.Models.ServerStatus;
 
 /// <summary>
 ///     Contains data about the status of a single server.
 /// </summary>
-public interface IServerStatusData
+public interface IServerStatusData : INotifyPropertyChanged
 {
     /// <summary>
     ///     The address of the server this status is for.

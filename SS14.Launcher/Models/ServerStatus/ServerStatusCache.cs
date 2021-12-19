@@ -14,7 +14,6 @@ namespace SS14.Launcher.Models.ServerStatus;
 
 /// <summary>
 ///     Caches information pulled from servers and updates it asynchronously.
-///     So we don't have to request data from favorite servers twice (once server list, once favorites list).
 /// </summary>
 public partial class ServerStatusCache
 {
@@ -139,6 +138,16 @@ public partial class ServerStatusCache
 
             UpdateStatusFor(datum);
         }
+    }
+
+    public void Clear()
+    {
+        foreach (var value in _cachedData.Values)
+        {
+            value.Cancellation?.Cancel();
+        }
+
+        _cachedData.Clear();
     }
 
     private sealed class ServerStatus

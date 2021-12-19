@@ -1,12 +1,12 @@
 using System;
 using System.Threading;
-using ReactiveUI;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace SS14.Launcher.Models.ServerStatus;
 
 public partial class ServerStatusCache
 {
-    private sealed class Data : ReactiveObject, IServerStatusData
+    private sealed class Data : ObservableObject, IServerStatusData
     {
         private string? _name;
         private TimeSpan? _ping;
@@ -23,7 +23,7 @@ public partial class ServerStatusCache
         public string? Name
         {
             get => _name;
-            set => this.RaiseAndSetIfChanged(ref _name, value);
+            set => SetProperty(ref _name, value);
         }
 
         // BUG: This ping stat is completely wrong currently.
@@ -31,19 +31,19 @@ public partial class ServerStatusCache
         public TimeSpan? Ping
         {
             get => _ping;
-            set => this.RaiseAndSetIfChanged(ref _ping, value);
+            set => SetProperty(ref _ping, value);
         }
 
         public ServerStatusCode Status
         {
             get => _status;
-            set => this.RaiseAndSetIfChanged(ref _status, value);
+            set => SetProperty(ref _status, value);
         }
 
         public int PlayerCount
         {
             get => _playerCount;
-            set => this.RaiseAndSetIfChanged(ref _playerCount, value);
+            set => SetProperty(ref _playerCount, value);
         }
 
         public bool DidInitialStatusUpdate { get; set; }

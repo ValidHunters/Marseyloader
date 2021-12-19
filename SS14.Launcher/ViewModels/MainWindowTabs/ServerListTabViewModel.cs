@@ -1,11 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DynamicData;
+using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
@@ -22,12 +24,9 @@ public class ServerListTabViewModel : MainWindowTabViewModel
     private readonly HttpClient _http;
     private CancellationTokenSource? _refreshCancel;
 
-    public ObservableCollection<ServerEntryViewModel> SearchedServers { get; }
-        = new ObservableCollection<ServerEntryViewModel>();
+    public ReadOnlyObservableCollection<ServerEntryViewModel> SearchedServers { get; }
 
-    public ObservableCollection<ServerEntryViewModel> AllServers { get; }
-        = new ObservableCollection<ServerEntryViewModel>();
-
+    public SourceList<ServerEntryViewModel> AllServers { get; } = new();
     [Reactive] private RefreshListStatus Status { get; set; } = RefreshListStatus.NotUpdated;
 
     public override string Name => "Servers";
@@ -67,21 +66,36 @@ public class ServerListTabViewModel : MainWindowTabViewModel
     public ServerListTabViewModel(MainWindowViewModel windowVm)
     {
         _windowVm = windowVm;
-        _statusCache = Locator.Current.GetRequiredService<ServerStatusCache>();
+        _statusCache = new ServerStatusCache();
         _http = Locator.Current.GetRequiredService<HttpClient>();
 
-        AllServers.CollectionChanged += (s, e) =>
-        {
-            foreach (var server in AllServers)
+        var filter = this.WhenAnyValue(x => x.SearchString)
+            .Select<string?, Func<ServerEntryViewModel, bool>>(s =>
             {
-                server.DoInitialUpdate();
-            }
+                if (string.IsNullOrWhiteSpace(s))
+                    return _ => true;
 
-            RepopulateServerList();
-        };
+                return server => server.Name.Contains(s, StringComparison.CurrentCultureIgnoreCase);
+            });
 
-        this.WhenAnyValue(x => x.SearchString)
-            .Subscribe(_ => RepopulateServerList());
+        var resort = AllServers
+            .Connect()
+            .WhenPropertyChanged(p => p.CacheData.PlayerCount)
+            .Select(_ => Unit.Default);
+
+        AllServers
+            .Connect()
+            .Filter(filter)
+            .FilterOnObservable(s => s.WhenAnyValue(sv => sv.IsOnline))
+            .Sort(SortExpressionComparer<ServerEntryViewModel>.Descending(p => p.CacheData.PlayerCount), resort: resort)
+            .Bind(out var searchedServers)
+            .Subscribe(a =>
+            {
+                this.RaisePropertyChanged(nameof(ListEmptyText));
+                this.RaisePropertyChanged(nameof(ListVisible));
+            });
+
+        SearchedServers = searchedServers;
 
         this.WhenAnyValue(x => x.Status)
             .Subscribe(_ =>
@@ -89,26 +103,6 @@ public class ServerListTabViewModel : MainWindowTabViewModel
                 this.RaisePropertyChanged(nameof(ListEmptyText));
                 this.RaisePropertyChanged(nameof(ListVisible));
             });
-
-        SearchedServers.CollectionChanged += (s, e) =>
-        {
-            this.RaisePropertyChanged(nameof(ListEmptyText));
-            this.RaisePropertyChanged(nameof(ListVisible));
-        };
-    }
-
-    private void RepopulateServerList()
-    {
-        SearchedServers.Clear();
-        if (string.IsNullOrEmpty(SearchString))
-        {
-            SearchedServers.AddRange(AllServers);
-        }
-        else
-        {
-            SearchedServers.AddRange(AllServers.Where(s =>
-                s.Name.Contains(SearchString, StringComparison.CurrentCultureIgnoreCase)));
-        }
     }
 
     public override async void Selected()
@@ -125,8 +119,8 @@ public class ServerListTabViewModel : MainWindowTabViewModel
     {
         _refreshCancel?.Cancel();
         _refreshCancel = new CancellationTokenSource();
+        _statusCache.Clear();
         await RefreshServerList(_refreshCancel.Token);
-        _statusCache.Refresh();
     }
 
     private async Task RefreshServerList(CancellationToken cancel)
@@ -141,15 +135,20 @@ public class ServerListTabViewModel : MainWindowTabViewModel
 
             response.EnsureSuccessStatusCode();
 
-            var entries = await response.Content.AsJson<List<ServerListEntry>>();
+            var entries = await response.Content.AsJson<ServerListEntry[]>();
 
             Status = RefreshListStatus.Updated;
 
             AllServers.AddRange(entries.Select(e =>
-                new ServerEntryViewModel(_windowVm, e.Address)
+            {
+                var cacheData = _statusCache.GetStatusFor(e.Address);
+                _statusCache.InitialUpdateStatus(cacheData);
+
+                return new ServerEntryViewModel(_windowVm, cacheData)
                 {
                     FallbackName = e.Name
-                }));
+                };
+            }));
         }
         catch (OperationCanceledException)
         {
@@ -157,7 +156,7 @@ public class ServerListTabViewModel : MainWindowTabViewModel
         }
         catch (Exception e)
         {
-            Log.Error(e, "Failed to fetch server list due to exception.");
+            Log.Error(e, "Failed to fetch server list due to exception");
             Status = RefreshListStatus.Error;
         }
     }
