@@ -10,13 +10,13 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs;
 
 public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<FavoritesChanged>, IViewModelBase
 {
-    private readonly IServerStatusData _cacheData;
+    private readonly ServerStatusData _cacheData;
     private readonly DataManager _cfg;
     private readonly MainWindowViewModel _windowVm;
     private string Address => _cacheData.Address;
     private string _fallbackName = string.Empty;
 
-    public ServerEntryViewModel(MainWindowViewModel windowVm, IServerStatusData cacheData)
+    public ServerEntryViewModel(MainWindowViewModel windowVm, ServerStatusData cacheData)
     {
         _cfg = Locator.Current.GetRequiredService<DataManager>();
         _windowVm = windowVm;
@@ -38,15 +38,11 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
                 case nameof(IServerStatusData.Name):
                     OnPropertyChanged(nameof(Name));
                     break;
-
-                case nameof(IServerStatusData.Ping):
-                    OnPropertyChanged(nameof(PingText));
-                    break;
             }
         };
     }
 
-    public ServerEntryViewModel(MainWindowViewModel windowVm, IServerStatusData cacheData, FavoriteServer favorite)
+    public ServerEntryViewModel(MainWindowViewModel windowVm, ServerStatusData cacheData, FavoriteServer favorite)
         : this(windowVm, cacheData)
     {
         Favorite = favorite;
@@ -58,6 +54,8 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
     }
 
     public FavoriteServer? Favorite { get; }
+
+    public bool IsExpanded { get; set; }
 
     public string Name => Favorite?.Name ?? _cacheData.Name ?? _fallbackName;
     public string FavoriteButtonText => IsFavorite ? "Remove Favorite" : "Add Favorite";
@@ -73,8 +71,6 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
         _ => throw new NotSupportedException()
     };
 
-    public string PingText => $"Ping: {PingMs} ms";
-    private int PingMs => (int) (_cacheData.Ping?.TotalMilliseconds ?? default);
     public bool IsOnline => _cacheData.Status == ServerStatusCode.Online;
 
     public string FallbackName
@@ -87,7 +83,7 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
         }
     }
 
-    public IServerStatusData CacheData => _cacheData;
+    public ServerStatusData CacheData => _cacheData;
 
     public void FavoriteButtonPressed()
     {

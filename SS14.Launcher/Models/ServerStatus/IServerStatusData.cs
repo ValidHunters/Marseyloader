@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 
 namespace SS14.Launcher.Models.ServerStatus;
@@ -18,7 +17,6 @@ public interface IServerStatusData : INotifyPropertyChanged
     /// </summary>
     string? Name { get; set; }
 
-    TimeSpan? Ping { get; set; }
     ServerStatusCode Status { get; set; }
     int PlayerCount { get; set; }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -15,13 +14,11 @@ namespace SS14.Launcher.Models.ServerStatus;
 /// <summary>
 ///     Caches information pulled from servers and updates it asynchronously.
 /// </summary>
-public partial class ServerStatusCache
+public sealed class ServerStatusCache
 {
     // Yes this class "memory leaks" because it never frees these data objects.
     // Oh well!
-    private readonly Dictionary<string, Data> _cachedData
-        = new Dictionary<string, Data>();
-
+    private readonly Dictionary<string, CacheReg> _cachedData = new();
     private readonly HttpClient _http;
 
     public ServerStatusCache()
@@ -34,15 +31,14 @@ public partial class ServerStatusCache
     ///     This does NOT start fetching the data.
     /// </summary>
     /// <param name="serverAddress">The address of the server to fetch data for.</param>
-    public IServerStatusData GetStatusFor(string serverAddress)
+    public ServerStatusData GetStatusFor(string serverAddress)
     {
-        if (_cachedData.TryGetValue(serverAddress, out var data))
-        {
-            return data;
-        }
+        if (_cachedData.TryGetValue(serverAddress, out var reg))
+            return reg.Data;
 
-        data = new Data(serverAddress);
-        _cachedData.Add(serverAddress, data);
+        var data = new ServerStatusData(serverAddress);
+        reg = new CacheReg(data);
+        _cachedData.Add(serverAddress, reg);
 
         return data;
     }
@@ -50,24 +46,33 @@ public partial class ServerStatusCache
     /// <summary>
     ///     Do the initial status update for a server status. This only acts once.
     /// </summary>
-    public void InitialUpdateStatus(IServerStatusData data)
+    public void InitialUpdateStatus(ServerStatusData data)
     {
-        var actualData = (Data) data;
-        if (actualData.DidInitialStatusUpdate)
-        {
+        var reg = _cachedData[data.Address];
+        if (reg.DidInitialStatusUpdate)
             return;
-        }
 
-        actualData.DidInitialStatusUpdate = true;
-        UpdateStatusFor(actualData);
+        UpdateStatusFor(reg);
     }
 
-    private async void UpdateStatusFor(Data data)
+    private async void UpdateStatusFor(CacheReg reg)
     {
-        await data.StatusSemaphore.WaitAsync();
-        var cancelSource = data.Cancellation = new CancellationTokenSource();
+        reg.DidInitialStatusUpdate = true;
+        await reg.Semaphore.WaitAsync();
+        var cancelSource = reg.Cancellation = new CancellationTokenSource();
         var cancel = cancelSource.Token;
+        try
+        {
+            await UpdateStatusFor(reg.Data, _http, cancel);
+        }
+        finally
+        {
+            reg.Semaphore.Release();
+        }
+    }
 
+    public static async Task UpdateStatusFor(ServerStatusData data, HttpClient http, CancellationToken cancel)
+    {
         try
         {
             if (!UriHelper.TryParseSs14Uri(data.Address, out var parsedAddress))
@@ -80,24 +85,24 @@ public partial class ServerStatusCache
             var statusAddr = UriHelper.GetServerStatusAddress(parsedAddress);
             data.Status = ServerStatusCode.FetchingStatus;
 
-            var stopwatch = new Stopwatch();
             ServerStatus status;
             try
             {
-                // BUG: This ping stat is completely wrong currently.
-                // TCP/TLS need multiple round trips, which we are measuring.
-                stopwatch.Start();
-                using var response = await _http.GetAsync(statusAddr, cancel);
-                stopwatch.Stop();
-                response.EnsureSuccessStatusCode();
+                // await Task.Delay(Random.Shared.Next(150, 5000), cancel);
 
-                var statusJson = JsonConvert.DeserializeObject<ServerStatus>(await response.Content.ReadAsStringAsync());
-                status = statusJson ?? throw new InvalidDataException();
-
-                if (cancel.IsCancellationRequested)
+                using (var linkedToken = CancellationTokenSource.CreateLinkedTokenSource(cancel))
                 {
-                    throw new TaskCanceledException();
+                    linkedToken.CancelAfter(ConfigConstants.ServerStatusTimeout);
+
+                    using var response = await http.GetAsync(statusAddr, linkedToken.Token);
+                    response.EnsureSuccessStatusCode();
+
+                    var statusJson = JsonConvert.DeserializeObject<ServerStatus>(
+                        await response.Content.ReadAsStringAsync(linkedToken.Token));
+                    status = statusJson ?? throw new InvalidDataException();
                 }
+
+                cancel.ThrowIfCancellationRequested();
             }
             catch (Exception e) when (e is JsonException or HttpRequestException or InvalidDataException)
             {
@@ -106,18 +111,12 @@ public partial class ServerStatusCache
             }
 
             data.Status = ServerStatusCode.Online;
-            data.Ping = stopwatch.Elapsed;
             data.Name = status.Name;
             data.PlayerCount = status.PlayerCount;
         }
         catch (OperationCanceledException)
         {
-            // Do nothing.
-        }
-        finally
-        {
-            data.Cancellation = null;
-            data.StatusSemaphore.Release();
+            data.Status = ServerStatusCode.Offline;
         }
     }
 
@@ -130,9 +129,7 @@ public partial class ServerStatusCache
         foreach (var datum in _cachedData.Values)
         {
             if (!datum.DidInitialStatusUpdate)
-            {
                 continue;
-            }
 
             datum.Cancellation?.Cancel();
 
@@ -156,5 +153,18 @@ public partial class ServerStatusCache
 
         [JsonProperty(PropertyName = "players")]
         public int PlayerCount { get; set; }
+    }
+
+    private sealed class CacheReg
+    {
+        public readonly ServerStatusData Data;
+        public readonly SemaphoreSlim Semaphore = new(1);
+        public CancellationTokenSource? Cancellation;
+        public bool DidInitialStatusUpdate;
+
+        public CacheReg(ServerStatusData data)
+        {
+            Data = data;
+        }
     }
 }

@@ -13,6 +13,9 @@ public static class ConfigConstants
     // If the user leaves the launcher running for absolute ages, this is how often we'll update his login tokens.
     public static readonly TimeSpan TokenRefreshInterval = TimeSpan.FromDays(7);
 
+    // The amount of time before a server is considered timed out for status checks.
+    public static readonly TimeSpan ServerStatusTimeout = TimeSpan.FromSeconds(5);
+
     // Check the command queue this often.
     public static readonly TimeSpan CommandQueueCheckInterval = TimeSpan.FromSeconds(1);
 

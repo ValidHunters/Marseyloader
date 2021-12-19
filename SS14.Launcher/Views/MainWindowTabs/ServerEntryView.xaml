@@ -10,7 +10,7 @@
   </Design.DataContext>
 
   <Panel>
-    <Expander Name="Expando" Classes="NoPad">
+    <Expander Name="Expando" Classes="NoPad" IsExpanded="{Binding IsExpanded}">
       <Expander.Header>
         <DockPanel>
           <Button IsEnabled="{Binding IsOnline}" DockPanel.Dock="Right" Content="Connect"
