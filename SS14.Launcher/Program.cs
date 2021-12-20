@@ -71,6 +71,7 @@ internal static class Program
         Log.Logger = logCfg.CreateLogger();
 
         VcRedistCheck.Check();
+        LauncherPaths.CreateDirs();
 
         var cfg = new DataManager();
         cfg.Load();
@@ -81,8 +82,6 @@ internal static class Program
             new ProductInfoHeaderValue(LauncherVersion.Name, LauncherVersion.Version?.ToString()));
         http.DefaultRequestHeaders.Add("SS14-Launcher-Fingerprint", cfg.Fingerprint.ToString());
         Locator.CurrentMutable.RegisterConstant(http);
-
-        LauncherPaths.CreateDirs();
 
         if (cfg.GetCVar(CVars.LogLauncher))
         {

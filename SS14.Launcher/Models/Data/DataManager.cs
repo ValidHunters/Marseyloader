@@ -352,6 +352,9 @@ public sealed class DataManager : ReactiveObject
         var path = GetCfgJsonPath();
 
         using var changeSuppress = SuppressChangeNotifications();
+        if (!File.Exists(path))
+            return;
+
         var text = File.ReadAllText(path);
         var data = JsonConvert.DeserializeObject<JsonData>(text)!;
 
