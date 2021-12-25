@@ -81,6 +81,8 @@ public sealed class EngineManagerDynamic : IEngineManager
 
         var buildInfo = versionInfo.Platforms[bestRid];
 
+        Log.Debug("Downloading engine: {EngineDownloadUrl}", buildInfo.Url);
+
         Helpers.EnsureDirectoryExists(LauncherPaths.DirEngineInstallations);
 
         var downloadTarget = Path.Combine(LauncherPaths.DirEngineInstallations, $"{engineVersion}.zip");

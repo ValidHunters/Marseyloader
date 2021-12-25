@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -91,6 +92,9 @@ internal static class Program
                 .WriteTo.File(LauncherPaths.PathLauncherLog)
                 .CreateLogger();
         }
+
+        Log.Information("Runtime: {RuntimeDesc} {RuntimeInfo}", RuntimeInformation.FrameworkDescription, RuntimeInformation.RuntimeIdentifier);
+        Log.Information("OS: {OSDesc} {OSArch}", RuntimeInformation.OSDescription, RuntimeInformation.OSArchitecture);
 
 #if DEBUG
         Logger.Sink = new AvaloniaSeriLogger(new LoggerConfiguration()
