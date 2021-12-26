@@ -56,8 +56,6 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         AccountDropDown = new AccountDropDownViewModel(this);
         LoginViewModel = new MainWindowLoginViewModel();
 
-        this.WhenAnyValue(x => x.SelectedIndex).Subscribe(i => Tabs[i].Selected());
-
         this.WhenAnyValue(x => x._loginMgr.ActiveAccount)
             .Subscribe(s =>
             {
@@ -74,8 +72,18 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         // we reset it to login state
         this.WhenAnyValue(x => x.LoggedIn)
             .DistinctUntilChanged() // Only when change.
-            .Where(p => !p)
-            .Subscribe(x => LoginViewModel.SwitchToLogin());
+            .Subscribe(x =>
+            {
+                if (x)
+                {
+                    // "Switch" to main window.
+                    RunSelectedOnTab();
+                }
+                else
+                {
+                    LoginViewModel.SwitchToLogin();
+                }
+            });
     }
 
     public MainWindow? Control { get; set; }
@@ -100,7 +108,22 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
     public int SelectedIndex
     {
         get => _selectedIndex;
-        set => this.RaiseAndSetIfChanged(ref _selectedIndex, value);
+        set
+        {
+            var previous = Tabs[_selectedIndex];
+            previous.IsSelected = false;
+
+            this.RaiseAndSetIfChanged(ref _selectedIndex, value);
+
+            RunSelectedOnTab();
+        }
+    }
+
+    private void RunSelectedOnTab()
+    {
+        var tab = Tabs[_selectedIndex];
+        tab.IsSelected = true;
+        tab.Selected();
     }
 
     public ICVarEntry<bool> HasDismissedEarlyAccessWarning => Cfg.GetCVarEntry(CVars.HasDismissedEarlyAccessWarning);

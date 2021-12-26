@@ -18,7 +18,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs;
 public class HomePageViewModel : MainWindowTabViewModel
 {
     public MainWindowViewModel MainWindowViewModel { get; }
-    private readonly List<ServerEntryViewModel> _favorites = new List<ServerEntryViewModel>();
     private readonly DataManager _cfg;
     private readonly ServerStatusCache _statusCache = new ServerStatusCache();
 
@@ -30,7 +29,13 @@ public class HomePageViewModel : MainWindowTabViewModel
         _cfg.FavoriteServers
             .Connect()
             .Select(x => new ServerEntryViewModel(MainWindowViewModel, _statusCache.GetStatusFor(x.Address), x))
-            .OnItemAdded(a => _statusCache.InitialUpdateStatus(a.CacheData))
+            .OnItemAdded(a =>
+            {
+                if (IsSelected)
+                {
+                    _statusCache.InitialUpdateStatus(a.CacheData);
+                }
+            })
             .Sort(Comparer<ServerEntryViewModel>.Create((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase)))
             .Bind(out var favorites)
             .Subscribe(_ => FavoritesEmpty = favorites.Count == 0);
@@ -91,5 +96,13 @@ public class HomePageViewModel : MainWindowTabViewModel
     public void RefreshPressed()
     {
         _statusCache.Refresh();
+    }
+
+    public override void Selected()
+    {
+        foreach (var favorite in Favorites)
+        {
+            _statusCache.InitialUpdateStatus(favorite.CacheData);
+        }
     }
 }
