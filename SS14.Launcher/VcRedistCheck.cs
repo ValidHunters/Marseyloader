@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using TerraFX.Interop.Windows;
 
 namespace SS14.Launcher;
 
 // Checks that the VC++ 2015 redist, which the game needs, is present.
 public static class VcRedistCheck
 {
-    public static void Check()
+    public static unsafe void Check()
     {
         if (!OperatingSystem.IsWindows())
             return;
@@ -23,12 +24,20 @@ public static class VcRedistCheck
         }
 
         // We could show this dialog all fancy with Avalonia but I'm lazy so.
-        var ret = MessageBoxW(IntPtr.Zero,
-            "The game needs the VC++ 2015 redistributable installed, which you do not have.\nWould you like to download the installer for it?",
-            "VC++ 2015 redistributable not installed",
-            MB_ICONERROR | MB_YESNO);
+        int ret;
+        fixed (char* title =
+                   "The game needs the VC++ 2015 redistributable installed, which you do not have.\nWould you like to download the installer for it?")
+        {
+            fixed (char* caption = "VC++ 2015 redistributable not installed")
+            {
+                ret = Windows.MessageBoxW(HWND.NULL,
+                    (ushort*)title,
+                    (ushort*)caption,
+                    MB.MB_ICONERROR | MB.MB_YESNO);
+            }
+        }
 
-        if (ret == IDYES)
+        if (ret == Windows.IDYES)
         {
             Process.Start(new ProcessStartInfo
                 {
@@ -40,20 +49,4 @@ public static class VcRedistCheck
 
         Environment.Exit(1);
     }
-
-    [DllImport("user32.dll")]
-    private static extern int MessageBoxW(
-        IntPtr hWnd,
-        [MarshalAs(UnmanagedType.LPWStr)] string lpText,
-        [MarshalAs(UnmanagedType.LPWStr)] string lpCaption,
-        uint uType);
-
-    // ReSharper disable InconsistentNaming
-    // ReSharper disable IdentifierTypo
-    private const uint MB_ICONERROR = (uint)0x00000010L;
-    private const uint MB_YESNO = (uint)0x00000004L;
-
-    private const int IDYES = 6;
-    // ReSharper restore IdentifierTypo
-    // ReSharper restore InconsistentNaming
 }

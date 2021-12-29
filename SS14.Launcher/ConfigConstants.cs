@@ -32,4 +32,5 @@ public static class ConfigConstants
     public const string DownloadUrl = "https://spacestation14.io/about/nightlies/";
     public const string LauncherVersionUrl = "https://central.spacestation14.io/launcher_version.txt";
     public const string RobustBuildsManifest = "https://central.spacestation14.io/builds/robust/manifest.json";
+    public const string RobustModulesManifest = "https://central.spacestation14.io/builds/robust/modules.json";
 }

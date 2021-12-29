@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -228,17 +228,28 @@ public class Connector : ReactiveObject
         }
     }
 
+    public static InstalledEngineModule? GetInstalledModuleForEngineVersion(
+        Version engineVersion,
+        string moduleName,
+        DataManager dataManager)
+    {
+        return dataManager.EngineModules
+            .Where(m => m.Name == moduleName)
+            .Select(m => new { Version = Version.Parse(m.Version), m })
+            .Where(m => engineVersion >= m.Version)
+            .MaxBy(m => m.Version)?.m;
+    }
+
     private async Task<Process?> LaunchClient(
         string engineVersion,
         InstalledServerContent installedServerContent,
         IEnumerable<string> extraArgs,
         List<(string, string)> env)
     {
-        var pubKey = Path.Combine(LauncherPaths.DirLauncherInstall, "signing_key");
+        var pubKey = LauncherPaths.PathPublicKey;
         var binPath = _engineManager.GetEnginePath(engineVersion);
         var sig = _engineManager.GetEngineSignature(engineVersion);
-        var contentPath = Path.Combine(LauncherPaths.DirServerContent,
-            installedServerContent.DiskId.ToString(CultureInfo.InvariantCulture) + ".zip");
+        var contentPath = LauncherPaths.GetContentZip(installedServerContent.DiskId);
 
         var startInfo = await GetLoaderStartInfo();
 
@@ -252,6 +263,30 @@ public class Connector : ReactiveObject
         foreach (var (k, v) in env)
         {
             startInfo.EnvironmentVariables[k] = v;
+        }
+
+        // Env vars for engine modules.
+        {
+            await using var content = File.OpenRead(contentPath);
+            var modules = Updater.GetModuleNames(content);
+
+            if (modules.Length > 0)
+            {
+                var engineVersionObj = Version.Parse(engineVersion);
+                foreach (var moduleName in modules)
+                {
+                    var moduleVersion = GetInstalledModuleForEngineVersion(engineVersionObj, moduleName, _cfg);
+
+                    Debug.Assert(
+                        moduleVersion != null,
+                        "Module version must have been installed along with server installation");
+
+                    var modulePath = _engineManager.GetEngineModule(moduleVersion.Name, moduleVersion.Version);
+
+                    var envVar = $"ROBUST_MODULE_{moduleName.ToUpperInvariant().Replace('.', '_')}";
+                    startInfo.EnvironmentVariables[envVar] = modulePath;
+                }
+            }
         }
 
         startInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "LatestMajor";

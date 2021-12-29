@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading;
@@ -14,11 +14,19 @@ using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Utility;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace SS14.Launcher.Models;
 
 public sealed class Updater : ReactiveObject
 {
+    private static readonly IDeserializer ResourceManifestDeserializer =
+        new DeserializerBuilder()
+            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .IgnoreUnmatchedProperties()
+            .Build();
+
     private readonly DataManager _cfg;
     private readonly IEngineManager _engineManager;
     private readonly HttpClient _http;
@@ -36,7 +44,7 @@ public sealed class Updater : ReactiveObject
 
     public async Task<InstalledServerContent?> RunUpdateForLaunchAsync(
         ServerBuildInformation buildInformation,
-        CancellationToken cancel=default)
+        CancellationToken cancel = default)
     {
         if (_updating)
         {
@@ -72,59 +80,148 @@ public sealed class Updater : ReactiveObject
         ServerBuildInformation buildInformation,
         CancellationToken cancel)
     {
+        // I tried to fit modules into this and it all fell apart.
+        // Please bear with me, all of this is a mess.
+
         Status = UpdateStatus.CheckingClientUpdate;
 
-        var changeEngine = await InstallEngineVersionIfMissing(buildInformation.EngineVersion, cancel);
+        var changedEngine = await InstallEngineVersionIfMissing(buildInformation.EngineVersion, cancel);
 
         Status = UpdateStatus.CheckingClientUpdate;
 
-        var (installation, changedContent) = await UpdateContentIfNecessary(buildInformation, cancel);
+        var changedContent = false;
 
-        if (changedContent || changeEngine)
+        var diskId = 0;
+        FileStream? file = null;
+        var deleteTemp = true;
+        InstalledServerContent? installation;
+        try
+        {
+            if (CheckNeedUpdate(buildInformation, out installation))
+            {
+                changedContent = true;
+
+                diskId = _cfg.GetNewInstallationId();
+                var binPath = LauncherPaths.GetContentZip(diskId);
+
+                Log.Debug("Downloading new content into {NewContentPath}", binPath);
+
+                Helpers.EnsureDirectoryExists(LauncherPaths.DirServerContent);
+                file = File.Create(binPath, 4096, FileOptions.Asynchronous);
+
+                await UpdateDownloadContent(file, buildInformation, cancel);
+            }
+            else
+            {
+                deleteTemp = false;
+                file = File.OpenRead(LauncherPaths.GetContentZip(installation.DiskId));
+            }
+
+            if (changedEngine || changedContent)
+            {
+                file.Position = 0;
+
+                // Check for any modules that need installing.
+                var modules = GetModuleNames(file);
+                if (modules.Length != 0)
+                {
+                    var moduleManifest = await _engineManager.GetEngineModuleManifest(cancel);
+
+                    foreach (var module in modules)
+                    {
+                        await _engineManager.DownloadModuleIfNecessary(
+                            module,
+                            buildInformation.EngineVersion,
+                            moduleManifest,
+                            null, cancel);
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Dispose download target file if content download or module download failed.
+            if (deleteTemp && file != null)
+            {
+                var name = file.Name;
+                await file.DisposeAsync();
+                File.Delete(name);
+            }
+
+            throw;
+        }
+        finally
+        {
+            if (file != null)
+                await file.DisposeAsync();
+        }
+
+        // Should be no errors from here on out.
+
+        if (changedContent)
+        {
+            // Write version to disk.
+            if (installation != null)
+            {
+                var prevId = installation.DiskId;
+                var prevPath = LauncherPaths.GetContentZip(prevId);
+
+                Log.Debug("Deleting old build: {PrevBuildPath}", prevPath);
+
+                try
+                {
+                    File.Delete(prevPath);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Failed to delete previous build!");
+                }
+
+                installation.CurrentVersion = buildInformation.Version;
+                installation.CurrentHash = buildInformation.Hash;
+                installation.CurrentEngineVersion = buildInformation.EngineVersion;
+                installation.DiskId = diskId;
+            }
+            else
+            {
+                installation = new InstalledServerContent(
+                    buildInformation.Version,
+                    buildInformation.Hash,
+                    buildInformation.ForkId,
+                    diskId,
+                    buildInformation.EngineVersion);
+
+                _cfg.AddInstallation(installation);
+            }
+
+        }
+
+        if (changedContent || changedEngine)
         {
             Status = UpdateStatus.CullingEngine;
             await CullEngineVersionsMaybe();
         }
 
+        _cfg.CommitConfig();
+
         Log.Information("Update done!");
-        return installation;
+        return installation!;
     }
 
-    private async Task<(InstalledServerContent, bool changed)> UpdateContentIfNecessary(
+    private async Task UpdateDownloadContent(
+        Stream file,
         ServerBuildInformation buildInformation,
         CancellationToken cancel)
     {
-        if (!CheckNeedUpdate(buildInformation, out var existingInstallation))
-        {
-            return (existingInstallation, false);
-        }
-
         Status = UpdateStatus.DownloadingClientUpdate;
 
         Log.Information($"Downloading content update from {buildInformation.DownloadUrl}");
 
-        var diskId = existingInstallation?.DiskId ?? _cfg.GetNewInstallationId();
-        var binPath = Path.Combine(LauncherPaths.DirServerContent,
-            diskId.ToString(CultureInfo.InvariantCulture) + ".zip");
-
-        Helpers.EnsureDirectoryExists(LauncherPaths.DirServerContent);
-        await using var file = File.Create(binPath, 4096, FileOptions.Asynchronous);
-
-        try
-        {
-            await _http.DownloadToStream(
-                buildInformation.DownloadUrl,
-                file,
-                DownloadProgressCallback,
-                cancel);
-        }
-        catch (OperationCanceledException)
-        {
-            // Don't leave behind garbage.
-            await file.DisposeAsync();
-            File.Delete(binPath);
-            throw;
-        }
+        await _http.DownloadToStream(
+            buildInformation.DownloadUrl,
+            file,
+            DownloadProgressCallback,
+            cancel);
 
         file.Position = 0;
 
@@ -146,27 +243,6 @@ public sealed class Updater : ReactiveObject
                     $"Hash mismatch. Expected: {expectHash}, got: {newFileHashString}");
             }
         }
-
-        // Write version to disk.
-        if (existingInstallation != null)
-        {
-            existingInstallation.CurrentVersion = buildInformation.Version;
-            existingInstallation.CurrentHash = buildInformation.Hash;
-            existingInstallation.CurrentEngineVersion = buildInformation.EngineVersion;
-        }
-        else
-        {
-            existingInstallation = new InstalledServerContent(
-                buildInformation.Version,
-                buildInformation.Hash,
-                buildInformation.ForkId,
-                diskId,
-                buildInformation.EngineVersion);
-            _cfg.AddInstallation(existingInstallation);
-            _cfg.CommitConfig();
-        }
-
-        return (existingInstallation, true);
     }
 
     private async Task CullEngineVersionsMaybe()
@@ -227,6 +303,26 @@ public sealed class Updater : ReactiveObject
 
         installation = null;
         return true;
+    }
+
+    public static string[] GetModuleNames(Stream zipContent)
+    {
+        // Check zip file contents for manifest.yml and read the modules the server needs.
+
+        using var zip = new ZipArchive(zipContent, ZipArchiveMode.Read, leaveOpen: true);
+
+        var manifest = zip.GetEntry("manifest.yml");
+        if (manifest == null)
+            return Array.Empty<string>();
+
+        using var streamReader = new StreamReader(manifest.Open());
+        var manifestData = ResourceManifestDeserializer.Deserialize<ResourceManifestData>(streamReader);
+        return manifestData.Modules;
+    }
+
+    private sealed class ResourceManifestData
+    {
+        public string[] Modules = Array.Empty<string>();
     }
 
     public enum UpdateStatus

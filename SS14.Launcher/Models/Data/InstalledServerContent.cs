@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace SS14.Launcher.Models.Data;
 
@@ -44,7 +45,7 @@ public sealed class InstalledServerContent : ReactiveObject
     public string ForkId { get; private set; } // Private set for JSON.NET
 
     [JsonProperty(PropertyName = "disk_id")]
-    public int DiskId { get; private set; } // Ditto
+    [Reactive] public int DiskId { get; set; }
 
     public string CurrentVersion
     {

@@ -9,6 +9,7 @@
         <Version>0.10.1</Version>
         <IsPackable>false</IsPackable>
         <DefineConstants Condition="'$(FullRelease)' == 'True'">FULL_RELEASE;$(DefineConstants)</DefineConstants>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
         <Compile Update="**\*.xaml.cs">
@@ -43,14 +44,17 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
         <PackageReference Include="XamlNameReferenceGenerator" Version="1.2.1" />
+        <PackageReference Include="YamlDotNet" Version="11.2.1" />
+        <PackageReference Include="TerraFX.Interop.Windows" Version="10.0.20348" />
+        <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="Utility\runtime.json" />
         <EmbeddedResource Include="Utility\runtime.json">
             <LogicalName>Utility.runtime.json</LogicalName>
         </EmbeddedResource>
-        <None Remove="Models\Data\Migrations\0000_initial.sql" />
-        <EmbeddedResource Include="Models\Data\Migrations\0000_Initial.sql" />
+        <None Remove="Models\Data\Migrations\*.sql" />
+        <EmbeddedResource Include="Models\Data\Migrations\*.sql" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="signing_key" />

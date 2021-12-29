@@ -52,6 +52,11 @@ public sealed class DataManager : ReactiveObject
 
     private readonly Dictionary<string, CVarEntry> _configEntries = new();
 
+    // TODO: I got lazy and this is a flat list.
+    // This probably results in some bad O(n*m) behavior.
+    // I don't care for now.
+    private readonly List<InstalledEngineModule> _modules = new();
+
     private readonly List<DbCommand> _dbCommandQueue = new();
     private readonly SemaphoreSlim _dbWritingSemaphore = new(1);
 
@@ -127,6 +132,7 @@ public sealed class DataManager : ReactiveObject
     public IObservableCache<InstalledServerContent, string> ServerContent => _serverContent;
     public IObservableCache<LoginInfo, Guid> Logins => _logins;
     public IObservableCache<InstalledEngineVersion, string> EngineInstallations => _engineInstallations;
+    public IEnumerable<InstalledEngineModule> EngineModules => _modules;
 
     public bool ActuallyMultiAccounts =>
 #if DEBUG
@@ -173,6 +179,18 @@ public sealed class DataManager : ReactiveObject
     public void RemoveEngineInstallation(InstalledEngineVersion version)
     {
         _engineInstallations.Remove(version);
+    }
+
+    public void AddEngineModule(InstalledEngineModule module)
+    {
+        _modules.Add(module);
+        AddDbCommand(c => c.Execute("INSERT INTO EngineModule VALUES (@Name, @Version)", module));
+    }
+
+    public void RemoveEngineModule(InstalledEngineModule module)
+    {
+        _modules.Remove(module);
+        AddDbCommand(c => c.Execute("DELETE FROM EngineModule WHERE Name = @Name AND Version = @Version", module));
     }
 
     public void AddLogin(LoginInfo login)
@@ -294,14 +312,17 @@ public sealed class DataManager : ReactiveObject
                     "SELECT Address,Name FROM FavoriteServer")
                 .Select(l => new FavoriteServer(l.name, l.addr)));
 
-        // Favorites
+        // Engine installations
         _engineInstallations.AddOrUpdate(
             sqliteConnection.Query<InstalledEngineVersion>("SELECT Version,Signature FROM EngineInstallation"));
 
-        // Favorites
+        // Content installations
         _serverContent.AddOrUpdate(
             sqliteConnection.Query<InstalledServerContent>(
                 "SELECT CurrentVersion,CurrentHash,ForkId,DiskId,CurrentEngineVersion FROM ServerContent"));
+
+        // Engine modules
+        _modules.AddRange(sqliteConnection.Query<InstalledEngineModule>("SELECT Name, Version FROM EngineModule"));
 
         // Load CVars.
         var configRows = sqliteConnection.Query<(string, object)>("SELECT Key, Value FROM Config");
@@ -505,7 +526,7 @@ public sealed class DataManager : ReactiveObject
                     ChangeReason.Add =>
                         "INSERT INTO ServerContent VALUES (@ForkId, @CurrentVersion, @CurrentHash, @CurrentEngineVersion, @DiskId)",
                     ChangeReason.Update =>
-                        "UPDATE ServerContent SET CurrentVersion = @CurrentVersion, CurrentHash = @CurrentHash, CurrentEngineVersion = @CurrentEngineVersion WHERE ForkId = @ForkId",
+                        "UPDATE ServerContent SET CurrentVersion = @CurrentVersion, CurrentHash = @CurrentHash, CurrentEngineVersion = @CurrentEngineVersion, DiskId = @DiskId WHERE ForkId = @ForkId",
                     ChangeReason.Remove => "DELETE FROM ServerContent WHERE ForkId = @ForkId",
                     _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
                 },

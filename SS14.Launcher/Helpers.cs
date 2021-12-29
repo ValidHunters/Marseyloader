@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using TerraFX.Interop.Windows;
 
 namespace SS14.Launcher;
 
@@ -131,5 +132,39 @@ public static class Helpers
     {
         var str = await content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<T>(str) ?? throw new JsonException("AsJson: did not expect null response");
+    }
+
+    public static unsafe void MarkDirectoryCompress(string path)
+    {
+        // TODO: Linux: chattr +c
+        if (!OperatingSystem.IsWindows())
+            return;
+
+        fixed (char* pPath = path)
+        {
+            var handle = Windows.CreateFileW(
+                (ushort*) pPath,
+                Windows.GENERIC_ALL,
+                FILE.FILE_SHARE_READ,
+                null,
+                OPEN.OPEN_EXISTING,
+                FILE.FILE_FLAG_BACKUP_SEMANTICS,
+                HANDLE.NULL);
+
+            var lpBytesReturned = 0u;
+            var lpInBuffer = (short) Windows.COMPRESSION_FORMAT_DEFAULT;
+
+            Windows.DeviceIoControl(
+                handle,
+                FSCTL.FSCTL_SET_COMPRESSION,
+                &lpInBuffer,
+                sizeof(short),
+                null,
+                0,
+                &lpBytesReturned,
+                null);
+
+            Windows.CloseHandle(handle);
+        }
     }
 }
