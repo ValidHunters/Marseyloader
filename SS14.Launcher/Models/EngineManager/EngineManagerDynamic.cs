@@ -206,6 +206,17 @@ public sealed class EngineManagerDynamic : IEngineManager
             Helpers.MarkDirectoryCompress(moduleVersionDiskPath);
 
             Helpers.ExtractZipToDirectory(moduleVersionDiskPath, tempFile);
+
+            // Chmod required files.
+            if (OperatingSystem.IsLinux())
+            {
+                switch (moduleName)
+                {
+                    case "Robust.Client.WebView":
+                        Helpers.ChmodPlusX(Path.Combine(moduleVersionDiskPath, "Robust.Client.WebView"));
+                        break;
+                }
+            }
         }
 
         _cfg.AddEngineModule(new InstalledEngineModule(moduleName, selectedVersionString));

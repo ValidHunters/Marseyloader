@@ -47,6 +47,7 @@
         <PackageReference Include="YamlDotNet" Version="11.2.1" />
         <PackageReference Include="TerraFX.Interop.Windows" Version="10.0.20348" />
         <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
+        <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="Utility\runtime.json" />

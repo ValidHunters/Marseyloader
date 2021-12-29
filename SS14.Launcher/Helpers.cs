@@ -8,6 +8,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Mono.Unix;
 using Newtonsoft.Json;
 using TerraFX.Interop.Windows;
 
@@ -166,5 +167,13 @@ public static class Helpers
 
             Windows.CloseHandle(handle);
         }
+    }
+
+    public static void ChmodPlusX(string path)
+    {
+        var f = new UnixFileInfo(path);
+        f.FileAccessPermissions |=
+            FileAccessPermissions.UserExecute | FileAccessPermissions.GroupExecute |
+            FileAccessPermissions.OtherExecute;
     }
 }
