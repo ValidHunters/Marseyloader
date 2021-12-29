@@ -38,7 +38,7 @@ public class MainWindowLoginViewModel : ViewModelBase
 
     public void SwitchToLogin()
     {
-        Screen = new LoginViewModel(this, _authApi, _loginMgr);
+        Screen = new LoginViewModel(this, _authApi, _loginMgr, _cfg);
     }
 
     public void SwitchToExpiredLogin(LoggedInAccount account)
@@ -63,6 +63,6 @@ public class MainWindowLoginViewModel : ViewModelBase
 
     public void SwitchToRegisterNeedsConfirmation(string username, string password)
     {
-        Screen = new RegisterNeedsConfirmationViewModel(this, _authApi, username, password, _loginMgr);
+        Screen = new RegisterNeedsConfirmationViewModel(this, _authApi, username, password, _loginMgr, _cfg);
     }
 }
