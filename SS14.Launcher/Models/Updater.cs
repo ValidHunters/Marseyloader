@@ -121,11 +121,15 @@ public sealed class Updater : ReactiveObject
             {
                 file.Position = 0;
 
+                Status = UpdateStatus.CheckingEngineModules;
+
                 // Check for any modules that need installing.
                 var modules = GetModuleNames(file);
                 if (modules.Length != 0)
                 {
                     var moduleManifest = await _engineManager.GetEngineModuleManifest(cancel);
+
+                    Status = UpdateStatus.DownloadingEngineModules;
 
                     foreach (var module in modules)
                     {
@@ -133,8 +137,10 @@ public sealed class Updater : ReactiveObject
                             module,
                             buildInformation.EngineVersion,
                             moduleManifest,
-                            null, cancel);
+                            DownloadProgressCallback, cancel);
                     }
+
+                    Progress = null;
                 }
             }
         }
@@ -155,6 +161,8 @@ public sealed class Updater : ReactiveObject
             if (file != null)
                 await file.DisposeAsync();
         }
+
+        Status = UpdateStatus.CommittingDownload;
 
         // Should be no errors from here on out.
 
@@ -328,9 +336,12 @@ public sealed class Updater : ReactiveObject
     public enum UpdateStatus
     {
         CheckingClientUpdate,
+        CheckingEngineModules,
         DownloadingEngineVersion,
+        DownloadingEngineModules,
         DownloadingClientUpdate,
         Verifying,
+        CommittingDownload,
         CullingEngine,
         Ready,
         Error,
