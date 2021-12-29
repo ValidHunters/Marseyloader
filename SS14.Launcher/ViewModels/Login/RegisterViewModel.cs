@@ -113,6 +113,8 @@ public class RegisterViewModel : BaseLoginViewModel, IErrorOverlayOwner
                     var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
 
                     await LoginViewModel.DoLogin(this, resp, _loginMgr, _authApi);
+
+                    _cfg.CommitConfig();
                 }
                 else
                 {

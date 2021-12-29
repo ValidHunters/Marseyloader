@@ -2,6 +2,7 @@ using System;
 using Avalonia.Threading;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.ViewModels.Login;
@@ -16,6 +17,7 @@ public class RegisterNeedsConfirmationViewModel : BaseLoginViewModel, IErrorOver
     private readonly string _loginUsername;
     private readonly string _loginPassword;
     private readonly LoginManager _loginMgr;
+    private readonly DataManager _dataManager;
 
     public bool ConfirmButtonEnabled => TimeoutSecondsLeft == 0;
     public string ConfirmButtonText
@@ -35,7 +37,7 @@ public class RegisterNeedsConfirmationViewModel : BaseLoginViewModel, IErrorOver
     [Reactive] private int TimeoutSecondsLeft { get; set; }
 
     public RegisterNeedsConfirmationViewModel(MainWindowLoginViewModel parentVm,
-        AuthApi authApi, string username, string password, LoginManager loginMgr)
+        AuthApi authApi, string username, string password, LoginManager loginMgr, DataManager dataManager)
     {
         BusyText = "Logging in...";
         ParentVM = parentVm;
@@ -44,6 +46,7 @@ public class RegisterNeedsConfirmationViewModel : BaseLoginViewModel, IErrorOver
         _loginUsername = username;
         _loginPassword = password;
         _loginMgr = loginMgr;
+        _dataManager = dataManager;
 
         this.WhenAnyValue(p => p.TimeoutSecondsLeft)
             .Subscribe(_ =>
@@ -71,6 +74,8 @@ public class RegisterNeedsConfirmationViewModel : BaseLoginViewModel, IErrorOver
         var resp = await _authApi.AuthenticateAsync(_loginUsername, _loginPassword);
 
         await LoginViewModel.DoLogin(this, resp, _loginMgr, _authApi);
+
+        _dataManager.CommitConfig();
 
         Busy = false;
     }

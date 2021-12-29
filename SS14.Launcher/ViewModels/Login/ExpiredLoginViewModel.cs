@@ -41,6 +41,8 @@ public class ExpiredLoginViewModel : BaseLoginViewModel, IErrorOverlayOwner
             var resp = await _authApi.AuthenticateAsync(Account.UserId, EditingPassword);
 
             await LoginViewModel.DoLogin(this, resp, _loginMgr, _authApi);
+
+            _cfg.CommitConfig();
         }
         finally
         {
@@ -51,6 +53,7 @@ public class ExpiredLoginViewModel : BaseLoginViewModel, IErrorOverlayOwner
     public void OnLogOutButtonPressed()
     {
         _cfg.RemoveLogin(Account.LoginInfo);
+        _cfg.CommitConfig();
 
         _parentVm.SwitchToLogin();
     }

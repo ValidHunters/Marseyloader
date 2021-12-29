@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 
 namespace SS14.Launcher.ViewModels.Login;
@@ -11,6 +12,7 @@ public class LoginViewModel : BaseLoginViewModel, IErrorOverlayOwner
     public MainWindowLoginViewModel ParentVM { get; }
     private readonly AuthApi _authApi;
     private readonly LoginManager _loginMgr;
+    private readonly DataManager _dataManager;
 
     [Reactive] public string EditingUsername { get; set; } = "";
     [Reactive] public string EditingPassword { get; set; } = "";
@@ -18,11 +20,12 @@ public class LoginViewModel : BaseLoginViewModel, IErrorOverlayOwner
     [Reactive] public bool IsInputValid { get; private set; }
 
     public LoginViewModel(MainWindowLoginViewModel parentVm, AuthApi authApi,
-        LoginManager loginMgr)
+        LoginManager loginMgr, DataManager dataManager)
     {
         BusyText = "Logging in...";
         _authApi = authApi;
         _loginMgr = loginMgr;
+        _dataManager = dataManager;
         ParentVM = parentVm;
 
         this.WhenAnyValue(x => x.EditingUsername, x => x.EditingPassword)
@@ -42,6 +45,8 @@ public class LoginViewModel : BaseLoginViewModel, IErrorOverlayOwner
             var resp = await _authApi.AuthenticateAsync(EditingUsername, EditingPassword);
 
             await DoLogin(this, resp, _loginMgr, _authApi);
+
+            _dataManager.CommitConfig();
         }
         finally
         {
