@@ -320,12 +320,15 @@ public sealed class Updater : ReactiveObject
         using var zip = new ZipArchive(zipContent, ZipArchiveMode.Read, leaveOpen: true);
 
         var manifest = zip.GetEntry("manifest.yml");
-        if (manifest == null)
-            return Array.Empty<string>();
+        if (manifest != null)
+        {
+            using var streamReader = new StreamReader(manifest.Open());
+            var manifestData = ResourceManifestDeserializer.Deserialize<ResourceManifestData?>(streamReader);
+            if (manifestData != null)
+                return manifestData.Modules;
+        }
 
-        using var streamReader = new StreamReader(manifest.Open());
-        var manifestData = ResourceManifestDeserializer.Deserialize<ResourceManifestData>(streamReader);
-        return manifestData.Modules;
+        return Array.Empty<string>();
     }
 
     private sealed class ResourceManifestData
