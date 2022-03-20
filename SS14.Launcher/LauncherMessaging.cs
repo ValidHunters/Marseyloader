@@ -46,6 +46,19 @@ public class LauncherMessaging
 
         var actualPipeName = ConfigConstants.LauncherCommandsNamedPipeName;
 
+        // NOTE: On Unix, NamedPipeStream allows passing full rooted file paths.
+        if (OperatingSystem.IsLinux() && Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR") is { } runtimeDir && !string.IsNullOrEmpty(runtimeDir))
+        {
+            // Use XDG_RUNTIME_DIR to store the pipe if available.
+            actualPipeName = Path.Combine(runtimeDir, actualPipeName);
+        }
+        else if (!OperatingSystem.IsMacOS())
+        {
+            // Pipes use TMPDIR on macOS which is user-specific, so we don't need to give them a funny name to avoid multi-user problems.
+            // On other platforms, throw the user name along with the pipe name to avoid any conflicts.
+            actualPipeName += "_" + Convert.ToHexString(Encoding.UTF8.GetBytes(Environment.UserName));
+        }
+
         // Must use Console since we are in pre-init context. Better than nothing if this somehow misdetects.
 
         // So during testing on Linux, I found that NamedPipeServerStream does NOT have it's "mutex" semantics.
