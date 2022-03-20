@@ -44,7 +44,7 @@ public class LauncherMessaging
                 throw new ArgumentOutOfRangeException(nameof(command), "No newlines are allowed in a launcher IPC command.");
         }
 
-        var actualPipeName = ConfigConstants.LauncherCommandsNamedPipeName + "_" + Convert.ToHexString(Encoding.UTF8.GetBytes(Environment.UserName));
+        var actualPipeName = ConfigConstants.LauncherCommandsNamedPipeName;
 
         // Must use Console since we are in pre-init context. Better than nothing if this somehow misdetects.
 
@@ -52,7 +52,7 @@ public class LauncherMessaging
         // Don't know who to blame for this, don't care, let's just try connecting first.
         try
         {
-            using (var client = new NamedPipeClientStream(actualPipeName))
+            using (var client = new NamedPipeClientStream(".", actualPipeName, PipeDirection.InOut, PipeOptions.CurrentUserOnly))
             {
                 // If we are waiting more than 5 seconds something has gone HORRIBLY wrong and we should just let the launcher start.
                 client.Connect(ConfigConstants.LauncherCommandsNamedPipeTimeout);
