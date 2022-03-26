@@ -8,6 +8,8 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.Data.Sqlite;
 using NSec.Cryptography;
 using Serilog;
 using Splat;
@@ -115,7 +117,7 @@ public sealed class EngineManagerDynamic : IEngineManager
 
     public async Task<bool> DownloadModuleIfNecessary(
         string moduleName,
-        string engineVersion,
+        string moduleVersion,
         EngineModuleManifest manifest,
         Helpers.DownloadProgressCallback? progress = null,
         CancellationToken cancel = default)
@@ -123,27 +125,13 @@ public sealed class EngineManagerDynamic : IEngineManager
         // Currently the module handling code assumes all modules need straight extract to disk.
         // This works for CEF, but who knows what the future might hold?
 
-        Log.Debug("Checking to download {ModuleName} for engine {EngineVersion}", moduleName, engineVersion);
+        Log.Debug("Checking to download {ModuleName} {ModuleVersion}", moduleName, moduleVersion);
 
-        if (!manifest.Modules.TryGetValue(moduleName, out var moduleData))
-            throw new UpdateException("Unable to find engine module in manifest!");
+        var versionData = manifest.Modules[moduleName].Versions[moduleVersion];
 
-        // Because engine modules are solely identified by *minimum* version,
-        // we have to double-check that there isn't a newer version of the module available for the relevant engine.
-        var engineVersionObj = Version.Parse(engineVersion);
-        var selectedVersion = moduleData.Versions
-            .Select(kv => new { Version = Version.Parse(kv.Key), kv.Key, kv.Value })
-            .Where(kv => engineVersionObj >= kv.Version)
-            .MaxBy(kv => kv.Version);
+        Log.Debug("Selected module {ModuleName} {ModuleVersion}", moduleName, moduleVersion);
 
-        if (selectedVersion == null)
-            throw new UpdateException("Unable to find suitable module version in manifest!");
-
-        var selectedVersionString = selectedVersion.Key;
-
-        Log.Debug("Selected module {ModuleName} {ModuleVersion}", moduleName, selectedVersionString);
-
-        var alreadyInstalled = _cfg.EngineModules.Any(m => m.Name == moduleName && m.Version == selectedVersionString);
+        var alreadyInstalled = _cfg.EngineModules.Any(m => m.Name == moduleName && m.Version == moduleVersion);
 
         if (alreadyInstalled)
         {
@@ -151,20 +139,20 @@ public sealed class EngineManagerDynamic : IEngineManager
             return false;
         }
 
-        Log.Information("Installing {ModuleName} {ModuleVersion}", moduleName, selectedVersionString);
+        Log.Information("Installing {ModuleName} {ModuleVersion}", moduleName, moduleVersion);
 
-        var bestRid = RidUtility.FindBestRid(selectedVersion.Value.Platforms.Keys);
+        var bestRid = RidUtility.FindBestRid(versionData.Platforms.Keys);
         if (bestRid == null)
             throw new UpdateException("No module version available for our platform!");
 
         Log.Debug("Selecting RID {Rid}", bestRid);
 
-        var platformData = selectedVersion.Value.Platforms[bestRid];
+        var platformData = versionData.Platforms[bestRid];
 
         Log.Debug("Downloading module: {EngineDownloadUrl}", platformData.Url);
 
         var moduleDiskPath = Path.Combine(LauncherPaths.DirModuleInstallations, moduleName);
-        var moduleVersionDiskPath = Path.Combine(moduleDiskPath, selectedVersionString);
+        var moduleVersionDiskPath = Path.Combine(moduleDiskPath, moduleVersion);
 
         await Task.Run(() =>
         {
@@ -219,7 +207,7 @@ public sealed class EngineManagerDynamic : IEngineManager
             }
         }
 
-        _cfg.AddEngineModule(new InstalledEngineModule(moduleName, selectedVersionString));
+        _cfg.AddEngineModule(new InstalledEngineModule(moduleName, moduleVersion));
         _cfg.CommitConfig();
 
         Log.Debug("Done installing module!");
@@ -270,14 +258,17 @@ public sealed class EngineManagerDynamic : IEngineManager
                throw new InvalidDataException();
     }
 
-    public async Task DoEngineCullMaybeAsync()
+    public async Task DoEngineCullMaybeAsync(SqliteConnection contenCon)
     {
-        Log.Debug("Checking to cull engine versions.");
+        Log.Debug("Checking to cull engine dependencies");
 
         // Cull main engine installations.
 
-        var usedVersions = _cfg.ServerContent.Items.Select(c => c.CurrentEngineVersion).ToHashSet();
-        var toCull = _cfg.EngineInstallations.Items.Where(i => !usedVersions.Contains(i.Version)).ToArray();
+        var modulesUsed = contenCon
+            .Query<(string, string)>("SELECT DISTINCT ModuleName, ModuleVersion FROM ContentEngineDependency")
+            .ToHashSet();
+
+        var toCull = _cfg.EngineInstallations.Items.Where(i => !modulesUsed.Contains(("Robust", i.Version))).ToArray();
 
         foreach (var installation in toCull)
         {
@@ -291,26 +282,11 @@ public sealed class EngineManagerDynamic : IEngineManager
         }
 
         // Cull modules
-
-        var usedModules = _cfg.ServerContent.Items.SelectMany(c =>
-        {
-            var engineVersion = Version.Parse(c.CurrentEngineVersion);
-            using var zip = File.OpenRead(LauncherPaths.GetContentZip(c.DiskId));
-            return Updater.GetModuleNames(zip)
-                .Select(m => Connector.GetInstalledModuleForEngineVersion(engineVersion, m, _cfg));
-        });
-
-        var toCullModules = _cfg.EngineModules.Except(usedModules).ToArray();
+        var toCullModules = _cfg.EngineModules.Where(m => !modulesUsed.Contains((m.Name, m.Version))).ToArray();
 
         foreach (var module in toCullModules)
         {
             Log.Debug("Culling unused module {EngineModule}", module);
-
-            if (module == null)
-            {
-                Log.Warning("Unable to resolve module for installed server content! Module: {Module}", module);
-                continue;
-            }
 
             var path = GetEngineModule(module.Name, module.Version);
 

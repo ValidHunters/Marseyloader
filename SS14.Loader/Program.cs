@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
@@ -52,11 +53,30 @@ internal class Program
         if (!TryGetLoader(clientAssembly, out var loader))
             return false;
 
+        SQLitePCL.Batteries_V2.Init();
+
         var launcher = Environment.GetEnvironmentVariable("SS14_LAUNCHER_PATH");
         var redialApi = launcher != null ? new RedialApi(launcher) : null;
-        var args = new MainArgs(_engineArgs, _fileApi, redialApi);
+        var contentDb = Environment.GetEnvironmentVariable("SS14_LOADER_CONTENT_DB");
+        var contentVersion = Environment.GetEnvironmentVariable("SS14_LOADER_CONTENT_VERSION");
+        ContentDbFileApi? contentApi = null;
+        IEnumerable<ApiMount>? extraMounts = null;
+        if (!string.IsNullOrEmpty(contentDb) && !string.IsNullOrEmpty(contentVersion))
+        {
+            contentApi = new ContentDbFileApi(contentDb, long.Parse(contentVersion));
+            extraMounts = new[] { new ApiMount(contentApi, "/") };
+        }
 
-        loader.Main(args);
+        var args = new MainArgs(_engineArgs, _fileApi, redialApi, extraMounts);
+
+        try
+        {
+            loader.Main(args);
+        }
+        finally
+        {
+            contentApi?.Dispose();
+        }
         return true;
     }
 

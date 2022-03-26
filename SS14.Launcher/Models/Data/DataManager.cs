@@ -9,8 +9,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using DbUp.Engine;
-using DbUp.SQLite.Helpers;
 using DynamicData;
 using JetBrains.Annotations;
 using Microsoft.Data.Sqlite;
@@ -43,7 +41,6 @@ public sealed class DataManager : ReactiveObject
     private delegate void DbCommand(SqliteConnection connection);
 
     private readonly SourceCache<FavoriteServer, string> _favoriteServers = new(f => f.Address);
-    private readonly SourceCache<InstalledServerContent, string> _serverContent = new(i => i.ForkId);
 
     private readonly SourceCache<LoginInfo, Guid> _logins = new(l => l.UserId);
 
@@ -79,15 +76,6 @@ public sealed class DataManager : ReactiveObject
         _favoriteServers.Connect()
             .ForEachChange(c => ChangeFavoriteServer(c.Reason, c.Current))
             .Subscribe(_ => WeakReferenceMessenger.Default.Send(new FavoritesChanged()));
-
-        // Server content
-        _serverContent.Connect()
-            .WhenAnyPropertyChanged()
-            .Subscribe(c => ChangeServerContent(ChangeReason.Update, c!));
-
-        _serverContent.Connect()
-            .ForEachChange(c => ChangeServerContent(c.Reason, c.Current))
-            .Subscribe();
 
         // Logins
         _logins.Connect()
@@ -129,7 +117,6 @@ public sealed class DataManager : ReactiveObject
     }
 
     public IObservableCache<FavoriteServer, string> FavoriteServers => _favoriteServers;
-    public IObservableCache<InstalledServerContent, string> ServerContent => _serverContent;
     public IObservableCache<LoginInfo, Guid> Logins => _logins;
     public IObservableCache<InstalledEngineVersion, string> EngineInstallations => _engineInstallations;
     public IEnumerable<InstalledEngineModule> EngineModules => _modules;
@@ -154,21 +141,6 @@ public sealed class DataManager : ReactiveObject
     public void RemoveFavoriteServer(FavoriteServer server)
     {
         _favoriteServers.Remove(server);
-    }
-
-    public void AddInstallation(InstalledServerContent installedServerContent)
-    {
-        if (_favoriteServers.Lookup(installedServerContent.ForkId).HasValue)
-        {
-            throw new ArgumentException("An installation with that fork ID already exists.");
-        }
-
-        _serverContent.AddOrUpdate(installedServerContent); // Will do a save.
-    }
-
-    public void RemoveInstallation(InstalledServerContent installedServerContent)
-    {
-        _serverContent.Remove(installedServerContent);
     }
 
     public void AddEngineInstallation(InstalledEngineVersion version)
@@ -213,14 +185,6 @@ public sealed class DataManager : ReactiveObject
         }
     }
 
-    public int GetNewInstallationId()
-    {
-        var id = GetCVar(CVars.NextInstallationId);
-        id += 1;
-        SetCVar(CVars.NextInstallationId, id);
-        return id;
-    }
-
     /// <summary>
     ///     Loads config file from disk, or resets the loaded config to default if the config doesn't exist on disk.
     /// </summary>
@@ -232,16 +196,10 @@ public sealed class DataManager : ReactiveObject
         connection.Open();
 
         var sw = Stopwatch.StartNew();
-        var result = DbUp.DeployChanges.To
-            .SQLiteDatabase(new SharedConnection(connection))
-            .WithScripts(LoadMigrationScriptsList())
-            .LogToAutodetectedLog()
-            .WithTransactionPerScript()
-            .Build()
-            .PerformUpgrade();
+        var success = Migrator.Migrate(connection, "SS14.Launcher.Models.Data.Migrations");
 
-        if (result.Error is { } error)
-            throw error;
+        if (!success)
+            throw new Exception("Migrations failed!");
 
         Log.Debug("Did migrations in {MigrationTime}", sw.Elapsed);
 
@@ -272,27 +230,6 @@ public sealed class DataManager : ReactiveObject
         CommitConfig();
     }
 
-    private static IEnumerable<SqlScript> LoadMigrationScriptsList()
-    {
-        var assembly = typeof(DataManager).Assembly;
-        foreach (var resourceName in assembly.GetManifestResourceNames())
-        {
-            if (!resourceName.EndsWith(".sql"))
-                continue;
-
-            var index = resourceName.LastIndexOf('.', resourceName.Length - 5, resourceName.Length - 4);
-            index += 1;
-
-            var name = resourceName[index..^4];
-            yield return new LazySqlScript(name, () =>
-            {
-                using var reader = new StreamReader(assembly.GetManifestResourceStream(resourceName)!);
-
-                return reader.ReadToEnd();
-            });
-        }
-    }
-
     private void LoadSqliteConfig(SqliteConnection sqliteConnection)
     {
         // Load logins.
@@ -315,11 +252,6 @@ public sealed class DataManager : ReactiveObject
         // Engine installations
         _engineInstallations.AddOrUpdate(
             sqliteConnection.Query<InstalledEngineVersion>("SELECT Version,Signature FROM EngineInstallation"));
-
-        // Content installations
-        _serverContent.AddOrUpdate(
-            sqliteConnection.Query<InstalledServerContent>(
-                "SELECT CurrentVersion,CurrentHash,ForkId,DiskId,CurrentEngineVersion FROM ServerContent"));
 
         // Engine modules
         _modules.AddRange(sqliteConnection.Query<InstalledEngineModule>("SELECT Name, Version FROM EngineModule"));
@@ -405,15 +337,6 @@ public sealed class DataManager : ReactiveObject
             }
         });
 
-        if (data.ServerContent != null)
-        {
-            _serverContent.Edit(a =>
-            {
-                a.Clear();
-                a.AddOrUpdate(data.ServerContent);
-            });
-        }
-
         SetCVar(CVars.CompatMode, data.ForceGLES2 ?? CVars.CompatMode.DefaultValue);
         SetCVar(CVars.Fingerprint, data.Fingerprint.ToString());
         SetCVar(CVars.DynamicPgo, data.DynamicPGO ?? CVars.DynamicPgo.DefaultValue);
@@ -422,7 +345,6 @@ public sealed class DataManager : ReactiveObject
         SetCVar(CVars.LogLauncher, data.LogLauncher);
         SetCVar(CVars.MultiAccounts, data.MultiAccounts);
         SetCVar(CVars.HasDismissedEarlyAccessWarning, data.DismissedEarlyAccessWarning ?? false);
-        SetCVar(CVars.NextInstallationId, data.NextInstallationId);
     }
 
     [SuppressMessage("ReSharper", "UseAwaitUsing")]
@@ -501,33 +423,6 @@ public sealed class DataManager : ReactiveObject
                     ChangeReason.Add => "INSERT INTO FavoriteServer VALUES (@Address, @Name)",
                     ChangeReason.Update => "UPDATE FavoriteServer SET Name = @Name WHERE Address = @Address",
                     ChangeReason.Remove => "DELETE FROM FavoriteServer WHERE Address = @Address",
-                    _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
-                },
-                data
-            );
-        });
-    }
-
-    private void ChangeServerContent(ChangeReason reason, InstalledServerContent serverContent)
-    {
-        // Make immutable copy to avoid race condition bugs.
-        var data = new
-        {
-            serverContent.ForkId,
-            serverContent.CurrentVersion,
-            serverContent.CurrentHash,
-            serverContent.CurrentEngineVersion,
-            serverContent.DiskId
-        };
-        AddDbCommand(con =>
-        {
-            con.Execute(reason switch
-                {
-                    ChangeReason.Add =>
-                        "INSERT INTO ServerContent VALUES (@ForkId, @CurrentVersion, @CurrentHash, @CurrentEngineVersion, @DiskId)",
-                    ChangeReason.Update =>
-                        "UPDATE ServerContent SET CurrentVersion = @CurrentVersion, CurrentHash = @CurrentHash, CurrentEngineVersion = @CurrentEngineVersion, DiskId = @DiskId WHERE ForkId = @ForkId",
-                    ChangeReason.Remove => "DELETE FROM ServerContent WHERE ForkId = @ForkId",
                     _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
                 },
                 data
@@ -648,9 +543,6 @@ public sealed class DataManager : ReactiveObject
 
         [JsonProperty(PropertyName = "favorites")]
         public List<FavoriteServer>? Favorites { get; set; }
-
-        [JsonProperty(PropertyName = "server_content")]
-        public List<InstalledServerContent>? ServerContent { get; set; }
 
         [JsonProperty(PropertyName = "engines")]
         public List<InstalledEngineVersion>? Engines { get; set; }

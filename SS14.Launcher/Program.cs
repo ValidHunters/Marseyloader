@@ -9,6 +9,7 @@ using Avalonia.ReactiveUI;
 using Serilog;
 using Splat;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
@@ -132,11 +133,14 @@ internal static class Program
     {
         var cfg = Locator.Current.GetService<DataManager>();
         var msgr = Locator.Current.GetRequiredService<LauncherMessaging>();
+        var contentManager = new ContentManager();
+        Locator.CurrentMutable.RegisterConstant(contentManager);
         Locator.CurrentMutable.RegisterConstant<IEngineManager>(new EngineManagerDynamic());
         Locator.CurrentMutable.RegisterConstant(new Updater());
         Locator.CurrentMutable.RegisterConstant(new AuthApi());
         var lm = new LoginManager();
         Locator.CurrentMutable.RegisterConstant(lm);
+        contentManager.Initialize();
 
         var viewModel = new MainWindowViewModel();
         var window = new MainWindow
