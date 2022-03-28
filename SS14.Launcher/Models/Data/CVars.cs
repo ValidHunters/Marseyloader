@@ -51,6 +51,11 @@ public static class CVars
     public static readonly CVarDef<bool> LogLauncher = CVarDef.Create("LogLauncher", false);
 
     /// <summary>
+    /// Verbose logging of launcher logs.
+    /// </summary>
+    public static readonly CVarDef<bool> LogLauncherVerbose = CVarDef.Create("LogLauncherVerbose", false);
+
+    /// <summary>
     /// Enable multi-account support on release builds.
     /// </summary>
     public static readonly CVarDef<bool> MultiAccounts = CVarDef.Create("MultiAccounts", false);

@@ -20,7 +20,7 @@ public class ConnectingViewModel : ViewModelBase
 
     private Connector.ConnectionStatus _connectorStatus;
     private Updater.UpdateStatus _updaterStatus;
-    private (long downloaded, long total)? _updaterProgress;
+    private (long downloaded, long total, Updater.ProgressUnit unit)? _updaterProgress;
 
     public bool IsErrored => _connectorStatus == Connector.ConnectionStatus.ConnectionFailed ||
                              _connectorStatus == Connector.ConnectionStatus.UpdateError ||
@@ -90,7 +90,7 @@ public class ConnectingViewModel : ViewModelBase
                 return 0;
             }
 
-            var (downloaded, total) = _updaterProgress.Value;
+            var (downloaded, total, _) = _updaterProgress.Value;
 
             return downloaded / (float) total;
         }
@@ -105,9 +105,13 @@ public class ConnectingViewModel : ViewModelBase
                 return "";
             }
 
-            var (downloaded, total) = _updaterProgress.Value;
+            var (downloaded, total, unit) = _updaterProgress.Value;
 
-            return $"{Helpers.FormatBytes(downloaded)} / {Helpers.FormatBytes(total)}";
+            return unit switch
+            {
+                Updater.ProgressUnit.Bytes => $"{Helpers.FormatBytes(downloaded)} / {Helpers.FormatBytes(total)}",
+                _ => $"{downloaded} / {total}"
+            };
         }
     }
 

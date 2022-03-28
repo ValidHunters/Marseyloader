@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:SS14.Launcher.ViewModels;assembly=SS14.Launcher"
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.OptionsTabView"
@@ -40,6 +39,11 @@
         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLauncher}">Log Launcher</CheckBox>
         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                    Text="Enables logging of the launcher. Useful for developers. (requires launcher restart)"
+                   Margin="8" />
+
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLauncherVerbose}">Verbose launcher logging</CheckBox>
+        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                   Text="For when the developers are *very* stumped with your problem. (requires launcher restart)"
                    Margin="8" />
 
         <CheckBox VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" Margin="4" IsChecked="{Binding DisableSigning}">Disable Engine Signature Checks</CheckBox>

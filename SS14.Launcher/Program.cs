@@ -87,8 +87,8 @@ internal static class Program
         if (cfg.GetCVar(CVars.LogLauncher))
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Logger(Log.Logger)
+                .MinimumLevel.Is(cfg.GetCVar(CVars.LogLauncherVerbose) ? LogEventLevel.Verbose : LogEventLevel.Debug)
+                .WriteTo.Console()
                 .WriteTo.File(LauncherPaths.PathLauncherLog)
                 .CreateLogger();
         }

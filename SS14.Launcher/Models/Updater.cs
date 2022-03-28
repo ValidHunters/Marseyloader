@@ -49,7 +49,7 @@ public sealed class Updater : ReactiveObject
 
     // Note: these get updated from different threads. Observe responsibly.
     [Reactive] public UpdateStatus Status { get; private set; }
-    [Reactive] public (long downloaded, long total)? Progress { get; private set; }
+    [Reactive] public (long downloaded, long total, ProgressUnit unit)? Progress { get; private set; }
 
     public async Task<ContentLaunchInfo?> RunUpdateForLaunchAsync(
         ServerBuildInformation buildInformation,
@@ -415,6 +415,8 @@ public sealed class Updater : ReactiveObject
         var totalSize = 0L;
         var sw = new Stopwatch();
 
+        var newFileCount = 0;
+
         SqliteBlobStream? blob = null;
         try
         {
@@ -423,11 +425,19 @@ public sealed class Updater : ReactiveObject
             using var zStdCompressor = new ZStdCompressStream(compressBuffer);
 
             // Sort by full name for manifest building.
+            var count = 0;
             foreach (var entry in zip.Entries.OrderBy(e => e.FullName, StringComparer.Ordinal))
             {
+                cancel.ThrowIfCancellationRequested();
+
+                if (count++ % 100 == 0)
+                    Progress = (count++, zip.Entries.Count, ProgressUnit.None);
+
                 // Ignore directory entries.
                 if (entry.Name == "")
                     continue;
+
+                Log.Verbose("Storing file {EntryName}", entry.FullName);
 
                 byte[] hash;
                 using (var stream = entry.Open())
@@ -440,6 +450,8 @@ public sealed class Updater : ReactiveObject
                     new { Hash = hash });
                 if (row == 0)
                 {
+                    newFileCount += 1;
+
                     // Don't have this content blob yet, insert it into the database.
                     using var entryStream = entry.Open();
 
@@ -511,12 +523,15 @@ public sealed class Updater : ReactiveObject
         }
 
         Log.Debug("Compression report: {ElapsedMs} ms elapsed, {TotalSize} B total size", sw.ElapsedMilliseconds, totalSize);
+        Log.Debug("New files: {NewFilesCount}", newFileCount);
 
         manifestWriter.Flush();
 
         manifestStream.Seek(0, SeekOrigin.Begin);
 
         var manifestHash = HashFile(manifestStream);
+
+        Log.Debug("Manifest hash: {ManifestHash}", Convert.ToHexString(manifestHash));
 
         // File.WriteAllBytes("manifest.txt", manifestStream.ToArray());
 
@@ -534,6 +549,8 @@ public sealed class Updater : ReactiveObject
             {
                 Version = versionId, EngineVersion = engineVersion
             });
+
+        Log.Debug("Inserting dependency: {ModuleName} {ModuleVersion}", "Robust", engineVersion);
 
         // If we have a manifest file, load module dependencies from manifest file.
         if (ContentManager.OpenBlob(con, versionId, "manifest.yml") is { } resourceManifest)
@@ -561,6 +578,8 @@ public sealed class Updater : ReactiveObject
                             ModName = module,
                             ModVersion = version
                         });
+
+                    Log.Debug("Inserting dependency: {ModuleName} {ModuleVersion}", module, version);
                 }
             }
         }
@@ -598,15 +617,17 @@ public sealed class Updater : ReactiveObject
         var hash = await Task.Run(() => HashFile(file), cancel);
         file.Position = 0;
 
+        var newFileHashString = Convert.ToHexString(hash);
         if (buildInformation.Hash is { } expectHash)
         {
-            var newFileHashString = Convert.ToHexString(hash);
             if (!expectHash.Equals(newFileHashString, StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(
                     $"Hash mismatch. Expected: {expectHash}, got: {newFileHashString}");
             }
         }
+
+        Log.Verbose("Done downloading zip. Hash: {DownloadHash}", newFileHashString);
 
         return hash;
     }
@@ -627,7 +648,7 @@ public sealed class Updater : ReactiveObject
 
     private void DownloadProgressCallback(long downloaded, long total)
     {
-        Dispatcher.UIThread.Post(() => Progress = (downloaded, total));
+        Dispatcher.UIThread.Post(() => Progress = (downloaded, total, ProgressUnit.Bytes));
     }
 
     internal static byte[] HashFile(Stream stream)
@@ -666,5 +687,11 @@ public sealed class Updater : ReactiveObject
         CullingContent,
         Ready,
         Error,
+    }
+
+    public enum ProgressUnit
+    {
+        None,
+        Bytes,
     }
 }
