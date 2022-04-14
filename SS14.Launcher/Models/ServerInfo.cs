@@ -29,6 +29,12 @@ public class ServerBuildInformation
     [JsonProperty(PropertyName = "download_url")]
     public string DownloadUrl = default!;
 
+    [JsonProperty(PropertyName = "manifest_url", Required = Required.Default)]
+    public string? ManifestUrl;
+
+    [JsonProperty(PropertyName = "manifest_download_url", Required = Required.Default)]
+    public string? ManifestDownloadUrl;
+
     [JsonProperty(PropertyName = "engine_version")]
     public string EngineVersion = default!;
 
@@ -40,6 +46,12 @@ public class ServerBuildInformation
 
     [JsonProperty(PropertyName = "hash", Required = Required.AllowNull)]
     public string? Hash;
+
+    [JsonProperty(PropertyName = "manifest_hash", Required = Required.Default)]
+    public string? ManifestHash;
+
+    [JsonProperty(PropertyName = "acz", Required = Required.Default)]
+    public bool Acz;
 }
 
 public enum AuthMode
