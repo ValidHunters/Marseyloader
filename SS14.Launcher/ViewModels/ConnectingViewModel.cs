@@ -21,6 +21,7 @@ public class ConnectingViewModel : ViewModelBase
     private Connector.ConnectionStatus _connectorStatus;
     private Updater.UpdateStatus _updaterStatus;
     private (long downloaded, long total, Updater.ProgressUnit unit)? _updaterProgress;
+    private long? _updaterSpeed;
 
     public bool IsErrored => _connectorStatus == Connector.ConnectionStatus.ConnectionFailed ||
                              _connectorStatus == Connector.ConnectionStatus.UpdateError ||
@@ -43,6 +44,16 @@ public class ConnectingViewModel : ViewModelBase
                 this.RaisePropertyChanged(nameof(Progress));
                 this.RaisePropertyChanged(nameof(ProgressIndeterminate));
                 this.RaisePropertyChanged(nameof(ProgressText));
+            });
+
+        this.WhenAnyValue(x => x._updater.Speed)
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(speed =>
+            {
+                _updaterSpeed = speed;
+
+                this.RaisePropertyChanged(nameof(SpeedText));
+                this.RaisePropertyChanged(nameof(SpeedIndeterminate));
             });
 
         this.WhenAnyValue(x => x._updater.Status)
@@ -92,7 +103,7 @@ public class ConnectingViewModel : ViewModelBase
 
             var (downloaded, total, _) = _updaterProgress.Value;
 
-            return downloaded / (float) total;
+            return downloaded / (float)total;
         }
     }
 
@@ -115,23 +126,26 @@ public class ConnectingViewModel : ViewModelBase
         }
     }
 
-    public bool ProgressIndeterminate
-    {
-        get
-        {
-            if (_connectorStatus == Connector.ConnectionStatus.Updating)
-            {
-                return !_updaterProgress.HasValue;
-            }
-
-            return true;
-        }
-    }
+    public bool ProgressIndeterminate => _connectorStatus != Connector.ConnectionStatus.Updating
+                                         || _updaterProgress == null;
 
     public bool ProgressBarVisible => _connectorStatus != Connector.ConnectionStatus.ClientExited &&
                                       _connectorStatus != Connector.ConnectionStatus.ClientRunning &&
                                       _connectorStatus != Connector.ConnectionStatus.ConnectionFailed &&
                                       _connectorStatus != Connector.ConnectionStatus.UpdateError;
+
+    public bool SpeedIndeterminate => _connectorStatus != Connector.ConnectionStatus.Updating || _updaterSpeed == null;
+
+    public string SpeedText
+    {
+        get
+        {
+            if (_updaterSpeed is not { } speed)
+                return "";
+
+            return $"{Helpers.FormatBytes(speed)}/s";
+        }
+    }
 
     public string StatusText =>
         _connectorStatus switch

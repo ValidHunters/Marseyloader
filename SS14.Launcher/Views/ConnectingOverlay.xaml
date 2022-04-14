@@ -25,9 +25,13 @@
         <DockPanel LastChildFill="False">
           <Button DockPanel.Dock="Left" Content="Cancel" Command="{Binding Cancel}" IsVisible="{Binding !IsErrored}" />
 
-          <TextBlock DockPanel.Dock="Right" Margin="0 4" Text="{Binding ProgressText}"
+          <TextBlock DockPanel.Dock="Right" Margin="8 4 0 4" Text="{Binding ProgressText}"
                      TextWrapping="Wrap"
                      IsVisible="{Binding !ProgressIndeterminate}" />
+
+          <TextBlock DockPanel.Dock="Right" Margin="0 4" Text="{Binding SpeedText}"
+                     TextWrapping="Wrap"
+                     IsVisible="{Binding !SpeedIndeterminate}" />
         </DockPanel>
       </Panel>
     </StackPanel>

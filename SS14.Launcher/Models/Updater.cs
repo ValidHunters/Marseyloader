@@ -63,6 +63,7 @@ public sealed class Updater : ReactiveObject
     // Note: these get updated from different threads. Observe responsibly.
     [Reactive] public UpdateStatus Status { get; private set; }
     [Reactive] public (long downloaded, long total, ProgressUnit unit)? Progress { get; private set; }
+    [Reactive] public long? Speed { get; private set; }
 
     public async Task<ContentLaunchInfo?> RunUpdateForLaunchAsync(
         ServerBuildInformation buildInformation,
@@ -93,6 +94,7 @@ public sealed class Updater : ReactiveObject
         finally
         {
             Progress = null;
+            Speed = null;
             _updating = false;
         }
 
@@ -730,10 +732,17 @@ public sealed class Updater : ReactiveObject
 
         // Send HTTP request
 
-        var response = await _http.SendZStdAsync(request, HttpCompletionOption.ResponseHeadersRead, cancel);
+        request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("zstd"));
+        var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancel);
         response.EnsureSuccessStatusCode();
 
-        await using var stream = await response.Content.ReadAsStreamAsync(cancel);
+        var stream = await response.Content.ReadAsStreamAsync(cancel);
+        var bandwidthStream = new BandwidthStream(stream);
+        stream = bandwidthStream;
+        if (response.Content.Headers.ContentEncoding.Contains("zstd"))
+            stream = new ZStdDecompressStream(stream);
+
+        await using var streamDispose = stream;
 
         // Read flags header
         var streamHeader = await stream.ReadExactAsync(4, cancel);
@@ -782,8 +791,9 @@ public sealed class Updater : ReactiveObject
             {
                 // Simple loop stuff.
                 cancel.ThrowIfCancellationRequested();
-                Progress = (i++, toDownload.Count, ProgressUnit.None);
 
+                Progress = (i, toDownload.Count, ProgressUnit.None);
+                Speed = bandwidthStream.CalcCurrentAvg();
 
                 // Read file header.
                 await stream.ReadExactAsync(fileHeader, cancel);
@@ -894,6 +904,7 @@ public sealed class Updater : ReactiveObject
                 swSqlite.Stop();
 
                 // Log.Debug("Data size: {DataSize}, Size: {UncompressedLen}", writeData.Length, uncompressedLen);
+                i += 1;
             }
         }
         finally
@@ -904,6 +915,9 @@ public sealed class Updater : ReactiveObject
             stmtFindContentHash?.Dispose();
             stmtUpdateContent?.Dispose();
         }
+
+        Progress = null;
+        Speed = null;
 
         void CheckErr(int err) => SqliteException.ThrowExceptionForRC(err, con.Handle);
     }
