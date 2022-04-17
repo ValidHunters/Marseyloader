@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Buffers;
 using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using SharpZstd.Interop;
 using static SharpZstd.Interop.Zstd;
+using static SS14.Launcher.Utility.Libc;
 
 namespace SS14.Launcher.Utility;
 
@@ -15,6 +18,44 @@ public static class ZStd
     public static int CompressBound(int length)
     {
         return (int)ZSTD_compressBound((nuint)length);
+    }
+
+    [ModuleInitializer]
+    public static void InitZStd()
+    {
+        NativeLibrary.SetDllImportResolver(
+            typeof(Zstd).Assembly,
+            ResolveZstd
+            );
+    }
+
+    private static IntPtr ResolveZstd(string name, Assembly assembly, DllImportSearchPath? path)
+    {
+        if (name == "zstd" && OperatingSystem.IsLinux())
+        {
+            var paths = (string)AppContext.GetData("NATIVE_DLL_SEARCH_DIRECTORIES")!;
+            foreach (var p in paths.Split(':', StringSplitOptions.RemoveEmptyEntries))
+            {
+                var tryPath = Path.Join(p, "zstd.so");
+                // Console.WriteLine($"TRYING: {tryPath}");
+                var result = dlopen(tryPath, RTLD_LOCAL | RTLD_DEEPBIND | RTLD_LAZY);
+                // Console.WriteLine(result);
+                if (result != IntPtr.Zero)
+                {
+                    // Console.WriteLine($"FOUND: {tryPath}");
+                    return result;
+                }
+            }
+
+            // Try some extra paths too worst case.
+            if (NativeLibrary.TryLoad("libzstd.so", out var handle))
+                return handle;
+
+            if (NativeLibrary.TryLoad("libzstd.so.1", out handle))
+                return handle;
+        }
+
+        return IntPtr.Zero;
     }
 }
 
