@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using SharpZstd.Interop;
 using static SharpZstd.Interop.Zstd;
-using static SS14.Launcher.Utility.Libc;
 
 namespace SS14.Launcher.Utility;
 
@@ -33,30 +32,11 @@ public static class ZStd
     {
         if (name == "zstd" && OperatingSystem.IsLinux())
         {
-            try
-            {
-                var paths = (string)AppContext.GetData("NATIVE_DLL_SEARCH_DIRECTORIES")!;
-                foreach (var p in paths.Split(':', StringSplitOptions.RemoveEmptyEntries))
-                {
-                    var tryPath = Path.Join(p, "zstd.so");
-                    // Console.WriteLine($"TRYING: {tryPath}");
-                    var result = dlopen(tryPath, RTLD_LOCAL | RTLD_DEEPBIND | RTLD_LAZY);
-                    // Console.WriteLine(result);
-                    if (result != IntPtr.Zero)
-                    {
-                        // Console.WriteLine($"FOUND: {tryPath}");
-                        return result;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Catch and at least provide some way of retrieving this.
-                Console.WriteLine($"Exception during ZStd libdl search: {ex}");
-            }
+            if (NativeLibrary.TryLoad("zstd.so", out var handle))
+                return handle;
 
             // Try some extra paths too worst case.
-            if (NativeLibrary.TryLoad("libzstd.so.1", out var handle))
+            if (NativeLibrary.TryLoad("libzstd.so.1", out handle))
                 return handle;
 
             if (NativeLibrary.TryLoad("libzstd.so", out handle))
