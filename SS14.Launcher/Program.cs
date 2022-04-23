@@ -95,6 +95,7 @@ internal static class Program
 
         Log.Information("Runtime: {RuntimeDesc} {RuntimeInfo}", RuntimeInformation.FrameworkDescription, RuntimeInformation.RuntimeIdentifier);
         Log.Information("OS: {OSDesc} {OSArch}", RuntimeInformation.OSDescription, RuntimeInformation.OSArchitecture);
+        Log.Information("Launcher version: {LauncherVersion}", typeof(Program).Assembly.GetName().Version);
 
 #if DEBUG
         Logger.Sink = new AvaloniaSeriLogger(new LoggerConfiguration()
