@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http;
@@ -18,25 +19,14 @@ public class ServerListTabViewModel : MainWindowTabViewModel
 {
     private readonly MainWindowViewModel _windowVm;
     private readonly HttpClient _http;
-    private CancellationTokenSource? _refreshCancel;
+    private readonly ServerListCache _serverListCache;
 
     public ObservableCollection<ServerEntryViewModel> SearchedServers { get; } = new();
 
-    private readonly List<ServerEntryViewModel> _allServers = new();
-    private RefreshListStatus _status = RefreshListStatus.NotUpdated;
+    private List<ServerEntryViewModel> _allServers => _serverListCache.AllServers.Select(
+        x => new ServerEntryViewModel(_windowVm, x)
+    ).ToList();
     private string? _searchString;
-
-    private RefreshListStatus Status
-    {
-        get => _status;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _status, value);
-            this.RaisePropertyChanged(nameof(ListText));
-            this.RaisePropertyChanged(nameof(ListTextVisible));
-            this.RaisePropertyChanged(nameof(SpinnerVisible));
-        }
-    }
 
     public override string Name => "Servers";
 
@@ -51,26 +41,27 @@ public class ServerListTabViewModel : MainWindowTabViewModel
         }
     }
 
-    public bool ListTextVisible => Status != RefreshListStatus.Updated;
-    public bool SpinnerVisible => Status < RefreshListStatus.Updated;
+    public bool ListTextVisible => _serverListCache.Status != RefreshListStatus.Updated;
+    public bool SpinnerVisible => _serverListCache.Status < RefreshListStatus.Updated;
 
     public string ListText
     {
         get
         {
-            if (Status == RefreshListStatus.Error)
+            var status = _serverListCache.Status;
+            if (status == RefreshListStatus.Error)
                 return "There was an error fetching the master server list.";
 
-            if (Status == RefreshListStatus.UpdatingMaster)
+            if (status == RefreshListStatus.UpdatingMaster)
                 return "Fetching master server list...";
 
             if (SearchedServers.Count == 0 && _allServers.Count != 0)
                 return "No servers match your search.";
 
-            if (Status == RefreshListStatus.Updating)
+            if (status == RefreshListStatus.Updating)
                 return "Discovering servers...";
 
-            if (Status == RefreshListStatus.NotUpdated)
+            if (status == RefreshListStatus.NotUpdated)
                 return "";
 
             if (_allServers.Count == 0)
@@ -84,75 +75,30 @@ public class ServerListTabViewModel : MainWindowTabViewModel
     {
         _windowVm = windowVm;
         _http = Locator.Current.GetRequiredService<HttpClient>();
+        _serverListCache = Locator.Current.GetRequiredService<ServerListCache>();
+
+        _serverListCache.AllServers.CollectionChanged += (_, _) => UpdateSearchedList();
+        _serverListCache.PropertyChanged += (_, args) =>
+        {
+            switch (args.PropertyName)
+            {
+                case nameof(ServerListCache.Status):
+                    this.RaisePropertyChanged(nameof(ListText));
+                    this.RaisePropertyChanged(nameof(ListTextVisible));
+                    this.RaisePropertyChanged(nameof(SpinnerVisible));
+                    break;
+            }
+        };
     }
 
     public override void Selected()
     {
-        if (Status == RefreshListStatus.NotUpdated)
-        {
-            _refreshCancel?.Cancel();
-            _refreshCancel = new CancellationTokenSource();
-            RefreshServerList(_refreshCancel.Token);
-        }
+        _serverListCache.RequestInitialUpdate();
     }
 
     public void RefreshPressed()
     {
-        _refreshCancel?.Cancel();
-        _allServers.Clear();
-        SearchedServers.Clear();
-        _refreshCancel = new CancellationTokenSource();
-        RefreshServerList(_refreshCancel.Token);
-    }
-
-    private async void RefreshServerList(CancellationToken cancel)
-    {
-        _allServers.Clear();
-        Status = RefreshListStatus.UpdatingMaster;
-
-        try
-        {
-            using var response = await _http.GetAsync(ConfigConstants.HubUrl + "api/servers", cancel);
-
-            response.EnsureSuccessStatusCode();
-
-            var entries = await response.Content.AsJson<ServerListEntry[]>();
-
-            Status = RefreshListStatus.Updating;
-
-            await Parallel.ForEachAsync(entries, new ParallelOptions
-            {
-                MaxDegreeOfParallelism = 20,
-                CancellationToken = cancel
-            }, async (entry, token) =>
-            {
-                var status = new ServerStatusData(entry.Address);
-                await ServerStatusCache.UpdateStatusFor(status, _http, token);
-
-                if (status.Status == ServerStatusCode.Offline)
-                    return;
-
-                Dispatcher.UIThread.Post(() =>
-                {
-                    if (!cancel.IsCancellationRequested)
-                    {
-                        // Log.Information("{Name}: {Address}", status.Name, status.Address);
-                        _allServers.Add(new ServerEntryViewModel(_windowVm, status) { FallbackName = entry.Name ?? "" });
-                        UpdateSearchedList();
-                    }
-                });
-            });
-
-            Status = RefreshListStatus.Updated;
-        }
-        catch (OperationCanceledException)
-        {
-        }
-        catch (Exception e)
-        {
-            Log.Error(e, "Failed to fetch server list due to exception");
-            Status = RefreshListStatus.Error;
-        }
+        _serverListCache.RequestRefresh();
     }
 
     private void UpdateSearchedList()
@@ -182,39 +128,5 @@ public class ServerListTabViewModel : MainWindowTabViewModel
 
         return vm.CacheData.Name != null &&
                vm.CacheData.Name.Contains(SearchString, StringComparison.CurrentCultureIgnoreCase);
-    }
-
-    private sealed class ServerListEntry
-    {
-        public string Address { get; set; } = default!;
-        public string Name { get; set; } = default!;
-    }
-
-    private enum RefreshListStatus
-    {
-        /// <summary>
-        /// Hasn't started updating yet?
-        /// </summary>
-        NotUpdated,
-
-        /// <summary>
-        /// Fetching master server list.
-        /// </summary>
-        UpdatingMaster,
-
-        /// <summary>
-        /// Fetched master server list and currently fetching information from master servers.
-        /// </summary>
-        Updating,
-
-        /// <summary>
-        /// Fetched information from ALL servers from the hub.
-        /// </summary>
-        Updated,
-
-        /// <summary>
-        /// An error occured.
-        /// </summary>
-        Error
     }
 }
