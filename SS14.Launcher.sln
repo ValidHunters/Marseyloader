@@ -36,6 +36,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Loader", "SS14.Loader\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robust.LoaderApi", "Robust.LoaderApi\Robust.LoaderApi\Robust.LoaderApi.csproj", "{D7B7D05D-4C78-41AB-9643-6543EF8EBE29}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MSBuild", "MSBuild", "{3B5FEB12-2A8A-4F35-9367-C1A36CD5068B}"
+	ProjectSection(SolutionItems) = preProject
+		MSBuild\Robust.Trimming.targets = MSBuild\Robust.Trimming.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

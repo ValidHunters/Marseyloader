@@ -65,9 +65,14 @@
     <EmbeddedResource Include="Models\ContentManagement\Migrations\*.sql" />
   </ItemGroup>
   <ItemGroup>
+    <RobustLinkRoots Include="SS14.Launcher" />
+    <RobustLinkAssemblies Include="TerraFX.Interop.Windows" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="signing_key" />
     <Content Include="signing_key">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <Import Project="..\MSBuild\Robust.Trimming.targets" />
 </Project>
