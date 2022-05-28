@@ -396,13 +396,13 @@ public sealed class Updater : ReactiveObject
                 // Copy module dependencies.
                 con.Execute(@"
                     INSERT INTO ContentEngineDependency (VersionId, ModuleName, ModuleVersion)
-                    SELECT (@NewVersion, ModuleName, ModuleVersion)
+                    SELECT @NewVersion, ModuleName, ModuleVersion
                     FROM ContentEngineDependency
                     WHERE VersionId = @OldVersion",
                     new
                     {
                         NewVersion = versionId,
-                        OldVersion = existingVersion.ForkVersion
+                        OldVersion = existingVersion.Id
                     });
             }
         }
