@@ -504,7 +504,7 @@ public sealed class Updater : ReactiveObject
 
             con.Execute(
                 @"INSERT INTO ContentEngineDependency(VersionId, ModuleName, ModuleVersion)
-                        VALUES (@Version, @ModName, @EngineVersion)",
+                        VALUES (@Version, @ModName, @ModVersion)",
                 new
                 {
                     Version = versionId,
