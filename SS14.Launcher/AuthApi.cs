@@ -48,7 +48,7 @@ public sealed class AuthApi
     {
         try
         {
-            const string authUrl = ConfigConstants.AuthUrl + "api/auth/authenticate";
+            var authUrl = ConfigConstants.AuthUrl + "api/auth/authenticate";
 
             using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -99,7 +99,7 @@ public sealed class AuthApi
                 Password = password
             };
 
-            const string authUrl = ConfigConstants.AuthUrl + "api/auth/register";
+            var authUrl = ConfigConstants.AuthUrl + "api/auth/register";
 
             using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -143,7 +143,7 @@ public sealed class AuthApi
                 Email = email,
             };
 
-            const string authUrl = ConfigConstants.AuthUrl + "api/auth/resetPassword";
+            var authUrl = ConfigConstants.AuthUrl + "api/auth/resetPassword";
 
             using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -173,7 +173,7 @@ public sealed class AuthApi
                 Email = email,
             };
 
-            const string authUrl = ConfigConstants.AuthUrl + "api/auth/resendConfirmation";
+            var authUrl = ConfigConstants.AuthUrl + "api/auth/resendConfirmation";
 
             using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -207,7 +207,7 @@ public sealed class AuthApi
                 Token = token
             };
 
-            const string authUrl = ConfigConstants.AuthUrl + "api/auth/refresh";
+            var authUrl = ConfigConstants.AuthUrl + "api/auth/refresh";
 
             using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -253,7 +253,7 @@ public sealed class AuthApi
                 Token = token
             };
 
-            const string authUrl = ConfigConstants.AuthUrl + "api/auth/logout";
+            var authUrl = ConfigConstants.AuthUrl + "api/auth/logout";
 
             using var resp = await _httpClient.PostAsync(authUrl, request);
 
@@ -284,7 +284,7 @@ public sealed class AuthApi
     {
         try
         {
-            const string authUrl = ConfigConstants.AuthUrl + "api/auth/ping";
+            var authUrl = ConfigConstants.AuthUrl + "api/auth/ping";
 
             using var requestMessage = new HttpRequestMessage(HttpMethod.Get, authUrl);
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("SS14Auth", token);
