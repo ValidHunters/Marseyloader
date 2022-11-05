@@ -90,7 +90,12 @@ public static class Helpers
 
     public static void OpenUri(Uri uri)
     {
-        Process.Start(new ProcessStartInfo(uri.ToString()) {UseShellExecute = true});
+        OpenUri(uri.ToString());
+    }
+
+    public static void OpenUri(string uri)
+    {
+        Process.Start(new ProcessStartInfo(uri) {UseShellExecute = true});
     }
 
     private static readonly string[] ByteSuffixes =

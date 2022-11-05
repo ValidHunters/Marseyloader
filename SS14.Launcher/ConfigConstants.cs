@@ -28,6 +28,7 @@ public static class ConfigConstants
     public static readonly string AuthUrl = "https://central.spacestation14.io/auth/";
     public const string HubUrl = "https://central.spacestation14.io/hub/";
     public const string DiscordUrl = "https://discord.ss14.io/";
+    public const string AccountManagementUrl = "https://central.spacestation14.io/web/Identity/Account/Manage";
     public const string WebsiteUrl = "https://spacestation14.io";
     public const string DownloadUrl = "https://spacestation14.io/about/nightlies/";
     public const string LauncherVersionUrl = "https://central.spacestation14.io/launcher_version.txt";
