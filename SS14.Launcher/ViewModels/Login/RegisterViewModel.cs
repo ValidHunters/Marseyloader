@@ -92,7 +92,7 @@ public class RegisterViewModel : BaseLoginViewModel
 
     public async void OnRegisterInButtonPressed()
     {
-        if (!IsInputValid)
+        if (!IsInputValid || Busy)
         {
             return;
         }

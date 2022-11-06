@@ -50,6 +50,9 @@ public sealed class AuthTfaViewModel : BaseLoginViewModel
 
     public async void ConfirmTfa()
     {
+        if (Busy)
+            return;
+
         var tfaLogin = _request with { TfaCode = Code.Trim() };
 
         Busy = true;

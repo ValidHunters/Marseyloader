@@ -32,7 +32,7 @@ public class LoginViewModel : BaseLoginViewModel
 
     public async void OnLogInButtonPressed()
     {
-        if (!IsInputValid)
+        if (!IsInputValid || Busy)
         {
             return;
         }

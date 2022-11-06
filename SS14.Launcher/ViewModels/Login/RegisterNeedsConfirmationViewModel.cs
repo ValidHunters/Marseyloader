@@ -71,6 +71,9 @@ public class RegisterNeedsConfirmationViewModel : BaseLoginViewModel
 
     public async void ConfirmButtonPressed()
     {
+        if (Busy)
+            return;
+
         Busy = true;
 
         try

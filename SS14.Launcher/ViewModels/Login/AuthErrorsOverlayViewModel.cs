@@ -34,4 +34,9 @@ public class AuthErrorsOverlayViewModel : ViewModelBase
 
         return new[] { err };
     }
+
+    public void Ok()
+    {
+        ParentVm.OverlayOk();
+    }
 }

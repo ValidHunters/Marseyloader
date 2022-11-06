@@ -21,6 +21,9 @@ public sealed class ForgotPasswordViewModel : BaseLoginViewModel
 
     public async void SubmitPressed()
     {
+        if (Busy)
+            return;
+
         Busy = true;
         try
         {

@@ -17,6 +17,9 @@ public class ResendConfirmationViewModel : BaseLoginViewModel
 
     public async void SubmitPressed()
     {
+        if (Busy)
+            return;
+
         Busy = true;
         try
         {

@@ -29,6 +29,9 @@ public class ExpiredLoginViewModel : BaseLoginViewModel
 
     public async void OnLogInButtonPressed()
     {
+        if (Busy)
+            return;
+
         Busy = true;
         try
         {
