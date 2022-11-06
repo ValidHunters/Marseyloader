@@ -24,10 +24,6 @@
     </AvaloniaResource>
 
     <AdditionalFiles Include="**\*.xaml" />
-
-    <Compile Remove="Models\Data\InstalledServerContent.cs" />
-
-    <Compile Remove="Models\ContentManagement\ZStdDecompressStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.13" />
