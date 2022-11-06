@@ -1,12 +1,9 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using ReactiveUI;
 
 namespace SS14.Launcher.Models.Data;
 
-[Serializable]
-// Without OptIn JSON.NET chokes on ReactiveObject.
-[JsonObject(MemberSerialization.OptIn)]
 public sealed class FavoriteServer : ReactiveObject
 {
     private string? _name;
@@ -31,14 +28,14 @@ public sealed class FavoriteServer : ReactiveObject
         RaiseTime = raiseTime;
     }
 
-    [JsonProperty(PropertyName = "name")]
+    [JsonPropertyName("name")]
     public string? Name
     {
         get => _name;
         set => this.RaiseAndSetIfChanged(ref _name, value);
     }
 
-    [JsonProperty(PropertyName = "address")]
+    [JsonPropertyName("address")]
     public string Address { get; private set; } // Need private set for JSON.NET to work.
 
     /// <summary>
