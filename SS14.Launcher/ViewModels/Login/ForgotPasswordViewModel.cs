@@ -3,21 +3,20 @@ using SS14.Launcher.Models.Data;
 
 namespace SS14.Launcher.ViewModels.Login;
 
-public sealed class ForgotPasswordViewModel : BaseLoginViewModel, IErrorOverlayOwner
+public sealed class ForgotPasswordViewModel : BaseLoginViewModel
 {
-    private readonly DataManager _cfg;
     private readonly AuthApi _authApi;
-    public MainWindowLoginViewModel ParentVM { get; }
 
     [Reactive] public string EditingEmail { get; set; } = "";
 
     private bool _errored;
 
-    public ForgotPasswordViewModel(DataManager cfg, MainWindowLoginViewModel parentVM, AuthApi authApi)
+    public ForgotPasswordViewModel(
+        MainWindowLoginViewModel parentVM,
+        AuthApi authApi)
+        : base(parentVM)
     {
-        _cfg = cfg;
         _authApi = authApi;
-        ParentVM = parentVM;
     }
 
     public async void SubmitPressed()
@@ -33,7 +32,7 @@ public sealed class ForgotPasswordViewModel : BaseLoginViewModel, IErrorOverlayO
             if (!_errored)
             {
                 // This isn't an error lol but that's what I called the control.
-                OverlayControl = new AuthErrorsOverlayViewModel(this, "Reset email sent", new []
+                OverlayControl = new AuthErrorsOverlayViewModel(this, "Reset email sent", new[]
                 {
                     "A reset link has been sent to your email address."
                 });
@@ -47,15 +46,13 @@ public sealed class ForgotPasswordViewModel : BaseLoginViewModel, IErrorOverlayO
         {
             Busy = false;
         }
-
     }
 
-    public void OverlayOk()
+    public override void OverlayOk()
     {
         if (_errored)
         {
-            // Clear overlay and allow re-submit if an error occured.
-            OverlayControl = null;
+            base.OverlayOk();
         }
         else
         {

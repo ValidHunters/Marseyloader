@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Runtime.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Serilog;
 using Splat;
@@ -23,19 +24,7 @@ public sealed class AuthApi
         _httpClient = Locator.Current.GetRequiredService<HttpClient>();
     }
 
-    public Task<AuthenticateResult> AuthenticateAsync(Guid userId, string password)
-    {
-        var request = new AuthenticateRequest(null, userId, password);
-        return AuthenticateImpl(request);
-    }
-
-    public Task<AuthenticateResult> AuthenticateAsync(string username, string password)
-    {
-        var request = new AuthenticateRequest(username, null, password);
-        return AuthenticateImpl(request);
-    }
-
-    private async Task<AuthenticateResult> AuthenticateImpl(AuthenticateRequest request)
+    public async Task<AuthenticateResult> AuthenticateAsync(AuthenticateRequest request)
     {
         try
         {
@@ -59,23 +48,29 @@ public sealed class AuthApi
             {
                 // Login failure.
                 var respJson = await resp.Content.AsJson<AuthenticateDenyResponse>();
-                return new AuthenticateResult(respJson.Errors);
+                return new AuthenticateResult(respJson.Errors, respJson.Code);
             }
 
             Log.Error("Server returned unexpected HTTP status code: {responseCode}", resp.StatusCode);
             Log.Debug("Response for error:\n{response}\n{content}", resp, await resp.Content.ReadAsStringAsync());
             // Unknown error? uh oh.
-            return new AuthenticateResult(new[] { "Server returned unknown error" });
+            return new AuthenticateResult(
+                new[] { "Server returned unknown error" },
+                AuthenticateDenyResponseCode.UnknownError);
         }
         catch (JsonException e)
         {
             Log.Error(e, "JsonException in AuthenticateAsync");
-            return new AuthenticateResult(new[] { "Server sent invalid response" });
+            return new AuthenticateResult(
+                new[] { "Server sent invalid response" },
+                AuthenticateDenyResponseCode.UnknownError);
         }
         catch (HttpRequestException httpE)
         {
             Log.Error(httpE, "HttpRequestException in AuthenticateAsync");
-            return new AuthenticateResult(new[] { $"Connection error to authentication server: {httpE.Message}" });
+            return new AuthenticateResult(
+                new[] { $"Connection error to authentication server: {httpE.Message}" },
+                AuthenticateDenyResponseCode.UnknownError);
         }
     }
 
@@ -286,11 +281,37 @@ public sealed class AuthApi
         }
     }
 
-    public sealed record AuthenticateRequest(string? Username, Guid? UserId, string Password);
+    public sealed record AuthenticateRequest(string? Username, Guid? UserId, string Password, string? TfaCode = null)
+    {
+        public AuthenticateRequest(string username, string password) : this(username, null, password)
+        {
+
+        }
+
+        public AuthenticateRequest(Guid userId, string password) : this(null, userId, password)
+        {
+
+        }
+    }
 
     public sealed record AuthenticateResponse(string Token, string Username, Guid UserId, DateTimeOffset ExpireTime);
 
-    public sealed record AuthenticateDenyResponse(string[] Errors);
+    public sealed record AuthenticateDenyResponse(string[] Errors, AuthenticateDenyResponseCode Code);
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum AuthenticateDenyResponseCode
+    {
+        // @formatter:off
+        None               =  0,
+        InvalidCredentials =  1,
+        AccountUnconfirmed =  2,
+        TfaRequired        =  3,
+        TfaInvalid         =  4,
+
+        // Not actually from the API, but used internally.
+        UnknownError       = -1,
+        // @formatter:on
+    }
 
     public sealed record RegisterRequest(string Username, string Email, string Password);
 
@@ -313,17 +334,20 @@ public readonly struct AuthenticateResult
 {
     private readonly LoginInfo? _loginInfo;
     private readonly string[]? _errors;
+    public AuthApi.AuthenticateDenyResponseCode Code { get; }
 
     public AuthenticateResult(LoginInfo loginInfo)
     {
         _loginInfo = loginInfo;
         _errors = null;
+        Code = default;
     }
 
-    public AuthenticateResult(string[] errors)
+    public AuthenticateResult(string[] errors, AuthApi.AuthenticateDenyResponseCode code)
     {
         _loginInfo = null;
         _errors = errors;
+        Code = code;
     }
 
     public bool IsSuccess => _loginInfo != null;
