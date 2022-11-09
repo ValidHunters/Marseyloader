@@ -283,8 +283,6 @@ public class Connector : ReactiveObject
             }
         }
 
-        startInfo.EnvironmentVariables["DOTNET_ROLL_FORWARD"] = "LatestMajor";
-
         if (_cfg.GetCVar(CVars.DisableSigning))
             startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = "true";
 
