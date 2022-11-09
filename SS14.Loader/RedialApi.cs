@@ -35,6 +35,10 @@ internal sealed class RedialApi : IRedialApi
             }
         };
 
+        startInfo.EnvironmentVariables.Remove("DOTNET_TieredPGO");
+        startInfo.EnvironmentVariables.Remove("DOTNET_TC_QuickJitForLoops");
+        startInfo.EnvironmentVariables.Remove("DOTNET_ReadyToRun");
+
         Process.Start(startInfo);
     }
 }
