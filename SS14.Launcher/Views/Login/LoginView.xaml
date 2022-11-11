@@ -36,11 +36,11 @@
     </DockPanel>
 
     <DockPanel DockPanel.Dock="Top" LastChildFill="False" MaxWidth="300">
-        <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Resend email confirmation" Command="{Binding ParentVM.SwitchToResendConfirmation}"/>
+        <Button DockPanel.Dock="Left" HorizontalAlignment="Center" Content="Resend email confirmation" Command="{Binding ResendConfirmationPressed}"/>
     </DockPanel>
 
     <Button DockPanel.Dock="Bottom" Classes="BigButton" Margin="0 4" HorizontalAlignment="Center"
-            Content="Don't have an account? Register!" Command="{Binding ParentVM.SwitchToRegister}"
+            Content="Don't have an account? Register!" Command="{Binding RegisterPressed}"
             IsEnabled="{Binding !Busy}" />
   </DockPanel>
 </UserControl>

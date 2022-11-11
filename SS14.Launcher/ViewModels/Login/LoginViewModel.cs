@@ -95,4 +95,16 @@ public class LoginViewModel : BaseLoginViewModel
         vm.OverlayControl = new AuthErrorsOverlayViewModel(vm, "Unable to log in", errors);
         return false;
     }
+
+    public void RegisterPressed()
+    {
+        // Registration is purely via website now, sorry.
+        Helpers.OpenUri(ConfigConstants.AccountRegisterUrl);
+    }
+
+    public void ResendConfirmationPressed()
+    {
+        // Registration is purely via website now, sorry.
+        Helpers.OpenUri(ConfigConstants.AccountResendConfirmationUrl);
+    }
 }
