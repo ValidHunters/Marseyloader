@@ -5,9 +5,7 @@ using Avalonia.Threading;
 using DynamicData;
 using ReactiveUI;
 using Serilog;
-using Splat;
 using SS14.Launcher.Models.Data;
-using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.Models.Logins;
 
@@ -60,10 +58,10 @@ public sealed class LoginManager : ReactiveObject
 
     public IObservableCache<LoggedInAccount, Guid> Logins { get; }
 
-    public LoginManager()
+    public LoginManager(DataManager cfg, AuthApi authApi)
     {
-        _cfg = Locator.Current.GetRequiredService<DataManager>();
-        _authApi = Locator.Current.GetRequiredService<AuthApi>();
+        _cfg = cfg;
+        _authApi = authApi;
 
         _logins = _cfg.Logins
             .Connect()

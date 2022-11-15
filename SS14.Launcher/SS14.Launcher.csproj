@@ -58,6 +58,8 @@
     <EmbeddedResource Include="Models\Data\Migrations\*.sql" />
     <None Remove="Models\ContentManagement\Migrations\*.sql" />
     <EmbeddedResource Include="Models\ContentManagement\Migrations\*.sql" />
+    <None Remove="Models\OverrideAssets\Migrations\*.sql" />
+    <EmbeddedResource Include="Models\OverrideAssets\Migrations\*.sql" />
   </ItemGroup>
   <ItemGroup>
     <RobustLinkRoots Include="SS14.Launcher" />

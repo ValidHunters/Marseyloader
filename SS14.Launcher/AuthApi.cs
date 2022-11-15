@@ -8,10 +8,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Serilog;
-using Splat;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
-using SS14.Launcher.Utility;
 
 namespace SS14.Launcher;
 
@@ -19,9 +17,9 @@ public sealed class AuthApi
 {
     private readonly HttpClient _httpClient;
 
-    public AuthApi()
+    public AuthApi(HttpClient http)
     {
-        _httpClient = Locator.Current.GetRequiredService<HttpClient>();
+        _httpClient = http;
     }
 
     public async Task<AuthenticateResult> AuthenticateAsync(AuthenticateRequest request)

@@ -9,7 +9,7 @@
         MinWidth="650" MinHeight="400"
         Width="650" Height="400"
         x:Class="SS14.Launcher.Views.MainWindow"
-        Icon="/Assets/icon.ico"
+        Icon="{DynamicResource WindowIcon}"
         Title="Space Station 14 Launcher">
 
   <Design.DataContext>
@@ -19,30 +19,35 @@
   <Panel>
     <DockPanel LastChildFill="true">
       <!-- Header -->
-      <DockPanel DockPanel.Dock="Top" Margin="4, 0">
-        <DockPanel.Background>
+      <Panel DockPanel.Dock="Top" >
+        <Panel.Background>
           <SolidColorBrush Color="#212126" />
-        </DockPanel.Background>
-        <!-- Logo -->
-        <v:Logo DockPanel.Dock="Left" Height="60" HorizontalAlignment="Left" Margin="0, 8"></v:Logo>
-        <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
-              ColumnDefinitions="Auto, Auto" RowDefinitions="Auto, Auto">
-          <!-- Discord link -->
-          <Button Content="Discord" Grid.Row="0" Grid.Column="0" MinWidth="90"
-                  Command="{Binding OnDiscordButtonPressed}"
-                  Margin="0, 6, 4, 6" />
+        </Panel.Background>
 
-          <!-- Website link -->
-          <Button Content="Website" Grid.Row="0" Grid.Column="1" MinWidth="90"
-                  Command="{Binding OnWebsiteButtonPressed}"
-                  Margin="0, 6" />
+        <DockPanel Margin="4, 0">
+          <!-- Logo -->
+          <Image DockPanel.Dock="Left" HorizontalAlignment="Left" Height="60" Margin="0, 8"
+                 Source="{DynamicResource LogoLong}" />
+          <!--<v:Logo DockPanel.Dock="Left" Height="60" HorizontalAlignment="Left" Margin="0, 8"></v:Logo>-->
+          <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
+                ColumnDefinitions="Auto, Auto" RowDefinitions="Auto, Auto">
+            <!-- Discord link -->
+            <Button Content="Discord" Grid.Row="0" Grid.Column="0" MinWidth="90"
+                    Command="{Binding OnDiscordButtonPressed}"
+                    Margin="0, 6, 4, 6" />
 
-          <!-- Account drop down -->
-          <v:AccountDropDown Grid.ColumnSpan="2" Grid.Row="1"
-                             IsEnabled="{Binding $parent.DataContext.AccountDropDownVisible}"
-                             DataContext="{Binding AccountDropDown}" />
-        </Grid>
-      </DockPanel>
+            <!-- Website link -->
+            <Button Content="Website" Grid.Row="0" Grid.Column="1" MinWidth="90"
+                    Command="{Binding OnWebsiteButtonPressed}"
+                    Margin="0, 6" />
+
+            <!-- Account drop down -->
+            <v:AccountDropDown Grid.ColumnSpan="2" Grid.Row="1"
+                               IsEnabled="{Binding $parent.DataContext.AccountDropDownVisible}"
+                               DataContext="{Binding AccountDropDown}" />
+          </Grid>
+        </DockPanel>
+      </Panel>
       <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" />
       <Grid>
         <!-- Main tabbed layout when logged in -->
@@ -61,7 +66,8 @@
       </Grid>
     </DockPanel>
 
-    <ContentControl Classes="OverlayBox" IsVisible="{Binding LoginViewModel.Screen.OverlayControl, Converter={x:Static ObjectConverters.IsNotNull}}">
+    <ContentControl Classes="OverlayBox"
+                    IsVisible="{Binding LoginViewModel.Screen.OverlayControl, Converter={x:Static ObjectConverters.IsNotNull}}">
       <ContentControl Content="{Binding LoginViewModel.Screen.OverlayControl}" />
     </ContentControl>
 

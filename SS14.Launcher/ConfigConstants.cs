@@ -38,6 +38,9 @@ public static class ConfigConstants
     public const string RobustBuildsManifest = "https://central.spacestation14.io/builds/robust/manifest.json";
     public const string RobustModulesManifest = "https://central.spacestation14.io/builds/robust/modules.json";
 
+    public const string UrlOverrideAssets = "https://central.spacestation14.io/launcher/override_assets.json";
+    public const string UrlAssetsBase = "https://central.spacestation14.io/launcher/assets/";
+
     static ConfigConstants()
     {
         var envVarAuthUrl = Environment.GetEnvironmentVariable("SS14_LAUNCHER_OVERRIDE_AUTH");

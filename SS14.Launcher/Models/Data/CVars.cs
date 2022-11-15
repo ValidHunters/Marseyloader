@@ -76,6 +76,11 @@ public static class CVars
     /// Maximum amount of versions to keep of a specific fork ID.
     /// </summary>
     public static readonly CVarDef<int> MaxForkVersionsToKeep = CVarDef.Create("MaxForkVersionsToKeep", 3);
+
+    /// <summary>
+    /// Whether to display override assets (trans rights).
+    /// </summary>
+    public static readonly CVarDef<bool> OverrideAssets = CVarDef.Create("OverrideAssets", true);
 }
 
 /// <summary>

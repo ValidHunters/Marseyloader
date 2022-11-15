@@ -14,6 +14,7 @@ using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
+using SS14.Launcher.Models.OverrideAssets;
 using SS14.Launcher.Utility;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
@@ -79,12 +80,6 @@ internal static class Program
         cfg.Load();
         Locator.CurrentMutable.RegisterConstant(cfg);
 
-        var http = HappyEyeballsHttp.CreateHttpClient();
-        http.DefaultRequestHeaders.UserAgent.Add(
-            new ProductInfoHeaderValue(LauncherVersion.Name, LauncherVersion.Version?.ToString()));
-        http.DefaultRequestHeaders.Add("SS14-Launcher-Fingerprint", cfg.Fingerprint.ToString());
-        Locator.CurrentMutable.RegisterConstant(http);
-
         if (cfg.GetCVar(CVars.LogLauncher))
         {
             Log.Logger = new LoggerConfiguration()
@@ -110,7 +105,7 @@ internal static class Program
         {
             using (msgr.PipeServerSelfDestruct)
             {
-                BuildAvaloniaApp().Start(AppMain, args);
+                BuildAvaloniaApp(cfg).Start(AppMain, args);
                 msgr.PipeServerSelfDestruct.Cancel();
             }
         }
@@ -124,26 +119,43 @@ internal static class Program
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
-    private static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    private static AppBuilder BuildAvaloniaApp(DataManager cfg)
+    {
+        var locator = Locator.CurrentMutable;
+
+        var http = HappyEyeballsHttp.CreateHttpClient();
+        http.DefaultRequestHeaders.UserAgent.Add(
+            new ProductInfoHeaderValue(LauncherVersion.Name, LauncherVersion.Version?.ToString()));
+        http.DefaultRequestHeaders.Add("SS14-Launcher-Fingerprint", cfg.Fingerprint.ToString());
+        Locator.CurrentMutable.RegisterConstant(http);
+
+        var authApi = new AuthApi(http);
+        var overrideAssets = new OverrideAssetsManager(cfg, http);
+        var loginManager = new LoginManager(cfg, authApi);
+
+        locator.RegisterConstant(new ContentManager());
+        locator.RegisterConstant<IEngineManager>(new EngineManagerDynamic());
+        locator.RegisterConstant(new Updater());
+        locator.RegisterConstant(authApi);
+        locator.RegisterConstant(new ServerListCache());
+        locator.RegisterConstant(loginManager);
+        locator.RegisterConstant(overrideAssets);
+
+        return AppBuilder.Configure(() => new App(overrideAssets))
             .UsePlatformDetect()
             .UseReactiveUI();
+    }
 
     // Your application's entry point. Here you can initialize your MVVM framework, DI
     // container, etc.
     private static void AppMain(Application app, string[] args)
     {
-        var cfg = Locator.Current.GetService<DataManager>();
         var msgr = Locator.Current.GetRequiredService<LauncherMessaging>();
-        var contentManager = new ContentManager();
-        Locator.CurrentMutable.RegisterConstant(contentManager);
-        Locator.CurrentMutable.RegisterConstant<IEngineManager>(new EngineManagerDynamic());
-        Locator.CurrentMutable.RegisterConstant(new Updater());
-        Locator.CurrentMutable.RegisterConstant(new AuthApi());
-        Locator.CurrentMutable.RegisterConstant(new ServerListCache());
-        var lm = new LoginManager();
-        Locator.CurrentMutable.RegisterConstant(lm);
+        var contentManager = Locator.Current.GetRequiredService<ContentManager>();
+        var overrideAssets = Locator.Current.GetRequiredService<OverrideAssetsManager>();
+
         contentManager.Initialize();
+        overrideAssets.Initialize();
 
         var viewModel = new MainWindowViewModel();
         var window = new MainWindow

@@ -88,6 +88,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel
         }
     }
 
+    public bool OverrideAssets
+    {
+        get => Cfg.GetCVar(CVars.OverrideAssets);
+        set
+        {
+            Cfg.SetCVar(CVars.OverrideAssets, value);
+            Cfg.CommitConfig();
+        }
+    }
+
     public void ClearEngines()
     {
         _engineManager.ClearAllEngines();

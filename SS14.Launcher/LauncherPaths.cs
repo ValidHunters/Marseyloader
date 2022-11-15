@@ -33,6 +33,7 @@ public static class LauncherPaths
     public static readonly string PathClientStderrLog = Path.Combine(DirLogs, ClientStderrLogName);
     public static readonly string PathPublicKey = Path.Combine(DirLauncherInstall, "signing_key");
     public static readonly string PathContentDb = Path.Combine(DirLocalData, "content.db");
+    public static readonly string PathOverrideAssetsDb = Path.Combine(DirLocalData, "override_assets.db");
 
     public static void CreateDirs()
     {
