@@ -17,7 +17,7 @@ public sealed class ServerInfo
     [JsonPropertyName("links")] public ServerInfoLink[]? Links { get; set; }
 }
 
-public sealed record ServerInfoLink(string Name, string Icon, string Url);
+public sealed record ServerInfoLink(string Name, string? Icon, string Url);
 
 public class ServerAuthInformation
 {

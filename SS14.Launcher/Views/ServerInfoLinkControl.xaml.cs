@@ -46,6 +46,9 @@ public sealed partial class ServerInfoLinkControl : UserControl
         if (DataContext is not ServerInfoLink link)
             return;
 
+        if (link.Icon == null)
+            return;
+
         if (!ValidIcons.Contains(link.Icon))
         {
             Log.Warning("Invalid info icon: {Icon}", link.Icon);
