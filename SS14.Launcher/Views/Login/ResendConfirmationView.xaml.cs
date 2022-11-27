@@ -23,9 +23,4 @@ public sealed partial class ResendConfirmationView : UserControl
             vm.SubmitPressed();
         }
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }

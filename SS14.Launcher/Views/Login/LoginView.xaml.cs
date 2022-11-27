@@ -25,9 +25,4 @@ public partial class LoginView : UserControl
             vm.OnLogInButtonPressed();
         }
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }

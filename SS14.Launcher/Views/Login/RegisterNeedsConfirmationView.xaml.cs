@@ -9,9 +9,4 @@ public partial class RegisterNeedsConfirmationView : UserControl
     {
         InitializeComponent();
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }

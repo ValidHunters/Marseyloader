@@ -78,9 +78,4 @@ public sealed partial class DungSpinner : UserControl
         DrawElectron(0, pathX, pathY, sizeElectron, 0.0);
         DrawElectron(0, 0, 0, sizeNucleus, 0);
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }

@@ -27,9 +27,4 @@ public partial class ServerEntryView : UserControl
         if (DataContext is ObservableRecipient r)
             r.IsActive = false;
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }

@@ -26,9 +26,4 @@ public partial class RegisterView : UserControl
             vm.OnRegisterInButtonPressed();
         }
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }

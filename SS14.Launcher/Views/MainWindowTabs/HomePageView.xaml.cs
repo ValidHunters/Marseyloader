@@ -30,9 +30,4 @@ public partial class HomePageView : UserControl
 
         base.OnDataContextChanged(e);
     }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
 }
