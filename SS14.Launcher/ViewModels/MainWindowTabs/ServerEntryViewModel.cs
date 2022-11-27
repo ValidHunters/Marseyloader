@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Splat;
@@ -15,6 +16,7 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
     private readonly MainWindowViewModel _windowVm;
     private string Address => _cacheData.Address;
     private string _fallbackName = string.Empty;
+    private bool _isExpanded;
 
     public ServerEntryViewModel(MainWindowViewModel windowVm, ServerStatusData cacheData)
     {
@@ -33,10 +35,17 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
                 case nameof(IServerStatusData.Status):
                     OnPropertyChanged(nameof(IsOnline));
                     OnPropertyChanged(nameof(ServerStatusString));
+                    OnPropertyChanged(nameof(Description));
+                    CheckUpdateInfo();
                     break;
 
                 case nameof(IServerStatusData.Name):
                     OnPropertyChanged(nameof(Name));
+                    break;
+
+                case nameof(IServerStatusData.Description):
+                case nameof(IServerStatusData.StatusInfo):
+                    OnPropertyChanged(nameof(Description));
                     break;
             }
         };
@@ -61,7 +70,15 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
 
     public FavoriteServer? Favorite { get; }
 
-    public bool IsExpanded { get; set; }
+    public bool IsExpanded
+    {
+        get => _isExpanded;
+        set
+        {
+            _isExpanded = value;
+            CheckUpdateInfo();
+        }
+    }
 
     public string Name => Favorite?.Name ?? _cacheData.Name ?? _fallbackName;
     public string FavoriteButtonText => IsFavorite ? "Remove Favorite" : "Add Favorite";
@@ -92,6 +109,29 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
                 default:
                     throw new NotSupportedException();
             }
+        }
+    }
+
+    public string Description
+    {
+        get
+        {
+            switch (_cacheData.Status)
+            {
+                case ServerStatusCode.Offline:
+                    return "Unable to contact server";
+                case ServerStatusCode.FetchingStatus:
+                    return "Fetching server status...";
+            }
+
+            return _cacheData.StatusInfo switch
+            {
+                ServerStatusInfoCode.NotFetched => "Fetching server description...",
+                ServerStatusInfoCode.Fetching => "Fetching server description...",
+                ServerStatusInfoCode.Error => "Error while fetching server description",
+                ServerStatusInfoCode.Fetched => _cacheData.Description ?? "No server description provided",
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 
@@ -139,5 +179,17 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
     public void Receive(FavoritesChanged message)
     {
         OnPropertyChanged(nameof(FavoriteButtonText));
+    }
+
+    private void CheckUpdateInfo()
+    {
+        if (!IsExpanded || _cacheData.Status != ServerStatusCode.Online)
+            return;
+
+        if (_cacheData.StatusInfo is not (ServerStatusInfoCode.NotFetched or ServerStatusInfoCode.Error))
+            return;
+
+        var httpClient = Locator.Current.GetRequiredService<HttpClient>();
+        ServerStatusCache.UpdateInfoFor(_cacheData, httpClient);
     }
 }

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 127.14 127.14"
+   version="1.1"
+   id="svg11"
+   sodipodi:docname="discord.svg"
+   inkscape:export-filename="discord.png"
+   inkscape:export-xdpi="12.08117"
+   inkscape:export-ydpi="12.08117"
+   width="127.14"
+   height="127.14"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview13"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="4.7152745"
+     inkscape:cx="53.443336"
+     inkscape:cy="69.137014"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="2552"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg11" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.cls-1{fill:#fff;}</style>
+  </defs>
+  <g
+     id="图层_2"
+     data-name="图层 2"
+     transform="translate(-2.2516973e-4,15.39)">
+    <g
+       id="Discord_Logos"
+       data-name="Discord Logos">
+      <g
+         id="Discord_Logo_-_Large_-_White"
+         data-name="Discord Logo - Large - White">
+        <path
+           class="cls-1"
+           d="M 107.7,8.07 A 105.15,105.15 0 0 0 81.47,0 72.06,72.06 0 0 0 78.11,6.83 97.68,97.68 0 0 0 49,6.83 72.37,72.37 0 0 0 45.64,0 105.89,105.89 0 0 0 19.39,8.09 C 2.79,32.65 -1.71,56.6 0.54,80.21 V 80.21 A 105.73,105.73 0 0 0 32.71,96.36 77.7,77.7 0 0 0 39.6,85.25 68.42,68.42 0 0 1 28.75,80.07 C 29.66,79.41 30.55,78.73 31.41,78.07 A 75.57,75.57 0 0 0 95.73,78.07 C 96.6,78.78 97.49,79.46 98.39,80.07 A 68.68,68.68 0 0 1 87.52,85.26 77,77 0 0 0 94.41,96.36 105.25,105.25 0 0 0 126.6,80.22 V 80.22 C 129.24,52.84 122.09,29.11 107.7,8.07 Z M 42.45,65.69 C 36.18,65.69 31,60 31,53 31,46 36,40.26 42.43,40.26 48.86,40.26 54,46 53.89,53 53.78,60 48.84,65.69 42.45,65.69 Z M 84.69,65.69 C 78.41,65.69 73.25,60 73.25,53 73.25,46 78.25,40.26 84.69,40.26 91.13,40.26 96.23,46 96.12,53 96.01,60 91.08,65.69 84.69,65.69 Z"
+           id="path6" />
+      </g>
+    </g>
+  </g>
+</svg>

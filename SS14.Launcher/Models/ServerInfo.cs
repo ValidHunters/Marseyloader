@@ -12,7 +12,12 @@ public sealed class ServerInfo
 
     [JsonInclude, JsonPropertyName("build")] public ServerBuildInformation? BuildInformation;
     [JsonPropertyName("auth")] public ServerAuthInformation AuthInformation { get; set; } = default!;
+
+    [JsonPropertyName("desc")] public string? Desc { get; set; }
+    [JsonPropertyName("links")] public ServerInfoLink[]? Links { get; set; }
 }
+
+public sealed record ServerInfoLink(string Name, string Icon, string Url);
 
 public class ServerAuthInformation
 {

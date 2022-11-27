@@ -6,3 +6,11 @@ public enum ServerStatusCode
     FetchingStatus,
     Online
 }
+
+public enum ServerStatusInfoCode
+{
+    NotFetched,
+    Fetching,
+    Error,
+    Fetched
+}

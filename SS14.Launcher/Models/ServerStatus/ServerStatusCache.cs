@@ -119,6 +119,53 @@ public sealed class ServerStatusCache
         }
     }
 
+    public static async void UpdateInfoFor(ServerStatusData data, HttpClient http)
+    {
+        if (data.StatusInfo == ServerStatusInfoCode.Fetching)
+            return;
+
+        if (data.Status != ServerStatusCode.Online)
+        {
+            Log.Error("Refusing to fetch info for server {Server} before we know it's online", data.Address);
+            return;
+        }
+
+        data.InfoCancel?.Cancel();
+        data.InfoCancel = new CancellationTokenSource();
+        var cancel = data.InfoCancel.Token;
+
+        var statusAddr = UriHelper.GetServerInfoAddress(data.Address);
+        data.StatusInfo = ServerStatusInfoCode.Fetching;
+
+        ServerInfo info;
+        try
+        {
+            using (var linkedToken = CancellationTokenSource.CreateLinkedTokenSource(cancel))
+            {
+                linkedToken.CancelAfter(ConfigConstants.ServerStatusTimeout);
+
+                info = await http.GetFromJsonAsync<ServerInfo>(statusAddr, linkedToken.Token)
+                       ?? throw new InvalidDataException();
+            }
+
+            cancel.ThrowIfCancellationRequested();
+        }
+        catch (OperationCanceledException)
+        {
+            data.StatusInfo = ServerStatusInfoCode.NotFetched;
+            return;
+        }
+        catch (Exception e) when (e is JsonException or HttpRequestException or InvalidDataException)
+        {
+            data.StatusInfo = ServerStatusInfoCode.Error;
+            return;
+        }
+
+        data.StatusInfo = ServerStatusInfoCode.Fetched;
+        data.Description = info.Desc;
+        data.Links = info.Links;
+    }
+
     public void Refresh()
     {
         // TODO: This refreshes everything.
@@ -131,6 +178,11 @@ public sealed class ServerStatusCache
                 continue;
 
             datum.Cancellation?.Cancel();
+            datum.Data.InfoCancel?.Cancel();
+
+            datum.Data.StatusInfo = ServerStatusInfoCode.NotFetched;
+            datum.Data.Links = null;
+            datum.Data.Description = null;
 
             UpdateStatusFor(datum);
         }
@@ -141,6 +193,7 @@ public sealed class ServerStatusCache
         foreach (var value in _cachedData.Values)
         {
             value.Cancellation?.Cancel();
+            value.Data.InfoCancel?.Cancel();
         }
 
         _cachedData.Clear();

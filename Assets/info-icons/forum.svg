@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 4.2333332 4.2333333"
+   version="1.1"
+   id="svg17260"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="forum.svg"
+   inkscape:export-filename="forum.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview17262"
+     pagecolor="#373737"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="true"
+     inkscape:zoom="58.553984"
+     inkscape:cx="7.5144332"
+     inkscape:cy="9.3418067"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="2552"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid17611"
+       empspacing="4" />
+    <inkscape:grid
+       type="xygrid"
+       id="grid23921"
+       originx="0.13229166"
+       originy="0.13229166"
+       empspacing="4"
+       color="#a2e500"
+       opacity="0.14901961"
+       empcolor="#c8e500"
+       empopacity="0.30196078"
+       dotted="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs17257" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path26521"
+       style="fill:none;stroke:#ffffff;stroke-width:0.264583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       d="M 3.5718749,2.1166661 C 3.5718749,2.9203552 2.920356,3.571874 2.1166666,3.571874 1.9232631,3.571874 1.7386719,3.5341447 1.5698515,3.4656448 1.4066573,3.3994278 0.53232454,3.7537207 0.46652931,3.6976228 0.40626339,3.6462392 0.85235829,2.8687884 0.77086811,2.671255 0.70035641,2.5003336 0.66145825,2.3130424 0.66145825,2.1166661 0.66145825,1.3129769 1.3129772,0.6614581 2.1166666,0.66145813 2.920356,0.66145813 3.5718749,1.3129769 3.5718749,2.1166661 Z"
+       sodipodi:nodetypes="ssssssss" />
+  </g>
+</svg>

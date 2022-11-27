@@ -17,6 +17,10 @@ public interface IServerStatusData : INotifyPropertyChanged
     /// </summary>
     string? Name { get; set; }
 
+    string? Description { get; set; }
+
     ServerStatusCode Status { get; set; }
+    ServerStatusInfoCode StatusInfo { get; set; }
+
     int PlayerCount { get; set; }
 }

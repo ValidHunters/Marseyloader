@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
+             xmlns:models="clr-namespace:SS14.Launcher.Models"
+             xmlns:views="clr-namespace:SS14.Launcher.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.ServerEntryView">
   <Design.DataContext>
@@ -24,25 +26,35 @@
         </DockPanel>
       </Expander.Header>
       <DockPanel Margin="4">
-        <!-- Raise to top button. -->
-        <Button DockPanel.Dock="Right" HorizontalAlignment="Right"
-                IsVisible="{Binding ViewedInFavoritesPane}" Classes="OpenLeft"
-                Content="Raise to top"
-                Command="{Binding FavoriteRaiseButtonPressed}" />
-        <!--
-            Two versions of the favorite/unfavorite button based on if we're in the favorites pane.
-            This is so that OpenRight is applied properly.
-        -->
-        <Button DockPanel.Dock="Right" HorizontalAlignment="Right"
-                IsVisible="{Binding ViewedInFavoritesPane}" Classes="OpenRight"
-                Content="{Binding FavoriteButtonText}"
-                Command="{Binding FavoriteButtonPressed}" />
-        <Button DockPanel.Dock="Right" HorizontalAlignment="Right"
-                IsVisible="{Binding !ViewedInFavoritesPane}"
-                Content="{Binding FavoriteButtonText}"
-                Command="{Binding FavoriteButtonPressed}" />
-      </DockPanel>
+        <TextBlock DockPanel.Dock="Top" Name="Description" Margin="4,0,4,16"
+                   Text="{Binding Description}" />
 
+        <Grid DockPanel.Dock="Right" VerticalAlignment="Bottom" RowDefinitions="Auto,Auto">
+          <!-- Favorite add/remove button -->
+          <Button Grid.Row="0" HorizontalAlignment="Right"
+                  Content="{Binding FavoriteButtonText}"
+                  Command="{Binding FavoriteButtonPressed}" />
+
+          <!-- Raise to top button. -->
+          <Button Grid.Row="1" HorizontalAlignment="Right"
+                  IsVisible="{Binding ViewedInFavoritesPane}" Classes="OpenRight"
+                  Content="Raise to top"
+                  Command="{Binding FavoriteRaiseButtonPressed}" />
+        </Grid>
+
+        <ItemsControl VerticalAlignment="Bottom" Items="{Binding CacheData.Links}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="models:ServerInfoLink">
+              <views:ServerInfoLinkControl DataContext="{Binding}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </DockPanel>
     </Expander>
   </Panel>
 

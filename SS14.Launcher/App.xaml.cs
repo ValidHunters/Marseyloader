@@ -41,6 +41,7 @@ public class App : Application
         AvaloniaXamlLoader.Load(this);
 
         LoadBaseAssets();
+        IconsLoader.Load(this);
 
         _overrideAssets.AssetsChanged += OnAssetsChanged;
     }
