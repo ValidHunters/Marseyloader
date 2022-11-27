@@ -24,9 +24,10 @@
           <SolidColorBrush Color="#212126" />
         </Panel.Background>
 
-        <DockPanel Margin="4, 0">
+        <!-- Note: that top margin gets disabled from C# on Windows 11 due to the colored title bar. -->
+        <DockPanel Name="HeaderPanel" Margin="4, 8, 0, 0">
           <!-- Logo -->
-          <Image DockPanel.Dock="Left" HorizontalAlignment="Left" Height="60" Margin="0, 8"
+          <Image DockPanel.Dock="Left" HorizontalAlignment="Left" Height="60" Margin="0, 0, 0, 8"
                  Source="{DynamicResource LogoLong}" />
           <!--<v:Logo DockPanel.Dock="Left" Height="60" HorizontalAlignment="Left" Margin="0, 8"></v:Logo>-->
           <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"

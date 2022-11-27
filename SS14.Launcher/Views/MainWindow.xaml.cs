@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Win32;
 using SS14.Launcher.ViewModels;
 using TerraFX.Interop.Windows;
@@ -41,11 +40,6 @@ public partial class MainWindow : Window
         base.OnDataContextChanged(e);
     }
 
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
-
     private unsafe void DarkMode()
     {
         if (PlatformImpl is not WindowImpl windowImpl || Environment.OSVersion.Version.Build < 22000)
@@ -63,5 +57,9 @@ public partial class MainWindow : Window
 
         COLORREF r = 0x00262121;
         Windows.DwmSetWindowAttribute(hWnd, 35, &r, (uint) sizeof(COLORREF));
+
+        // Remove top margin of the window on Windows 11, since there's ample space after we recolor the title bar.
+        var margin = HeaderPanel.Margin;
+        HeaderPanel.Margin = new Thickness(margin.Left, 0, margin.Right, margin.Bottom);
     }
 }
