@@ -29,7 +29,12 @@ public sealed partial class ServerInfoLinkControl : UserControl
         if (DataContext is not ServerInfoLink link)
             return;
 
-        var uri = new Uri(link.Url);
+        if (!Uri.TryCreate(link.Url, UriKind.Absolute, out var uri))
+        {
+            Log.Error("Unable to parse URI in info link: {Link}", link.Url);
+            return;
+        }
+
         if (uri.Scheme is not ("http" or "https"))
         {
             Log.Error("Refusing to open info link {Link}, only http/https are allowed", uri);
