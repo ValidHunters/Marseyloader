@@ -18,6 +18,7 @@ using SS14.Launcher.Models.OverrideAssets;
 using SS14.Launcher.Utility;
 using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
+using TerraFX.Interop.Windows;
 using LogEventLevel = Serilog.Events.LogEventLevel;
 
 namespace SS14.Launcher;
@@ -35,14 +36,15 @@ internal static class Program
         Locator.CurrentMutable.RegisterConstant(msgr);
 
         // Parse arguments as early as possible for launcher messaging reasons.
-        string[] commands = {LauncherCommands.PingCommand};
+        string[] commands = { LauncherCommands.PingCommand };
         var commandSendAnyway = false;
         if (args.Length == 1)
         {
             // Check if this is a valid Uri, since that indicates re-invocation.
             if (Uri.TryCreate(args[0], UriKind.Absolute, out var result))
             {
-                commands = new string[] {LauncherCommands.BlankReasonCommand, LauncherCommands.ConstructConnectCommand(result)};
+                commands = new string[]
+                    { LauncherCommands.BlankReasonCommand, LauncherCommands.ConstructConnectCommand(result) };
                 // This ensures we queue up the connection even if we're starting the launcher now.
                 commandSendAnyway = true;
             }
@@ -60,6 +62,7 @@ internal static class Program
                 commandSendAnyway = true;
             }
         }
+
         // Note: This MUST occur before we do certain actions like:
         // + Open the launcher log file (and therefore wipe a user's existing launcher log)
         // + Initialize Avalonia (and therefore waste whatever time it takes to do that)
@@ -80,6 +83,8 @@ internal static class Program
         cfg.Load();
         Locator.CurrentMutable.RegisterConstant(cfg);
 
+        CheckWindows7(cfg);
+
         if (cfg.GetCVar(CVars.LogLauncher))
         {
             Log.Logger = new LoggerConfiguration()
@@ -89,7 +94,8 @@ internal static class Program
                 .CreateLogger();
         }
 
-        Log.Information("Runtime: {RuntimeDesc} {RuntimeInfo}", RuntimeInformation.FrameworkDescription, RuntimeInformation.RuntimeIdentifier);
+        Log.Information("Runtime: {RuntimeDesc} {RuntimeInfo}", RuntimeInformation.FrameworkDescription,
+            RuntimeInformation.RuntimeIdentifier);
         Log.Information("OS: {OSDesc} {OSArch}", RuntimeInformation.OSDescription, RuntimeInformation.OSArchitecture);
         Log.Information("Launcher version: {LauncherVersion}", typeof(Program).Assembly.GetName().Version);
 
@@ -114,8 +120,34 @@ internal static class Program
             Log.CloseAndFlush();
             cfg.Close();
         }
+
         // Wait for pipe server to shut down cleanly.
         _serverTask?.Wait();
+    }
+
+    private static unsafe void CheckWindows7(DataManager cfg)
+    {
+        // 9600 is Windows 8.1, minimum we currently support.
+        if (!OperatingSystem.IsWindows() || Environment.OSVersion.Version.Build >= 9600)
+            return;
+
+        if (cfg.GetCVar(CVars.DismissedOldWindows))
+            return;
+
+        const string text =
+            "You are using an old version of Windows that is no longer supported by Space Station 14.\n\n" +
+            "If anything breaks, DO NOT ASK FOR HELP OR SUPPORT.";
+
+        const string caption = "Unsupported Windows version";
+
+        fixed (char* pText = text)
+        fixed (char* pCaption = caption)
+        {
+            _ = Windows.MessageBoxW(HWND.NULL, (ushort*)pText, (ushort*)pCaption, MB.MB_OK | MB.MB_ICONWARNING);
+        }
+
+        cfg.SetCVar(CVars.DismissedOldWindows, true);
+        cfg.CommitConfig();
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
