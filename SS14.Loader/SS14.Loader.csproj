@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../Launcher.props" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <!--<OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>-->
-    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>

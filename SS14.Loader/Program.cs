@@ -39,7 +39,10 @@ internal class Program
     {
         var ourDir = Path.GetDirectoryName(typeof(Program).Assembly.Location);
         var a = Path.Combine(ourDir!, unmanaged);
-        return NativeLibrary.Load(a);
+        if (NativeLibrary.TryLoad(a, out var handle))
+            return handle;
+
+        return IntPtr.Zero;
     }
 
     private bool Run()

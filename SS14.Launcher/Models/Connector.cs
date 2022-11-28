@@ -266,8 +266,8 @@ public class Connector : ReactiveObject
             startInfo.EnvironmentVariables[k] = v;
         }
 
-        startInfo.EnvironmentVariables["SS14_LOADER_CONTENT_DB"] = LauncherPaths.PathContentDb;
-        startInfo.EnvironmentVariables["SS14_LOADER_CONTENT_VERSION"] = launchInfo.Version.ToString();
+        EnvVar("SS14_LOADER_CONTENT_DB", LauncherPaths.PathContentDb);
+        EnvVar("SS14_LOADER_CONTENT_VERSION", launchInfo.Version.ToString());
 
         // Env vars for engine modules.
         {
@@ -279,14 +279,14 @@ public class Connector : ReactiveObject
                 var modulePath = _engineManager.GetEngineModule(moduleName, moduleVersion);
 
                 var envVar = $"ROBUST_MODULE_{moduleName.ToUpperInvariant().Replace('.', '_')}";
-                startInfo.EnvironmentVariables[envVar] = modulePath;
+                EnvVar(envVar, modulePath);
             }
         }
 
         if (_cfg.GetCVar(CVars.DisableSigning))
-            startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = "true";
+            EnvVar("SS14_DISABLE_SIGNING", "true");
 
-        startInfo.EnvironmentVariables["SS14_LAUNCHER_PATH"] = Process.GetCurrentProcess().MainModule!.FileName;
+        EnvVar("SS14_LAUNCHER_PATH", Process.GetCurrentProcess().MainModule!.FileName);
 
         // ReSharper disable once ReplaceWithSingleAssignment.False
         var manualPipeLogging = false;
@@ -296,7 +296,7 @@ public class Connector : ReactiveObject
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                startInfo.Environment["SS14_LOG_CLIENT"] = LauncherPaths.PathClientMacLog;
+                EnvVar("SS14_LOG_CLIENT", LauncherPaths.PathClientMacLog);
             }
 
             startInfo.RedirectStandardOutput = true;
@@ -306,20 +306,31 @@ public class Connector : ReactiveObject
         if (_cfg.GetCVar(CVars.DynamicPgo))
         {
             Log.Debug("Dynamic PGO is enabled.");
-            startInfo.EnvironmentVariables["DOTNET_TieredPGO"] = "1";
-            startInfo.EnvironmentVariables["DOTNET_TC_QuickJitForLoops"] = "1";
-            startInfo.EnvironmentVariables["DOTNET_ReadyToRun"] = "0";
+            EnvVar("DOTNET_TieredPGO", "1");
+            EnvVar("DOTNET_TC_QuickJitForLoops", "1");
+            EnvVar("DOTNET_ReadyToRun", "0");
         }
 
         if (OperatingSystem.IsLinux())
         {
             // Work around https://github.com/space-wizards/RobustToolbox/issues/2563
             // Yuck.
-            startInfo.EnvironmentVariables["GLIBC_TUNABLES"] = "glibc.rtld.dynamic_sort=1";
+            EnvVar("GLIBC_TUNABLES", "glibc.rtld.dynamic_sort=1");
         }
+
+        EnvVar("DOTNET_ROLL_FORWARD", "Major");
+        EnvVar("DOTNET_MULTILEVEL_LOOKUP", "0");
 
         startInfo.UseShellExecute = false;
         startInfo.ArgumentList.AddRange(extraArgs);
+
+        /*
+        foreach (var arg in startInfo.ArgumentList)
+        {
+            Log.Debug("arg: {Arg}", arg);
+        }
+        */
+
         var process = Process.Start(startInfo);
 
         if (manualPipeLogging && process != null)
@@ -346,6 +357,12 @@ public class Connector : ReactiveObject
         }
 
         return process;
+
+        void EnvVar(string envVar, string value)
+        {
+            startInfo.EnvironmentVariables[envVar] = value;
+            // Log.Debug("Env: {EnvVar} = {Value}", envVar, value);
+        }
     }
 
     private static async void PipeOutput(Process process, Stream targetStdout, Stream targetStderr)
@@ -418,7 +435,7 @@ public class Connector : ReactiveObject
             basePath = Path.GetFullPath(Path.Combine(
                 LauncherPaths.DirLauncherInstall,
                 "..", "..", "..", "..",
-                "SS14.Loader", "bin", "Debug", "net6.0"));
+                "SS14.Loader", "bin", "Debug", "net7.0"));
         }
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
