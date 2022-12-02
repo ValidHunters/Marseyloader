@@ -12,12 +12,12 @@ PLATFORM_WINDOWS = "windows"
 PLATFORM_LINUX = "linux"
 PLATFORM_MACOS = "mac"
 
-DOTNET_RUNTIME_VERSION = "6.0.4"
+DOTNET_RUNTIME_VERSION = "7.0.0"
 
 DOTNET_RUNTIME_DOWNLOADS = {
-    PLATFORM_LINUX: "https://download.visualstudio.microsoft.com/download/pr/5b08d331-15ac-4a53-82a5-522fa45b1b99/65ae300dd160ae0b88b91dd78834ce3e/dotnet-runtime-6.0.4-linux-x64.tar.gz",
-    PLATFORM_WINDOWS: "https://download.visualstudio.microsoft.com/download/pr/3feaabc7-1786-4012-8e00-d664f00581e9/8d9b529256502637663ddd4048de04dc/dotnet-runtime-6.0.4-win-x64.zip",
-    PLATFORM_MACOS: "https://download.visualstudio.microsoft.com/download/pr/c0bc0428-852d-4884-b536-3d0969a400ba/fe0a9a221c3e665e88b7020633f2cf8e/dotnet-runtime-6.0.4-osx-x64.tar.gz"
+    PLATFORM_LINUX: "https://download.visualstudio.microsoft.com/download/pr/d4b0a69b-29cd-40ef-9e95-a8d16f0ff346/5844add76ae3917af9efd59d95e3cbd4/dotnet-runtime-7.0.0-linux-x64.tar.gz",
+    PLATFORM_WINDOWS: "https://download.visualstudio.microsoft.com/download/pr/243bac9c-0559-4d5e-9ab3-60aa92ef51bd/1bb509033e17301021a458b4214f0931/dotnet-runtime-7.0.0-win-x64.zip",
+    PLATFORM_MACOS: "https://download.visualstudio.microsoft.com/download/pr/93aca2a1-570c-4db7-90a1-de89a3a53f27/2d443a62676d498918def9188859f900/dotnet-runtime-7.0.0-osx-x64.tar.gz"
 }
 
 p = os.path.join

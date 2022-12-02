@@ -1,6 +1,13 @@
 ﻿<Project>
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <!--
+        Me from the present putting a note so me from the future doesn't oopsie like me from the past did:
+        Other places this value needs to be updated:
+        1. Packaging scripts.
+        2. Download .NET runtime script.
+        3. Local dev SS14.Loader launching code.z
+        -->
+        <TargetFramework>net7.0</TargetFramework>
         <Version>0.19.0</Version>
     </PropertyGroup>
 </Project>
