@@ -358,7 +358,7 @@ public class Connector : ReactiveObject
 
         return process;
 
-        void EnvVar(string envVar, string value)
+        void EnvVar(string envVar, string? value)
         {
             startInfo.EnvironmentVariables[envVar] = value;
             // Log.Debug("Env: {EnvVar} = {Value}", envVar, value);
