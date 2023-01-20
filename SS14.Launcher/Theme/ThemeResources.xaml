@@ -33,11 +33,6 @@
     <SolidColorBrush x:Key="ThemeTabItemSelectedBrush" Color="{StaticResource ThemeTabItemSelectedColor}" />
     <SolidColorBrush x:Key="ThemeTabItemHoveredBrush" Color="{StaticResource ThemeTabItemHoveredColor}" />
 
-    <RadialGradientBrush x:Key="ThemeListSeparatorBrush" Radius="12">
-      <GradientStop Offset="0" Color="{StaticResource ThemeListSeparatorColor}"/>
-      <GradientStop Offset="1" Color="{StaticResource ThemeListSeparatorColorTransparent}"/>
-    </RadialGradientBrush>
-
     <sys:Double x:Key="FontSizeNormal">15</sys:Double>
 
     <VisualBrush x:Key="ThemeStripeBackBrush">

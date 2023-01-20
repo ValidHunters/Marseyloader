@@ -59,8 +59,11 @@
     <Setter Property="FontSize" Value="20" />
   </Style>
 
-  <Style Selector="Separator">
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="BorderBrush" Value="{DynamicResource ThemeListSeparatorBrush}" />
+  <Style Selector="Rectangle.VerticalSeparator">
+    <Setter Property="Fill">
+      <SolidColorBrush Color="{DynamicResource ThemeListSeparatorColor}" />
+    </Setter>
+    <Setter Property="Width" Value="2" />
+    <Setter Property="Margin" Value="0 4" />
   </Style>
 </Styles>
