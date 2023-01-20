@@ -30,7 +30,6 @@ public class ServerListTabViewModel : MainWindowTabViewModel
 
     public override string Name => "Servers";
 
-    [Reactive]
     public string? SearchString
     {
         get => _searchString;
