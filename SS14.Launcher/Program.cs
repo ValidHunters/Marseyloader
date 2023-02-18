@@ -1,4 +1,7 @@
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -85,6 +88,7 @@ internal static class Program
         Locator.CurrentMutable.RegisterConstant(cfg);
 
         CheckWindows7();
+        CheckAvast();
 
         if (cfg.GetCVar(CVars.LogLauncher))
         {
@@ -142,6 +146,26 @@ internal static class Program
 
             caption = "Неподдерживаемая версия Windows";
         }
+
+        fixed (char* pText = text)
+        fixed (char* pCaption = caption)
+        {
+            _ = Windows.MessageBoxW(HWND.NULL, (ushort*)pText, (ushort*)pCaption, MB.MB_OK | MB.MB_ICONWARNING);
+        }
+    }
+
+    private static unsafe void CheckAvast()
+    {
+        // Avast Free Antivirus breaks the game due to their AMSI integration crashing the process. Awesome!
+        if (!OperatingSystem.IsWindows())
+            return;
+
+        var avastFound = Process.GetProcesses().Any(x => x.ProcessName == "AvastSvc");
+        if (!avastFound)
+            return;
+
+        const string text = "Avast Free Antivirus is detected on your system.\n\nAvast is known to cause the game to crash while loading. If the game fails to start, uninstall Avast.\n\nThis is Avast's fault, do not ask us for help or support.";
+        const string caption = "Avast Free Antivirus detected!";
 
         fixed (char* pText = text)
         fixed (char* pCaption = caption)
