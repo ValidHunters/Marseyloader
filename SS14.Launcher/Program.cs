@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -88,7 +89,7 @@ internal static class Program
         Locator.CurrentMutable.RegisterConstant(cfg);
 
         CheckWindows7();
-        CheckAvast();
+        CheckBadAntivirus();
 
         if (cfg.GetCVar(CVars.LogLauncher))
         {
@@ -154,18 +155,33 @@ internal static class Program
         }
     }
 
-    private static unsafe void CheckAvast()
+    private static unsafe void CheckBadAntivirus()
     {
         // Avast Free Antivirus breaks the game due to their AMSI integration crashing the process. Awesome!
+        // Oh hey back here again, turns out AVG is just the same product as Avast with different paint.
         if (!OperatingSystem.IsWindows())
             return;
 
-        var avastFound = Process.GetProcesses().Any(x => x.ProcessName == "AvastSvc");
-        if (!avastFound)
+        var badPrograms =
+            new Dictionary<string, (string shortName, string longName)>(StringComparer.InvariantCultureIgnoreCase)
+            {
+                // @formatter:off
+                {"AvastSvc", ("Avast", "Avast Free Antivirus")},
+                {"AVGSvc",   ("AVG",   "AVG Antivirus")},
+                // @formatter:on
+            };
+
+        var badFound = Process.GetProcesses()
+            .Select(x => x.ProcessName)
+            .FirstOrDefault(x => badPrograms.ContainsKey(x));
+
+        if (badFound == null)
             return;
 
-        const string text = "Avast Free Antivirus is detected on your system.\n\nAvast is known to cause the game to crash while loading. If the game fails to start, uninstall Avast.\n\nThis is Avast's fault, do not ask us for help or support.";
-        const string caption = "Avast Free Antivirus detected!";
+        var (shortName, longName) = badPrograms[badFound];
+
+        var text = $"{longName} is detected on your system.\n\n{shortName} is known to cause the game to crash while loading. If the game fails to start, uninstall {shortName}.\n\nThis is {shortName}'s fault, do not ask us for help or support.";
+        var caption = $"{longName} detected!";
 
         fixed (char* pText = text)
         fixed (char* pCaption = caption)
