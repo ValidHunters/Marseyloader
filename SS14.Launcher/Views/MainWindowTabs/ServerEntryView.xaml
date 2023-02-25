@@ -28,7 +28,7 @@
       </Expander.Header>
       <DockPanel Margin="4">
         <TextBlock DockPanel.Dock="Top" Name="Description" Margin="4,0,4,16"
-                   Text="{Binding Description}" />
+                   Text="{Binding Description}" TextWrapping="Wrap" />
 
         <Grid DockPanel.Dock="Right" VerticalAlignment="Bottom" RowDefinitions="Auto,Auto">
           <!-- Favorite add/remove button -->
