@@ -1,0 +1,44 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Launcher-loader shared stuff -->
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="6.0.1"/>
+    <PackageVersion Include="NSec.Cryptography" Version="20.2.0"/>
+    <PackageVersion Include="SharpZstd.Interop" Version="1.5.2-beta2"/>
+
+    <!-- Loader -->
+    <PackageVersion Include="Robust.Natives" Version="0.1.1"/>
+
+    <!-- Launcher -->
+    <PackageVersion Include="Avalonia" Version="0.10.13" />
+    <PackageVersion Include="Avalonia.Desktop" Version="0.10.13" />
+    <PackageVersion Include="Avalonia.ReactiveUI" Version="0.10.13" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="0.10.13" />
+    <PackageVersion Include="CodeHollow.FeedReader" Version="1.2.1" />
+    <PackageVersion Include="Dapper" Version="2.0.123" />
+    <PackageVersion Include="DynamicData" Version="7.4.9" />
+    <PackageVersion Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+    <PackageVersion Include="ReactiveUI" Version="17.1.9" />
+    <PackageVersion Include="ReactiveUI.Fody" Version="17.1.9" />
+    <PackageVersion Include="Robust.Shared.AuthLib" Version="0.1.2" />
+    <PackageVersion Include="Serilog" Version="2.10.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageVersion Include="XamlNameReferenceGenerator" Version="1.2.1" />
+    <PackageVersion Include="YamlDotNet" Version="11.2.1" />
+    <PackageVersion Include="TerraFX.Interop.Windows" Version="10.0.20348" />
+    <PackageVersion Include="Mono.Posix.NETStandard" Version="1.0.0" />
+    <PackageVersion Include="SpaceWizards.Sodium" Version="0.2.0" />
+
+    <!-- Test stuff -->
+    <PackageVersion Include="nunit" Version="3.13.2"/>
+    <PackageVersion Include="NUnit.Analyzers" Version="3.1.0"/>
+    <PackageVersion Include="NUnit3TestAdapter" Version="3.17.0"/>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="16.9.4"/>
+    
+    <!-- Bootstrap -->
+    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" />
+  </ItemGroup>
+</Project>
