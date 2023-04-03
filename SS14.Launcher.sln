@@ -15,6 +15,7 @@ ProjectSection(SolutionItems) = preProject
 	LICENSE.txt = LICENSE.txt
 	.editorconfig = .editorconfig
 	Launcher.props = Launcher.props
+	Directory.Packages.props = Directory.Packages.props
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{31D3CCC5-36F4-48C3-8885-E029A2026B57}"
