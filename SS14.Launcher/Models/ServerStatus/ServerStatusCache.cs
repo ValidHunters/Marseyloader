@@ -4,11 +4,11 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using Splat;
+using SS14.Launcher.Api;
 using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.Models.ServerStatus;
@@ -16,7 +16,7 @@ namespace SS14.Launcher.Models.ServerStatus;
 /// <summary>
 ///     Caches information pulled from servers and updates it asynchronously.
 /// </summary>
-public sealed class ServerStatusCache
+public sealed class ServerStatusCache : IServerSource
 {
     // Yes this class "memory leaks" because it never frees these data objects.
     // Oh well!
@@ -87,7 +87,7 @@ public sealed class ServerStatusCache
             var statusAddr = UriHelper.GetServerStatusAddress(parsedAddress);
             data.Status = ServerStatusCode.FetchingStatus;
 
-            ServerStatus status;
+            ServerApi.ServerStatus status;
             try
             {
                 // await Task.Delay(Random.Shared.Next(150, 5000), cancel);
@@ -96,7 +96,7 @@ public sealed class ServerStatusCache
                 {
                     linkedToken.CancelAfter(ConfigConstants.ServerStatusTimeout);
 
-                    status = await http.GetFromJsonAsync<ServerStatus>(statusAddr, linkedToken.Token)
+                    status = await http.GetFromJsonAsync<ServerApi.ServerStatus>(statusAddr, linkedToken.Token)
                              ?? throw new InvalidDataException();
                 }
 
@@ -108,10 +108,7 @@ public sealed class ServerStatusCache
                 return;
             }
 
-            data.Status = ServerStatusCode.Online;
-            data.Name = status.Name;
-            data.PlayerCount = status.PlayerCount;
-            data.SoftMaxPlayerCount = status.SoftMaxPlayerCount;
+            ApplyStatus(data, status);
         }
         catch (OperationCanceledException)
         {
@@ -119,7 +116,15 @@ public sealed class ServerStatusCache
         }
     }
 
-    public static async void UpdateInfoFor(ServerStatusData data, HttpClient http)
+    public static void ApplyStatus(ServerStatusData data, ServerApi.ServerStatus status)
+    {
+        data.Status = ServerStatusCode.Online;
+        data.Name = status.Name;
+        data.PlayerCount = status.PlayerCount;
+        data.SoftMaxPlayerCount = status.SoftMaxPlayerCount;
+    }
+
+    public static async void UpdateInfoForCore(ServerStatusData data, Func<CancellationToken, Task<ServerInfo?>> fetch)
     {
         if (data.StatusInfo == ServerStatusInfoCode.Fetching)
             return;
@@ -134,7 +139,6 @@ public sealed class ServerStatusCache
         data.InfoCancel = new CancellationTokenSource();
         var cancel = data.InfoCancel.Token;
 
-        var statusAddr = UriHelper.GetServerInfoAddress(data.Address);
         data.StatusInfo = ServerStatusInfoCode.Fetching;
 
         ServerInfo info;
@@ -144,8 +148,8 @@ public sealed class ServerStatusCache
             {
                 linkedToken.CancelAfter(ConfigConstants.ServerStatusTimeout);
 
-                info = await http.GetFromJsonAsync<ServerInfo>(statusAddr, linkedToken.Token)
-                       ?? throw new InvalidDataException();
+                var statusAddr = UriHelper.GetServerInfoAddress(data.Address);
+                info = await fetch(linkedToken.Token) ?? throw new InvalidDataException();
             }
 
             cancel.ThrowIfCancellationRequested();
@@ -199,12 +203,14 @@ public sealed class ServerStatusCache
         _cachedData.Clear();
     }
 
-    private sealed record ServerStatus(
-        [property: JsonPropertyName("name")] string? Name,
-        [property: JsonPropertyName("players")]
-        int PlayerCount,
-        [property: JsonPropertyName("soft_max_players")]
-        int SoftMaxPlayerCount);
+    void IServerSource.UpdateInfoFor(ServerStatusData statusData)
+    {
+        UpdateInfoForCore(statusData, async cancel =>
+        {
+            var statusAddr = UriHelper.GetServerInfoAddress(statusData.Address);
+            return await _http.GetFromJsonAsync<ServerInfo>(statusAddr, cancel);
+        });
+    }
 
     private sealed class CacheReg
     {

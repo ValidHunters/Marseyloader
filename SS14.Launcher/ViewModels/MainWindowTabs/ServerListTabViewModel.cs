@@ -24,7 +24,7 @@ public class ServerListTabViewModel : MainWindowTabViewModel
     public ObservableCollection<ServerEntryViewModel> SearchedServers { get; } = new();
 
     private List<ServerEntryViewModel> _allServers => _serverListCache.AllServers.Select(
-        x => new ServerEntryViewModel(_windowVm, x)
+        x => new ServerEntryViewModel(_windowVm, x, _serverListCache)
     ).ToList();
     private string? _searchString;
 

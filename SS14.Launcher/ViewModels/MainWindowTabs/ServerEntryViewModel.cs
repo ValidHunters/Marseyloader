@@ -1,5 +1,4 @@
 using System;
-using System.Net.Http;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Splat;
@@ -12,17 +11,19 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs;
 public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<FavoritesChanged>, IViewModelBase
 {
     private readonly ServerStatusData _cacheData;
+    private readonly IServerSource _serverSource;
     private readonly DataManager _cfg;
     private readonly MainWindowViewModel _windowVm;
     private string Address => _cacheData.Address;
     private string _fallbackName = string.Empty;
     private bool _isExpanded;
 
-    public ServerEntryViewModel(MainWindowViewModel windowVm, ServerStatusData cacheData)
+    public ServerEntryViewModel(MainWindowViewModel windowVm, ServerStatusData cacheData, IServerSource serverSource)
     {
         _cfg = Locator.Current.GetRequiredService<DataManager>();
         _windowVm = windowVm;
         _cacheData = cacheData;
+        _serverSource = serverSource;
 
         _cacheData.PropertyChanged += (_, args) =>
         {
@@ -52,14 +53,21 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
         };
     }
 
-    public ServerEntryViewModel(MainWindowViewModel windowVm, ServerStatusData cacheData, FavoriteServer favorite)
-        : this(windowVm, cacheData)
+    public ServerEntryViewModel(
+        MainWindowViewModel windowVm,
+        ServerStatusData cacheData,
+        FavoriteServer favorite,
+        IServerSource serverSource)
+        : this(windowVm, cacheData, serverSource)
     {
         Favorite = favorite;
     }
 
-    public ServerEntryViewModel(MainWindowViewModel windowVm, ServerStatusDataWithFallbackName ssdfb)
-        : this(windowVm, ssdfb.Data)
+    public ServerEntryViewModel(
+        MainWindowViewModel windowVm,
+        ServerStatusDataWithFallbackName ssdfb,
+        IServerSource serverSource)
+        : this(windowVm, ssdfb.Data, serverSource)
     {
         FallbackName = ssdfb.FallbackName ?? "";
     }
@@ -190,7 +198,6 @@ public sealed class ServerEntryViewModel : ObservableRecipient, IRecipient<Favor
         if (_cacheData.StatusInfo is not (ServerStatusInfoCode.NotFetched or ServerStatusInfoCode.Error))
             return;
 
-        var httpClient = Locator.Current.GetRequiredService<HttpClient>();
-        ServerStatusCache.UpdateInfoFor(_cacheData, httpClient);
+        _serverSource.UpdateInfoFor(_cacheData);
     }
 }

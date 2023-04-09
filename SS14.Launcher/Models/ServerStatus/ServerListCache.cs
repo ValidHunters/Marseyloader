@@ -1,25 +1,23 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
+using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Serilog;
 using Splat;
 using SS14.Launcher.Utility;
-using Avalonia.Threading;
+using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using SS14.Launcher.Api;
 
 namespace SS14.Launcher.Models.ServerStatus;
 
 /// <summary>
 ///     Caches the Hub's server list.
 /// </summary>
-public sealed class ServerListCache : ReactiveObject
+public sealed class ServerListCache : ReactiveObject, IServerSource
 {
-    private readonly HttpClient _http;
+    private readonly HubApi _hubApi;
 
     private CancellationTokenSource? _refreshCancel;
 
@@ -30,7 +28,7 @@ public sealed class ServerListCache : ReactiveObject
 
     public ServerListCache()
     {
-        _http = Locator.Current.GetRequiredService<HttpClient>();
+        _hubApi = Locator.Current.GetRequiredService<HubApi>();
     }
 
     /// <summary>
@@ -62,33 +60,16 @@ public sealed class ServerListCache : ReactiveObject
 
         try
         {
-            var entries = await _http.GetFromJsonAsync<ServerListEntry[]>(
-                ConfigConstants.HubUrl + "api/servers",
-                cancel) ?? throw new JsonException("Server list is null!");
+            var entries = await _hubApi.GetServerList(cancel);
 
             Status = RefreshListStatus.Updating;
 
-            await Parallel.ForEachAsync(entries, new ParallelOptions
+            AllServers.AddRange(entries.Select(entry =>
             {
-                MaxDegreeOfParallelism = 20,
-                CancellationToken = cancel
-            }, async (entry, token) =>
-            {
-                var status = new ServerStatusData(entry.Address);
-                await ServerStatusCache.UpdateStatusFor(status, _http, token);
-
-                if (status.Status == ServerStatusCode.Offline)
-                    return;
-
-                Dispatcher.UIThread.Post(() =>
-                {
-                    if (!cancel.IsCancellationRequested)
-                    {
-                        // Log.Information("{Name}: {Address}", status.Name, status.Address);
-                        AllServers.Add(new ServerStatusDataWithFallbackName(status, entry.Name));
-                    }
-                });
-            });
+                var statusData = new ServerStatusData(entry.Address);
+                ServerStatusCache.ApplyStatus(statusData, entry.StatusData);
+                return new ServerStatusDataWithFallbackName(statusData, entry.StatusData.Name);
+            }));
 
             Status = RefreshListStatus.Updated;
         }
@@ -100,6 +81,13 @@ public sealed class ServerListCache : ReactiveObject
             Log.Error(e, "Failed to fetch server list due to exception");
             Status = RefreshListStatus.Error;
         }
+    }
+
+    void IServerSource.UpdateInfoFor(ServerStatusData statusData)
+    {
+        ServerStatusCache.UpdateInfoForCore(
+            statusData,
+            async token => await _hubApi.GetServerInfo(statusData.Address, token));
     }
 }
 
@@ -141,11 +129,5 @@ public enum RefreshListStatus
     /// An error occured.
     /// </summary>
     Error
-}
-
-public sealed class ServerListEntry
-{
-    public string Address { get; set; } = default!;
-    public string Name { get; set; } = default!;
 }
 

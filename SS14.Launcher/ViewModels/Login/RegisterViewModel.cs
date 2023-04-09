@@ -4,6 +4,7 @@ using System.Net.Mail;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Robust.Shared.AuthLib;
+using SS14.Launcher.Api;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 

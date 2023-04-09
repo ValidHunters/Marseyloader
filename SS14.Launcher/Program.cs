@@ -13,6 +13,7 @@ using Avalonia.Logging;
 using Avalonia.ReactiveUI;
 using Serilog;
 using Splat;
+using SS14.Launcher.Api;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
@@ -202,6 +203,7 @@ internal static class Program
         Locator.CurrentMutable.RegisterConstant(http);
 
         var authApi = new AuthApi(http);
+        var hubApi = new HubApi(http);
         var overrideAssets = new OverrideAssetsManager(cfg, http);
         var loginManager = new LoginManager(cfg, authApi);
 
@@ -209,6 +211,7 @@ internal static class Program
         locator.RegisterConstant<IEngineManager>(new EngineManagerDynamic());
         locator.RegisterConstant(new Updater());
         locator.RegisterConstant(authApi);
+        locator.RegisterConstant(hubApi);
         locator.RegisterConstant(new ServerListCache());
         locator.RegisterConstant(loginManager);
         locator.RegisterConstant(overrideAssets);

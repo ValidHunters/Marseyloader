@@ -1,5 +1,6 @@
 using ReactiveUI;
 using Splat;
+using SS14.Launcher.Api;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;

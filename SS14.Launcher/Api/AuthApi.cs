@@ -11,7 +11,7 @@ using Serilog;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
 
-namespace SS14.Launcher;
+namespace SS14.Launcher.Api;
 
 public sealed class AuthApi
 {
