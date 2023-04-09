@@ -9,6 +9,7 @@
     <IsPackable>false</IsPackable>
     <DefineConstants Condition="'$(FullRelease)' == 'True'">FULL_RELEASE;$(DefineConstants)</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
