@@ -61,7 +61,7 @@ public class ServerListTabViewModel : MainWindowTabViewModel
         }
     }
 
-    [Reactive] public bool FiltersVisible { get; set; } = true;
+    [Reactive] public bool FiltersVisible { get; set; }
 
     public ServerListFiltersViewModel Filters { get; }
 
