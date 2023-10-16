@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check for Merge Conflicts
-        uses: ike709/actions-label-merge-conflict@9eefdd17e10566023c46d2dc6dc04fcb8ec76142
+        uses: ValidHunters/actions-label-merge-conflict@9eefdd17e10566023c46d2dc6dc04fcb8ec76142
         with:
           dirtyLabel: "Merge Conflict"
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
