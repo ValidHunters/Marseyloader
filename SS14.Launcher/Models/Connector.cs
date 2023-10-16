@@ -19,6 +19,7 @@ using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
+using SS14.Launcher.Marsey;
 
 namespace SS14.Launcher.Models;
 
@@ -185,6 +186,9 @@ public class Connector : ReactiveObject
         bool contentBundle = false,
         CancellationToken cancel = default)
     {
+        Log.Debug("Trying to get assemblies");
+
+        MarseyPatcher.Boot();
         Status = ConnectionStatus.StartingClient;
 
         var clientProc = await ConnectLaunchClient(launchInfo, info, buildInfo, connectAddress, parsedAddr, contentBundle);
