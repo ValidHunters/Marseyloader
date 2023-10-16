@@ -223,6 +223,8 @@ public class Connector : ReactiveObject
     {
         var cVars = new List<(string, string)>();
 
+        await _loginManager.UpdateSingleAccountStatus(_loginManager.ActiveAccount);
+
         if (info != null && info.AuthInformation.Mode != AuthMode.Disabled && _loginManager.ActiveAccount != null)
         {
             var account = _loginManager.ActiveAccount;

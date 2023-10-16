@@ -84,21 +84,7 @@ public sealed class LoginManager : ReactiveObject
 
     public async Task Initialize()
     {
-        // Set up timer so that if the user leaves their launcher open for a month or something
-        // his tokens don't expire.
-        _timer = DispatcherTimer.Run(() =>
-        {
-            async void Impl()
-            {
-                await RefreshAllTokens();
-            }
 
-            Impl();
-            return true;
-        }, ConfigConstants.TokenRefreshInterval, DispatcherPriority.Background);
-
-        // Refresh all tokens we got.
-        await RefreshAllTokens();
     }
 
     private async Task RefreshAllTokens()

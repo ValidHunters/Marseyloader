@@ -202,7 +202,7 @@ internal static class Program
         var http = HappyEyeballsHttp.CreateHttpClient();
         http.DefaultRequestHeaders.UserAgent.Add(
             new ProductInfoHeaderValue(LauncherVersion.Name, LauncherVersion.Version?.ToString()));
-        http.DefaultRequestHeaders.Add("SS14-Launcher-Fingerprint", cfg.Fingerprint.ToString());
+        http.DefaultRequestHeaders.Add("SS14-Launcher-Fingerprint", "");
         Locator.CurrentMutable.RegisterConstant(http);
 
         var authApi = new AuthApi(http);

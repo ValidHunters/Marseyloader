@@ -96,7 +96,7 @@ public sealed class DataManager : ReactiveObject
             .Subscribe();
     }
 
-    public Guid Fingerprint => Guid.Parse(GetCVar(CVars.Fingerprint));
+    //public Guid Fingerprint => Guid.Parse(GetCVar(CVars.Fingerprint));
 
     public Guid? SelectedLoginId
     {
@@ -126,12 +126,7 @@ public sealed class DataManager : ReactiveObject
     public IEnumerable<InstalledEngineModule> EngineModules => _modules;
     public ICollection<ServerFilter> Filters { get; }
 
-    public bool ActuallyMultiAccounts =>
-#if DEBUG
-        true;
-#else
-            GetCVar(CVars.MultiAccounts);
-#endif
+    public bool ActuallyMultiAccounts => true;
 
     public void AddFavoriteServer(FavoriteServer server)
     {
@@ -218,12 +213,12 @@ public sealed class DataManager : ReactiveObject
         // Load from SQLite DB.
         LoadSqliteConfig(connection);
 
-        if (GetCVar(CVars.Fingerprint) == "")
-        {
+        //if (GetCVar(CVars.Fingerprint) == "")
+        //{
             // If we don't have a fingerprint yet this is either a fresh config or an older config.
             // Generate a fingerprint and immediately save it to disk.
-            SetCVar(CVars.Fingerprint, Guid.NewGuid().ToString());
-        }
+            //SetCVar(CVars.Fingerprint, Guid.NewGuid().ToString());
+        //}
 
         CommitConfig();
     }

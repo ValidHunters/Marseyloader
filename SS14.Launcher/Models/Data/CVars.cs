@@ -66,7 +66,7 @@ public static class CVars
     /// </summary>
     public static readonly CVarDef<string> SelectedLogin = CVarDef.Create("SelectedLogin", "");
 
-    public static readonly CVarDef<string> Fingerprint = CVarDef.Create("Fingerprint", "");
+    //public static readonly CVarDef<string> Fingerprint = CVarDef.Create("Fingerprint", "");
 
     /// <summary>
     /// Maximum amount of TOTAL versions to keep in the content database.
