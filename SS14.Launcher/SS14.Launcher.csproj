@@ -37,6 +37,7 @@
     <PackageReference Include="CodeHollow.FeedReader" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="DynamicData" />
+    <PackageReference Include="Lib.Harmony" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" />
     <PackageReference Include="ReactiveUI" />

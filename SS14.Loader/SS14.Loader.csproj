@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Lib.Harmony" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="NSec.Cryptography" />
     <PackageReference Include="Robust.Natives" />
