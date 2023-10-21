@@ -6,6 +6,7 @@
     <TargetFramework>net45</TargetFramework>
     <TargetName>Space Station 14 Launcher</TargetName>
     <ApplicationIcon>../SS14.Launcher/Assets/icon.ico</ApplicationIcon>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
