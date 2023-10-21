@@ -21,7 +21,14 @@ public sealed class ServerStatusData : ObservableObject, IServerStatusData
         Address = address;
     }
 
+    public ServerStatusData(string address, string hubAddress)
+    {
+        Address = address;
+        HubAddress = hubAddress;
+    }
+
     public string Address { get; }
+    public string? HubAddress { get; }
 
     public string? Name
     {

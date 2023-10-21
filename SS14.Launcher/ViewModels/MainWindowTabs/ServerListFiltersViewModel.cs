@@ -9,6 +9,7 @@ using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.ServerStatus;
 using SS14.Launcher.Utility;
 using static SS14.Launcher.Api.ServerApi;
+using static SS14.Launcher.Utility.HubUtility;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs;
 
@@ -23,11 +24,13 @@ public sealed partial class ServerListFiltersViewModel : ObservableObject
     private readonly FilterListCollection _filtersRegion = new();
     private readonly FilterListCollection _filtersRolePlay = new();
     private readonly FilterListCollection _filtersEighteenPlus = new();
+    private readonly FilterListCollection _filtersHub = new();
 
     public ObservableCollection<ServerFilterViewModel> FiltersLanguage => _filtersLanguage;
     public ObservableCollection<ServerFilterViewModel> FiltersRegion => _filtersRegion;
     public ObservableCollection<ServerFilterViewModel> FiltersRolePlay => _filtersRolePlay;
     public ObservableCollection<ServerFilterViewModel> FiltersEighteenPlus => _filtersEighteenPlus;
+    public ObservableCollection<ServerFilterViewModel> FiltersHub => _filtersHub;
 
     public ServerFilterViewModel FilterPlayerCountHideEmpty { get; }
     public ServerFilterViewModel FilterPlayerCountHideFull { get; }
@@ -85,13 +88,14 @@ public sealed partial class ServerListFiltersViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Update the set of visible filters, to avoid redundant servers that would match no servers.
+    /// Update the set of visible filters, to avoid redundant filters that would match no servers.
     /// </summary>
     public void UpdatePresentFilters(IEnumerable<ServerStatusData> servers)
     {
         var filtersLanguage = new List<ServerFilterViewModel>();
         var filtersRegion = new List<ServerFilterViewModel>();
         var filtersRolePlay = new List<ServerFilterViewModel>();
+        var filtersHub = new List<ServerFilterViewModel>();
 
         var alreadyAdded = new HashSet<ServerFilter>();
 
@@ -153,12 +157,23 @@ public sealed partial class ServerListFiltersViewModel : ObservableObject
                     filtersRolePlay.Add(vm);
                 }
             }
+
+            if (server.HubAddress is { } hub)
+            {
+                var filter = new ServerFilter(ServerFilterCategory.Hub, hub);
+                if (!alreadyAdded.Add(filter))
+                    continue;
+
+                var vm = new ServerFilterViewModel(hub, GetHubShortName(hub), filter, this);
+                filtersHub.Add(vm);
+            }
         }
 
         // Sort.
         filtersLanguage.Sort(ServerFilterShortNameComparer.Instance);
         filtersRegion.Sort(ServerFilterShortNameComparer.Instance);
         filtersRolePlay.Sort(ServerFilterDataOrderComparer.InstanceRolePlay);
+        filtersHub.Sort(ServerFilterShortNameComparer.Instance);
 
         // Unspecified always comes last.
         filtersLanguage.Add(new ServerFilterViewModel("Unspecified", "Unspecified",
@@ -172,6 +187,7 @@ public sealed partial class ServerListFiltersViewModel : ObservableObject
         _filtersLanguage.SetItems(filtersLanguage);
         _filtersRegion.SetItems(filtersRegion);
         _filtersRolePlay.SetItems(filtersRolePlay);
+        _filtersHub.SetItems(filtersHub);
     }
 
     public bool GetFilter(ServerFilterCategory category, string data) => GetFilter(new ServerFilter(category, data));
@@ -211,6 +227,7 @@ public sealed partial class ServerListFiltersViewModel : ObservableObject
         var categorySetLanguage = GetCategoryFilterSet(FiltersLanguage);
         var categorySetRegion = GetCategoryFilterSet(FiltersRegion);
         var categorySetRolePlay = GetCategoryFilterSet(FiltersRolePlay);
+        var categorySetHub = GetCategoryFilterSet(FiltersHub);
 
         var hideEmpty = GetFilter(ServerFilter.PlayerCountHideEmpty);
         var hideFull = GetFilter(ServerFilter.PlayerCountHideFull);
@@ -283,6 +300,9 @@ public sealed partial class ServerListFiltersViewModel : ObservableObject
             if (maxPlayerCount != null && server.PlayerCount > maxPlayerCount)
                 return false;
 
+            if (categorySetHub != null && server.HubAddress != null && !categorySetHub.Contains(server.HubAddress))
+                return false;
+
             return true;
         }
 
@@ -342,7 +362,7 @@ public sealed partial class ServerListFiltersViewModel : ObservableObject
 
         public override int Compare(ServerFilterViewModel x, ServerFilterViewModel y)
         {
-            return string.Compare(x.Name, y.Name, StringComparison.CurrentCultureIgnoreCase);
+            return string.Compare(x.ShortName, y.ShortName, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 
