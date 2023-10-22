@@ -85,8 +85,8 @@ public class MarseyPatcher
         Console.WriteLine("[MARSEY] Got robust assembly, waiting 5 seconds to start a patch");
         Thread.Sleep(5000);
         Console.WriteLine("[Marsey] Patching.");
-        harmony.PatchAll();
-
+        foreach (Assembly ass in Assemblies)
+            harmony.PatchAll(ass);
     }
 
     public static void Boot(Assembly robCliAssembly)
@@ -95,23 +95,5 @@ public class MarseyPatcher
         LoadAssemblies();
         harmony = new Harmony("com.validhunters.marseypatcher");
         ThreadProc();
-    }
-}
-
-[HarmonyPatch]
-public static class DODPatch
-{
-    // The method to be patched
-    private static MethodBase TargetMethod()
-    {
-        var tp = MarseyPatcher.RobustAss.GetType("Robust.Client.Graphics.Clyde.Clyde");
-        return tp.GetMethod("DrawOcclusionDepth", BindingFlags.NonPublic | BindingFlags.Instance);
-    }
-
-    // Prefix that will be executed before the original method
-    [HarmonyPrefix]
-    private static bool PrefSkip()
-    {
-        return false;
     }
 }
