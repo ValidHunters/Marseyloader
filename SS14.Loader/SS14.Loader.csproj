@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Robust.LoaderApi\Robust.LoaderApi\Robust.LoaderApi.csproj" />
+    <ProjectReference Include="..\SS14.Launcher\SS14.Launcher.csproj" />
   </ItemGroup>
 
   <ItemGroup>

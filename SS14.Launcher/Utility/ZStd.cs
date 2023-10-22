@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using SharpZstd.Interop;
 using static SharpZstd.Interop.Zstd;
 
@@ -22,10 +23,19 @@ public static class ZStd
     [ModuleInitializer]
     public static void InitZStd()
     {
-        NativeLibrary.SetDllImportResolver(
-            typeof(Zstd).Assembly,
-            ResolveZstd
+        try
+        {
+            NativeLibrary.SetDllImportResolver(
+                typeof(Zstd).Assembly,
+                ResolveZstd
             );
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Handle exception here.
+            // For example, you might want to log it:
+            Log.Error(ex, "Failed to set DllImportResolver for Zstd");
+        }
     }
 
     private static IntPtr ResolveZstd(string name, Assembly assembly, DllImportSearchPath? path)

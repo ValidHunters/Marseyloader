@@ -188,7 +188,6 @@ public class Connector : ReactiveObject
     {
         Log.Debug("Trying to get assemblies");
 
-        MarseyPatcher.Boot();
         Status = ConnectionStatus.StartingClient;
 
         var clientProc = await ConnectLaunchClient(launchInfo, info, buildInfo, connectAddress, parsedAddr, contentBundle);

@@ -6,8 +6,10 @@ using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
+using System.Threading;
 using NSec.Cryptography;
 using Robust.LoaderApi;
+using SS14.Launcher.Marsey;
 
 namespace SS14.Loader;
 
@@ -53,10 +55,14 @@ internal class Program
             return false;
         }
 
+
         if (!TryGetLoader(clientAssembly, out var loader))
             return false;
 
         SQLitePCL.Batteries_V2.Init();
+
+        Thread t = new Thread(() => MarseyPatcher.Boot(clientAssembly));
+        t.Start();
 
         var launcher = Environment.GetEnvironmentVariable("SS14_LAUNCHER_PATH");
         var redialApi = launcher != null ? new RedialApi(launcher) : null;
