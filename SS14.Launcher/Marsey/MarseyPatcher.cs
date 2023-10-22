@@ -84,9 +84,12 @@ public class MarseyPatcher
 
     private static void PatchProc()
     {
-        Console.WriteLine("[Marsey] Patching.");
+        Console.WriteLine("[MARSEY] Patching.");
         foreach (Assembly ass in PatchAssemblies)
+        {
+            Console.WriteLine($"[MARSEY] Patching {ass.GetName()}");
             harmony.PatchAll(ass);
+        }
     }
 
     public static void GetGameAssemblies()
@@ -110,7 +113,7 @@ public class MarseyPatcher
                     ClientSharedAss = e;
                 }
             }
-
+            Thread.Sleep(100);
             loops++;
         }
         Console.WriteLine($"[MARSEY] Received assemblies in {loops} loops.");
@@ -119,9 +122,11 @@ public class MarseyPatcher
     public static void Boot(Assembly robClientAssembly)
     {
         RobustAss = robClientAssembly;
+        harmony = new Harmony("com.validhunters.marseypatcher");
+        Harmony.DEBUG = true;
+
         GetGameAssemblies();
         LoadAssemblies();
-        harmony = new Harmony("com.validhunters.marseypatcher");
         PatchProc();
     }
 }
