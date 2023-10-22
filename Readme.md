@@ -14,6 +14,6 @@ Space Station 14 launcher with drama-causing functionality.
       - [ ] Content.Shared
       - [ ] Content.Client
   - [X] Basic patchwork
-  - [ ] Dll plugin support
+  - [X] Dll plugin support
   - [ ] Separate tab
 - [ ] Log sanitization
