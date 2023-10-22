@@ -15,14 +15,15 @@ public class MarseyPatcher
     private static Assembly RobustSharedAss;
     private static Assembly ClientSharedAss;
 
-    private static List<Assembly> PatchAssemblies = new List<Assembly>();
+    private static List<Patch> PatchAssemblies = new List<Patch>();
+    private static List<Patch> EnabledPatches = new List<Patch>();
 
     // Patcher
     private static Harmony harmony;
 
 
 
-    public static void LoadAssemblies()
+    private static void LoadAssemblies()
     {
         string path = Path.Combine(Directory.GetCurrentDirectory(), "Marsey");
         foreach (string file in Directory.GetFiles(path, "*.dll"))
@@ -39,7 +40,7 @@ public class MarseyPatcher
         }
     }
 
-    public static void SetAssemblyTarget(FieldInfo required, FieldInfo target)
+    private static void SetAssemblyTarget(FieldInfo required, FieldInfo target)
     {
         string reqType = (string)required.GetValue(null);
 
@@ -60,7 +61,7 @@ public class MarseyPatcher
         }
     }
 
-    public static void InitAssembly(Assembly assembly)
+    private static void InitAssembly(Assembly assembly)
     {
         var marseyPatchType = assembly.GetType("MarseyPatch");
 
@@ -75,21 +76,21 @@ public class MarseyPatcher
                 SetAssemblyTarget(reqAsm, targAsm);
             }
         }
-
-        PatchAssemblies.Add(assembly);
+        var Patch = new Patch(assembly, (string)marseyPatchType.GetField("Name").GetValue(null), (string)marseyPatchType.GetField("Description").GetValue(null));
+        PatchAssemblies.Add(Patch);
     }
 
     private static void PatchProc()
     {
         Console.WriteLine("[MARSEY] Patching.");
-        foreach (Assembly ass in PatchAssemblies)
+        foreach (Patch p in PatchAssemblies)
         {
-            Console.WriteLine($"[MARSEY] Patching {ass.GetName()}");
-            harmony.PatchAll(ass);
+            Console.WriteLine($"[MARSEY] Patching {p.asm.GetName()}");
+            harmony.PatchAll(p.asm);
         }
     }
 
-    public static void GetGameAssemblies()
+    private static void GetGameAssemblies()
     {
         int loops = 0;
         while (RobustSharedAss == null || ClientAss == null || ClientSharedAss == null)
@@ -116,6 +117,11 @@ public class MarseyPatcher
         Console.WriteLine($"[MARSEY] Received assemblies in {loops} loops.");
     }
 
+    public static List<Patch> GetPatchList()
+    {
+        return PatchAssemblies;
+    }
+
     public static void Boot(Assembly robClientAssembly)
     {
         RobustAss = robClientAssembly;
@@ -125,5 +131,19 @@ public class MarseyPatcher
         GetGameAssemblies();
         LoadAssemblies();
         PatchProc();
+    }
+}
+
+public class Patch
+{
+    public Assembly asm;
+    public string name;
+    public string desc;
+
+    public Patch(Assembly asm, string name, string desc)
+    {
+        this.asm = asm;
+        this.name = name;
+        this.desc = desc;
     }
 }

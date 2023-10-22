@@ -10,13 +10,14 @@
     <mainWindowTabs:PatchesTabViewModel />
   </Design.DataContext>
 
-  <DockPanel>
-    <TextBlock DockPanel.Dock="Top" Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
-    <Panel Background="{DynamicResource StripeBackBrush}">
+    <DockPanel>
+      <TextBlock DockPanel.Dock="Top" Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
 
-    </Panel>
+      <Panel Background="{DynamicResource StripeBackBrush}">
 
-
-  </DockPanel>
+      </Panel>
+    </DockPanel>
+  </ScrollViewer>
 </UserControl>
