@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using Serilog;
 using HarmonyLib;
 
 namespace SS14.Launcher.Marsey;
@@ -32,12 +31,10 @@ public class MarseyPatcher
             {
                 Assembly assembly = Assembly.LoadFrom(file);
                 InitAssembly(assembly);
-
-                Log.Debug($"Added {file}.");
             }
             catch (Exception ex)
             {
-                Log.Error($"Failed to load assembly from {file}. Error: {ex.Message}");
+                Console.WriteLine($"Failed to load assembly from {file}. Error: {ex.Message}");
             }
         }
     }

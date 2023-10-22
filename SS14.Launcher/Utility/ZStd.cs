@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Serilog;
 using SharpZstd.Interop;
 using static SharpZstd.Interop.Zstd;
 
@@ -34,7 +33,7 @@ public static class ZStd
         {
             // Handle exception here.
             // For example, you might want to log it:
-            Log.Error(ex, "Failed to set DllImportResolver for Zstd");
+            Console.WriteLine($"Failed to set DllImportResolver for Zstd: {ex}");
         }
     }
 
