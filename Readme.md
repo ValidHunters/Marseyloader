@@ -9,10 +9,11 @@ Space Station 14 launcher with drama-causing functionality.
 - [ ] Local name change on demand
 - [ ] Harmony integration
   - [ ] Patching
-    - [ ] Getting assemblies
+    - [X] Getting assemblies
       - [X] Robust.Client
-      - [ ] Content.Shared
-      - [ ] Content.Client
+      - [X] Content.Shared
+      - [X] Content.Client
+      - [X] Robust.Shared
   - [X] Basic patchwork
   - [X] Dll plugin support
   - [ ] Separate tab

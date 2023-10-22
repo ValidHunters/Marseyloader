@@ -10,12 +10,18 @@ namespace SS14.Launcher.Marsey;
 
 public class MarseyPatcher
 {
-    public static Assembly RobustAss;
+    // Assemblinos
+    private static Assembly RobustAss;
     private static Assembly ClientAss;
+    private static Assembly RobustSharedAss;
+    private static Assembly ClientSharedAss;
 
+    private static List<Assembly> PatchAssemblies = new List<Assembly>();
+
+    // Patcher
     private static Harmony harmony;
 
-    public static List<Assembly> Assemblies = new List<Assembly>();
+
 
     public static void LoadAssemblies()
     {
@@ -25,25 +31,7 @@ public class MarseyPatcher
             try
             {
                 Assembly assembly = Assembly.LoadFrom(file);
-                Assemblies.Add(assembly);
-
-                var marseyPatchType = assembly.GetType("MarseyPatch");
-
-                if (marseyPatchType != null)
-                {
-                    // Get all fields of the MarseyPatch type
-                    var reqAsm = marseyPatchType.GetField("ReqAsm");
-                    var Asm = marseyPatchType.GetField("TargetAssembly");
-
-                    if (reqAsm != null && Asm != null)
-                    {
-                        string reqAsmVal = (string)reqAsm.GetValue(null);
-                        if (reqAsmVal == "RC")
-                        {
-                            Asm.SetValue(null, RobustAss);
-                        }
-                    }
-                }
+                InitAssembly(assembly);
 
                 Log.Debug($"Added {file}.");
             }
@@ -54,46 +42,86 @@ public class MarseyPatcher
         }
     }
 
-
-
-    private static void ThreadProc()
+    public static void SetAssemblyTarget(FieldInfo required, FieldInfo target)
     {
-        bool loaded = false;
-        Log.Debug("Loaded into threadproc");
-        Thread t = new Thread(new ThreadStart(ThreadProc2));
-        t.Start();
-        return;
-        /*
-        while (true)
+        string reqType = (string)required.GetValue(null);
+
+        switch (reqType)
         {
-            Thread.Sleep(2500);
-            Assembly[] assemblies;
-            foreach(var e in assemblies)
-            {
-
-                if (e.FullName.Contains("Content.Client,") && loaded == true)
-                {
-                    ClientAss = e;
-
-                }
-            }
-        }*/
+            case "RC":
+                target.SetValue(null, RobustAss);
+                break;
+            case "RS":
+                target.SetValue(null, RobustSharedAss);
+                break;
+            case "CC":
+                target.SetValue(null, ClientAss);
+                break;
+            case "CS":
+                target.SetValue(null, ClientAss);
+                break;
+        }
     }
 
-    private static void ThreadProc2()
+    public static void InitAssembly(Assembly assembly)
     {
-        Console.WriteLine("[MARSEY] Got robust assembly, waiting 5 seconds to start a patch");
-        Thread.Sleep(5000);
+        var marseyPatchType = assembly.GetType("MarseyPatch");
+
+        if (marseyPatchType != null)
+        {
+            // Get all fields of the MarseyPatch type
+            var reqAsm = marseyPatchType.GetField("ReqAsm");
+            var targAsm = marseyPatchType.GetField("TargetAssembly");
+
+            if (reqAsm != null && targAsm != null)
+            {
+                SetAssemblyTarget(reqAsm, targAsm);
+            }
+        }
+
+        PatchAssemblies.Add(assembly);
+    }
+
+    private static void PatchProc()
+    {
         Console.WriteLine("[Marsey] Patching.");
-        foreach (Assembly ass in Assemblies)
+        foreach (Assembly ass in PatchAssemblies)
             harmony.PatchAll(ass);
     }
 
-    public static void Boot(Assembly robCliAssembly)
+    public static void GetGameAssemblies()
     {
-        RobustAss = robCliAssembly;
+        int loops = 0;
+        while (RobustSharedAss == null || ClientAss == null || ClientSharedAss == null)
+        {
+            var asms = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var e in asms)
+            {
+                if (RobustSharedAss == null && e.FullName.Contains("Robust.Shared,"))
+                {
+                    RobustSharedAss = e;
+                }
+                else if (ClientAss == null && e.FullName.Contains("Content.Client,"))
+                {
+                    ClientAss = e;
+                }
+                else if (ClientSharedAss == null && e.FullName.Contains("Content.Shared,"))
+                {
+                    ClientSharedAss = e;
+                }
+            }
+
+            loops++;
+        }
+        Console.WriteLine($"[MARSEY] Received assemblies in {loops} loops.");
+    }
+
+    public static void Boot(Assembly robClientAssembly)
+    {
+        RobustAss = robClientAssembly;
+        GetGameAssemblies();
         LoadAssemblies();
         harmony = new Harmony("com.validhunters.marseypatcher");
-        ThreadProc();
+        PatchProc();
     }
 }
