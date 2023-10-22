@@ -23,8 +23,10 @@ public class MarseyPatcher
 
 
 
-    private static void LoadAssemblies()
+    public static void LoadAssemblies()
     {
+        PatchAssemblies = new List<Patch>();
+
         string path = Path.Combine(Directory.GetCurrentDirectory(), "Marsey");
         foreach (string file in Directory.GetFiles(path, "*.dll"))
         {
@@ -82,7 +84,6 @@ public class MarseyPatcher
 
     private static void PatchProc()
     {
-        Console.WriteLine("[MARSEY] Patching.");
         foreach (Patch p in PatchAssemblies)
         {
             Console.WriteLine($"[MARSEY] Patching {p.asm.GetName()}");
@@ -129,16 +130,16 @@ public class MarseyPatcher
         Harmony.DEBUG = true;
 
         GetGameAssemblies();
-        LoadAssemblies();
+        //LoadAssemblies();
         PatchProc();
     }
 }
 
 public class Patch
 {
-    public Assembly asm;
-    public string name;
-    public string desc;
+    public Assembly asm { get; set; }
+    public string name { get; set; }
+    public string desc { get; set; }
 
     public Patch(Assembly asm, string name, string desc)
     {
