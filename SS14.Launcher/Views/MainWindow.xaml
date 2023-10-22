@@ -10,7 +10,7 @@
         Width="650" Height="400"
         x:Class="SS14.Launcher.Views.MainWindow"
         Icon="{DynamicResource WindowIcon}"
-        Title="Space Station 14 Launcher"
+        Title="{Binding RandomTitle}"
         DragDrop.AllowDrop="True">
 
   <Design.DataContext>

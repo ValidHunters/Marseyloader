@@ -34,6 +34,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
     public HomePageViewModel HomeTab { get; }
     public ServerListTabViewModel ServersTab { get; }
     public NewsTabViewModel NewsTab { get; }
+
+    public PatchesTabViewModel PatchesTab { get; }
     public OptionsTabViewModel OptionsTab { get; }
 
     public MainWindowViewModel()
@@ -45,6 +47,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         ServersTab = new ServerListTabViewModel(this);
         NewsTab = new NewsTabViewModel();
         HomeTab = new HomePageViewModel(this);
+        PatchesTab = new PatchesTabViewModel();
         OptionsTab = new OptionsTabViewModel();
 
         Tabs = new MainWindowTabViewModel[]
@@ -52,6 +55,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
             HomeTab,
             ServersTab,
             NewsTab,
+            PatchesTab,
             OptionsTab
         };
 
@@ -273,5 +277,25 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         Debug.Assert(IsContentBundleDropValid(fileName));
 
         ConnectingViewModel.StartContentBundle(this, fileName);
+    }
+
+    private static readonly Random _random = new Random();
+
+    private static readonly string[] _titles =
+    {
+        "Space Station 14 Launcher",
+        "Marseylauncher",
+        "Dramalauncher",
+        "Literally a launcher with cheats",
+        "Marsey is the cutest cat",
+        "An rslur made this one",
+        "Marsey.",
+        "God, King & Bussy",
+        "Moonyware"
+    };
+
+    public string RandomTitle
+    {
+        get { return _titles[_random.Next(_titles.Length)]; }
     }
 }
