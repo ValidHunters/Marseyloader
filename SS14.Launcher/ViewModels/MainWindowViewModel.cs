@@ -284,18 +284,24 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
     private static readonly string[] _titles =
     {
         "Space Station 14 Launcher",
-        "Marseylauncher",
         "Dramalauncher",
         "Literally a launcher with cheats",
         "Marsey is the cutest cat",
         "An rslur made this one",
         "Marsey.",
         "God, King & Bussy",
-        "Moonyware"
+        "Moonyware",
+        "World's greatest spergatory launcher",
+        "as seen in moony's head",
+        "banned from wizden",
+        "russian paradise",
+        "ransomware launchpad",
+        "incel matchmaking service",
+        "public enemy number 1"
     };
 
     public string RandomTitle
     {
-        get { return _titles[_random.Next(_titles.Length)]; }
+        get { return "Marseyloader: " + _titles[_random.Next(_titles.Length)]; }
     }
 }
