@@ -127,7 +127,6 @@ public class MarseyPatcher
     {
         RobustAss = robClientAssembly;
         harmony = new Harmony("com.validhunters.marseypatcher");
-        Harmony.DEBUG = true;
 
         GetGameAssemblies();
         //LoadAssemblies();
