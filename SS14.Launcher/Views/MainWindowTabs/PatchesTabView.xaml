@@ -3,21 +3,38 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
+             xmlns:mainWindowTabs1="clr-namespace:SS14.Launcher.Views.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.PatchesTabView"
              Name="NewsTab">
   <Design.DataContext>
-    <mainWindowTabs:PatchesTabViewModel />
+    <mainWindowTabs1:PatchesTabView />
   </Design.DataContext>
 
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-
-    <DockPanel>
+  <Grid RowDefinitions="Auto, Auto, Auto">
+    <DockPanel Grid.Row="0">
       <TextBlock DockPanel.Dock="Top" Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
-
-      <Panel Background="{DynamicResource StripeBackBrush}">
-
-      </Panel>
+      <TextBlock Text="Marsey loves you" Classes="SubText"/>
+      <Line></Line>
     </DockPanel>
+
+    <DockPanel Grid.Row="1">
+      <StackPanel Orientation="Vertical">
+      <ItemsControl Items="{Binding Patches}" Name="PatchList">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding enabled}" Content="{Binding name}"></CheckBox>
+              <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                         Text="{Binding desc}"
+                         Margin="8" />
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+    </DockPanel>
+    </Grid>
   </ScrollViewer>
 </UserControl>

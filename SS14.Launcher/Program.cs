@@ -12,6 +12,7 @@ using Avalonia.ReactiveUI;
 using Serilog;
 using Splat;
 using SS14.Launcher.Api;
+using SS14.Launcher.Marsey;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
@@ -246,6 +247,8 @@ internal static class Program
         lc.RunCommandTask();
         Locator.CurrentMutable.RegisterConstant(lc);
         _serverTask = msgr.ServerTask(lc);
+
+        MarseyPatcher.LoadAssemblies();
 
         app.Run(window);
 
