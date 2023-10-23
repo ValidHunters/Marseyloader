@@ -153,11 +153,11 @@ public sealed class LoginManager : ReactiveObject
             {
                 // Token expired or whatever?
                 data.SetStatus(AccountLoginStatus.Expired);
-                Log.Debug("Token for {login} expired while refreshing it", data.LoginInfo);
+                Log.Debug("Token for {login} expired while refreshing it", data.LoginInfo.Username);
             }
             else
             {
-                Log.Debug("Refreshed token for {login}", data.LoginInfo);
+                Log.Debug("Refreshed token for {login}", data.LoginInfo.Username);
                 data.LoginInfo.Token = newTokenHopefully.Value;
                 data.SetStatus(AccountLoginStatus.Available);
             }
@@ -165,7 +165,7 @@ public sealed class LoginManager : ReactiveObject
         else if (data.Status == AccountLoginStatus.Unsure)
         {
             var valid = await _authApi.CheckTokenAsync(data.LoginInfo.Token.Token);
-            Log.Debug("Token for {login} still valid? {valid}", data.LoginInfo, valid);
+            Log.Debug("Token for {login} still valid? {valid}", data.LoginInfo.Username, valid);
             data.SetStatus(valid ? AccountLoginStatus.Available : AccountLoginStatus.Expired);
         }
     }
@@ -183,7 +183,7 @@ public sealed class LoginManager : ReactiveObject
         public void SetStatus(AccountLoginStatus status)
         {
             this.RaiseAndSetIfChanged(ref _status, status, nameof(Status));
-            Log.Debug("Setting status for login {account} to {status}", LoginInfo, status);
+            Log.Debug("Setting status for login {account} to {status}", LoginInfo.Username, status);
         }
     }
 }
