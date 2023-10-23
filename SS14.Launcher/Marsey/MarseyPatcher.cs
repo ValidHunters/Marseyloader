@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using HarmonyLib;
@@ -16,19 +17,49 @@ public class MarseyPatcher
     private static Assembly ClientSharedAss;
 
     private static List<Patch> PatchAssemblies = new List<Patch>();
-    private static List<Patch> EnabledPatches = new List<Patch>();
 
     // Patcher
     private static Harmony harmony;
 
 
 
-    public static void LoadAssemblies()
+    public static void PrepAssemblies()
     {
-        PatchAssemblies = new List<Patch>();
+        string[] path = { "Marsey", "Enabled" };
+        foreach (string file in GetPatches(path))
+            File.Delete(file);
 
-        string path = Path.Combine(Directory.GetCurrentDirectory(), "Marsey");
-        foreach (string file in Directory.GetFiles(path, "*.dll"))
+        foreach (Patch p in PatchAssemblies)
+        {
+            if (p.enabled)
+            {
+                string asmLocation = p.asm.Location;
+
+                File.Copy(p.asm.Location,
+                    Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "Marsey",
+                        "Enabled",
+                        Path.GetFileName(asmLocation)), true );
+            }
+
+        }
+    }
+
+    public static string[] GetPatches(string[] subdir)
+    {
+        subdir.Prepend(Directory.GetCurrentDirectory());
+        string path = Path.Combine(subdir);
+
+        return Directory.GetFiles(path, "*.dll");
+    }
+
+    public static void LoadAssemblies(string[] path = null)
+    {
+        path ??= new[] { "Marsey" };
+
+        var files = GetPatches(path);
+        foreach (string file in files)
         {
             try
             {
@@ -79,6 +110,13 @@ public class MarseyPatcher
             }
         }
         var Patch = new Patch(assembly, (string)marseyPatchType.GetField("Name").GetValue(null), (string)marseyPatchType.GetField("Description").GetValue(null));
+
+        foreach (Patch p in PatchAssemblies)
+        {
+            if (p.asm == assembly)
+                return;
+        }
+
         PatchAssemblies.Add(Patch);
     }
 
@@ -129,7 +167,8 @@ public class MarseyPatcher
         harmony = new Harmony("com.validhunters.marseypatcher");
 
         GetGameAssemblies();
-        //LoadAssemblies();
+        LoadAssemblies(new string[]{"Marsey", "Enabled"});
+
         PatchProc();
     }
 }
@@ -139,11 +178,13 @@ public class Patch
     public Assembly asm { get; set; }
     public string name { get; set; }
     public string desc { get; set; }
+    public bool enabled { get; set; }
 
     public Patch(Assembly asm, string name, string desc)
     {
         this.asm = asm;
         this.name = name;
         this.desc = desc;
+        this.enabled = false;
     }
 }

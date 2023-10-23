@@ -186,7 +186,6 @@ public class Connector : ReactiveObject
         bool contentBundle = false,
         CancellationToken cancel = default)
     {
-        Log.Debug("Trying to get assemblies");
 
         Status = ConnectionStatus.StartingClient;
 
@@ -498,6 +497,9 @@ public class Connector : ReactiveObject
             Log.Debug("arg: {Arg}", arg);
         }
         */
+
+        Log.Information("Starting.");
+        MarseyPatcher.PrepAssemblies();
 
         var process = Process.Start(startInfo);
 
