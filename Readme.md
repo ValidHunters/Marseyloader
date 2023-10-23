@@ -6,9 +6,9 @@ Space Station 14 launcher with drama-causing functionality.
 
 - [X] Multiaccount (Thanks PJB)
 - [X] Token update only on connect or account switch
-- [ ] Local name change on demand
-- [ ] Harmony integration
-  - [ ] Patching
+- [X] Local name change on demand
+- [X] Harmony integration
+  - [X] Patching
     - [X] Getting assemblies
       - [X] Robust.Client
       - [X] Content.Shared
@@ -16,5 +16,5 @@ Space Station 14 launcher with drama-causing functionality.
       - [X] Robust.Shared
   - [X] Basic patchwork
   - [X] Dll plugin support
-  - [ ] Separate tab
+  - [X] Separate tab
 - [ ] Log sanitization

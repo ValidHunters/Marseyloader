@@ -56,6 +56,11 @@
                    Text="Whatever temporally relevant icons and logos we can come up with."
                    Margin="8" />
 
+        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                   Text="Set your current active account name to a funny"
+                   Margin="8"/>
+        <TextBox VerticalAlignment="Center" Margin="4" Text="{Binding Username}"/>
+
         <CheckBox VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" Margin="4" IsChecked="{Binding DisableSigning}">Disable Engine Signature Checks</CheckBox>
         <TextBlock VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" TextWrapping="Wrap"
                    Text="[DEV ONLY] Disables verification of engine signatures. DO NOT ENABLE UNLESS YOU KNOW EXACTLY WHAT YOU'RE DOING."

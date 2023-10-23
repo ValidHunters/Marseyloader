@@ -1,8 +1,10 @@
 using System.Diagnostics;
+using DynamicData;
 using Splat;
 using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
+using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs;
@@ -10,12 +12,16 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs;
 public class OptionsTabViewModel : MainWindowTabViewModel
 {
     public DataManager Cfg { get; }
+    private readonly LoginManager _loginManager;
+    private readonly DataManager _dataManager;
     private readonly IEngineManager _engineManager;
     private readonly ContentManager _contentManager;
 
     public OptionsTabViewModel()
     {
         Cfg = Locator.Current.GetRequiredService<DataManager>();
+        _loginManager = Locator.Current.GetRequiredService<LoginManager>();
+        _dataManager = Locator.Current.GetRequiredService<DataManager>();
         _engineManager = Locator.Current.GetRequiredService<IEngineManager>();
         _contentManager = Locator.Current.GetRequiredService<ContentManager>();
     }
@@ -95,6 +101,18 @@ public class OptionsTabViewModel : MainWindowTabViewModel
         {
             Cfg.SetCVar(CVars.OverrideAssets, value);
             Cfg.CommitConfig();
+        }
+    }
+
+    public string Username
+    {
+        get => _loginManager.ActiveAccount.Username;
+        set
+        {
+            LoginInfo LI = _loginManager.ActiveAccount.LoginInfo;
+            LI.Username = value;
+            _dataManager.ChangeLogin(ChangeReason.Update, LI);
+            _dataManager.CommitConfig();
         }
     }
 

@@ -374,7 +374,7 @@ public sealed class DataManager : ReactiveObject
         });
     }
 
-    private void ChangeLogin(ChangeReason reason, LoginInfo login)
+    public void ChangeLogin(ChangeReason reason, LoginInfo login)
     {
         // Make immutable copy to avoid race condition bugs.
         var data = new
