@@ -81,7 +81,7 @@ public static class CVars
     /// <summary>
     /// Whether to display override assets (trans rights).
     /// </summary>
-    public static readonly CVarDef<bool> OverrideAssets = CVarDef.Create("OverrideAssets", true);
+    public static readonly CVarDef<bool> OverrideAssets = CVarDef.Create("OverrideAssets", false);
 
     /// <summary>
     /// Stores the minimum player count value used by the "minimum player count" filter.

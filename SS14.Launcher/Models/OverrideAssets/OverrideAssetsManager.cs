@@ -49,6 +49,8 @@ public sealed class OverrideAssetsManager
 
         _dataManager.GetCVarEntry(CVars.OverrideAssets).PropertyChanged += OnOverrideAssetsEnabledChanged;
 
+        _dataManager.SetCVar(CVars.OverrideAssets, false);
+
         if (_dataManager.GetCVar(CVars.OverrideAssets))
             LoadAssets();
     }
