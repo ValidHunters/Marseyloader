@@ -16,7 +16,7 @@ public class MarseyPatcher
     private static Assembly RobustSharedAss;
     private static Assembly ClientSharedAss;
 
-    private static List<Patch> PatchAssemblies = new List<Patch>();
+    private static List<MarseyPatch> PatchAssemblies = new List<MarseyPatch>();
 
     // Patcher
     private static Harmony harmony;
@@ -27,7 +27,7 @@ public class MarseyPatcher
         foreach (string file in GetPatches(path))
             File.Delete(file);
 
-        foreach (Patch p in PatchAssemblies)
+        foreach (var p in PatchAssemblies)
         {
             if (p.enabled)
             {
@@ -52,9 +52,19 @@ public class MarseyPatcher
         return Directory.GetFiles(path, "*.dll");
     }
 
+    private static void RecheckPatches()
+    {
+        if (GetPatches(new string[]{"Marsey"}).Length == PatchAssemblies.Count)
+            return;
+
+        PatchAssemblies = new List<MarseyPatch>();
+    }
+
     public static void LoadAssemblies(string[] path = null)
     {
         path ??= new[] { "Marsey" };
+
+        RecheckPatches();
 
         var files = GetPatches(path);
         foreach (string file in files)
@@ -107,9 +117,9 @@ public class MarseyPatcher
                 SetAssemblyTarget(reqAsm, targAsm);
             }
         }
-        var Patch = new Patch(assembly, (string)marseyPatchType.GetField("Name").GetValue(null), (string)marseyPatchType.GetField("Description").GetValue(null));
+        var Patch = new MarseyPatch(assembly, (string)marseyPatchType.GetField("Name").GetValue(null), (string)marseyPatchType.GetField("Description").GetValue(null));
 
-        foreach (Patch p in PatchAssemblies)
+        foreach (MarseyPatch p in PatchAssemblies)
         {
             if (p.asm == assembly)
                 return;
@@ -120,7 +130,7 @@ public class MarseyPatcher
 
     private static void PatchProc()
     {
-        foreach (Patch p in PatchAssemblies)
+        foreach (MarseyPatch p in PatchAssemblies)
         {
             Console.WriteLine($"[MARSEY] Patching {p.asm.GetName()}");
             harmony.PatchAll(p.asm);
@@ -154,11 +164,12 @@ public class MarseyPatcher
         Console.WriteLine($"[MARSEY] Received assemblies in {loops} loops.");
     }
 
-    public static List<Patch> GetPatchList()
+    public static List<MarseyPatch> GetPatchList()
     {
         return PatchAssemblies;
     }
 
+    // This gets executed by the Loader function.
     public static void Boot(Assembly robClientAssembly)
     {
         RobustAss = robClientAssembly;
@@ -171,14 +182,14 @@ public class MarseyPatcher
     }
 }
 
-public class Patch
+public class MarseyPatch
 {
     public Assembly asm { get; set; }
     public string name { get; set; }
     public string desc { get; set; }
     public bool enabled { get; set; }
 
-    public Patch(Assembly asm, string name, string desc)
+    public MarseyPatch(Assembly asm, string name, string desc)
     {
         this.asm = asm;
         this.name = name;

@@ -9,10 +9,11 @@ namespace SS14.Launcher.Views.MainWindowTabs
 {
     public partial class PatchesTabView : UserControl
     {
-        public static List<Patch> Patches { get; private set; }
+        public static List<MarseyPatch> Patches { get; private set; }
         public PatchesTabView()
         {
             InitializeComponent();
+            MarseyPatcher.LoadAssemblies();
             Patches = MarseyPatcher.GetPatchList();
             Log.Information($"Got {Patches.Count} patches.");
             this.DataContext = this;
