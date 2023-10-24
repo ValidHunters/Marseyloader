@@ -21,8 +21,22 @@ public class MarseyPatcher
     // Patcher
     private static Harmony harmony;
 
+    public static void EnsureDirectoriesExist()
+    {
+        string currentDirectory = Directory.GetCurrentDirectory();
 
+        string marseyPath = Path.Combine(currentDirectory, "Marsey");
+        if (!Directory.Exists(marseyPath))
+        {
+            Directory.CreateDirectory(marseyPath);
+        }
 
+        string enabledPath = Path.Combine(marseyPath, "Enabled");
+        if (!Directory.Exists(enabledPath))
+        {
+            Directory.CreateDirectory(enabledPath);
+        }
+    }
     public static void PrepAssemblies()
     {
         string[] path = { "Marsey", "Enabled" };
