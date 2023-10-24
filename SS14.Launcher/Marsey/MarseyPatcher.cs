@@ -21,6 +21,39 @@ public class MarseyPatcher
     // Patcher
     private static Harmony harmony;
 
+    private static void InitAssembly(Assembly assembly)
+    {
+        var marseyPatchType = assembly.GetType("MarseyPatch");
+
+        if (marseyPatchType.GetField("TargetAssembly") != null)
+            Console.WriteLine($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
+
+        if (marseyPatchType != null)
+        {
+            // Get all fields of the MarseyPatch type
+            List<FieldInfo> targets = new List<FieldInfo>();
+            targets.Add(marseyPatchType.GetField("RobustClient"));
+            targets.Add(marseyPatchType.GetField("RobustShared"));
+            targets.Add(marseyPatchType.GetField("ContentClient"));
+            targets.Add(marseyPatchType.GetField("ContentShared"));
+
+            SetAssemblyTargets(targets);
+
+        }
+
+        var Patch = new MarseyPatch(assembly,
+            (string)marseyPatchType.GetField("Name").GetValue(null),
+            (string)marseyPatchType.GetField("Description").GetValue(null));
+
+        foreach (MarseyPatch p in PatchAssemblies)
+        {
+            if (p.asm == assembly)
+                return;
+        }
+
+        PatchAssemblies.Add(Patch);
+    }
+
     public static void PrepAssemblies()
     {
         string[] path = { "Marsey", "Enabled" };
@@ -44,22 +77,6 @@ public class MarseyPatcher
         }
     }
 
-    public static string[] GetPatches(string[] subdir)
-    {
-        subdir.Prepend(Directory.GetCurrentDirectory());
-        string path = Path.Combine(subdir);
-
-        return Directory.GetFiles(path, "*.dll");
-    }
-
-    private static void RecheckPatches()
-    {
-        if (GetPatches(new string[]{"Marsey"}).Length == PatchAssemblies.Count)
-            return;
-
-        PatchAssemblies = new List<MarseyPatch>();
-    }
-
     public static void LoadAssemblies(string[] path = null)
     {
         path ??= new[] { "Marsey" };
@@ -81,53 +98,47 @@ public class MarseyPatcher
         }
     }
 
-    private static void SetAssemblyTarget(FieldInfo required, FieldInfo target)
+    /// <summary>
+    /// Sets the assembly target in the patch assembly.
+    /// </summary>
+    /// <param name="targets">Array of assemblies from the MarseyPatch class</param>
+    private static void SetAssemblyTargets(List<FieldInfo> targets)
     {
-        string reqType = (string)required.GetValue(null);
-
-        switch (reqType)
-        {
-            case "RC":
-                target.SetValue(null, RobustAss);
-                break;
-            case "RS":
-                target.SetValue(null, RobustSharedAss);
-                break;
-            case "CC":
-                target.SetValue(null, ClientAss);
-                break;
-            case "CS":
-                target.SetValue(null, ClientAss);
-                break;
-        }
+        targets[0].SetValue(null, RobustAss);
+        targets[1].SetValue(null,RobustSharedAss);
+        targets[2].SetValue(null,ClientAss);
+        targets[3].SetValue(null,ClientSharedAss);
     }
 
-    private static void InitAssembly(Assembly assembly)
+    public static string[] GetPatches(string[] subdir)
     {
-        var marseyPatchType = assembly.GetType("MarseyPatch");
+        subdir.Prepend(Directory.GetCurrentDirectory());
+        string path = Path.Combine(subdir);
 
-        if (marseyPatchType != null)
-        {
-            // Get all fields of the MarseyPatch type
-            var reqAsm = marseyPatchType.GetField("ReqAsm");
-            var targAsm = marseyPatchType.GetField("TargetAssembly");
-
-            if (reqAsm != null && targAsm != null)
-            {
-                SetAssemblyTarget(reqAsm, targAsm);
-            }
-        }
-        var Patch = new MarseyPatch(assembly, (string)marseyPatchType.GetField("Name").GetValue(null), (string)marseyPatchType.GetField("Description").GetValue(null));
-
-        foreach (MarseyPatch p in PatchAssemblies)
-        {
-            if (p.asm == assembly)
-                return;
-        }
-
-        PatchAssemblies.Add(Patch);
+        return Directory.GetFiles(path, "*.dll");
     }
 
+    /// <returns>Patch list</returns>
+    public static List<MarseyPatch> GetPatchList()
+    {
+        return PatchAssemblies;
+    }
+
+    /// <summary>
+    /// Checks if the amount of patches in folder equals the amount of patches in list.
+    /// If not - resets the list.
+    /// </summary>
+    private static void RecheckPatches()
+    {
+        if (GetPatches(new string[]{"Marsey"}).Length == PatchAssemblies.Count)
+            return;
+
+        PatchAssemblies = new List<MarseyPatch>();
+    }
+
+    /// <summary>
+    /// Patches the game using assemblies in List.
+    /// </summary>
     private static void PatchProc()
     {
         foreach (MarseyPatch p in PatchAssemblies)
@@ -137,6 +148,12 @@ public class MarseyPatcher
         }
     }
 
+    /// <summary>
+    /// Obtains game assemblies
+    /// The function ends only when Robust.Shared,
+    /// Content.Client and Content.Shared are initialized by the game.
+    /// Executed only by the Loader.
+    /// </summary>
     private static void GetGameAssemblies()
     {
         int loops = 0;
@@ -164,12 +181,10 @@ public class MarseyPatcher
         Console.WriteLine($"[MARSEY] Received assemblies in {loops} loops.");
     }
 
-    public static List<MarseyPatch> GetPatchList()
-    {
-        return PatchAssemblies;
-    }
-
-    // This gets executed by the Loader function.
+    /// <summary>
+    /// Starts (Boots) the patcher
+    /// </summary>
+    /// <param name="robClientAssembly">Robust.Client assembly provded by the Loader</param>
     public static void Boot(Assembly robClientAssembly)
     {
         RobustAss = robClientAssembly;
