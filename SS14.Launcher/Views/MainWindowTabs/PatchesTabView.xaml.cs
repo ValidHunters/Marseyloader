@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Serilog;
@@ -24,7 +25,7 @@ namespace SS14.Launcher.Views.MainWindowTabs
             Process.Start(new ProcessStartInfo
             {
                 UseShellExecute = true,
-                FileName = LauncherPaths.DirPatch
+                FileName = Path.Combine(Directory.GetCurrentDirectory(), "Marsey")
             });
         }
 

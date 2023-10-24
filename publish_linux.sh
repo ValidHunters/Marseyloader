@@ -14,6 +14,7 @@ dotnet publish SS14.Loader/SS14.Loader.csproj -c Release --no-self-contained -r 
 # Create intermediate directories.
 mkdir -p bin/publish/Linux/bin
 mkdir -p bin/publish/Linux/bin/loader
+mkdir -p bin/publish/Linux/Marsey/Enabled
 mkdir -p bin/publish/Linux/dotnet
 
 cp PublishFiles/SS14.Launcher PublishFiles/SS14.desktop bin/publish/Linux/
