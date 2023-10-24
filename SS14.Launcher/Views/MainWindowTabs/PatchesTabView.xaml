@@ -15,7 +15,8 @@
   <Grid RowDefinitions="Auto, Auto, Auto">
     <DockPanel Grid.Row="0">
       <TextBlock DockPanel.Dock="Top" Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
-      <TextBlock Text="Marsey loves you" Classes="SubText"/>
+      <Button Content="Open patch directory" DockPanel.Dock="Top" Margin="4, 0" HorizontalAlignment="Left"
+              Command="{Binding OpenPatchDirectory}"/>
       <Line></Line>
     </DockPanel>
 
@@ -35,6 +36,7 @@
       </ItemsControl>
     </StackPanel>
     </DockPanel>
-    </Grid>
+  </Grid>
+
   </ScrollViewer>
 </UserControl>

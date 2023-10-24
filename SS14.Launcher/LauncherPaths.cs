@@ -14,6 +14,8 @@ public static class LauncherPaths
     public static readonly string EngineModulesDirName = "modules";
     public static readonly string ServerContentDirName = "server content";
     public static readonly string LogsDirName = "logs";
+    public static readonly string PatchesDirName = "Marsey";
+    public static readonly string EnabledPatchesDirName = "Enabled";
     public static readonly string LauncherLogName = "launcher.log";
     public static readonly string ClientMacLogName = "client.mac.log";
     public static readonly string ClientStdoutLogName = "client.stdout.log";
@@ -27,6 +29,8 @@ public static class LauncherPaths
     // Legacy server content directory. No longer used except to delete on launch.
     public static readonly string DirServerContent = Path.Combine(DirUserData, ServerContentDirName);
     public static readonly string DirLogs = Path.Combine(DirUserData, LogsDirName);
+    public static readonly string DirPatch = Path.Combine(DirLauncherInstall, PatchesDirName);
+    public static readonly string DirEnPatch = Path.Combine(DirPatch, EnabledPatchesDirName);
     public static readonly string PathLauncherLog = Path.Combine(DirLogs, LauncherLogName);
     public static readonly string PathClientMacLog = Path.Combine(DirLogs, ClientMacLogName);
     public static readonly string PathClientStdoutLog = Path.Combine(DirLogs, ClientStdoutLogName);
@@ -39,6 +43,7 @@ public static class LauncherPaths
     {
         Ensure(DirLogs);
         Ensure(DirLocalData);
+        Ensure(DirEnPatch);
         Ensure(DirEngineInstallations);
         Ensure(DirModuleInstallations);
 

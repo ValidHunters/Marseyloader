@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Serilog;
@@ -15,6 +16,15 @@ namespace SS14.Launcher.Views.MainWindowTabs
             Patches = MarseyPatcher.GetPatchList();
             Log.Information($"Got {Patches.Count} patches.");
             this.DataContext = this;
+        }
+
+        public void OpenPatchDirectory()
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = LauncherPaths.DirPatch
+            });
         }
 
         private void InitializeComponent()
