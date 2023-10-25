@@ -7,7 +7,7 @@ Space Station 14 launcher with client-side modding/patching support.
 * **Integration with the Harmony patching library.**
 * * Abilitiy to patch everything on the client side including shared.
 * Enabled multiaccount
-* * Tokens are update only on connect or account switch to evade alt detection
+* * Tokens are updated only on connect or account switch to evade alt detection
 * Locally change username for screenshots (This doesn't change your username in-game)
 * Violated MVVM
 * Marsey.
