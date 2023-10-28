@@ -11,22 +11,26 @@ namespace SS14.Launcher.Marsey;
 public class MarseyPatcher
 {
     // Assemblinos
-    private static Assembly RobustAss;
-    private static Assembly ClientAss;
-    private static Assembly RobustSharedAss;
-    private static Assembly ClientSharedAss;
+    private static Assembly? _robustAss;
+    private static Assembly? _clientAss;
+    private static Assembly? _robustSharedAss;
+    private static Assembly? _clientSharedAss;
 
-    private static List<MarseyPatch> PatchAssemblies = new List<MarseyPatch>();
+    private static List<MarseyPatch> _patchAssemblies = new List<MarseyPatch>();
 
     // Patcher
-    private static Harmony harmony;
+    private static Harmony? _harmony;
 
     private static void InitAssembly(Assembly assembly)
     {
-        var marseyPatchType = assembly.GetType("MarseyPatch");
+        Type marseyPatchType = assembly.GetType("MarseyPatch");
+        FieldInfo TargAsm = marseyPatchType.GetField("TargetAssembly");
 
-        if (marseyPatchType.GetField("TargetAssembly") != null)
+        if (TargAsm != null)
+        {
             Console.WriteLine($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
+            return;
+        }
 
         if (marseyPatchType != null)
         {
@@ -41,17 +45,17 @@ public class MarseyPatcher
 
         }
 
-        var Patch = new MarseyPatch(assembly,
+        var patch = new MarseyPatch(assembly,
             (string)marseyPatchType.GetField("Name").GetValue(null),
             (string)marseyPatchType.GetField("Description").GetValue(null));
 
-        foreach (MarseyPatch p in PatchAssemblies)
+        foreach (MarseyPatch p in _patchAssemblies)
         {
             if (p.asm == assembly)
                 return;
         }
 
-        PatchAssemblies.Add(Patch);
+        _patchAssemblies.Add(patch);
     }
 
     public static void PrepAssemblies()
@@ -60,7 +64,7 @@ public class MarseyPatcher
         foreach (string file in GetPatches(path))
             File.Delete(file);
 
-        foreach (var p in PatchAssemblies)
+        foreach (var p in _patchAssemblies)
         {
             if (p.enabled)
             {
@@ -77,7 +81,7 @@ public class MarseyPatcher
         }
     }
 
-    public static void LoadAssemblies(string[] path = null)
+    public static void LoadAssemblies(string[]? path = null)
     {
         path ??= new[] { "Marsey" };
 
@@ -104,10 +108,10 @@ public class MarseyPatcher
     /// <param name="targets">Array of assemblies from the MarseyPatch class</param>
     private static void SetAssemblyTargets(List<FieldInfo> targets)
     {
-        targets[0].SetValue(null, RobustAss);
-        targets[1].SetValue(null,RobustSharedAss);
-        targets[2].SetValue(null,ClientAss);
-        targets[3].SetValue(null,ClientSharedAss);
+        targets[0].SetValue(null, _robustAss);
+        targets[1].SetValue(null,_robustSharedAss);
+        targets[2].SetValue(null,_clientAss);
+        targets[3].SetValue(null,_clientSharedAss);
     }
 
     public static string[] GetPatches(string[] subdir)
@@ -121,7 +125,7 @@ public class MarseyPatcher
     /// <returns>Patch list</returns>
     public static List<MarseyPatch> GetPatchList()
     {
-        return PatchAssemblies;
+        return _patchAssemblies;
     }
 
     /// <summary>
@@ -130,10 +134,10 @@ public class MarseyPatcher
     /// </summary>
     private static void RecheckPatches()
     {
-        if (GetPatches(new string[]{"Marsey"}).Length == PatchAssemblies.Count)
+        if (GetPatches(new string[]{"Marsey"}).Length == _patchAssemblies.Count)
             return;
 
-        PatchAssemblies = new List<MarseyPatch>();
+        _patchAssemblies = new List<MarseyPatch>();
     }
 
     /// <summary>
@@ -141,10 +145,10 @@ public class MarseyPatcher
     /// </summary>
     private static void PatchProc()
     {
-        foreach (MarseyPatch p in PatchAssemblies)
+        foreach (MarseyPatch p in _patchAssemblies)
         {
             Console.WriteLine($"[MARSEY] Patching {p.asm.GetName()}");
-            harmony.PatchAll(p.asm);
+            _harmony.PatchAll(p.asm);
         }
     }
 
@@ -157,25 +161,25 @@ public class MarseyPatcher
     private static void GetGameAssemblies()
     {
         int loops = 0;
-        while (RobustSharedAss == null || ClientAss == null || ClientSharedAss == null)
+        while (_robustSharedAss == null || _clientAss == null || _clientSharedAss == null)
         {
             var asms = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var e in asms)
             {
-                if (RobustSharedAss == null && e.FullName.Contains("Robust.Shared,"))
+                if (_robustSharedAss == null && e.FullName.Contains("Robust.Shared,"))
                 {
-                    RobustSharedAss = e;
+                    _robustSharedAss = e;
                 }
-                else if (ClientAss == null && e.FullName.Contains("Content.Client,"))
+                else if (_clientAss == null && e.FullName.Contains("Content.Client,"))
                 {
-                    ClientAss = e;
+                    _clientAss = e;
                 }
-                else if (ClientSharedAss == null && e.FullName.Contains("Content.Shared,"))
+                else if (_clientSharedAss == null && e.FullName.Contains("Content.Shared,"))
                 {
-                    ClientSharedAss = e;
+                    _clientSharedAss = e;
                 }
             }
-            Thread.Sleep(100);
+            Thread.Sleep(200);
             loops++;
         }
         Console.WriteLine($"[MARSEY] Received assemblies in {loops} loops.");
@@ -185,10 +189,10 @@ public class MarseyPatcher
     /// Starts (Boots) the patcher
     /// </summary>
     /// <param name="robClientAssembly">Robust.Client assembly provded by the Loader</param>
-    public static void Boot(Assembly robClientAssembly)
+    public static void Boot(Assembly? robClientAssembly)
     {
-        RobustAss = robClientAssembly;
-        harmony = new Harmony("com.validhunters.marseypatcher");
+        _robustAss = robClientAssembly;
+        _harmony = new Harmony("com.validhunters.marseypatcher");
 
         GetGameAssemblies();
         LoadAssemblies(new string[]{"Marsey", "Enabled"});
