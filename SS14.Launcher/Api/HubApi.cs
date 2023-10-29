@@ -18,16 +18,19 @@ public sealed class HubApi
         _http = http;
     }
 
-    public async Task<ServerListEntry[]> GetServerList(CancellationToken cancel)
+    public async Task<ServerListEntry[]> GetServers(Uri hubUri, CancellationToken cancel)
     {
-        return await _http.GetFromJsonAsync<ServerListEntry[]>(
-            ConfigConstants.HubUrl + "api/servers",
-            cancel) ?? throw new JsonException("Server list is null!");
+        // Sanity check, this should be enforced with code
+        if (!hubUri.AbsoluteUri.EndsWith('/'))
+            throw new Exception("URI doesn't have trailing slash");
+
+        return await _http.GetFromJsonAsync<ServerListEntry[]>(new Uri(hubUri, "api/servers"), cancel)
+               ?? throw new JsonException("Server list is null!");
     }
 
-    public async Task<ServerInfo> GetServerInfo(string serverAddress, CancellationToken cancel)
+    public async Task<ServerInfo> GetServerInfo(string serverAddress, string hubAddress, CancellationToken cancel)
     {
-        var url = $"{ConfigConstants.HubUrl}api/servers/info?url={Uri.EscapeDataString(serverAddress)}";
+        var url = $"{hubAddress}api/servers/info?url={Uri.EscapeDataString(serverAddress)}";
         return await _http.GetFromJsonAsync<ServerInfo>(url, cancel) ?? throw new InvalidDataException();
     }
 
