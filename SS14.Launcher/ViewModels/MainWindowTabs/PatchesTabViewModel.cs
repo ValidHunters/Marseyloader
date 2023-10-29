@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
-using SS14.Launcher.Marsey;
+using Marsey;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {

@@ -31,8 +31,6 @@ public static class ZStd
         }
         catch (InvalidOperationException ex)
         {
-            // Handle exception here.
-            // For example, you might want to log it:
             Console.WriteLine($"Failed to set DllImportResolver for Zstd: {ex}");
         }
     }

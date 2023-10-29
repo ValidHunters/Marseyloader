@@ -9,7 +9,7 @@ using System.Runtime.Loader;
 using System.Threading;
 using NSec.Cryptography;
 using Robust.LoaderApi;
-using SS14.Launcher.Marsey;
+using Marsey;
 
 namespace SS14.Loader;
 
@@ -61,8 +61,8 @@ internal class Program
 
         SQLitePCL.Batteries_V2.Init();
 
-        MarseyPatcher Marsey = new MarseyPatcher();
-        Thread t = new Thread(() => Marsey.Boot(clientAssembly));
+        MarseyPatcher marsey = new MarseyPatcher();
+        Thread t = new Thread(() => marsey.Boot(clientAssembly));
         t.Start();
 
         var launcher = Environment.GetEnvironmentVariable("SS14_LAUNCHER_PATH");

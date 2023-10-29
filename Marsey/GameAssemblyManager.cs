@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Threading;
 using HarmonyLib;
 
-namespace SS14.Launcher.Marsey;
+namespace Marsey;
 
 public class GameAssemblyManager
 {

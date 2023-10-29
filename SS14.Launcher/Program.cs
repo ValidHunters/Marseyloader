@@ -12,7 +12,6 @@ using Avalonia.ReactiveUI;
 using Serilog;
 using Splat;
 using SS14.Launcher.Api;
-using SS14.Launcher.Marsey;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
@@ -25,6 +24,7 @@ using SS14.Launcher.ViewModels;
 using SS14.Launcher.Views;
 using TerraFX.Interop.Windows;
 using LogEventLevel = Serilog.Events.LogEventLevel;
+using Marsey;
 
 namespace SS14.Launcher;
 

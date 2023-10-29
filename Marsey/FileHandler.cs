@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace SS14.Launcher.Marsey;
+namespace Marsey;
 
 public class FileHandler
 {

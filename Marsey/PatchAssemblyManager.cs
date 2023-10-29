@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace SS14.Launcher.Marsey;
+namespace Marsey;
 
 public class PatchAssemblyManager
 {

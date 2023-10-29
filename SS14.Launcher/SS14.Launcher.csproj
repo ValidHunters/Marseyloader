@@ -71,6 +71,9 @@
     <RobustLinkAssemblies Include="TerraFX.Interop.Windows" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="../Marsey/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="signing_key" />
     <Content Include="signing_key">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
