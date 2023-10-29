@@ -5,36 +5,30 @@
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.PatchesTabView"
-             Name="NewsTab">
+             Name="PatchesTab">
   <Design.DataContext>
     <mainWindowTabs:PatchesTabViewModel />
   </Design.DataContext>
 
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-    <Grid RowDefinitions="Auto, Auto, Auto">
-      <DockPanel Grid.Row="0">
-        <TextBlock DockPanel.Dock="Top" Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
-        <Button Content="Open patch directory" DockPanel.Dock="Top" Margin="4, 0" HorizontalAlignment="Left"
-                Command="{Binding OpenPatchDirectoryCommand}"/>
-        <Line></Line>
-      </DockPanel>
+    <StackPanel>
+      <TextBlock Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
+      <Button Content="Open patch directory" Margin="4, 0" HorizontalAlignment="Left"
+              Command="{Binding OpenPatchDirectoryCommand}"/>
+      <Separator/>
 
-      <DockPanel Grid.Row="1">
-        <StackPanel Orientation="Vertical">
-          <ItemsControl Items="{Binding Patches}" Name="PatchList">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <StackPanel Orientation="Horizontal">
-                  <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
-                  <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                             Text="{Binding Desc}"
-                             Margin="8" />
-                </StackPanel>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </StackPanel>
-      </DockPanel>
-    </Grid>
+      <ItemsControl Items="{Binding Patches}" Name="PatchList">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
+              <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                         Text="{Binding Desc}"
+                         Margin="8" />
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
   </ScrollViewer>
 </UserControl>
