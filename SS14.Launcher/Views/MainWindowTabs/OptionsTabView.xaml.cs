@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using ReactiveUI;
 using SS14.Launcher.Utility;
 using SS14.Launcher.ViewModels.MainWindowTabs;
@@ -37,5 +38,10 @@ public partial class OptionsTabView : UserControl
     {
         ((OptionsTabViewModel)DataContext!).ClearServerContent();
         await ClearServerContentButton.DisplayDoneMessage();
+    }
+
+    private async void OpenHubSettings(object? sender, RoutedEventArgs args)
+    {
+        await new HubSettingsDialog().ShowDialog(this.GetVisualRoot() as Window);
     }
 }

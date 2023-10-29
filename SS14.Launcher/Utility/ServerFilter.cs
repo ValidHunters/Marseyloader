@@ -56,4 +56,5 @@ public enum ServerFilterCategory : byte
     RolePlay = 3,
     EighteenPlus = 4,
     PlayerCount = 5,
+    Hub = 6,
 }
