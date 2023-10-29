@@ -20,7 +20,7 @@ Space Station 14 launcher with client-side modding/patching support.
 2. Run "SS14.Launcher"
 
 ### Patching
-Marseyloader uses the [Harmony](https://github.com/pardeike/Harmony) patching library. Introduction for the library is provided [here](https://harmony.pardeike.net/) and documentation [here](https://dotnetcademy.net/Learn/4/Pages/1).
+Marseyloader uses the [Harmony](https://github.com/pardeike/Harmony) patching library. Introduction for the library is provided [here](https://harmony.pardeike.net/) and documentation [here](https://harmony.pardeike.net/articles/intro.html).
 
 Example patches can be found in the [ExampleMarseyPatch](https://github.com/ValidHunters/ExampleMarseyPatch) repository.
 
