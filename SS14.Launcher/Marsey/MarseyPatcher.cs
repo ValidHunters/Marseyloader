@@ -23,65 +23,45 @@ public class MarseyPatcher
 
     private static void InitAssembly(Assembly assembly)
     {
-        Type? marseyPatchType = assembly.GetType("MarseyPatch");
+        Type marseyPatchType = assembly.GetType("MarseyPatch") ?? throw new Exception("Loaded assembly does not have MarseyPatch type.");
 
-        if (marseyPatchType == null)
+        if (marseyPatchType.GetField("TargetAssembly") != null) throw new Exception($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
+
+        List<FieldInfo> targets = GetPatchAssemblyFields(marseyPatchType) ?? throw new Exception($"Couldn't get assembly fields on {assembly.FullName}.");
+
+        SetAssemblyTargets(targets);
+
+        FieldInfo? nameField = marseyPatchType.GetField("Name");
+        FieldInfo? descriptionField = marseyPatchType.GetField("Description");
+
+        string name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
+        string description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
+
+        var patch = new MarseyPatch(assembly, name, description);
+
+        foreach (MarseyPatch p in _patchAssemblies)
         {
-            throw new Exception("Loaded assembly does not have MarseyPatch type.");
+           if (p.Asm == assembly)
+               return;
         }
-
-        FieldInfo? targAsm = marseyPatchType.GetField("TargetAssembly");
-
-        if (targAsm != null)
-        {
-            throw new Exception($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
-        }
-
-         // Get all fields of the MarseyPatch type
-         List<FieldInfo>? targets = GetPatchAssemblyFields(marseyPatchType);
-
-         if (targets == null)
-         {
-             throw new Exception($"Couldn't get assembly fields on {assembly.FullName}.");
-         }
-
-         SetAssemblyTargets(targets);
-
-         FieldInfo? nameField = marseyPatchType.GetField("Name");
-         FieldInfo? descriptionField = marseyPatchType.GetField("Description");
-
-         string name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
-         string description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
-
-         var patch = new MarseyPatch(assembly, name, description);
-
-         foreach (MarseyPatch p in _patchAssemblies)
-         {
-            if (p.Asm == assembly)
-                return;
-         }
 
         _patchAssemblies.Add(patch);
     }
 
+    /// <summary>
+    /// Obtains fields for each of the game's assemblies.
+    /// Returns null if any of the fields is null.
+    /// </summary>
     private static List<FieldInfo>? GetPatchAssemblyFields(Type marseyPatchType)
     {
-        List<FieldInfo> targets = new List<FieldInfo>();
-        FieldInfo? robustClientField = marseyPatchType.GetField("RobustClient");
-        FieldInfo? robustSharedField = marseyPatchType.GetField("RobustShared");
-        FieldInfo? contentClientField = marseyPatchType.GetField("ContentClient");
-        FieldInfo? contentSharedField = marseyPatchType.GetField("ContentShared");
+        var fieldNames = new[] { "RobustClient", "RobustShared", "ContentClient", "ContentShared" };
+        var targets = new List<FieldInfo>();
 
-        if (robustClientField != null && robustSharedField != null && contentClientField != null && contentSharedField != null)
+        foreach (var fieldName in fieldNames)
         {
-            targets.Add(robustClientField);
-            targets.Add(robustSharedField);
-            targets.Add(contentClientField);
-            targets.Add(contentSharedField);
-        }
-        else
-        {
-            return null;
+            var field = marseyPatchType.GetField(fieldName);
+            if (field == null) return null; // Not all fields could be caught, no point proceeding.
+            targets.Add(field);
         }
 
         return targets;
@@ -93,8 +73,8 @@ public class MarseyPatcher
     public static void PrepAssemblies()
     {
         string[] path = { "Marsey", "Enabled" };
-        foreach (string file in GetPatches(path))
-            File.Delete(file);
+
+        foreach (string file in GetPatches(path)) File.Delete(file);
 
         foreach (var p in _patchAssemblies)
         {
@@ -199,9 +179,10 @@ public class MarseyPatcher
     /// </summary>
     private static void GetGameAssemblies()
     {
-        while (_robustSharedAss == null || _clientAss == null || _clientSharedAss == null)
+        int loops = 0;
+        while (_robustSharedAss == null || _clientAss == null || _clientSharedAss == null && loops < 100)
         {
-            var asms = AppDomain.CurrentDomain.GetAssemblies();
+            Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var e in asms)
             {
                 string? fullName = e.FullName;
@@ -222,15 +203,19 @@ public class MarseyPatcher
                 }
             }
 
+            loops++;
             Thread.Sleep(200);
         }
-        Console.WriteLine($"[MARSEY] Received assemblies.");
+
+        Console.WriteLine(loops >= 100
+            ? $"[MARSEY] Failed to receive assemblies within 20 seconds."
+            : $"[MARSEY] Received assemblies.");
     }
 
     /// <summary>
     /// Starts (Boots) the patcher
     /// </summary>
-    /// <param name="robClientAssembly">Robust.Client assembly provded by the Loader</param>
+    /// <param name="robClientAssembly">Robust.Client assembly provided by the Loader</param>
     public static void Boot(Assembly? robClientAssembly)
     {
         _robustAss = robClientAssembly;

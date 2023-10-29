@@ -16,7 +16,7 @@ namespace SS14.Launcher.Views.MainWindowTabs
             InitializeComponent();
             MarseyPatcher.LoadAssemblies();
             Patches = MarseyPatcher.GetPatchList();
-            Log.Information($"Got {Patches.Count} patches.");
+            Log.Debug($"Refreshed patches, got {Patches.Count}.");
             this.DataContext = this;
         }
 
