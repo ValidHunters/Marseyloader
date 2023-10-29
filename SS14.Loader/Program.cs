@@ -61,7 +61,8 @@ internal class Program
 
         SQLitePCL.Batteries_V2.Init();
 
-        Thread t = new Thread(() => MarseyPatcher.Boot(clientAssembly));
+        MarseyPatcher Marsey = new MarseyPatcher();
+        Thread t = new Thread(() => Marsey.Boot(clientAssembly));
         t.Start();
 
         var launcher = Environment.GetEnvironmentVariable("SS14_LAUNCHER_PATH");

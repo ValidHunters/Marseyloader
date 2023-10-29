@@ -499,7 +499,7 @@ public class Connector : ReactiveObject
         */
 
         Log.Information("Starting.");
-        MarseyPatcher.PrepAssemblies();
+        FileHandler.PrepAssemblies();
 
         var process = Process.Start(startInfo);
 
