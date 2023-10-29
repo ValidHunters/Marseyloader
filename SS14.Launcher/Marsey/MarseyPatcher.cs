@@ -26,14 +26,15 @@ public class MarseyPatcher
         Type? marseyPatchType = assembly.GetType("MarseyPatch");
 
         if (marseyPatchType == null)
-            return;
+        {
+            throw new Exception("Loaded assembly does not have MarseyPatch type.");
+        }
 
         FieldInfo? targAsm = marseyPatchType.GetField("TargetAssembly");
 
         if (targAsm != null)
         {
-            Console.WriteLine($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
-            return;
+            throw new Exception($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
         }
 
          // Get all fields of the MarseyPatch type
@@ -41,12 +42,10 @@ public class MarseyPatcher
 
          if (targets == null)
          {
-             Console.WriteLine($"Couldn't get patchassembly fields on {assembly.FullName}");
-             return;
+             throw new Exception($"Couldn't get assembly fields on {assembly.FullName}.");
          }
 
          SetAssemblyTargets(targets);
-
 
          FieldInfo? nameField = marseyPatchType.GetField("Name");
          FieldInfo? descriptionField = marseyPatchType.GetField("Description");
@@ -88,6 +87,9 @@ public class MarseyPatcher
         return targets;
     }
 
+    /// <summary>
+    ///  Move "enabled" assemblies to the "Enabled" folder.
+    /// </summary>
     public static void PrepAssemblies()
     {
         string[] path = { "Marsey", "Enabled" };
@@ -111,6 +113,10 @@ public class MarseyPatcher
         }
     }
 
+    /// <summary>
+    /// Loads assemblies from a specified (lie) folder.
+    /// </summary>
+    /// <param name="path">folder with patch dll's</param>
     public static void LoadAssemblies(string[]? path = null)
     {
         path ??= new[] { "Marsey" };
