@@ -9,7 +9,7 @@ Space Station 14 launcher with client-side modding/patching support.
 * Enabled multiaccount
 * * Tokens are updated only on connect or account switch to evade alt detection
 * Locally change username for screenshots (This doesn't change your username in-game)
-* Violated MVVM
+* ~~Violated MVVM~~
 * Marsey.
 
 
@@ -25,6 +25,4 @@ Marseyloader uses the [Harmony](https://github.com/pardeike/Harmony) patching li
 Example patches can be found in the [ExampleMarseyPatch](https://github.com/ValidHunters/ExampleMarseyPatch) repository.
 
 ### TODO
-* Clean up logs.
-* Unfuck MVVM
-* Clean up MarseyPatcher
+* Log cleanup.
