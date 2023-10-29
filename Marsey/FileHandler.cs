@@ -19,25 +19,16 @@ public class FileHandler
 
         foreach (string file in GetPatches(path)) File.Delete(file);
 
-        foreach (var p in PatchAssemblyManager.GetPatchList())
-        {
-            if (p.Enabled)
-            {
-                string asmLocation = p.Asm.Location;
-
-                File.Copy(p.Asm.Location,
-                    Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "Marsey",
-                        "Enabled",
-                        Path.GetFileName(asmLocation)), true );
-            }
-
-        }
+        PatchAssemblyManager.GetPatchList()
+            .Where(p => p.Enabled)
+            .ToList()
+            .ForEach(p => File.Copy(p.Asm.Location,
+                Path.Combine(Directory.GetCurrentDirectory(), "Marsey",
+                    "Enabled", Path.GetFileName(p.Asm.Location)), true));
     }
 
     /// <summary>
-    /// Loads assemblies from a specified (lie) folder.
+    /// Loads assemblies from a specified folder.
     /// </summary>
     /// <param name="path">folder with patch dll's</param>
     public static void LoadAssemblies(string[]? path = null)

@@ -3,7 +3,7 @@ using System.Reflection;
 namespace Marsey;
 
 /// <summary>
-/// Generic class for a patch accepted by MarseyPatcher
+/// Generic class for a patch accepted by MarseyPatcher.
 /// </summary>
 public class MarseyPatch
 {

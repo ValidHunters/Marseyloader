@@ -54,6 +54,8 @@ public class PatchAssemblyManager
     /// Obtains fields for each of the game's assemblies.
     /// Returns null if any of the fields is null.
     /// </summary>
+    /// <returns>List of fields of assemblies within a MarseyPatch</returns>
+    /// <exception cref="Nullable">Returns null if any field in MarseyPatch is missing</exception>
     private static List<FieldInfo>? GetPatchAssemblyFields(Type marseyPatchType)
     {
         var fieldNames = new[] { "RobustClient", "RobustShared", "ContentClient", "ContentShared" };
@@ -71,6 +73,7 @@ public class PatchAssemblyManager
 
     /// <summary>
     /// Sets the assembly target in the patch assembly.
+    /// In order: Robust.Client, Robust.Shared, Content.Client, Content.Shared
     /// </summary>
     /// <param name="targets">Array of assemblies from the MarseyPatch class</param>
     private static void SetAssemblyTargets(List<FieldInfo> targets)
@@ -81,24 +84,19 @@ public class PatchAssemblyManager
         targets[3].SetValue(null,_clientSharedAss);
     }
 
-    /// <returns>Patch list</returns>
-    public static List<MarseyPatch> GetPatchList()
-    {
-        return _patchAssemblies;
-    }
-
     /// <summary>
     /// Checks if the amount of patches in folder equals the amount of patches in list.
     /// If not - resets the list.
     /// </summary>
     public static void RecheckPatches()
     {
-        if (FileHandler.GetPatches(new []{"Marsey"}).Length == _patchAssemblies.Count)
-            return;
-
-        _patchAssemblies = new List<MarseyPatch>();
+        if (FileHandler.GetPatches(new []{"Marsey"}).Length != _patchAssemblies.Count)
+            _patchAssemblies.Clear();
     }
 
+    /// <summary>
+    /// Sets assemblies to fields in class
+    /// </summary>
     public static void SetAssemblies(Assembly? robustAss, Assembly? clientAss, Assembly? robustSharedAss, Assembly? clientSharedAss)
     {
         _robustAss = robustAss;
@@ -106,5 +104,8 @@ public class PatchAssemblyManager
         _robustSharedAss = robustSharedAss;
         _clientSharedAss = clientSharedAss;
     }
+
+    /// <returns>Patch list</returns>
+    public static List<MarseyPatch> GetPatchList() => _patchAssemblies;
 }
 

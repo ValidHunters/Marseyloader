@@ -24,6 +24,8 @@ public class MarseyPatcher
 
         GameAssemblyManager.Init(new Harmony("com.validhunters.marseyloader"));
 
+        // Exception from this function halts execution.
+        // Patcher won't work if any of the 3 variables are null
         GameAssemblyManager.GetGameAssemblies(out var clientAss, out var robustSharedAss, out var clientSharedAss);
 
         PatchAssemblyManager.SetAssemblies(robClientAssembly, clientAss, robustSharedAss, clientSharedAss);

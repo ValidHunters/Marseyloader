@@ -498,7 +498,7 @@ public class Connector : ReactiveObject
         }
         */
 
-        Log.Information("Starting.");
+        Log.Debug("Preparing patch assemblies.");
         FileHandler.PrepAssemblies();
 
         var process = Process.Start(startInfo);

@@ -13,7 +13,7 @@ public class GameAssemblyManager
     private static Harmony? _harmony;
 
     /// <summary>
-    /// Sets the _harmony field in the class
+    /// Sets the _harmony field in the class.
     /// </summary>
     /// <param name="harmony">A Harmony instance</param>
     public static void Init(Harmony harmony)
@@ -37,12 +37,14 @@ public class GameAssemblyManager
     }
 
     /// <summary>
-    /// Obtains game assemblies
+    /// Obtains game assemblies.
     /// The function ends only when Robust.Shared,
     /// Content.Client and Content.Shared are initialized by the game,
     /// or 100 loops have been made without obtaining all the assemblies.
+    ///
     /// Executed only by the Loader.
     /// </summary>
+    /// <exception cref="Exception">Excepts if manager couldn't get game assemblies after 100 loops.</exception>
     public static void GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss)
     {
         clientAss = null;
@@ -77,8 +79,9 @@ public class GameAssemblyManager
             Thread.Sleep(200);
         }
 
-        Console.WriteLine(loops >= 100
-            ? $"[MARSEY] Failed to receive assemblies within 20 seconds."
-            : $"[MARSEY] Received assemblies.");
+        if (loops >= 100)
+            throw new Exception("Failed to receive assemblies within 100 loops.");
+        else
+            Console.WriteLine("[MARSEY] Received assemblies.");
     }
 }
