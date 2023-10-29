@@ -248,7 +248,7 @@ internal static class Program
         Locator.CurrentMutable.RegisterConstant(lc);
         _serverTask = msgr.ServerTask(lc);
 
-        MarseyPatcher.LoadAssemblies();
+        FileHandler.LoadAssemblies();
 
         app.Run(window);
 

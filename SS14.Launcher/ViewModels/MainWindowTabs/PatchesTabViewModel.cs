@@ -25,8 +25,8 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         private void LoadPatches()
         {
-            MarseyPatcher.LoadAssemblies();
-            var patches = MarseyPatcher.GetPatchList();
+            FileHandler.LoadAssemblies();
+            var patches = PatchAssemblyManager.GetPatchList();
             foreach (var patch in patches)
             {
                 Patches.Add(patch);
