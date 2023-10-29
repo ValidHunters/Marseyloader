@@ -8,6 +8,9 @@ using HarmonyLib;
 
 namespace Marsey;
 
+/// <summary>
+/// Entrypoint for patching
+/// </summary>
 public class MarseyPatcher
 {
     /// <summary>

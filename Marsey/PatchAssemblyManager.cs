@@ -4,6 +4,9 @@ using System.Reflection;
 
 namespace Marsey;
 
+/// <summary>
+/// Initializes, validates and manages patch assemblies.
+/// </summary>
 public class PatchAssemblyManager
 {
     private static Assembly? _robustAss;

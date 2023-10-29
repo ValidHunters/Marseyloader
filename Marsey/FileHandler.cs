@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace Marsey;
 
+/// <summary>
+/// Handles file operations in the patch folder
+/// </summary>
 public class FileHandler
 {
     /// <summary>
