@@ -186,9 +186,9 @@ internal class Program
         foreach (var asmLoadContext in AssemblyLoadContext.All)
         {
             Console.WriteLine("{0}:", asmLoadContext.Name);
-            foreach (var asm in asmLoadContext.Assemblies)
+            foreach (var Asm in asmLoadContext.Assemblies)
             {
-                Console.WriteLine("  {0}", asm.GetName().Name);
+                Console.WriteLine("  {0}", Asm.GetName().Name);
             }
         }*/
 

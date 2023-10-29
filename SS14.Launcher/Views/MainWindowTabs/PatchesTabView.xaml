@@ -26,9 +26,9 @@
         <ItemsControl.ItemTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal">
-              <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding enabled}" Content="{Binding name}"></CheckBox>
+              <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
               <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                         Text="{Binding desc}"
+                         Text="{Binding Desc}"
                          Margin="8" />
             </StackPanel>
           </DataTemplate>
