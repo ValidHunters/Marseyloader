@@ -22,7 +22,7 @@ public class MarseyPatcher
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
 
-        GameAssemblyManager.Init(new Harmony("com.validhunters.marseyloader"));
+        GameAssemblyManager.Init(new Harmony(MarseyVars.Identifier));
 
         FileHandler.LoadAssemblies(new []{"Marsey", "Enabled"});
 

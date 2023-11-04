@@ -11,7 +11,6 @@ namespace Marsey;
 public class GameAssemblyManager
 {
     private static Harmony? _harmony;
-    private static readonly int MaxLoops = 50;
 
     /// <summary>
     /// Sets the _harmony field in the class.
@@ -53,7 +52,7 @@ public class GameAssemblyManager
         clientSharedAss = null;
 
         int loops = 0;
-        while ((robustSharedAss == null || clientAss == null || clientSharedAss == null) && loops < MaxLoops)
+        while ((robustSharedAss == null || clientAss == null || clientSharedAss == null) && loops < MarseyVars.MaxLoops)
         {
             Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var e in asms)
@@ -77,10 +76,10 @@ public class GameAssemblyManager
             }
 
             loops++;
-            Thread.Sleep(200);
+            Thread.Sleep(MarseyVars.LoopCooldown);
         }
 
-        if (loops >= MaxLoops)
+        if (loops >= MarseyVars.MaxLoops)
         {
             Utility.Log(Utility.LogType.WARN, "Total amount of loops exhausted.");
 
