@@ -301,8 +301,5 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         "Sandbox bypass simulator", "DIY murder tutorials"
     };
 
-    public string RandomTitle
-    {
-        get { return "Marseyloader: " + _titles[_random.Next(_titles.Length)]; }
-    }
+    public string RandomTitle =>  "Marseyloader: " + _titles[_random.Next(_titles.Length)];
 }
