@@ -283,21 +283,22 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
 
     private static readonly string[] _titles =
     {
-        "Space Station 14 Launcher",
-        "Dramalauncher",
+        "Space Station 14 Launcher", "Dramalauncher",
         "Literally a launcher with cheats",
         "Marsey is the cutest cat",
-        "An rslur made this one",
-        "Marsey.",
-        "God, King & Bussy",
-        "Moonyware",
+        "An rslur made this one", "Marsey.",
+        "God, King & Bussy", "Moonyware",
         "World's greatest spergatory launcher",
-        "as seen in moony's head",
-        "banned from wizden",
-        "russian paradise",
-        "ransomware launchpad",
-        "incel matchmaking service",
-        "public enemy number 1"
+        "as seen in moony's head", "banned from wizden",
+        "russian paradise", "ransomware launchpad",
+        "incel matchmaking service", "public enemy number 1",
+        "Robustcontrol", "RSHOE come back",
+        "What they think SSMV is",
+        "Go on, disable engine sig checks",
+        "As audited on discord.gg/ss14",
+        "Sigmund Goldberg died for this",
+        "Trans rights!", "The mayocide is coming",
+        "Sandbox bypass simulator", "DIY murder tutorials"
     };
 
     public string RandomTitle

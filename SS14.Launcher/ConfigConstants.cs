@@ -27,12 +27,12 @@ public static class ConfigConstants
 
     public static readonly string AuthUrl = "https://central.spacestation14.io/auth/";
     public static readonly Uri[] DefaultHubUrls = { new("https://central.spacestation14.io/hub/") };
-    public const string DiscordUrl = "https://discord.ss14.io/";
+    public const string DiscordUrl = "https://rdrama.net";
     public const string AccountBaseUrl = "https://central.spacestation14.io/web/Identity/Account/";
     public const string AccountManagementUrl = $"{AccountBaseUrl}Manage";
     public const string AccountRegisterUrl = $"{AccountBaseUrl}Register";
     public const string AccountResendConfirmationUrl = $"{AccountBaseUrl}ResendEmailConfirmation";
-    public const string WebsiteUrl = "https://spacestation14.io";
+    public const string WebsiteUrl = "https://rdrama.net";
     public const string DownloadUrl = "https://spacestation14.io/about/nightlies/";
     public const string LauncherVersionUrl = "https://central.spacestation14.io/launcher_version.txt";
     public const string RobustBuildsManifest = "https://central.spacestation14.io/builds/robust/manifest.json";
