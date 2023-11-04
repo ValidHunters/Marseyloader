@@ -1,6 +1,6 @@
 namespace Marsey;
 
-public class MarseyVars
+public abstract class MarseyVars
 {
     // Namespace identifier for Harmony
     public const string Identifier = "com.validhunters.marseyloader";

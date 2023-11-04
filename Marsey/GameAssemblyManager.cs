@@ -8,7 +8,7 @@ namespace Marsey;
 /// <summary>
 /// Manages game's assemblies, this includes patching.
 /// </summary>
-public class GameAssemblyManager
+public abstract class GameAssemblyManager
 {
     private static Harmony? _harmony;
 

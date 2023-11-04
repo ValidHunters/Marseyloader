@@ -2,7 +2,7 @@ using System;
 
 namespace Marsey;
 
-public class Utility
+public abstract class Utility
 {
     public enum LogType
     {

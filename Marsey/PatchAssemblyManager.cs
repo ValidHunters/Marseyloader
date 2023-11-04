@@ -7,7 +7,7 @@ namespace Marsey;
 /// <summary>
 /// Initializes, validates and manages patch assemblies.
 /// </summary>
-public class PatchAssemblyManager
+public abstract class PatchAssemblyManager
 {
     private static Assembly? _robustAss;
     private static Assembly? _clientAss;
