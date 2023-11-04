@@ -45,9 +45,9 @@ public class FileHandler
                 Assembly assembly = Assembly.LoadFrom(file);
                 PatchAssemblyManager.InitAssembly(assembly);
             }
-            catch (Exception ex)
+            catch (PatchAssemblyException ex)
             {
-                Console.WriteLine($"Failed to load assembly from {file}. Error: {ex.Message}");
+                Utility.Log(Utility.LogType.FATL, ex.Message);
             }
         }
     }

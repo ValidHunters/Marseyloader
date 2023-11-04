@@ -24,13 +24,18 @@ public class MarseyPatcher
 
         GameAssemblyManager.Init(new Harmony("com.validhunters.marseyloader"));
 
-        // Exception from this function halts execution.
-        // Patcher won't work if any of the 3 variables are null
+        FileHandler.LoadAssemblies(new []{"Marsey", "Enabled"});
+
+        // If no patches are enabled - don't bother doing anything with the game.
+        if (PatchAssemblyManager.GetPatchList().Count == 0)
+        {
+            Utility.Log(Utility.LogType.INFO, "No patches loaded. Not capturing game assemblies.");
+            return;
+        }
+
         GameAssemblyManager.GetGameAssemblies(out var clientAss, out var robustSharedAss, out var clientSharedAss);
 
         PatchAssemblyManager.SetAssemblies(robClientAssembly, clientAss, robustSharedAss, clientSharedAss);
-
-        FileHandler.LoadAssemblies(new []{"Marsey", "Enabled"});
 
         GameAssemblyManager.PatchProc();
     }

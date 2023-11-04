@@ -25,11 +25,11 @@ public class PatchAssemblyManager
     /// <exception cref="Exception">Excepts if GetPatchAssemblyFields returns null</exception>
     public static void InitAssembly(Assembly assembly)
     {
-        Type marseyPatchType = assembly.GetType("MarseyPatch") ?? throw new Exception("Loaded assembly does not have MarseyPatch type.");
+        Type marseyPatchType = assembly.GetType("MarseyPatch") ?? throw new PatchAssemblyException("Loaded assembly does not have MarseyPatch type.");
 
-        if (marseyPatchType.GetField("TargetAssembly") != null) throw new Exception($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
+        if (marseyPatchType.GetField("TargetAssembly") != null) throw new PatchAssemblyException($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
 
-        List<FieldInfo> targets = GetPatchAssemblyFields(marseyPatchType) ?? throw new Exception($"Couldn't get assembly fields on {assembly.FullName}.");
+        List<FieldInfo> targets = GetPatchAssemblyFields(marseyPatchType) ?? throw new PatchAssemblyException($"Couldn't get assembly fields on {assembly.FullName}.");
 
         SetAssemblyTargets(targets);
 
@@ -48,6 +48,7 @@ public class PatchAssemblyManager
         }
 
         _patchAssemblies.Add(patch);
+
     }
 
     /// <summary>

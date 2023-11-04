@@ -11,6 +11,7 @@ namespace Marsey;
 public class GameAssemblyManager
 {
     private static Harmony? _harmony;
+    private static readonly int MaxLoops = 50;
 
     /// <summary>
     /// Sets the _harmony field in the class.
@@ -30,7 +31,7 @@ public class GameAssemblyManager
         {
             foreach (MarseyPatch p in PatchAssemblyManager.GetPatchList())
             {
-                Console.WriteLine($"[MARSEY] Patching {p.Asm.GetName()}");
+                Utility.Log(Utility.LogType.INFO, $"Patching {p.Asm.GetName()}");
                 _harmony.PatchAll(p.Asm);
             }
         }
@@ -40,11 +41,11 @@ public class GameAssemblyManager
     /// Obtains game assemblies.
     /// The function ends only when Robust.Shared,
     /// Content.Client and Content.Shared are initialized by the game,
-    /// or 100 loops have been made without obtaining all the assemblies.
+    /// or $MaxLoops loops have been made without obtaining all the assemblies.
     ///
     /// Executed only by the Loader.
     /// </summary>
-    /// <exception cref="Exception">Excepts if manager couldn't get game assemblies after 100 loops.</exception>
+    /// <exception cref="Exception">Excepts if manager couldn't get game assemblies after $MaxLoops loops.</exception>
     public static void GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss)
     {
         clientAss = null;
@@ -52,7 +53,7 @@ public class GameAssemblyManager
         clientSharedAss = null;
 
         int loops = 0;
-        while (robustSharedAss == null || clientAss == null || clientSharedAss == null && loops < 100)
+        while ((robustSharedAss == null || clientAss == null || clientSharedAss == null) && loops < MaxLoops)
         {
             Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var e in asms)
@@ -79,9 +80,18 @@ public class GameAssemblyManager
             Thread.Sleep(200);
         }
 
-        if (loops >= 100)
-            throw new Exception("Failed to receive assemblies within 100 loops.");
+        if (loops >= MaxLoops)
+        {
+            Utility.Log(Utility.LogType.WARN, "Total amount of loops exhausted.");
+
+            if (clientAss == null)
+                Utility.Log(Utility.LogType.WARN, "Content.Client assembly was not received.");
+            if (clientSharedAss == null)
+                Utility.Log(Utility.LogType.WARN, "Client.Shared assembly was not received.");
+            if (robustSharedAss == null)
+                Utility.Log(Utility.LogType.WARN, "Robust.Shared assembly was not received");
+        }
         else
-            Console.WriteLine("[MARSEY] Received assemblies.");
+            Utility.Log(Utility.LogType.INFO, "Received assemblies.");
     }
 }
