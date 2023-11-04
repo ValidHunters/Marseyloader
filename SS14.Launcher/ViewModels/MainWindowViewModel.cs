@@ -279,9 +279,9 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         ConnectingViewModel.StartContentBundle(this, fileName);
     }
 
-    private static readonly Random _random = new Random();
+    private static readonly Random Random = new Random();
 
-    private static readonly string[] _titles =
+    private static readonly string[] Titles =
     {
         "Space Station 14 Launcher", "Dramalauncher",
         "Literally a launcher with cheats",
@@ -301,5 +301,5 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         "Sandbox bypass simulator", "DIY murder tutorials"
     };
 
-    public string RandomTitle =>  "Marseyloader: " + _titles[_random.Next(_titles.Length)];
+    public string RandomTitle =>  "Marseyloader: " + Titles[Random.Next(Titles.Length)];
 }
