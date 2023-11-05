@@ -50,10 +50,25 @@ public class App : Application
     {
         var loader = AvaloniaLocator.Current.GetService<IAssetLoader>()!;
 
+        var logoUris = loader.GetAssets(new Uri($"avares://SS14.Launcher/Assets/logos"), null);
+        var rand = new Random();
+        var logolist = new List<System.Uri>(logoUris);
+
         foreach (var (name, (path, type)) in AssetDefs)
         {
-            using var dataStream = loader.Open(new Uri($"avares://SS14.Launcher/Assets/{path}"));
+            Uri assetUri;
+            if (name == "LogoLong" && logolist.Count > 0)
+            {
+                var randomIndex = rand.Next(logolist.Count);
+                var randomAsset = logolist[randomIndex];
+                assetUri = new Uri(randomAsset.AbsoluteUri);
+            }
+            else
+            {
+                assetUri = new Uri($"avares://SS14.Launcher/Assets/{path}");
+            }
 
+            using var dataStream = loader.Open(assetUri);
             var asset = LoadAsset(type, dataStream);
 
             _baseAssets.Add(name, asset);
