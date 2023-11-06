@@ -21,8 +21,7 @@ Space Station 14 launcher with client-side modding/patching support.
 
 ### Running
 1. Download release
-2. Copy "Marsey" folder from the bin directory to root
-3. Start the game from exe
+2. Start the game from exe
 
 ### Patching
 Marseyloader uses the [Harmony](https://github.com/pardeike/Harmony) patching library. Introduction for the library is provided [here](https://harmony.pardeike.net/) and documentation [here](https://harmony.pardeike.net/articles/intro.html).
