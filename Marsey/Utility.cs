@@ -41,6 +41,6 @@ public abstract class Utility
 
         Delegate logDelegate = Delegate.CreateDelegate(logDelegateType, null, logMethod);
 
-        marseyLoggerType.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static).SetValue(null, logDelegate);
+        marseyLoggerType.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static)!.SetValue(null, logDelegate);
     }
 }
