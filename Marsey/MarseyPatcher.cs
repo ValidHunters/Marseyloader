@@ -30,6 +30,8 @@ public class MarseyPatcher
 
         FileHandler.LoadAssemblies(new []{"Marsey", "Enabled"});
 
+        PatchAssemblyManager.InitLogger();
+
         GameAssemblyManager.PatchProc();
     }
 }

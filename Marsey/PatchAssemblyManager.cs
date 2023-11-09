@@ -20,14 +20,12 @@ public abstract class PatchAssemblyManager
     /// Initializes a given assembly, validates its structure, and adds it to the list of patch assemblies
     /// </summary>
     /// <param name="assembly">The assembly to initialize</param>
-    /// <exception cref="Exception">Excepts if MarseyPatch is not present in the assembly</exception>
-    /// <exception cref="Exception">Excepts if "TargetAssembly" is present in the assembly MarseyPatch type"</exception>
-    /// <exception cref="Exception">Excepts if GetPatchAssemblyFields returns null</exception>
+    /// <exception cref="PatchAssemblyException">Excepts if MarseyPatch is not present in the assembly</exception>
+    /// <exception cref="PatchAssemblyException">Excepts if "TargetAssembly" is present in the assembly MarseyPatch type"</exception>
+    /// <exception cref="PatchAssemblyException">Excepts if GetPatchAssemblyFields returns null</exception>
     public static void InitAssembly(Assembly assembly)
     {
-        Type marseyPatchType = assembly.GetType("MarseyPatch") ?? throw new PatchAssemblyException("Loaded assembly does not have MarseyPatch type.");
-
-        if (marseyPatchType.GetField("TargetAssembly") != null) throw new PatchAssemblyException($"{assembly.FullName} cannot be loaded because it uses an outdated patch!");
+        Type marseyPatchType = assembly.GetType("MarseyPatch") ?? throw new PatchAssemblyException("Loaded assembly does not have MarseyPatch type. Most likely because MarseyPatch is under a namespace, or you provided a non-patch dll.");
 
         List<FieldInfo> targets = GetPatchAssemblyFields(marseyPatchType) ?? throw new PatchAssemblyException($"Couldn't get assembly fields on {assembly.FullName}.");
 
@@ -49,6 +47,32 @@ public abstract class PatchAssemblyManager
 
         _patchAssemblies.Add(patch);
 
+    }
+
+    /// <summary>
+    /// Initializes logger class in patches that have it.
+    /// Executed only by the loader.
+    /// MarseyLogger example can be found in the Rethemer MarseyPatch example.
+    /// </summary>
+    public static void InitLogger()
+    {
+        foreach (MarseyPatch patch in _patchAssemblies)
+        {
+            Assembly assembly = patch.Asm;
+
+            // Check for a logger class
+            Type? marseyLoggerType = assembly.GetType("MarseyLogger");
+
+            if (marseyLoggerType != null)
+            {
+                //Utility.Log(Utility.LogType.DEBG, $"{assembly.GetName().Name} has a MarseyLogger class");
+                Utility.SetupLogger(assembly);
+            }
+            else
+            {
+                Utility.Log(Utility.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyLogger class");
+            }
+        }
     }
 
     /// <summary>
