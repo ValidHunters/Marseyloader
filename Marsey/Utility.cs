@@ -65,6 +65,7 @@ public abstract class Utility
     {
         MarseyVars.PatchLogAllowed = CheckEnv("MARSEY_LOG_PATCHES");
         MarseyVars.DebugAllowed = CheckEnv("MARSEY_LOADER_DEBUG");
+        MarseyVars.ThrowOnFail = CheckEnv("MARSEY_THROW_FAIL");
     }
 
     private static bool CheckEnv(string envName)

@@ -42,6 +42,11 @@ public static class CVars
     public static readonly CVarDef<bool> DisableSigning = CVarDef.Create("DisableSigning", false);
 
     /// <summary>
+    /// Throw an exception if a patch fails to apply.
+    /// </summary>
+    public static readonly CVarDef<bool> ThrowPatchFail = CVarDef.Create("ThrowPatchFail", false);
+
+    /// <summary>
     /// Enable logging of launched client instances to file.
     /// </summary>
     public static readonly CVarDef<bool> LogClient = CVarDef.Create("LogClient", false);

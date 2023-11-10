@@ -25,9 +25,20 @@ public abstract class PatchAssemblyManager
     /// <exception cref="PatchAssemblyException">Excepts if GetPatchAssemblyFields returns null</exception>
     public static void InitAssembly(Assembly assembly)
     {
-        Type marseyPatchType = assembly.GetType("MarseyPatch") ?? throw new PatchAssemblyException("Loaded assembly does not have MarseyPatch type. Most likely because MarseyPatch is under a namespace, or you provided a non-patch dll.");
+        Type? marseyPatchType = assembly.GetType("MarseyPatch");
+        if (marseyPatchType == null)
+        {
+            Utility.Log(Utility.LogType.FATL,
+                "Loaded assembly does not have MarseyPatch type. Most likely because MarseyPatch is under a namespace, or you provided a non-patch dll.");
+            return;
+        }
 
-        List<FieldInfo> targets = GetPatchAssemblyFields(marseyPatchType) ?? throw new PatchAssemblyException($"Couldn't get assembly fields on {assembly.FullName}.");
+        List<FieldInfo>? targets = GetPatchAssemblyFields(marseyPatchType);
+        if (targets == null)
+        {
+            Utility.Log(Utility.LogType.FATL, $"Couldn't get assembly fields on {assembly.FullName}.");
+            return;
+        }
 
         SetAssemblyTargets(targets);
 
@@ -37,7 +48,7 @@ public abstract class PatchAssemblyManager
         string name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
         string description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
 
-        var patch = new MarseyPatch(assembly, name, description);
+        MarseyPatch patch = new MarseyPatch(assembly, name, description);
 
         foreach (MarseyPatch p in _patchAssemblies)
         {

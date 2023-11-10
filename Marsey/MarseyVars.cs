@@ -30,4 +30,10 @@ public abstract class MarseyVars
     /// <see cref="Utility.SetupLogFlags"/>
     /// </summary>
     public static bool PatchLogAllowed;
+
+    /// <summary>
+    /// Throws an exception on client if any patch had failed applying.
+    /// <see cref="Utility.SetupLogFlags"/>
+    /// </summary>
+    public static bool ThrowOnFail;
 }

@@ -61,6 +61,11 @@
                    Text="For when things stop making sense"
                    Margin="8" />
 
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ThrowPatchFail}">Except on patch fail</CheckBox>
+        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                   Text="Exits client if any patch fails to apply. Useful when you need all patches applied or debugging a patch."
+                   Margin="8" />
+
         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                    Text="Set your current active account name to a funny"
                    Margin="8"/>

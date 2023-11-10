@@ -104,6 +104,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel
         }
     }
 
+    public bool ThrowPatchFail
+    {
+        get => Cfg.GetCVar(CVars.ThrowPatchFail);
+        set
+        {
+            Cfg.SetCVar(CVars.ThrowPatchFail, value);
+            Cfg.CommitConfig();
+        }
+    }
+
     public bool DisableSigning
     {
         get => Cfg.GetCVar(CVars.DisableSigning);

@@ -472,6 +472,9 @@ public class Connector : ReactiveObject
         if (_cfg.GetCVar(CVars.LogPatches))
             EnvVar("MARSEY_LOG_PATCHES", "true");
 
+        if (_cfg.GetCVar(CVars.ThrowPatchFail))
+            EnvVar("MARSEY_THROW_FAIL", "true");
+
         if (_cfg.GetCVar(CVars.DynamicPgo))
         {
             Log.Debug("Dynamic PGO is enabled.");
