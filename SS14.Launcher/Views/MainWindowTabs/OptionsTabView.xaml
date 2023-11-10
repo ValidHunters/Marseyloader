@@ -61,7 +61,7 @@
                    Text="For when things stop making sense"
                    Margin="8" />
 
-        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ThrowPatchFail}">Except on patch fail</CheckBox>
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ThrowPatchFail}">Except On Patch Fail</CheckBox>
         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                    Text="Exits client if any patch fails to apply. Useful when you need all patches applied or debugging a patch."
                    Margin="8" />
