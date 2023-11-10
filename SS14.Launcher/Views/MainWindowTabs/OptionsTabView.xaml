@@ -51,6 +51,16 @@
                    Text="For when the developers are *very* stumped with your problem. (requires launcher restart)"
                    Margin="8" />
 
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patches</CheckBox>
+        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                   Text="Write MarseyLogger patch output to log"
+                   Margin="8" />
+
+        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLoaderDebug}">Enable Loader Debug Logs</CheckBox>
+        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                   Text="For when things stop making sense"
+                   Margin="8" />
+
         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                    Text="Set your current active account name to a funny"
                    Margin="8"/>

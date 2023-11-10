@@ -466,6 +466,12 @@ public class Connector : ReactiveObject
             startInfo.RedirectStandardError = true;
         }
 
+        if (_cfg.GetCVar(CVars.LogLoaderDebug))
+            EnvVar("MARSEY_LOADER_DEBUG", "true");
+
+        if (_cfg.GetCVar(CVars.LogPatches))
+            EnvVar("MARSEY_LOG_PATCHES", "true");
+
         if (_cfg.GetCVar(CVars.DynamicPgo))
         {
             Log.Debug("Dynamic PGO is enabled.");

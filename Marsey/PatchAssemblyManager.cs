@@ -51,7 +51,7 @@ public abstract class PatchAssemblyManager
     /// <summary>
     /// Initializes logger class in patches that have it.
     /// Executed only by the loader.
-    /// MarseyLogger example can be found in the Rethemer MarseyPatch example.
+    /// MarseyLogger example can be found in the BasePatch MarseyPatch example.
     /// </summary>
     public static void InitLogger()
     {
@@ -63,14 +63,9 @@ public abstract class PatchAssemblyManager
             Type? marseyLoggerType = assembly.GetType("MarseyLogger");
 
             if (marseyLoggerType != null)
-            {
-                //Utility.Log(Utility.LogType.DEBG, $"{assembly.GetName().Name} has a MarseyLogger class");
                 Utility.SetupLogger(assembly);
-            }
             else
-            {
                 Utility.Log(Utility.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyLogger class");
-            }
         }
     }
 

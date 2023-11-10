@@ -14,13 +14,17 @@ namespace Marsey;
 public class MarseyPatcher
 {
     /// <summary>
-    /// Boots up the patcher, executed by the loader assembly only.
+    /// Boots up the patcher
+    ///
+    /// Executed by the loader.
     /// </summary>
     /// <param name="robClientAssembly">Robust.Client assembly as *loaded* by the *loader*</param>
     /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
     public static void Boot(Assembly? robClientAssembly)
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
+
+        Utility.SetupLogFlags();
 
         GameAssemblyManager.Init(new Harmony(MarseyVars.Identifier));
 

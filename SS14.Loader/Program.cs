@@ -61,8 +61,8 @@ internal class Program
 
         SQLitePCL.Batteries_V2.Init();
 
-        Thread t = new Thread(() => MarseyPatcher.Boot(clientAssembly));
-        t.Start();
+        // Start the MarseyPatcher
+        new Thread(() => MarseyPatcher.Boot(clientAssembly)).Start();
 
         var launcher = Environment.GetEnvironmentVariable("SS14_LAUNCHER_PATH");
         var redialApi = launcher != null ? new RedialApi(launcher) : null;

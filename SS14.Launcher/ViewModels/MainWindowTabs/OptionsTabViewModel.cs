@@ -84,6 +84,26 @@ public class OptionsTabViewModel : MainWindowTabViewModel
         }
     }
 
+    public bool LogPatches
+    {
+        get => Cfg.GetCVar(CVars.LogPatches);
+        set
+        {
+            Cfg.SetCVar(CVars.LogPatches, value);
+            Cfg.CommitConfig();
+        }
+    }
+
+    public bool LogLoaderDebug
+    {
+        get => Cfg.GetCVar(CVars.LogLoaderDebug);
+        set
+        {
+            Cfg.SetCVar(CVars.LogLoaderDebug, value);
+            Cfg.CommitConfig();
+        }
+    }
+
     public bool DisableSigning
     {
         get => Cfg.GetCVar(CVars.DisableSigning);

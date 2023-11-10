@@ -57,6 +57,16 @@ public static class CVars
     public static readonly CVarDef<bool> LogLauncherVerbose = CVarDef.Create("LogLauncherVerbose", false);
 
     /// <summary>
+    /// Log messages coming from patches
+    /// </summary>
+    public static readonly CVarDef<bool> LogPatches = CVarDef.Create("LogPatches", true);
+
+    /// <summary>
+    /// Log debug messages coming from loader
+    /// </summary>
+    public static readonly CVarDef<bool> LogLoaderDebug = CVarDef.Create("LogLoaderDebug", false);
+
+    /// <summary>
     /// Enable multi-account support on release builds.
     /// </summary>
     public static readonly CVarDef<bool> MultiAccounts = CVarDef.Create("MultiAccounts", false);
