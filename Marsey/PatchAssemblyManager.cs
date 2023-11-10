@@ -46,7 +46,6 @@ public abstract class PatchAssemblyManager
         }
 
         _patchAssemblies.Add(patch);
-
     }
 
     /// <summary>

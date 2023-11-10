@@ -106,10 +106,10 @@ public class OptionsTabViewModel : MainWindowTabViewModel
 
     public string Username
     {
-        get => _loginManager.ActiveAccount.Username;
+        get => _loginManager.ActiveAccount?.Username!;
         set
         {
-            LoginInfo LI = _loginManager.ActiveAccount.LoginInfo;
+            LoginInfo LI = _loginManager.ActiveAccount!.LoginInfo;
             LI.Username = value;
             _dataManager.ChangeLogin(ChangeReason.Update, LI);
             _dataManager.CommitConfig();

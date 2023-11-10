@@ -24,7 +24,7 @@ public sealed class LoginManager : ReactiveObject
     private readonly DataManager _cfg;
     private readonly AuthApi _authApi;
 
-    private IDisposable? _timer;
+    // private IDisposable? _timer;
 
     private Guid? _activeLoginId;
 
@@ -82,9 +82,9 @@ public sealed class LoginManager : ReactiveObject
             .AsObservableCache();
     }
 
-    public async Task Initialize()
+    public Task Initialize()
     {
-
+        return Task.CompletedTask;
     }
 
     private async Task RefreshAllTokens()

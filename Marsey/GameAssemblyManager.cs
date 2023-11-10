@@ -92,5 +92,10 @@ public abstract class GameAssemblyManager
         }
         else
             Utility.Log(Utility.LogType.INFO, "Received assemblies.");
+
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Console.WriteLine(asm.FullName);
+        }
     }
 }
