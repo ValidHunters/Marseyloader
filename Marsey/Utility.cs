@@ -61,7 +61,7 @@ public abstract class Utility
     ///
     /// Executed only by the loader.
     /// </summary>
-    public static void SetupLogFlags()
+    public static void SetupFlags()
     {
         MarseyVars.PatchLogAllowed = CheckEnv("MARSEY_LOG_PATCHES");
         MarseyVars.DebugAllowed = CheckEnv("MARSEY_LOADER_DEBUG");

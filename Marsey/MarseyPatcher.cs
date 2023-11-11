@@ -24,7 +24,7 @@ public class MarseyPatcher
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
 
-        Utility.SetupLogFlags();
+        Utility.SetupFlags();
 
         GameAssemblyManager.Init(new Harmony(MarseyVars.Identifier));
 
