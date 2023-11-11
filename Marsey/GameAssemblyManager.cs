@@ -14,9 +14,18 @@ public abstract class GameAssemblyManager
 
     /// <summary>
     /// Sets the _harmony field in the class.
+    ///
+    /// If debug is enabled - log IL to file on desktop
     /// </summary>
     /// <param name="harmony">A Harmony instance</param>
-    public static void Init(Harmony harmony) => _harmony = harmony;
+    public static void Init(Harmony harmony)
+    {
+        _harmony = harmony;
+
+        if (MarseyVars.DebugAllowed)
+            Harmony.DEBUG = true;
+    }
+
 
     /// <summary>
     /// Patches the game using assemblies in List.
