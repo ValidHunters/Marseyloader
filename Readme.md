@@ -42,7 +42,7 @@ Wherever clicking on the "Open patch directory" in the "Plugins" tab leads you
 No.
 
 #### Dotnet 8 when?
-When monomod fixes changed Emits
+https://github.com/ValidHunters/Marseyloader/issues/4
 
 #### IL logs?
 Enable loader debug, will be on your desktop
