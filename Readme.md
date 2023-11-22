@@ -30,5 +30,22 @@ Marseyloader uses the [Harmony](https://github.com/pardeike/Harmony) patching li
 
 Example patches can be found in the [ExampleMarseyPatch](https://github.com/ValidHunters/ExampleMarseyPatch) repository.
 
+### FAQ
+
+#### How do I make a patch
+[Example Marseypatches](https://github.com/ValidHunters/ExampleMarseyPatch)
+
+#### Where do I put the patch dll's
+Wherever clicking on the "Open patch directory" in the "Plugins" tab leads you
+
+#### Can you do X?
+No.
+
+#### Dotnet 8 when?
+https://github.com/ValidHunters/Marseyloader/issues/4
+
+#### IL logs?
+Enable loader debug, will be on your desktop
+
 ### TODO
 * Log cleanup.
