@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Marsey;
@@ -20,44 +21,36 @@ public abstract class PatchAssemblyManager
     /// Initializes a given assembly, validates its structure, and adds it to the list of patch assemblies
     /// </summary>
     /// <param name="assembly">The assembly to initialize</param>
-    /// <exception cref="PatchAssemblyException">Excepts if MarseyPatch is not present in the assembly</exception>
-    /// <exception cref="PatchAssemblyException">Excepts if "TargetAssembly" is present in the assembly MarseyPatch type"</exception>
-    /// <exception cref="PatchAssemblyException">Excepts if GetPatchAssemblyFields returns null</exception>
+    /// <remarks>Function returns if neither MarseyPatch nor SubverterPatch can be found in the assembly</remarks>
     public static void InitAssembly(Assembly assembly)
     {
-        Type? marseyPatchType = assembly.GetType("MarseyPatch");
-        if (marseyPatchType == null)
+        Type? DataType = assembly.GetType("MarseyPatch");
+        if (DataType != null)
         {
-            Utility.Log(Utility.LogType.FATL,
-                "Loaded assembly does not have MarseyPatch type. Most likely because MarseyPatch is under a namespace, or you provided a non-patch dll.");
+            List<FieldInfo>? targets = GetPatchAssemblyFields(DataType);
+            if (targets == null)
+            {
+                Utility.Log(Utility.LogType.FATL, $"Couldn't get assembly fields on {assembly.GetName().Name}.");
+                return;
+            }
+            SetAssemblyTargets(targets);
+        }
+
+        // MarseyPatch takes precedence over Subverter, for now
+        DataType ??= assembly.GetType("SubverterPatch");
+
+        if (DataType == null)
+        {
+            Utility.Log(Utility.LogType.FATL, $"{assembly.GetName().Name} had no supported data Type. Is it namespaced?");
             return;
         }
 
-        List<FieldInfo>? targets = GetPatchAssemblyFields(marseyPatchType);
-        if (targets == null)
-        {
-            Utility.Log(Utility.LogType.FATL, $"Couldn't get assembly fields on {assembly.FullName}.");
-            return;
-        }
-
-        SetAssemblyTargets(targets);
-
-        FieldInfo? nameField = marseyPatchType.GetField("Name");
-        FieldInfo? descriptionField = marseyPatchType.GetField("Description");
-
-        string name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
-        string description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
-
+        GetFields(DataType, out string name, out string description);
         MarseyPatch patch = new MarseyPatch(assembly, name, description);
 
-        foreach (MarseyPatch p in _patchAssemblies)
-        {
-            if (p.Asm == assembly)
-                return;
-        }
-
-        _patchAssemblies.Add(patch);
+        AddToList(patch);
     }
+
 
     /// <summary>
     /// Initializes logger class in patches that have it.
@@ -133,6 +126,28 @@ public abstract class PatchAssemblyManager
         _clientAss = clientAss;
         _robustSharedAss = robustSharedAss;
         _clientSharedAss = clientSharedAss;
+    }
+
+    public static void GetFields(Type? marseyPatchType, out string name, out string description)
+    {
+        FieldInfo? nameField = marseyPatchType?.GetField("Name");
+        FieldInfo? descriptionField = marseyPatchType?.GetField("Description");
+
+        name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
+        description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
+    }
+
+    /// <summary>
+    /// Adds to patch list if none present
+    /// </summary>
+    /// <param name="patch">MarseyPatch object</param>
+    public static void AddToList(MarseyPatch patch)
+    {
+        Assembly assembly = patch.Asm;
+
+        if (_patchAssemblies.Any(p => p.Asm == assembly)) return;
+
+        _patchAssemblies.Add(patch);
     }
 
     /// <returns>Patch list</returns>
