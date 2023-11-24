@@ -20,6 +20,7 @@ mkdir -p bin/publish/Windows/bin
 mkdir -p bin/publish/Windows/bin/loader
 mkdir -p bin/publish/Windows/dotnet
 mkdir -p bin/publish/Windows/Marsey/Enabled
+mkdir -p bin/publish/Windows/Subversion
 
 cp -r Dependencies/dotnet/windows/* bin/publish/Windows/dotnet
 cp "SS14.Launcher.Bootstrap/bin/Release/net45/publish/Space Station 14 Launcher.exe" bin/publish/Windows

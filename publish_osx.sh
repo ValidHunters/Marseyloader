@@ -18,6 +18,7 @@ cp -r "PublishFiles/Space Station 14 Launcher.app" bin/publish/macOS
 
 mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/dotnet/"
 mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/bin/"
+mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/Subversion"
 mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/Marsey/Enabled"
 mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/bin/loader/Space Station 14.app/Contents/Resources/bin/"
 

@@ -6,6 +6,7 @@ Space Station 14 launcher with client-side modding/patching support.
 
 * **Integration with the Harmony patching library.**
 * * Full functionality regarding methods in client/shared content/engine assemblies.
+* * Sideloading custom code using [Subverter](https://github.com/Subversionary/Subverter)
 * * Win/Mac/Linux support
 * * No injectors used, entirely based on reflection
 * Enabled multiaccount
