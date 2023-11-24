@@ -152,6 +152,13 @@ public abstract class PatchAssemblyManager
         _clientSharedAss = clientSharedAss;
     }
 
+    /// <summary>
+    /// Obtains patch metadata like name and description
+    /// </summary>
+    /// <param name="marseyPatchType">Patch data type</param>
+    /// <param name="name">Returned name</param>
+    /// <param name="description">Returned description</param>
+    /// <remarks>If name or description cannot be found - "Unknown" is returned</remarks>
     public static void GetFields(Type? marseyPatchType, out string name, out string description)
     {
         FieldInfo? nameField = marseyPatchType?.GetField("Name");

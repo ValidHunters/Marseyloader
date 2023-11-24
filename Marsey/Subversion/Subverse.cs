@@ -2,10 +2,17 @@ using System.Collections.Generic;
 
 namespace Marsey.Subversion;
 
+/// <summary>
+/// Manages the Subverter helper patch
+/// </summary>
 public static class Subverse
 {
     private static MarseyPatch? _subverter = null; 
     
+    /// <summary>
+    /// Initializes the subverter library and subversion patches
+    /// </summary>
+    /// <returns>True if the library was initialized successfully</returns>
     public static bool InitSubverter()
     {
         if (_subverter != null)

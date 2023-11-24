@@ -32,7 +32,7 @@ public abstract class FileHandler
     /// <summary>
     /// Loads assemblies from a specified folder.
     /// </summary>
-    /// <param name="path">folder with patch dll's</param>
+    /// <param name="path">folder with patch dll's, set to "Marsey" by default</param>
     /// <param name="subverter">Is the initialized assembly a subverter</param>
     public static void LoadAssemblies(string[]? path = null, bool subverter = false)
     {

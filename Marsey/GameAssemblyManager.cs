@@ -31,6 +31,7 @@ public abstract class GameAssemblyManager
     /// <summary>
     /// Patches the game using assemblies in List.
     /// </summary>
+    /// <param name="patchlist">A list of patches</param>
     public static void PatchProc(List<MarseyPatch> patchlist)
     {
         if (_harmony == null) return;
@@ -66,6 +67,7 @@ public abstract class GameAssemblyManager
     /// </summary>
     /// <exception cref="Exception">Excepts if manager couldn't get game assemblies after $MaxLoops loops.</exception>
     /// <see cref="MarseyVars.MaxLoops"/>
+    /// <remarks>Subversion patches skip this entirely and are loaded before game assemblies are obtained by the engine</remarks>
     public static void GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss)
     {
         clientAss = null;
