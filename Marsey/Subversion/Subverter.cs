@@ -24,7 +24,7 @@ public static class Subverter
         _subverterPatches.Add(patch);
     }
 
-    public static void SubversionPatch()
+    public static void SubversionPatcher()
     {
 
     }

@@ -8,6 +8,7 @@
              x:Class="SS14.Launcher.Views.MainWindowTabs.PatchesTabView"
              Name="PatchesTab">
   <UserControl.Resources>
+    <global:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     <global:PathToFileNameConverter x:Key="PathToFileNameConverter"/>
   </UserControl.Resources>
   
@@ -40,7 +41,7 @@
       </ScrollViewer>
     </TabItem>
 
-    <TabItem Header="Subverter">
+    <TabItem Header="Subverter" IsVisible="{Binding SubverterPresent, Converter={StaticResource BooleanToVisibilityConverter}}">
       <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <StackPanel>
           <TextBlock Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />

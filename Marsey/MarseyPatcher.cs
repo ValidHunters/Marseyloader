@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using HarmonyLib;
+using Marsey.Subversion;
 
 namespace Marsey;
 
@@ -23,10 +24,12 @@ public class MarseyPatcher
     public static void Boot(Assembly? robClientAssembly)
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
-
+        
         Utility.SetupFlags();
 
         GameAssemblyManager.Init(new Harmony(MarseyVars.Identifier));
+        
+        if (Subverse.InitSubverter()) Subverse.PatchSubverter();
 
         GameAssemblyManager.GetGameAssemblies(out var clientAss, out var robustSharedAss, out var clientSharedAss);
 
@@ -34,7 +37,7 @@ public class MarseyPatcher
 
         FileHandler.LoadAssemblies(new []{"Marsey", "Enabled"});
 
-        PatchAssemblyManager.InitLogger();
+        PatchAssemblyManager.InitLogger(PatchAssemblyManager.GetPatchList());
 
         GameAssemblyManager.PatchProc(PatchAssemblyManager.GetPatchList());
     }

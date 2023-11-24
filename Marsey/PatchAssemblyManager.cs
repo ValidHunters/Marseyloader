@@ -81,9 +81,9 @@ public abstract class PatchAssemblyManager
     /// Executed only by the loader.
     /// MarseyLogger example can be found in the BasePatch MarseyPatch example.
     /// </summary>
-    public static void InitLogger()
+    public static void InitLogger(List<MarseyPatch> patches)
     {
-        foreach (MarseyPatch patch in _patchAssemblies)
+        foreach (MarseyPatch patch in patches)
         {
             Assembly assembly = patch.Asm;
 
