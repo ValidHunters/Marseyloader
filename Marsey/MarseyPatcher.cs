@@ -36,6 +36,6 @@ public class MarseyPatcher
 
         PatchAssemblyManager.InitLogger();
 
-        GameAssemblyManager.PatchProc();
+        GameAssemblyManager.PatchProc(PatchAssemblyManager.GetPatchList());
     }
 }

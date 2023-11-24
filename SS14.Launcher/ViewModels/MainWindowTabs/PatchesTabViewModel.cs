@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -5,6 +6,7 @@ using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
 using Marsey;
+using Marsey.Subversion;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
@@ -12,35 +14,43 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
     {
         public override string Name => "Plugins";
 
-        public ObservableCollection<MarseyPatch> Patches { get; private set; }
+        public ObservableCollection<MarseyPatch> MarseyPatches { get; } = new ObservableCollection<MarseyPatch>();
+        public ObservableCollection<MarseyPatch> SubverterPatches { get; } = new ObservableCollection<MarseyPatch>();
 
-        public ICommand OpenPatchDirectoryCommand { get; private set; }
+        public ICommand OpenMarseyPatchDirectoryCommand { get; }
+        public ICommand OpenSubverterPatchDirectoryCommand { get; }
 
         public PatchesTabViewModel()
         {
-            Patches = new ObservableCollection<MarseyPatch>();
-            OpenPatchDirectoryCommand = new RelayCommand(OpenPatchDirectory);
+            OpenMarseyPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory("Marsey"));
+            OpenSubverterPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory("Subversion"));
             LoadPatches();
         }
 
         private void LoadPatches()
         {
             FileHandler.LoadAssemblies();
-            var patches = PatchAssemblyManager.GetPatchList();
-            foreach (var patch in patches)
-            {
-                Patches.Add(patch);
-            }
-            Log.Debug($"Refreshed patches, got {Patches.Count}.");
+            Subverter.LoadSubverts();
+            LoadPatchList(PatchAssemblyManager.GetPatchList(), MarseyPatches, "marseypatches");
+            LoadPatchList(Subverter.GetSubverterPatches(), SubverterPatches, "subverterpatches");
         }
 
-        private void OpenPatchDirectory()
+        private void OpenPatchDirectory(string directoryName)
         {
             Process.Start(new ProcessStartInfo
             {
                 UseShellExecute = true,
-                FileName = Path.Combine(Directory.GetCurrentDirectory(), "Marsey")
+                FileName = Path.Combine(Directory.GetCurrentDirectory(), directoryName)
             });
+        }
+
+        private void LoadPatchList(List<MarseyPatch> patches, ObservableCollection<MarseyPatch> patchList, string patchName)
+        {
+            foreach (var patch in patches)
+            {
+                patchList.Add(patch);
+            }
+            Log.Debug($"Refreshed {patchName}, got {patchList.Count}.");
         }
     }
 }

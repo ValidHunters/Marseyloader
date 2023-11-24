@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,25 +14,27 @@ public abstract class FileHandler
     /// <summary>
     ///  Move "Enabled" assemblies to the "Enabled" folder.
     /// </summary>
-    public static void PrepAssemblies()
+    public static void PrepAssemblies(string[] path)
     {
-        string[] path = { "Marsey", "Enabled" };
-
         foreach (string file in GetPatches(path)) File.Delete(file);
 
         PatchAssemblyManager.GetPatchList()
             .Where(p => p.Enabled)
             .ToList()
-            .ForEach(p => File.Copy(p.Asm.Location,
-                Path.Combine(Directory.GetCurrentDirectory(), "Marsey",
-                    "Enabled", Path.GetFileName(p.Asm.Location)), true));
+            .ForEach(p =>
+            {
+                var newPath = new List<string>(path) { Path.GetFileName(p.Asm.Location) }.ToArray();
+                File.Copy(p.Asm.Location, Path.Combine(newPath), true);
+            });
     }
+
 
     /// <summary>
     /// Loads assemblies from a specified folder.
     /// </summary>
     /// <param name="path">folder with patch dll's</param>
-    public static void LoadAssemblies(string[]? path = null)
+    /// <param name="subverter">Is the initialized assembly a subverter</param>
+    public static void LoadAssemblies(string[]? path = null, bool subverter = false)
     {
         path ??= new[] { "Marsey" };
 
@@ -43,7 +46,7 @@ public abstract class FileHandler
             try
             {
                 Assembly assembly = Assembly.LoadFrom(file);
-                PatchAssemblyManager.InitAssembly(assembly);
+                PatchAssemblyManager.InitAssembly(assembly, subverter);
             }
             catch (PatchAssemblyException ex)
             {

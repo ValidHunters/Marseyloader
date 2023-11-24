@@ -10,25 +10,53 @@
     <mainWindowTabs:PatchesTabViewModel />
   </Design.DataContext>
 
-  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-    <StackPanel>
-      <TextBlock Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
-      <Button Content="Open patch directory" Margin="4, 0" HorizontalAlignment="Left"
-              Command="{Binding OpenPatchDirectoryCommand}"/>
-      <Separator/>
+  <TabControl>
+    <TabItem Header="MarseyPatches">
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel>
+          <TextBlock Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
+          <Button Content="Open patch directory" Margin="4, 0" HorizontalAlignment="Left"
+                  Command="{Binding OpenMarseyPatchDirectoryCommand}"/>
+          <Separator/>
 
-      <ItemsControl Items="{Binding Patches}" Name="PatchList">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-            <StackPanel Orientation="Horizontal">
-              <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
-              <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                         Text="{Binding Desc}"
-                         Margin="8" />
-            </StackPanel>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-    </StackPanel>
-  </ScrollViewer>
+          <ItemsControl Items="{Binding MarseyPatches}" Name="MarseyPatchList">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                  <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
+                  <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                             Text="{Binding Desc}"
+                             Margin="8" />
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </ScrollViewer>
+    </TabItem>
+
+    <TabItem Header="Subverter">
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel>
+          <TextBlock Margin="4, 0" Text="Plugins" Classes="NanoHeadingMedium" />
+          <Button Content="Open patch directory" Margin="4, 0" HorizontalAlignment="Left"
+                  Command="{Binding OpenSubverterPatchDirectoryCommand}"/>
+          <Separator/>
+
+          <ItemsControl Items="{Binding SubverterPatches}" Name="SubverterPatchList">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                  <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
+                  <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                             Text="{Binding Desc}"
+                             Margin="8" />
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </ScrollViewer>
+    </TabItem>
+  </TabControl>
 </UserControl>

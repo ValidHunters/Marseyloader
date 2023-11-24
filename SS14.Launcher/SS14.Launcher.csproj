@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../Marsey/*.cs" />
+    <Compile Include="../Marsey/Subversion/*.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="signing_key" />

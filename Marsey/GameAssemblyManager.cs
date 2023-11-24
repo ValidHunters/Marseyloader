@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Threading;
 using HarmonyLib;
 
@@ -30,11 +31,11 @@ public abstract class GameAssemblyManager
     /// <summary>
     /// Patches the game using assemblies in List.
     /// </summary>
-    public static void PatchProc()
+    public static void PatchProc(List<MarseyPatch> patchlist)
     {
         if (_harmony == null) return;
 
-        foreach (var patch in PatchAssemblyManager.GetPatchList())
+        foreach (var patch in patchlist)
         {
             AssemblyName assemblyName = patch.Asm.GetName();
             Utility.Log(Utility.LogType.INFO, $"Patching {assemblyName}");

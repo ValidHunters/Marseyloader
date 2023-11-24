@@ -508,7 +508,7 @@ public class Connector : ReactiveObject
         */
 
         Log.Debug("Preparing patch assemblies.");
-        FileHandler.PrepAssemblies();
+        FileHandler.PrepAssemblies(new string[]{"Marsey", "Enabled"});
 
         var process = Process.Start(startInfo);
 

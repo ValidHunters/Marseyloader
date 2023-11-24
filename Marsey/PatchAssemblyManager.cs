@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using Marsey.Subversion;
 
 namespace Marsey;
 
@@ -21,12 +23,26 @@ public abstract class PatchAssemblyManager
     /// Initializes a given assembly, validates its structure, and adds it to the list of patch assemblies
     /// </summary>
     /// <param name="assembly">The assembly to initialize</param>
+    /// <param name="subverter">Is the initialized assembly a subverter</param>
     /// <remarks>Function returns if neither MarseyPatch nor SubverterPatch can be found in the assembly</remarks>
-    public static void InitAssembly(Assembly assembly)
+    public static void InitAssembly(Assembly assembly, bool subverter = false)
     {
-        Type? DataType = assembly.GetType("MarseyPatch");
-        if (DataType != null)
+        if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+        
+        Type? DataType = null;
+        Type? MarseyType = assembly.GetType("MarseyPatch");
+        Type? SubverterType = assembly.GetType("SubverterPatch");
+
+        if (MarseyType != null && SubverterType != null)
         {
+            Utility.Log(Utility.LogType.FATL, $"{assembly.GetName().Name} is both a marseypatch and a subverter!");
+            return;
+        }
+
+        if (MarseyType != null)
+        {
+            DataType = MarseyType;
+            
             List<FieldInfo>? targets = GetPatchAssemblyFields(DataType);
             if (targets == null)
             {
@@ -37,18 +53,26 @@ public abstract class PatchAssemblyManager
         }
 
         // MarseyPatch takes precedence over Subverter, for now
-        DataType ??= assembly.GetType("SubverterPatch");
+        if (subverter)
+            DataType = SubverterType;
 
         if (DataType == null)
         {
-            Utility.Log(Utility.LogType.FATL, $"{assembly.GetName().Name} had no supported data Type. Is it namespaced?");
+            Utility.Log(Utility.LogType.FATL, MarseyType != null 
+                ? $"{Path.GetFileName(assembly.Location)}: MarseyPatch in subverter folder" 
+                : SubverterType != null ? $"{Path.GetFileName(assembly.Location)}: SubverterPatch in Marsey folder" 
+                : $"{assembly.GetName().Name} had no supported data type. Is it namespaced?");
             return;
         }
+
 
         GetFields(DataType, out string name, out string description);
         MarseyPatch patch = new MarseyPatch(assembly, name, description);
 
-        AddToList(patch);
+        if (!subverter)
+            AddToList(patch);
+        else
+            Subverter.AddSubvert(patch);
     }
 
 
