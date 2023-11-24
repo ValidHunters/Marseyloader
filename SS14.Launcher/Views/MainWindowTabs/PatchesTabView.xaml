@@ -3,9 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
+             xmlns:global="clr-namespace:"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.PatchesTabView"
              Name="PatchesTab">
+  <UserControl.Resources>
+    <global:PathToFileNameConverter x:Key="PathToFileNameConverter"/>
+  </UserControl.Resources>
+  
   <Design.DataContext>
     <mainWindowTabs:PatchesTabViewModel />
   </Design.DataContext>
@@ -51,6 +56,8 @@
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="{Binding Desc}"
                              Margin="8" />
+                  <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5" 
+                             Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
                 </StackPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>

@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows.Input;
+using Avalonia.Data.Converters;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
 using Marsey;
@@ -52,5 +55,19 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
             Log.Debug($"Refreshed {patchName}, got {patchList.Count}.");
         }
+    }
+}
+
+public class PathToFileNameConverter : IValueConverter
+{
+    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var path = value as string;
+        return System.IO.Path.GetFileName(path);
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
     }
 }
