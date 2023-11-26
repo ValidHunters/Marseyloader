@@ -43,7 +43,7 @@ Wherever clicking on the "Open patch directory" in the "Plugins" tab leads you
 No.
 
 #### Dotnet 8 when?
-https://github.com/ValidHunters/Marseyloader/issues/4
+now
 
 #### IL logs?
 Enable loader debug, will be on your desktop
