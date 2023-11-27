@@ -25,6 +25,7 @@ using SS14.Launcher.Views;
 using TerraFX.Interop.Windows;
 using LogEventLevel = Serilog.Events.LogEventLevel;
 using Marsey;
+using Marsey.Subversion;
 
 namespace SS14.Launcher;
 
@@ -248,6 +249,7 @@ internal static class Program
         Locator.CurrentMutable.RegisterConstant(lc);
         _serverTask = msgr.ServerTask(lc);
 
+        Subverse.InitSubverter();
         FileHandler.LoadAssemblies();
 
         app.Run(window);

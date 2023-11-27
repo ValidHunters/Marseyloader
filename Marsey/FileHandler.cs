@@ -45,15 +45,25 @@ public abstract class FileHandler
         
         foreach (string file in files)
         {
-            try
-            {
-                Assembly assembly = Assembly.LoadFrom(file);
-                PatchAssemblyManager.InitAssembly(assembly, subverter);
-            }
-            catch (PatchAssemblyException ex)
-            {
-                Utility.Log(Utility.LogType.FATL, ex.Message);
-            }
+            LoadExactAssembly(file, subverter);
+        }
+    }
+
+    /// <summary>
+    /// Loads single assembly by name
+    /// </summary>
+    /// <param name="file">path to dll file</param>
+    /// <param name="subverter">is it a subverter</param>
+    public static void LoadExactAssembly(string file, bool subverter)
+    {
+        try
+        {
+            Assembly assembly = Assembly.LoadFrom(file);
+            PatchAssemblyManager.InitAssembly(assembly, subverter);
+        }
+        catch (PatchAssemblyException ex)
+        {
+            Utility.Log(Utility.LogType.FATL, ex.Message);
         }
     }
 

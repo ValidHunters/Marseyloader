@@ -20,9 +20,11 @@ public static class Subverter
 
     public static void AddSubvert(MarseyPatch patch)
     {
-        Assembly assembly = patch.Asm;
+        string assemblypath = patch.Asmpath;
+        
+        if (Subverse.CheckSubverterDuplicate(patch)) return;
 
-        if (_subverterPatches.Any(p => p.Asm == assembly)) return;
+        if (_subverterPatches.Any(p => p.Asmpath == assemblypath)) return;
 
         _subverterPatches.Add(patch);
     }

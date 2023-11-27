@@ -466,6 +466,8 @@ public class Connector : ReactiveObject
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
         }
+        
+        Subverse.CheckEnabled();
 
         if (_cfg.GetCVar(CVars.LogLoaderDebug))
             EnvVar("MARSEY_LOADER_DEBUG", "true");
@@ -515,7 +517,6 @@ public class Connector : ReactiveObject
         
         FileHandler.PrepAssemblies(new[] { MarseyVars.MarseyPatchFolder });
         
-        Subverse.CheckEnabled();
         if (MarseyVars.Subverter)
         {
             Log.Debug("Subverter enabled.");

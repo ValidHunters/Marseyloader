@@ -182,9 +182,9 @@ public abstract class PatchAssemblyManager
     /// <param name="patch">MarseyPatch object</param>
     public static void AddToList(MarseyPatch patch)
     {
-        Assembly assembly = patch.Asm;
+        string assemblypath = patch.Asmpath;
 
-        if (_patchAssemblies.Any(p => p.Asm == assembly)) return;
+        if (_patchAssemblies.Any(p => p.Asmpath == assemblypath)) return;
 
         _patchAssemblies.Add(patch);
     }

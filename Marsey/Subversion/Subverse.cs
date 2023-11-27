@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using HarmonyLib;
 
 namespace Marsey.Subversion;
 
@@ -9,38 +11,28 @@ namespace Marsey.Subversion;
 /// </summary>
 public static class Subverse
 {
-    private static MarseyPatch? _subverter = null; 
-    
+    private static MarseyPatch? _subverter = null;
+
     /// <summary>
-    /// Initializes the subverter library and subversion patches
+    /// Initializes the subverter library
     /// </summary>
     /// <returns>True if the library was initialized successfully</returns>
     public static bool InitSubverter()
     {
-        if (_subverter != null)
-            return true;
+        string path = Path.Combine(Directory.GetCurrentDirectory(), MarseyVars.SubverterPatchFolder, "Subverter.dll");
+        FileHandler.LoadExactAssembly(path, true);
         
-        Subverter.LoadSubverts();
         List<MarseyPatch> patches = Subverter.GetSubverterPatches();
-        foreach (MarseyPatch p in patches)
+        foreach (MarseyPatch p in patches.Where(p => p.Name == "Subverter"))
         {
-            if (p.Name == "Subverter")
-            {
-                AssignSubverter(p);
-                PatchAssemblyManager.InitLogger(patches);
-                patches.RemoveAll(p => p.Name == "Subverter");
-                return true;
-            }
+            AssignSubverter(p);
+            patches.Clear();
+            return true;
         }
-
+        
         return false;
     }
 
-    private static void AssignSubverter(MarseyPatch subverter)
-    {
-        _subverter = subverter;
-    }
-    
     /// <summary>
     /// Enables subverter if any of the of the subverter patches are enabled
     /// </summary>
@@ -58,11 +50,31 @@ public static class Subverse
     }
 
     /// <summary>
+    /// Check if a patch is loaded from the same place subverter is
+    /// </summary>
+    /// <returns></returns>
+    public static bool CheckSubverterDuplicate(MarseyPatch subverter)
+    {
+        return subverter.Asmpath == _subverter?.Asmpath;
+    }
+
+    public static bool CheckSubverterPresent()
+    {
+        return _subverter != null;
+    }
+    
+    /// <summary>
     /// Patches subverter ahead of everything else
     /// This is done as we attach to the assembly loading function
     /// </summary>
     public static void PatchSubverter()
     {
         if (_subverter != null) GameAssemblyManager.PatchProc(new List<MarseyPatch>() { _subverter });
+    }
+    
+    
+    private static void AssignSubverter(MarseyPatch subverter)
+    {
+        _subverter = subverter;
     }
 }
