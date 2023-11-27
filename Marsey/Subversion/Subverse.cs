@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Marsey.Subversion;
 
@@ -39,7 +40,27 @@ public static class Subverse
     {
         _subverter = subverter;
     }
+    
+    /// <summary>
+    /// Enables subverter if any of the of the subverter patches are enabled
+    /// </summary>
+    public static void CheckEnabled()
+    {
+        List<MarseyPatch> patches = Subverter.GetSubverterPatches();
 
+        if (patches.Any(p => p.Enabled))
+        {
+            MarseyVars.Subverter = true;
+            return;
+        }
+
+        MarseyVars.Subverter = false;
+    }
+
+    /// <summary>
+    /// Patches subverter ahead of everything else
+    /// This is done as we attach to the assembly loading function
+    /// </summary>
     public static void PatchSubverter()
     {
         if (_subverter != null) GameAssemblyManager.PatchProc(new List<MarseyPatch>() { _subverter });

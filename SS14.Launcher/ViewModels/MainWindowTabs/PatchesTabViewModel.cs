@@ -31,12 +31,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             LoadPatches();
         }
 
-        public bool SubverterEnabled
-        {
-            get => MarseyVars.Subverter;
-            set => MarseyVars.Subverter = value;
-        }
-
         private void LoadPatches()
         {
             FileHandler.LoadAssemblies();

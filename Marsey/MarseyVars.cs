@@ -31,10 +31,10 @@ public abstract class MarseyVars
 
     /// <summary>
     /// Should code side-loading be enabled
-    /// This default to false and has to be set to true every time
-    /// because you can unironically lock yourself out of subverters
+    /// This is only true if any subverter patch is enabled
+    /// <see cref="Subversion.Subverse.CheckEnabled"/>
     /// </summary>
-    public static bool Subverter = false;
+    public static bool Subverter;
     
     /// <summary>
     /// Log DEBG messages

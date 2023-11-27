@@ -20,6 +20,7 @@ using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 using Marsey;
+using Marsey.Subversion;
 
 namespace SS14.Launcher.Models;
 
@@ -514,8 +515,12 @@ public class Connector : ReactiveObject
         
         FileHandler.PrepAssemblies(new[] { MarseyVars.MarseyPatchFolder });
         
+        Subverse.CheckEnabled();
         if (MarseyVars.Subverter)
+        {
+            Log.Debug("Subverter enabled.");
             FileHandler.PrepAssemblies(new[] { MarseyVars.SubverterPatchFolder }, true);
+        }
 
         var process = Process.Start(startInfo);
 
