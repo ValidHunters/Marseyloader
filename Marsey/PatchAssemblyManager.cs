@@ -42,14 +42,22 @@ public abstract class PatchAssemblyManager
         if (MarseyType != null)
         {
             DataType = MarseyType;
-            
+            bool ignoreField = false;
             List<FieldInfo>? targets = GetPatchAssemblyFields(DataType);
-            if (targets == null)
+            FieldInfo? ignoreFieldInfo = DataType.GetField("ignoreFields");
+            
+            if (ignoreFieldInfo != null)
+                ignoreField = ignoreFieldInfo.GetValue(null) is bool;
+            
+            if (ignoreField)
+                Utility.Log(Utility.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is ignoring fields, not assigning");
+            else if (targets != null && ignoreField != true)
+                SetAssemblyTargets(targets);
+            else
             {
                 Utility.Log(Utility.LogType.FATL, $"Couldn't get assembly fields on {assembly.GetName().Name}.");
                 return;
             }
-            SetAssemblyTargets(targets);
         }
 
         // MarseyPatch takes precedence over Subverter, for now
