@@ -14,6 +14,8 @@ Space Station 14 launcher with client-side modding/patching support.
 * Locally change username for screenshots (This doesn't change your username in-game)
 * Marsey.
 
+**Project is in maintenance mode - Only bugs and crashes are going to be addressed** 
+
 ### Contributing
 If you have any feature you want added to the main repository you are free to submit a pull request.
 
@@ -31,12 +33,20 @@ Marseyloader uses the [Harmony](https://github.com/pardeike/Harmony) patching li
 
 Example patches can be found in the [ExampleMarseyPatch](https://github.com/ValidHunters/ExampleMarseyPatch) repository.
 
+Additionally, custom code can be loaded to the game using the [Subverter](https://github.com/Subversionary/Subverter) helper patch.
+
 ### FAQ
 
-#### How do I make a patch
+#### How do I make a patch?
 [Example Marseypatches](https://github.com/ValidHunters/ExampleMarseyPatch)
 
-#### Where do I put the patch dll's
+#### How do I enable subversion?
+Compile [Subverter](https://github.com/Subversionary/Subverter), put "Subverter.dll" only in the "Subversion" folder.
+
+#### What is subversion for?
+Subversion is used for adding your custom code (and not patching existing code) to the game, like custom commands and what not that can fully interact with the game as if they were part of the original code.
+
+#### Where do I put the patch dll's?
 Wherever clicking on the "Open patch directory" in the "Plugins" tab leads you
 
 #### Can you do X?
