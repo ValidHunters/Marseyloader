@@ -39,10 +39,10 @@ public abstract class FileHandler
 
         if (subverter == false || marserializer == false)
             PatchAssemblyManager.RecheckPatches();
-        
+
         List<string>? files = marserializer ? Deserialize(path) : GetPatches(path);
         if (files == null) return;
-        
+
         foreach (string file in files)
         {
             LoadExactAssembly(file, subverter);
@@ -60,6 +60,11 @@ public abstract class FileHandler
         {
             Assembly assembly = Assembly.LoadFrom(file);
             PatchAssemblyManager.InitAssembly(assembly, subverter);
+        }
+        catch (FileNotFoundException ex)
+        {
+            if (file.EndsWith("Subverter.dll")) return;
+            Utility.Log(Utility.LogType.DEBG, $"{file} could not be found");
         }
         catch (PatchAssemblyException ex)
         {
