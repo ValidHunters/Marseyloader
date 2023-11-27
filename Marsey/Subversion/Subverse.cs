@@ -4,6 +4,7 @@ namespace Marsey.Subversion;
 
 /// <summary>
 /// Manages the Subverter helper patch
+/// https://github.com/Subversionary/Subverter
 /// </summary>
 public static class Subverse
 {

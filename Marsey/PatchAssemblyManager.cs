@@ -17,7 +17,7 @@ public abstract class PatchAssemblyManager
     private static Assembly? _robustSharedAss;
     private static Assembly? _clientSharedAss;
 
-    private static List<MarseyPatch> _patchAssemblies = new List<MarseyPatch>();
+    private static readonly List<MarseyPatch> _patchAssemblies = new List<MarseyPatch>();
 
     /// <summary>
     /// Initializes a given assembly, validates its structure, and adds it to the list of patch assemblies
@@ -188,8 +188,16 @@ public abstract class PatchAssemblyManager
 
         _patchAssemblies.Add(patch);
     }
-
-    /// <returns>Patch list</returns>
-    public static List<MarseyPatch> GetPatchList() => _patchAssemblies;
+    
+    /// <summary>
+    /// Returns a either a MarseyPatch list or a Subverter depending if the bool is true
+    /// </summary>
+    /// <param name="subverter">Return a subverter list, false by default</param>
+    /// <returns></returns>
+    public static List<MarseyPatch> GetPatchList(bool subverter = false)
+    {
+        var patches = subverter ? Subverter.GetSubverterPatches() : _patchAssemblies;
+        return patches;
+    }
 }
 

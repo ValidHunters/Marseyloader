@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using HarmonyLib;
+using Marsey.Subversion;
 using static Marsey.Marserializer.Marserializer;
 
 namespace Marsey;
@@ -15,16 +16,14 @@ namespace Marsey;
 public abstract class FileHandler
 {
     /// <summary>
-    ///  Move "Enabled" assemblies to the "Enabled" folder.
+    /// Serialize enabled patches
+    /// <param name="subverter">Load subverters</param>
     /// </summary>
-    public static void PrepAssemblies(string[]? path)
+    public static void PrepAssemblies(string[]? path, bool subverter = false)
     {
-        List<string> patches = PatchAssemblyManager.GetPatchList()
-            .Where(p => p.Enabled)
-            .Select(p => p.Asmpath)
-            .ToList();
-        
-       Serialize(path, patches);
+        List<MarseyPatch> patches = PatchAssemblyManager.GetPatchList(subverter);
+        List<string> asmpaths = patches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
+        Serialize(path, asmpaths);
     }
 
 
@@ -38,10 +37,10 @@ public abstract class FileHandler
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
-        PatchAssemblyManager.RecheckPatches();
-
+        if (subverter == false || marserializer == false)
+            PatchAssemblyManager.RecheckPatches();
+        
         List<string>? files = marserializer ? Deserialize(path) : GetPatches(path);
-
         if (files == null) return;
         
         foreach (string file in files)

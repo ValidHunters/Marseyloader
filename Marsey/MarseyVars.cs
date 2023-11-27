@@ -30,8 +30,9 @@ public abstract class MarseyVars
     public const string SubverterPatchFolder = "Subversion";
 
     /// <summary>
-    /// Should code be side-loaded
-    /// Defaults to false
+    /// Should code side-loading be enabled
+    /// This default to false and has to be set to true every time
+    /// because you can unironically lock yourself out of subverters
     /// </summary>
     public static bool Subverter = false;
     

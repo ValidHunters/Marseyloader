@@ -511,7 +511,11 @@ public class Connector : ReactiveObject
         */
 
         Log.Debug("Preparing patch assemblies.");
+        
         FileHandler.PrepAssemblies(new[] { MarseyVars.MarseyPatchFolder });
+        
+        if (MarseyVars.Subverter)
+            FileHandler.PrepAssemblies(new[] { MarseyVars.SubverterPatchFolder }, true);
 
         var process = Process.Start(startInfo);
 

@@ -42,11 +42,12 @@ public class MarseyPatcher
 
         // Prepare patches
         FileHandler.LoadAssemblies(new []{ MarseyVars.MarseyPatchFolder }, marserializer: true);
+        List<MarseyPatch> patches = PatchAssemblyManager.GetPatchList(false);
 
         // Connect to internal logger
-        PatchAssemblyManager.InitLogger(PatchAssemblyManager.GetPatchList());
+        PatchAssemblyManager.InitLogger(patches);
 
         // Execute patches
-        GameAssemblyManager.PatchProc(PatchAssemblyManager.GetPatchList());
+        GameAssemblyManager.PatchProc(patches);
     }
 }

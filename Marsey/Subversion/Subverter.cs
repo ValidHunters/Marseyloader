@@ -14,7 +14,7 @@ public static class Subverter
     
     public static void LoadSubverts()
     {
-        string[] path = new string[] { "Subversion" };
+        string[] path = { MarseyVars.SubverterPatchFolder };
         FileHandler.LoadAssemblies(path, subverter: true);
     }
 
