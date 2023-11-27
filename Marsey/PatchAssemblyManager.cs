@@ -75,7 +75,7 @@ public abstract class PatchAssemblyManager
 
 
         GetFields(DataType, out string name, out string description);
-        MarseyPatch patch = new MarseyPatch(assembly, name, description);
+        MarseyPatch patch = new MarseyPatch(assembly.Location, assembly, name, description);
 
         if (!subverter)
             AddToList(patch);
@@ -145,7 +145,7 @@ public abstract class PatchAssemblyManager
     /// </summary>
     public static void RecheckPatches()
     {
-        if (FileHandler.GetPatches(new []{"Marsey"}).Length != _patchAssemblies.Count)
+        if (FileHandler.GetPatches(new []{"Marsey"}).Count != _patchAssemblies.Count)
             _patchAssemblies.Clear();
     }
 

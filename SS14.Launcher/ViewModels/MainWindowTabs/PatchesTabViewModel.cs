@@ -31,6 +31,12 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             LoadPatches();
         }
 
+        public bool SubverterEnabled
+        {
+            get => MarseyVars.Subverter;
+            set => MarseyVars.Subverter = value;
+        }
+
         private void LoadPatches()
         {
             FileHandler.LoadAssemblies();
@@ -62,7 +68,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
 public class PathToFileNameConverter : IValueConverter
 {
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var path = value as string;
         return Path.GetFileName(path);
@@ -76,7 +82,7 @@ public class PathToFileNameConverter : IValueConverter
 
 public class BooleanToVisibilityConverter : IValueConverter
 {
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool booleanValue)
         {
@@ -85,8 +91,9 @@ public class BooleanToVisibilityConverter : IValueConverter
         throw new InvalidOperationException("Invalid boolean value");
     }
 
-    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
+        if (value == null) throw new ArgumentNullException(nameof(value));
         if (value is bool visibilityValue)
         {
             return visibilityValue;

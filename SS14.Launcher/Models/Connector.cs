@@ -474,6 +474,9 @@ public class Connector : ReactiveObject
 
         if (_cfg.GetCVar(CVars.ThrowPatchFail))
             EnvVar("MARSEY_THROW_FAIL", "true");
+        
+        if (MarseyVars.Subverter)
+            EnvVar("MARSEY_SUBVERTER", "true");
 
         if (_cfg.GetCVar(CVars.DynamicPgo))
         {
@@ -508,7 +511,7 @@ public class Connector : ReactiveObject
         */
 
         Log.Debug("Preparing patch assemblies.");
-        FileHandler.PrepAssemblies(new string[]{"Marsey", "Enabled"});
+        FileHandler.PrepAssemblies(new[] { MarseyVars.MarseyPatchFolder });
 
         var process = Process.Start(startInfo);
 

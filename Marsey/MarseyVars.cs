@@ -20,6 +20,22 @@ public abstract class MarseyVars
     public const int LoopCooldown = 200;
 
     /// <summary>
+    /// Marseypatches are saved to this one
+    /// </summary>
+    public const string MarseyPatchFolder = "Marsey";
+
+    /// <summary>
+    /// Subverter patches saved to this one
+    /// </summary>
+    public const string SubverterPatchFolder = "Subversion";
+
+    /// <summary>
+    /// Should code be side-loaded
+    /// Defaults to false
+    /// </summary>
+    public static bool Subverter = false;
+    
+    /// <summary>
     /// Log DEBG messages
     /// <see cref="Utility.SetupFlags"/>
     /// </summary>
