@@ -20,14 +20,12 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public ObservableCollection<MarseyPatch> MarseyPatches { get; } = new ObservableCollection<MarseyPatch>();
         public ObservableCollection<SubverterPatch> SubverterPatches { get; } = new ObservableCollection<SubverterPatch>();
 
-        public ICommand OpenMarseyPatchDirectoryCommand { get; }
-        public ICommand OpenSubverterPatchDirectoryCommand { get; }
+        public ICommand OpenPatchDirectoryCommand { get; }
 
         public PatchesTabViewModel()
         {
             SubverterPresent = Subverse.CheckSubverterPresent();
-            OpenMarseyPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.MarseyPatchFolder));
-            OpenSubverterPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.SubverterPatchFolder));
+            OpenPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.MarseyPatchFolder));
             LoadPatches();
         }
 

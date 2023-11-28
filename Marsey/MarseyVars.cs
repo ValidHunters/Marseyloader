@@ -25,11 +25,6 @@ public abstract class MarseyVars
     public const string MarseyPatchFolder = "Marsey";
 
     /// <summary>
-    /// Subverter patches saved to this one
-    /// </summary>
-    public const string SubverterPatchFolder = "Subversion";
-
-    /// <summary>
     /// Should code side-loading be enabled
     /// This is only true if any subverter patch is enabled
     /// <see cref="Subversion.Subverse.CheckEnabled"/>

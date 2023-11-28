@@ -23,7 +23,7 @@
         <StackPanel>
           <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
           <Button Content="Open patch directory" Margin="4, 0" HorizontalAlignment="Left"
-                  Command="{Binding OpenMarseyPatchDirectoryCommand}"/>
+                  Command="{Binding OpenPatchDirectoryCommand}"/>
           <Separator/>
 
           <ItemsControl Items="{Binding MarseyPatches}" Name="MarseyPatchList">
@@ -51,7 +51,7 @@
         <StackPanel>
           <TextBlock Margin="4, 0" Text="Sideloading" Classes="NanoHeadingMedium" />
           <Button Content="Open patch directory" Margin="4, 0" HorizontalAlignment="Left"
-                  Command="{Binding OpenSubverterPatchDirectoryCommand}"/>
+                  Command="{Binding OpenPatchDirectoryCommand}"/>
           <Separator/>
 
           <ItemsControl Items="{Binding SubverterPatches}" Name="SubverterPatchList">

@@ -20,8 +20,7 @@ dotnet publish SS14.Launcher.Bootstrap/SS14.Launcher.Bootstrap.csproj -c Release
 mkdir -p bin/publish/Windows/bin
 mkdir -p bin/publish/Windows/bin/loader
 mkdir -p bin/publish/Windows/dotnet
-mkdir -p bin/publish/Windows/Marsey/Enabled
-mkdir -p bin/publish/Windows/Subversion
+mkdir -p bin/publish/Windows/Marsey
 
 cp -r Dependencies/dotnet/windows/* bin/publish/Windows/dotnet
 cp "SS14.Launcher.Bootstrap/bin/Release/net45/publish/Space Station 14 Launcher.exe" bin/publish/Windows
