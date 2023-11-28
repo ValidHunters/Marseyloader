@@ -664,7 +664,7 @@ public class Connector : ReactiveObject
                 // Fucking stupid since we can clearly just work around it like this...
                 // Thank you, Blaisorblade on Ask Different
                 // https://apple.stackexchange.com/questions/105155/denied-file-read-access-on-file-i-own-and-have-full-r-w-permissions-on
-                var xattr = Process.Start(new ProcessStartInfo
+                Process? xattr = Process.Start(new ProcessStartInfo
                 {
                     FileName = "xattr",
                     ArgumentList = {"-d", "com.apple.quarantine", appPath},
@@ -672,6 +672,7 @@ public class Connector : ReactiveObject
                     RedirectStandardOutput = true
                 });
 
+                if (xattr == null) throw new NotSupportedException("Unsupported platform.");
                 PipeLogOutput(xattr);
 
                 await xattr.WaitForExitAsync();
@@ -679,7 +680,7 @@ public class Connector : ReactiveObject
                 return new ProcessStartInfo
                 {
                     FileName = "open",
-                    ArgumentList = {appPath, "--args"},
+                    ArgumentList = { appPath, "--args" },
                 };
             }
             else

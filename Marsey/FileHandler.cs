@@ -61,9 +61,9 @@ public abstract class FileHandler
             Assembly assembly = Assembly.LoadFrom(file);
             PatchAssemblyManager.InitAssembly(assembly, subverter);
         }
-        catch (FileNotFoundException ex)
+        catch (FileNotFoundException)
         {
-            if (file.EndsWith("Subverter.dll")) return;
+            if (file.EndsWith("Subverter.dll") && subverter) return;
             Utility.Log(Utility.LogType.DEBG, $"{file} could not be found");
         }
         catch (PatchAssemblyException ex)

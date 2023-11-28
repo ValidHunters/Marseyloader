@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '7.0.x' ]
 
     steps:
     - name: Checkout code
