@@ -44,7 +44,7 @@ public class MarseyPatcher
         }
         
         // Manage game assemblies
-        GameAssemblyManager.GetGameAssemblies(out var clientAss, out var robustSharedAss, out var clientSharedAss);
+        GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
 
         // Prepare marseypatches
