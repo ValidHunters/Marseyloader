@@ -32,6 +32,14 @@
 
     <SolidColorBrush x:Key="ThemeTabItemSelectedBrush" Color="{StaticResource ThemeTabItemSelectedColor}" />
     <SolidColorBrush x:Key="ThemeTabItemHoveredBrush" Color="{StaticResource ThemeTabItemHoveredColor}" />
+    
+    <LinearGradientBrush x:Key="SenseLineHorizontalBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+      <LinearGradientBrush.GradientStops>
+        <GradientStop Color="#45aaf2" Offset="0.0" />
+        <GradientStop Color="#fc5c65" Offset="0.5" />
+        <GradientStop Color="#fed330" Offset="1.0" />
+      </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
 
     <sys:Double x:Key="FontSizeNormal">15</sys:Double>
 

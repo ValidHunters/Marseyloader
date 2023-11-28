@@ -53,7 +53,7 @@
           </Grid>
         </DockPanel>
       </Panel>
-      <Panel DockPanel.Dock="Top" Classes="GoldLineHorizontal" />
+      <Panel DockPanel.Dock="Top" Classes="SenseLineHorizontal" />
       <Grid>
         <!-- Main tabbed layout when logged in -->
         <TabControl IsVisible="{Binding LoggedIn}" Items="{Binding Tabs}" TabStripPlacement="Bottom"

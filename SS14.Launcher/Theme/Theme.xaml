@@ -32,6 +32,11 @@
     <Setter Property="Background" Value="{DynamicResource ThemeNanoGoldBrush}" />
     <Setter Property="MinHeight" Value="2" />
   </Style>
+  
+  <Style Selector="Panel.SenseLineHorizontal">
+    <Setter Property="Background" Value="{DynamicResource SenseLineHorizontalBrush}" />
+    <Setter Property="MinHeight" Value="2" />
+  </Style>
 
   <Style Selector="Expander[ExpandDirection=Down] /template/ ToggleButton#PART_toggle">
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
