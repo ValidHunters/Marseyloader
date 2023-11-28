@@ -17,7 +17,6 @@ public abstract class FileHandler
 {
     /// <summary>
     /// Serialize enabled patches
-    /// <param name="subverter">Load subverters</param>
     /// </summary>
     public static void PrepAssemblies<T>(string[]? path) where T : IPatch
     {
@@ -29,14 +28,11 @@ public abstract class FileHandler
         }
     }
 
-
-
     /// <summary>
     /// Loads assemblies from a specified folder.
     /// </summary>
     /// <param name="path">folder with patch dll's, set to "Marsey" by default</param>
     /// <param name="marserializer">Are we loading from marserializer</param>
-    /// <param name="subverter">Is the initialized assembly a subverter</param>
     public static void LoadAssemblies(string[]? path = null, bool marserializer = false)
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
@@ -57,7 +53,6 @@ public abstract class FileHandler
     /// Loads single assembly by name
     /// </summary>
     /// <param name="file">path to dll file</param>
-    /// <param name="subverter">is it a subverter</param>
     public static void LoadExactAssembly(string file)
     {
         try

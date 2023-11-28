@@ -13,7 +13,6 @@ namespace Marsey;
 public static class AssemblyInitializer
 {
     /// <param name="assembly">The assembly to initialize</param>
-    /// <param name="subverter">Is the initialized assembly a subverter</param>
     /// <remarks>Function returns if neither MarseyPatch nor SubverterPatch can be found in the assembly</remarks>
     public static void Initialize(Assembly assembly)
     {
@@ -109,8 +108,7 @@ public static class PatchListManager
     /// <summary>
     /// Returns a either a MarseyPatch list or a Subverter depending if the bool is true
     /// </summary>
-    /// <param name="subverter">Return a subverter list, false by default</param>
-    /// <returns></returns>
+    /// <returns>A list of patches</returns>
     public static List<T>? GetPatchList<T>() where T : IPatch
     {
         if (typeof(T) == typeof(MarseyPatch))
