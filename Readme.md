@@ -41,7 +41,7 @@ Additionally, custom code can be loaded to the game using the [Subverter](https:
 [Example Marseypatches](https://github.com/ValidHunters/ExampleMarseyPatch)
 
 #### How do I enable subversion?
-Compile [Subverter](https://github.com/Subversionary/Subverter), put "Subverter.dll" only in the "Subversion" folder.
+Compile [Subverter](https://github.com/Subversionary/Subverter), put "Subverter.dll" in the directory with the executable.
 
 #### What is subversion for?
 Subversion is used for adding your custom code (and not patching existing code) to the game, like custom commands and what not that can fully interact with the game as if they were part of the original code.
