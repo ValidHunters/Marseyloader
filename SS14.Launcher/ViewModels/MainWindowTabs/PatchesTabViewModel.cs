@@ -98,3 +98,16 @@ public class BooleanToVisibilityConverter : IValueConverter
         throw new InvalidOperationException("Invalid visibility value");
     }
 }
+
+public class BooleanToPreloadConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return value is true ? "(preload)" : "";
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return value;
+    }
+}

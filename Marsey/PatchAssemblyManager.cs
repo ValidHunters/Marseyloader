@@ -43,7 +43,6 @@ public static class AssemblyInitializer
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is ignoring fields, not assigning");
             else if (preloadField && targets != null)
             {
-                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is asking to preload.");
                 FieldInfo target = targets[0]; // Robust.Client
                 AssemblyFieldHandler.SetPreloadTarget(target);
             }
@@ -92,7 +91,7 @@ public static class PatchListManager
 {
     private static readonly List<MarseyPatch> _patchAssemblies = new List<MarseyPatch>();
     private static int _patchcount = 0;
-    public static string SerializerFile = "patches.marsey"; 
+    public const string MarserializerFile = "patches.marsey"; 
     
     /// <summary>
     /// Checks if the amount of patches in folder equals the amount of patches in list.
@@ -103,7 +102,7 @@ public static class PatchListManager
         if (FileHandler.GetPatches(new[] { MarseyVars.MarseyPatchFolder }).Count != _patchcount)
             return;
         
-        _patchAssemblies.Clear();
+        ResetList();
         Subverter.ResetList();
     }
 
@@ -152,6 +151,14 @@ public static class PatchListManager
             return Subverter.GetSubverterPatches() as List<T>;
         
         throw new ArgumentException("Invalid patch type passed");
+    }
+
+    /// <summary>
+    /// Clears list
+    /// </summary>
+    public static void ResetList()
+    {
+        _patchAssemblies.Clear();
     }
 }
 

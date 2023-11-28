@@ -30,6 +30,6 @@ public class MarseyPatch : IPatch
         this.Name = name;
         this.Desc = desc;
         this.Asm = asm;
-        this.Preload = false;
+        this.Preload = preload;
     }
 }

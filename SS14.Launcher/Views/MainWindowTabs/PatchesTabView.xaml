@@ -10,6 +10,7 @@
   <UserControl.Resources>
     <global:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     <global:PathToFileNameConverter x:Key="PathToFileNameConverter"/>
+    <global:BooleanToPreloadConverter x:Key="BooleanToPreloadConverter"/>
   </UserControl.Resources>
   
   <Design.DataContext>
@@ -33,7 +34,9 @@
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="{Binding Desc}"
                              Margin="8" />
-                  <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5" 
+                  <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5"
+                             Text="{Binding Preload, Converter={StaticResource BooleanToPreloadConverter}}"></TextBlock>
+                  <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5" 
                              Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
                 </StackPanel>
               </DataTemplate>

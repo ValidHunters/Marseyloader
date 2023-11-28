@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Marsey.Marserializer;
+namespace Marsey.Serializer;
 
 public static class Marserializer
 {

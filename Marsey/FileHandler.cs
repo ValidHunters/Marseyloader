@@ -5,8 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using HarmonyLib;
+using Marsey.Preloader;
 using Marsey.Subversion;
-using static Marsey.Marserializer.Marserializer;
+using Marsey.Serializer;
 
 namespace Marsey;
 
@@ -18,22 +19,41 @@ public abstract class FileHandler
     /// <summary>
     /// Serialize enabled patches
     /// </summary>
-    public static void PrepAssemblies<T>(string[]? path) where T : IPatch
+    public static void PrepAssemblies<T>(string[]? path = null) where T : IPatch
     {
+        path ??= new[] { MarseyVars.MarseyPatchFolder };
+        
         List<T>? patches = PatchListManager.GetPatchList<T>();
         string filename;
 
         if (typeof(T) == typeof(MarseyPatch))
-            filename = PatchListManager.SerializerFile;
+        {
+            filename = PatchListManager.MarserializerFile;
+            
+            // Marseypatches need specialized logic to be able to load before all fields are initialized
+            // As such, they're loaded separately
+            if (patches != null)
+            {
+                List<string> preloadpaths = patches
+                    .Where(p => p.Enabled && ((p as MarseyPatch)!).Preload)
+                    .Select(p => p.Asmpath)
+                    .ToList();
+                
+                Marserializer.Serialize(path, PreloadManager.MarserializerFile, preloadpaths);
+                
+                // Remove any patches that are preloading from list
+                patches.RemoveAll(p => preloadpaths.Contains(p.Asmpath));
+            }
+        }
         else if (typeof(T) == typeof(SubverterPatch))
-            filename = Subverter.SerializerFile;
+            filename = Subverter.MarserializerFile;
         else
             throw new ArgumentException("Unsupported patch type");
         
         if (patches != null)
         {
             List<string> asmpaths = patches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
-            Serialize(path, filename, asmpaths);
+            Marserializer.Serialize(path, filename, asmpaths);
         }
     }
 
@@ -47,16 +67,20 @@ public abstract class FileHandler
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
+        List<string>? files;
+
         if (marserializer == false)
             PatchListManager.RecheckPatches();
 
-        if (marserializer && filename == null) return;
-
-        List<string>? files = marserializer ? Deserialize(path, filename) : GetPatches(path);
+        if (marserializer && filename != null)
+            files = Marserializer.Deserialize(path, filename);
+        else
+            files = GetPatches(path);
+        
         if (files == null) return;
 
-        foreach (string file in files)
-        {
+        foreach (string file in files) 
+        { 
             LoadExactAssembly(file);
         }
     }

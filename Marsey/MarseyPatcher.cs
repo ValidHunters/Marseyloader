@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using HarmonyLib;
+using Marsey.Preloader;
 using Marsey.Subversion;
 
 namespace Marsey;
@@ -32,7 +33,10 @@ public class MarseyPatcher
         Utility.SetupFlags();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         
-        // Preload subverter if enabled and present
+        // Preload marseypatches, if available
+        PreloadManager.Preload();
+        
+        // Initialize subverter if enabled and present
         if (MarseyVars.Subverter && Subverse.InitSubverter())
         {
             // Side-load custom code
@@ -43,8 +47,8 @@ public class MarseyPatcher
         GameAssemblyManager.GetGameAssemblies(out var clientAss, out var robustSharedAss, out var clientSharedAss);
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
 
-        // Prepare patches
-        FileHandler.LoadAssemblies(new []{ MarseyVars.MarseyPatchFolder }, marserializer: true, filename: "patches.marsey");
+        // Prepare marseypatches
+        FileHandler.LoadAssemblies(marserializer: true, filename: "patches.marsey");
         List<MarseyPatch>? patches = PatchListManager.GetPatchList<MarseyPatch>();
 
         if (patches == null) return;

@@ -11,7 +11,7 @@ namespace Marsey.Subversion;
 public static class Subverter
 {
     private static List<SubverterPatch> _subverterPatches = new List<SubverterPatch>();
-    public static string SerializerFile = "subversion.marsey";
+    public const string MarserializerFile = "subversion.marsey";
 
     public static void AddSubvert(SubverterPatch patch)
     {
