@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Marsey;
 
-public abstract class Utility
+public static class MarseyLogger
 {
     public enum LogType
     {
@@ -12,50 +12,34 @@ public abstract class Utility
         FATL,
         DEBG
     }
-
+    
     /// <summary>
     /// Log function used by the loader
     /// </summary>
     /// <param name="logType">Log level</param>
     /// <param name="message">Log message</param>
-    public static void Log(LogType logType, string message)
+    public static void Log(MarseyLogger.LogType logType, string message)
     {
-        if (logType == LogType.DEBG && MarseyVars.DebugAllowed != true)
+        if (logType == MarseyLogger.LogType.DEBG && MarseyVars.DebugAllowed != true)
             return;
 
         Console.WriteLine($"[MARSEY] [{logType.ToString()}] {message}");
     }
-
+    
     /// <summary>
     /// Log function used by patches
     /// </summary>
     /// <param name="asm">Assembly name of patch</param>
     /// <param name="message">Log message</param>
+    /// <see cref="AssemblyFieldHandler.SetupLogger"/>
     public static void Log(AssemblyName asm, string message)
     {
         if (MarseyVars.PatchLogAllowed)
             Console.WriteLine($"[{asm.Name}] {message}");
     }
-
-    /// <summary>
-    /// Sets patch delegate to Utility::Log(AssemblyName, string)
-    /// Executed only by the Loader.
-    /// </summary>
-    /// <see cref="PatchAssemblyManager.InitLogger"/>
-    /// <param name="patch">Assembly from MarseyPatch</param>
-    public static void SetupLogger(Assembly patch)
-    {
-        Type marseyLoggerType = patch.GetType("MarseyLogger")!;
-
-        Type logDelegateType = marseyLoggerType.GetNestedType("Forward", BindingFlags.Public)!;
-
-        MethodInfo logMethod = typeof(Utility).GetMethod("Log", new []{typeof(AssemblyName), typeof(string)})!;
-
-        Delegate logDelegate = Delegate.CreateDelegate(logDelegateType, null, logMethod);
-
-        marseyLoggerType.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static)!.SetValue(null, logDelegate);
-    }
-
+}
+public abstract class Utility
+{
     /// <summary>
     /// Checks loader environment variables, sets relevant flags in MarseyVars
     ///

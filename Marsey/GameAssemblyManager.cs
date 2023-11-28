@@ -41,7 +41,7 @@ public static class GamePatcher
         foreach (MarseyPatch patch in patchlist)
         {
             AssemblyName assemblyName = patch.Asm.GetName();
-            Utility.Log(Utility.LogType.INFO, $"Patching {assemblyName}");
+            MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Patching {assemblyName}");
 
             try
             {
@@ -54,7 +54,7 @@ public static class GamePatcher
                 if (MarseyVars.ThrowOnFail)
                     throw new PatchAssemblyException(errorMessage);
 
-                Utility.Log(Utility.LogType.FATL, errorMessage);
+                MarseyLogger.Log(MarseyLogger.LogType.FATL, errorMessage);
             }
         }
     }
@@ -101,7 +101,7 @@ public abstract class GameAssemblyManager
 
             if (robustSharedAss != null && clientAss != null && clientSharedAss != null)
             {
-                Utility.Log(Utility.LogType.INFO, "Received assemblies.");
+                MarseyLogger.Log(MarseyLogger.LogType.INFO, "Received assemblies.");
                 break;
             }
 
@@ -120,10 +120,10 @@ public abstract class GameAssemblyManager
     private static void LogMissingAssemblies(Assembly? clientAss, Assembly? robustSharedAss, Assembly? clientSharedAss)
     {
         if (clientAss == null)
-            Utility.Log(Utility.LogType.WARN, "Content.Client assembly was not received.");
+            MarseyLogger.Log(MarseyLogger.LogType.WARN, "Content.Client assembly was not received.");
         if (clientSharedAss == null)
-            Utility.Log(Utility.LogType.WARN, "Client.Shared assembly was not received.");
+            MarseyLogger.Log(MarseyLogger.LogType.WARN, "Client.Shared assembly was not received.");
         if (robustSharedAss == null)
-            Utility.Log(Utility.LogType.WARN, "Robust.Shared assembly was not received");
+            MarseyLogger.Log(MarseyLogger.LogType.WARN, "Robust.Shared assembly was not received");
     }
 }

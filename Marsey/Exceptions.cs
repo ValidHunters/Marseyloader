@@ -7,7 +7,7 @@ public class PatchAssemblyException : Exception
 
     public override string ToString()
     {
-        Utility.Log(Utility.LogType.FATL, Message);
+        MarseyLogger.Log(MarseyLogger.LogType.FATL, Message);
         return base.ToString();
     }
 }

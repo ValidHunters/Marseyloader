@@ -25,7 +25,7 @@ public static class AssemblyInitializer
 
         if (MarseyType != null && SubverterType != null)
         {
-            Utility.Log(Utility.LogType.FATL, $"{assembly.GetName().Name} is both a marseypatch and a subverter!");
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} is both a marseypatch and a subverter!");
             return;
         }
 
@@ -40,12 +40,12 @@ public static class AssemblyInitializer
                 ignoreField = ignoreFieldInfo.GetValue(null) is bool;
             
             if (ignoreField)
-                Utility.Log(Utility.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is ignoring fields, not assigning");
+                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is ignoring fields, not assigning");
             else if (targets != null && ignoreField != true)
                 AssemblyFieldHandler.SetAssemblyTargets(targets);
             else
             {
-                Utility.Log(Utility.LogType.FATL, $"Couldn't get assembly fields on {assembly.GetName().Name}.");
+                MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Couldn't get assembly fields on {assembly.GetName().Name}.");
                 return;
             }
         }
@@ -56,7 +56,7 @@ public static class AssemblyInitializer
 
         if (DataType == null)
         {
-            Utility.Log(Utility.LogType.FATL, MarseyType != null 
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, MarseyType != null 
                 ? $"{Path.GetFileName(assembly.Location)}: MarseyPatch in subverter folder" 
                 : SubverterType != null ? $"{Path.GetFileName(assembly.Location)}: SubverterPatch in Marsey folder" 
                 : $"{assembly.GetName().Name} had no supported data type. Is it namespaced?");
@@ -141,9 +141,9 @@ public static class AssemblyFieldHandler
             Type? marseyLoggerType = assembly.GetType("MarseyLogger");
 
             if (marseyLoggerType != null)
-                Utility.SetupLogger(assembly);
+                SetupLogger(assembly);
             else
-                Utility.Log(Utility.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyLogger class");
+                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyLogger class");
         }
     }
 
@@ -190,6 +190,25 @@ public static class AssemblyFieldHandler
         _clientAss = clientAss;
         _robustSharedAss = robustSharedAss;
         _clientSharedAss = clientSharedAss;
+    }
+    
+    /// <summary>
+    /// Sets patch delegate to MarseyLogger::Log(AssemblyName, string)
+    /// Executed only by the Loader.
+    /// </summary>
+    /// <see cref="InitLogger"/>
+    /// <param name="patch">Assembly from MarseyPatch</param>
+    private static void SetupLogger(Assembly patch)
+    {
+        Type marseyLoggerType = patch.GetType("MarseyLogger")!;
+
+        Type logDelegateType = marseyLoggerType.GetNestedType("Forward", BindingFlags.Public)!;
+
+        MethodInfo logMethod = typeof(MarseyLogger).GetMethod("Log", new []{typeof(AssemblyName), typeof(string)})!;
+
+        Delegate logDelegate = Delegate.CreateDelegate(logDelegateType, null, logMethod);
+
+        marseyLoggerType.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static)!.SetValue(null, logDelegate);
     }
 
     /// <summary>

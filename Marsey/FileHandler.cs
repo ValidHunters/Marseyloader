@@ -64,11 +64,11 @@ public abstract class FileHandler
         catch (FileNotFoundException)
         {
             if (file.EndsWith("Subverter.dll") && subverter) return;
-            Utility.Log(Utility.LogType.DEBG, $"{file} could not be found");
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{file} could not be found");
         }
         catch (PatchAssemblyException ex)
         {
-            Utility.Log(Utility.LogType.FATL, ex.Message);
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, ex.Message);
         }
     }
 
