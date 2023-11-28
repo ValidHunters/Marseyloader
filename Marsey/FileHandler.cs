@@ -19,12 +19,16 @@ public abstract class FileHandler
     /// Serialize enabled patches
     /// <param name="subverter">Load subverters</param>
     /// </summary>
-    public static void PrepAssemblies(string[]? path, bool subverter = false)
+    public static void PrepAssemblies<T>(string[]? path) where T : IPatch
     {
-        List<MarseyPatch> patches = PatchListManager.GetPatchList(subverter);
-        List<string> asmpaths = patches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
-        Serialize(path, asmpaths);
+        List<T>? patches = PatchListManager.GetPatchList<T>();
+        if (patches != null)
+        {
+            List<string> asmpaths = patches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
+            Serialize(path, asmpaths);
+        }
     }
+
 
 
     /// <summary>
@@ -33,11 +37,11 @@ public abstract class FileHandler
     /// <param name="path">folder with patch dll's, set to "Marsey" by default</param>
     /// <param name="marserializer">Are we loading from marserializer</param>
     /// <param name="subverter">Is the initialized assembly a subverter</param>
-    public static void LoadAssemblies(string[]? path = null, bool marserializer = false, bool subverter = false)
+    public static void LoadAssemblies(string[]? path = null, bool marserializer = false)
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
-        if (subverter == false || marserializer == false)
+        if (marserializer == false)
             PatchListManager.RecheckPatches();
 
         List<string>? files = marserializer ? Deserialize(path) : GetPatches(path);
@@ -45,7 +49,7 @@ public abstract class FileHandler
 
         foreach (string file in files)
         {
-            LoadExactAssembly(file, subverter);
+            LoadExactAssembly(file);
         }
     }
 
@@ -54,16 +58,16 @@ public abstract class FileHandler
     /// </summary>
     /// <param name="file">path to dll file</param>
     /// <param name="subverter">is it a subverter</param>
-    public static void LoadExactAssembly(string file, bool subverter)
+    public static void LoadExactAssembly(string file)
     {
         try
         {
             Assembly assembly = Assembly.LoadFrom(file);
-            AssemblyInitializer.Initialize(assembly, subverter);
+            AssemblyInitializer.Initialize(assembly);
         }
         catch (FileNotFoundException)
         {
-            if (file.EndsWith("Subverter.dll") && subverter) return;
+            if (file.EndsWith("Subverter.dll")) return;
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{file} could not be found");
         }
         catch (PatchAssemblyException ex)

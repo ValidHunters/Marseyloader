@@ -18,7 +18,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public override string Name => "Plugins";
         public bool SubverterPresent { get; set; }
         public ObservableCollection<MarseyPatch> MarseyPatches { get; } = new ObservableCollection<MarseyPatch>();
-        public ObservableCollection<MarseyPatch> SubverterPatches { get; } = new ObservableCollection<MarseyPatch>();
+        public ObservableCollection<SubverterPatch> SubverterPatches { get; } = new ObservableCollection<SubverterPatch>();
 
         public ICommand OpenMarseyPatchDirectoryCommand { get; }
         public ICommand OpenSubverterPatchDirectoryCommand { get; }
@@ -35,9 +35,12 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private void LoadPatches()
         {
             FileHandler.LoadAssemblies();
-            LoadPatchList(PatchListManager.GetPatchList(), MarseyPatches, "marseypatches");
+            List<MarseyPatch> marseys =
+                PatchListManager.GetPatchList<MarseyPatch>() ?? throw new InvalidOperationException();
+            LoadPatchList(marseys, MarseyPatches, "marseypatches");
             if (!SubverterPresent) return;
-            LoadPatchList(Subverter.GetSubverterPatches(), SubverterPatches, "subverterpatches");
+            List<SubverterPatch> subverters = PatchListManager.GetPatchList<SubverterPatch>() ?? throw new InvalidOperationException();
+            LoadPatchList(subverters, SubverterPatches, "subverterpatches");
         }
 
         private void OpenPatchDirectory(string directoryName)
@@ -49,7 +52,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             });
         }
 
-        private void LoadPatchList(List<MarseyPatch> patches, ObservableCollection<MarseyPatch> patchList, string patchName)
+        private void LoadPatchList<T>(List<T> patches, ObservableCollection<T> patchList, string patchName) where T : IPatch
         {
             foreach (var patch in patches)
             {
@@ -57,6 +60,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
             Log.Debug($"Refreshed {patchName}, got {patchList.Count}.");
         }
+
     }
 }
 

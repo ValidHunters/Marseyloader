@@ -15,7 +15,7 @@ public static class AssemblyInitializer
     /// <param name="assembly">The assembly to initialize</param>
     /// <param name="subverter">Is the initialized assembly a subverter</param>
     /// <remarks>Function returns if neither MarseyPatch nor SubverterPatch can be found in the assembly</remarks>
-    public static void Initialize(Assembly assembly, bool subverter = false)
+    public static void Initialize(Assembly assembly)
     {
         if (assembly == null) throw new ArgumentNullException(nameof(assembly));
         
@@ -34,10 +34,8 @@ public static class AssemblyInitializer
             DataType = MarseyType;
             bool ignoreField = false;
             List<FieldInfo>? targets = AssemblyFieldHandler.GetPatchAssemblyFields(DataType);
-            FieldInfo? ignoreFieldInfo = DataType.GetField("ignoreFields");
-            
-            if (ignoreFieldInfo != null)
-                ignoreField = ignoreFieldInfo.GetValue(null) is bool;
+
+            ignoreField = AssemblyFieldHandler.DetermineIgnore(DataType);
             
             if (ignoreField)
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is ignoring fields, not assigning");
@@ -50,8 +48,7 @@ public static class AssemblyInitializer
             }
         }
         
-        // Prefer subverter over marseypatch if enabled
-        if (subverter)
+        if (SubverterType != null)
             DataType = SubverterType;
 
         if (DataType == null)
@@ -65,12 +62,17 @@ public static class AssemblyInitializer
 
 
         AssemblyFieldHandler.GetFields(DataType, out string name, out string description);
-        MarseyPatch patch = new MarseyPatch(assembly.Location, assembly, name, description);
 
-        if (!subverter)
+        if (SubverterType == null)
+        {
+            MarseyPatch patch = new MarseyPatch(assembly.Location, assembly, name, description);
             PatchListManager.AddToList(patch);
+        }
         else
+        {
+            SubverterPatch patch = new SubverterPatch(assembly.Location, assembly, name, description);
             Subverter.AddSubvert(patch);
+        }
     }
 }
 
@@ -109,10 +111,15 @@ public static class PatchListManager
     /// </summary>
     /// <param name="subverter">Return a subverter list, false by default</param>
     /// <returns></returns>
-    public static List<MarseyPatch> GetPatchList(bool subverter = false)
+    public static List<T>? GetPatchList<T>() where T : IPatch
     {
-        List<MarseyPatch> patches = subverter ? Subverter.GetSubverterPatches() : _patchAssemblies;
-        return patches;
+        if (typeof(T) == typeof(MarseyPatch))
+            return _patchAssemblies as List<T>;
+        
+        if (typeof(T) == typeof(SubverterPatch))
+            return Subverter.GetSubverterPatches() as List<T>;
+        
+        throw new ArgumentException("Invalid patch type passed");
     }
 }
 
@@ -166,6 +173,20 @@ public static class AssemblyFieldHandler
         }
 
         return targets;
+    }
+
+    /// <summary>
+    /// Is the patch asking the loader to ignore setting fields
+    /// </summary>
+    /// <param name="DataType">Patch class type</param>
+    public static bool DetermineIgnore(Type DataType)
+    {
+        FieldInfo? ignoreFieldInfo = DataType.GetField("ignoreFields");
+            
+        if (ignoreFieldInfo != null)
+            return ignoreFieldInfo.GetValue(null) is bool;
+
+        return false;
     }
 
     /// <summary>

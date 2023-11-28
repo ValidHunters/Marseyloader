@@ -35,6 +35,7 @@ public class MarseyPatcher
             // Side-load custom code
             Subverse.PatchSubverter();
         }
+        
 
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out var clientAss, out var robustSharedAss, out var clientSharedAss);
@@ -42,9 +43,11 @@ public class MarseyPatcher
 
         // Prepare patches
         FileHandler.LoadAssemblies(new []{ MarseyVars.MarseyPatchFolder }, marserializer: true);
-        List<MarseyPatch> patches = PatchListManager.GetPatchList(false);
+        List<MarseyPatch>? patches = PatchListManager.GetPatchList<MarseyPatch>();
 
-        // Connect to internal logger
+        if (patches == null) return;
+
+            // Connect to internal logger
         AssemblyFieldHandler.InitLogger(patches);
 
         // Execute patches

@@ -33,12 +33,12 @@ public static class GamePatcher
     /// Patches the game using assemblies in List.
     /// </summary>
     /// <param name="patchlist">A list of patches</param>
-    public static void Patch(List<MarseyPatch> patchlist)
+    public static void Patch<T>(List<T> patchlist) where T : IPatch
     {
         Harmony? harmony = HarmonyManager.GetHarmony;
         if (harmony == null) return;
 
-        foreach (MarseyPatch patch in patchlist)
+        foreach (T patch in patchlist)
         {
             AssemblyName assemblyName = patch.Asm.GetName();
             MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Patching {assemblyName}");

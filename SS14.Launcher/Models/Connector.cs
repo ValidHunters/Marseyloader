@@ -515,12 +515,12 @@ public class Connector : ReactiveObject
 
         Log.Debug("Preparing patch assemblies.");
         
-        FileHandler.PrepAssemblies(new[] { MarseyVars.MarseyPatchFolder });
+        FileHandler.PrepAssemblies<MarseyPatch>(new[] { MarseyVars.MarseyPatchFolder });
         
         if (MarseyVars.Subverter)
         {
             Log.Debug("Subverter enabled.");
-            FileHandler.PrepAssemblies(new[] { MarseyVars.SubverterPatchFolder }, true);
+            FileHandler.PrepAssemblies<SubverterPatch>(new[] { MarseyVars.SubverterPatchFolder });
         }
 
         var process = Process.Start(startInfo);
