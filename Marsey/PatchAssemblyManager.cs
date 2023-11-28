@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Marsey.Subversion;
-
 namespace Marsey;
 
 /// <summary>
@@ -14,6 +13,7 @@ public static class AssemblyInitializer
 {
     /// <param name="assembly">The assembly to initialize</param>
     /// <remarks>Function returns if neither MarseyPatch nor SubverterPatch can be found in the assembly</remarks>
+    /// <remarks>Because patches were made generic this now loads anything from the Marsey folder</remarks>
     public static void Initialize(Assembly assembly)
     {
         if (assembly == null) throw new ArgumentNullException(nameof(assembly));
@@ -22,22 +22,31 @@ public static class AssemblyInitializer
         Type? MarseyType = assembly.GetType("MarseyPatch");
         Type? SubverterType = assembly.GetType("SubverterPatch");
 
+        bool preloadField = false;
+        
         if (MarseyType != null && SubverterType != null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} is both a marseypatch and a subverter!");
             return;
         }
 
+        // MarseyPatch logic
         if (MarseyType != null)
         {
             DataType = MarseyType;
-            bool ignoreField = false;
             List<FieldInfo>? targets = AssemblyFieldHandler.GetPatchAssemblyFields(DataType);
 
-            ignoreField = AssemblyFieldHandler.DetermineIgnore(DataType);
+            bool ignoreField = AssemblyFieldHandler.DetermineIgnore(DataType);
+            preloadField = AssemblyFieldHandler.DeterminePreload(DataType);
             
             if (ignoreField)
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is ignoring fields, not assigning");
+            else if (preloadField && targets != null)
+            {
+                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is asking to preload.");
+                FieldInfo target = targets[0]; // Robust.Client
+                AssemblyFieldHandler.SetPreloadTarget(target);
+            }
             else if (targets != null && ignoreField != true)
                 AssemblyFieldHandler.SetAssemblyTargets(targets);
             else
@@ -47,9 +56,10 @@ public static class AssemblyInitializer
             }
         }
         
+        // Subverter logic
         if (SubverterType != null)
             DataType = SubverterType;
-
+        
         if (DataType == null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, MarseyType != null 
@@ -64,8 +74,8 @@ public static class AssemblyInitializer
 
         if (SubverterType == null)
         {
-            MarseyPatch patch = new MarseyPatch(assembly.Location, assembly, name, description);
-            PatchListManager.AddToList(patch);
+            MarseyPatch patch = new MarseyPatch(assembly.Location, assembly, name, description, preloadField);
+            PatchListManager.AddPatchToList(patch);
         }
         else
         {
@@ -81,28 +91,52 @@ public static class AssemblyInitializer
 public static class PatchListManager
 {
     private static readonly List<MarseyPatch> _patchAssemblies = new List<MarseyPatch>();
-
+    private static int _patchcount = 0;
+    public static string SerializerFile = "patches.marsey"; 
+    
     /// <summary>
     /// Checks if the amount of patches in folder equals the amount of patches in list.
-    /// If not - resets the list.
+    /// If not - resets the lists.
     /// </summary>
     public static void RecheckPatches()
     {
-        if (FileHandler.GetPatches(new []{"Marsey"}).Count != _patchAssemblies.Count)
-            _patchAssemblies.Clear();
+        if (FileHandler.GetPatches(new[] { MarseyVars.MarseyPatchFolder }).Count != _patchcount)
+            return;
+        
+        _patchAssemblies.Clear();
+        Subverter.ResetList();
+    }
+
+    public static void IncrementPatchCount()
+    {
+        _patchcount++;
     }
     
     /// <summary>
     /// Adds to patch list if none present
     /// </summary>
     /// <param name="patch">MarseyPatch object</param>
-    public static void AddToList(MarseyPatch patch)
+    public static void AddPatchToList<T>(T patch) where T : IPatch
     {
         string assemblypath = patch.Asmpath;
+        List<T>? patchList;
 
-        if (_patchAssemblies.Any(p => p.Asmpath == assemblypath)) return;
+        if (typeof(T) == typeof(MarseyPatch))
+        {
+            patchList = _patchAssemblies as List<T>;
+        }
+        else if (typeof(T) == typeof(SubverterPatch))
+        {
+            patchList = Subverter.GetSubverterPatches() as List<T>;
+        }
+        else
+            throw new ArgumentException("Invalid patch type");
 
-        _patchAssemblies.Add(patch);
+        if (patchList == null || patchList.Any(p => p.Asmpath == assemblypath)) return;
+    
+        IncrementPatchCount();
+    
+        patchList.Add(patch);
     }
     
     /// <summary>
@@ -131,6 +165,24 @@ public static class AssemblyFieldHandler
     private static Assembly? _robustSharedAss;
     private static Assembly? _clientSharedAss;
 
+    /// <summary>
+    /// Sets Robust.Client assembly in class
+    /// </summary>
+    public static void Init(Assembly RobustClient)
+    {
+        _robustAss = RobustClient;
+    }
+    
+    /// <summary>
+    /// Sets other assemblies to fields in class
+    /// </summary>
+    public static void SetAssemblies(Assembly? clientAss, Assembly? robustSharedAss, Assembly? clientSharedAss)
+    {
+        _clientAss = clientAss;
+        _robustSharedAss = robustSharedAss;
+        _clientSharedAss = clientSharedAss;
+    }
+    
     /// <summary>
     /// Initializes logger class in patches that have it.
     /// Executed only by the loader.
@@ -188,6 +240,20 @@ public static class AssemblyFieldHandler
     }
 
     /// <summary>
+    /// Is the patch asking to be loaded before the game?
+    /// </summary>
+    /// <param name="DataType">Patch class type</param>
+    public static bool DeterminePreload(Type DataType)
+    {
+        FieldInfo? preloadFieldInfo = DataType.GetField("preload");
+
+        if (preloadFieldInfo != null)
+            return preloadFieldInfo.GetValue(null) is bool;
+
+        return false;
+    }
+
+    /// <summary>
     /// Sets the assembly target in the patch assembly.
     /// In order: Robust.Client, Robust.Shared, Content.Client, Content.Shared
     /// </summary>
@@ -201,14 +267,12 @@ public static class AssemblyFieldHandler
     }
 
     /// <summary>
-    /// Sets assemblies to fields in class
+    /// Set patch field to use Robust.Client
     /// </summary>
-    public static void SetAssemblies(Assembly? robustAss, Assembly? clientAss, Assembly? robustSharedAss, Assembly? clientSharedAss)
+    /// <param name="target">MarseyPatch.RobustClient from a patch assembly</param>
+    public static void SetPreloadTarget(FieldInfo target)
     {
-        _robustAss = robustAss;
-        _clientAss = clientAss;
-        _robustSharedAss = robustSharedAss;
-        _clientSharedAss = clientSharedAss;
+        target.SetValue(null, _robustAss);
     }
     
     /// <summary>
@@ -245,4 +309,14 @@ public static class AssemblyFieldHandler
         name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
         description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
     }
+    
+    /// <summary>
+    /// Checks if GameAssemblyManager has finished capturing assemblies 
+    /// </summary>
+    /// <returns>True if any of the assemblies are filled</returns>
+    public static bool ClientInitialized()
+    {
+        return _clientAss != null || _robustSharedAss != null || _clientSharedAss != null;
+    }
+
 }

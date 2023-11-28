@@ -11,12 +11,7 @@ namespace Marsey.Subversion;
 public static class Subverter
 {
     private static List<SubverterPatch> _subverterPatches = new List<SubverterPatch>();
-    
-    public static void LoadSubverts()
-    {
-        string[] path = { MarseyVars.SubverterPatchFolder };
-        FileHandler.LoadAssemblies(path);
-    }
+    public static string SerializerFile = "subversion.marsey";
 
     public static void AddSubvert(SubverterPatch patch)
     {
@@ -25,9 +20,13 @@ public static class Subverter
         if (Subverse.CheckSubverterDuplicate(patch)) return;
 
         if (_subverterPatches.Any(p => p.Asmpath == assemblypath)) return;
-
+        
+        PatchListManager.IncrementPatchCount();
+        
         _subverterPatches.Add(patch);
     }
+
+    public static void ResetList() => _subverterPatches = new List<SubverterPatch>();
 
     public static List<SubverterPatch> GetSubverterPatches() => _subverterPatches;
 }

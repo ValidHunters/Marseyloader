@@ -19,7 +19,7 @@ public static class Subverse
     /// <returns>True if the library was initialized successfully</returns>
     public static bool InitSubverter()
     {
-        string path = Path.Combine(Directory.GetCurrentDirectory(), MarseyVars.SubverterPatchFolder, "Subverter.dll");
+        string path = Path.Combine(Directory.GetCurrentDirectory(), "Subverter.dll");
         FileHandler.LoadExactAssembly(path);
         
         List<SubverterPatch> patches = Subverter.GetSubverterPatches();

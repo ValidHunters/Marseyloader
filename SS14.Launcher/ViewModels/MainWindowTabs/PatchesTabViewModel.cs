@@ -25,7 +25,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public PatchesTabViewModel()
         {
-            Subverter.LoadSubverts();
             SubverterPresent = Subverse.CheckSubverterPresent();
             OpenMarseyPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.MarseyPatchFolder));
             OpenSubverterPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.SubverterPatchFolder));

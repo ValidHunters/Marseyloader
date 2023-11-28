@@ -520,7 +520,6 @@ public class Connector : ReactiveObject
         if (MarseyVars.Subverter)
         {
             Log.Debug("Subverter enabled.");
-            FileHandler.PrepAssemblies<SubverterPatch>(new[] { MarseyVars.SubverterPatchFolder });
         }
 
         var process = Process.Start(startInfo);

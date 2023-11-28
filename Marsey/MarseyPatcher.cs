@@ -25,6 +25,9 @@ public class MarseyPatcher
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
         
+        // Initialize FieldHandler
+        AssemblyFieldHandler.Init(robClientAssembly);
+        
         // Initialize loader
         Utility.SetupFlags();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
@@ -36,18 +39,17 @@ public class MarseyPatcher
             Subverse.PatchSubverter();
         }
         
-
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out var clientAss, out var robustSharedAss, out var clientSharedAss);
-        AssemblyFieldHandler.SetAssemblies(robClientAssembly, clientAss, robustSharedAss, clientSharedAss);
+        AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
 
         // Prepare patches
-        FileHandler.LoadAssemblies(new []{ MarseyVars.MarseyPatchFolder }, marserializer: true);
+        FileHandler.LoadAssemblies(new []{ MarseyVars.MarseyPatchFolder }, marserializer: true, filename: "patches.marsey");
         List<MarseyPatch>? patches = PatchListManager.GetPatchList<MarseyPatch>();
 
         if (patches == null) return;
 
-            // Connect to internal logger
+        // Connect patches to internal logger
         AssemblyFieldHandler.InitLogger(patches);
 
         // Execute patches

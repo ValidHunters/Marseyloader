@@ -7,20 +7,18 @@ namespace Marsey.Marserializer;
 
 public static class Marserializer
 {
-    private const string Filename = "Marserializer.json";
-    
-    public static void Serialize(string[]? path, List<string> patches)
+    public static void Serialize(string[]? path, string filename, List<string> patches)
     {
         var jsonString = JsonSerializer.Serialize(patches);
         string fullPath = Path.Combine(path ?? Array.Empty<string>());
-        fullPath = Path.Combine(fullPath, Filename);
+        fullPath = Path.Combine(fullPath, filename);
         File.WriteAllText(fullPath, jsonString);
     }
 
-    public static List<string>? Deserialize(string[]? path)
+    public static List<string>? Deserialize(string[]? path, string filename)
     {
         string fullPath = Path.Combine(path ?? Array.Empty<string>());
-        fullPath = Path.Combine(fullPath, Filename);
+        fullPath = Path.Combine(fullPath, filename);
         if (File.Exists(fullPath))
         {
             string? jsonString = File.ReadAllText(fullPath);
