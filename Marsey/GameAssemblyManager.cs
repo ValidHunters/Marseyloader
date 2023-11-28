@@ -6,10 +6,7 @@ using HarmonyLib;
 
 namespace Marsey;
 
-/// <summary>
-/// Manages game's assemblies, this includes patching.
-/// </summary>
-public abstract class GameAssemblyManager
+public static class HarmonyManager
 {
     private static Harmony? _harmony;
 
@@ -27,23 +24,28 @@ public abstract class GameAssemblyManager
             Harmony.DEBUG = true;
     }
 
+    public static Harmony? GetHarmony => _harmony;
+}
 
+public static class GamePatcher
+{
     /// <summary>
     /// Patches the game using assemblies in List.
     /// </summary>
     /// <param name="patchlist">A list of patches</param>
-    public static void PatchProc(List<MarseyPatch> patchlist)
+    public static void Patch(List<MarseyPatch> patchlist)
     {
-        if (_harmony == null) return;
+        Harmony? harmony = HarmonyManager.GetHarmony;
+        if (harmony == null) return;
 
-        foreach (var patch in patchlist)
+        foreach (MarseyPatch patch in patchlist)
         {
             AssemblyName assemblyName = patch.Asm.GetName();
             Utility.Log(Utility.LogType.INFO, $"Patching {assemblyName}");
 
             try
             {
-                _harmony.PatchAll(patch.Asm);
+                harmony.PatchAll(patch.Asm);
             }
             catch (Exception e)
             {
@@ -57,6 +59,10 @@ public abstract class GameAssemblyManager
         }
     }
 
+}
+
+public abstract class GameAssemblyManager
+{
     /// <summary>
     /// Obtains game assemblies.
     /// The function ends only when Robust.Shared,

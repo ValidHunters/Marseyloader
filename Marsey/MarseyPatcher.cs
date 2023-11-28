@@ -27,7 +27,7 @@ public class MarseyPatcher
         
         // Initialize loader
         Utility.SetupFlags();
-        GameAssemblyManager.Init(new Harmony(MarseyVars.Identifier));
+        HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         
         // Preload subverter if enabled and present
         if (MarseyVars.Subverter && Subverse.InitSubverter())
@@ -48,6 +48,6 @@ public class MarseyPatcher
         AssemblyFieldHandler.InitLogger(patches);
 
         // Execute patches
-        GameAssemblyManager.PatchProc(patches);
+        GamePatcher.Patch(patches);
     }
 }

@@ -69,7 +69,7 @@ public static class Subverse
     /// </summary>
     public static void PatchSubverter()
     {
-        if (_subverter != null) GameAssemblyManager.PatchProc(new List<MarseyPatch>() { _subverter });
+        if (_subverter != null) GamePatcher.Patch(new List<MarseyPatch>() { _subverter });
     }
     
     
