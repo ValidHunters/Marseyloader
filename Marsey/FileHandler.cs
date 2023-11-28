@@ -21,7 +21,7 @@ public abstract class FileHandler
     /// </summary>
     public static void PrepAssemblies(string[]? path, bool subverter = false)
     {
-        List<MarseyPatch> patches = PatchAssemblyManager.GetPatchList(subverter);
+        List<MarseyPatch> patches = PatchListManager.GetPatchList(subverter);
         List<string> asmpaths = patches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
         Serialize(path, asmpaths);
     }
@@ -38,7 +38,7 @@ public abstract class FileHandler
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
         if (subverter == false || marserializer == false)
-            PatchAssemblyManager.RecheckPatches();
+            PatchListManager.RecheckPatches();
 
         List<string>? files = marserializer ? Deserialize(path) : GetPatches(path);
         if (files == null) return;
@@ -59,7 +59,7 @@ public abstract class FileHandler
         try
         {
             Assembly assembly = Assembly.LoadFrom(file);
-            PatchAssemblyManager.InitAssembly(assembly, subverter);
+            AssemblyInitializer.Initialize(assembly, subverter);
         }
         catch (FileNotFoundException)
         {

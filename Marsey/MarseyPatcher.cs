@@ -38,14 +38,14 @@ public class MarseyPatcher
 
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out var clientAss, out var robustSharedAss, out var clientSharedAss);
-        PatchAssemblyManager.SetAssemblies(robClientAssembly, clientAss, robustSharedAss, clientSharedAss);
+        AssemblyFieldHandler.SetAssemblies(robClientAssembly, clientAss, robustSharedAss, clientSharedAss);
 
         // Prepare patches
         FileHandler.LoadAssemblies(new []{ MarseyVars.MarseyPatchFolder }, marserializer: true);
-        List<MarseyPatch> patches = PatchAssemblyManager.GetPatchList(false);
+        List<MarseyPatch> patches = PatchListManager.GetPatchList(false);
 
         // Connect to internal logger
-        PatchAssemblyManager.InitLogger(patches);
+        AssemblyFieldHandler.InitLogger(patches);
 
         // Execute patches
         GameAssemblyManager.PatchProc(patches);

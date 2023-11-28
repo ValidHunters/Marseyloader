@@ -35,7 +35,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private void LoadPatches()
         {
             FileHandler.LoadAssemblies();
-            LoadPatchList(PatchAssemblyManager.GetPatchList(), MarseyPatches, "marseypatches");
+            LoadPatchList(PatchListManager.GetPatchList(), MarseyPatches, "marseypatches");
             if (!SubverterPresent) return;
             LoadPatchList(Subverter.GetSubverterPatches(), SubverterPatches, "subverterpatches");
         }
