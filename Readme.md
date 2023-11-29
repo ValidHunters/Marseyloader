@@ -9,6 +9,7 @@ Space Station 14 launcher with client-side modding/patching support.
 * * Sideloading custom code using [Subverter](https://github.com/Subversionary/Subverter)
 * * Win/Mac/Linux support
 * * No injectors used, entirely based on reflection
+* * Patches are hidden from game
 * Enabled multiaccount
 * * Tokens are updated only on connect or account switch to evade alt detection
 * Locally change username for screenshots (This doesn't change your username in-game)
