@@ -86,27 +86,18 @@ public abstract class GameAssemblyManager
             Assembly[] asmlist = AppDomain.CurrentDomain.GetAssemblies();
             foreach (Assembly asm in asmlist)
             {
-                try
-                {
-                    Console.WriteLine("Trying " + asm.FullName);
-                    string? fullName = asm.FullName;
-                    if (fullName == null) continue;
+                string? fullName = asm.FullName;
+                if (fullName == null) continue;
 
-                    if (robustSharedAss == null && fullName.Contains("Robust.Shared,"))
-                        robustSharedAss = asm;
-                    else if (clientAss == null && fullName.Contains("Content.Client,"))
-                        clientAss = asm;
-                    else if (clientSharedAss == null && fullName.Contains("Content.Shared,"))
-                        clientSharedAss = asm;
-
-                    if (robustSharedAss != null && clientAss != null && clientSharedAss != null)
-                        break;
-                }
-                catch (AccessViolationException e)
-                {
-                    Console.WriteLine($"{asm.FullName} told you to fuck off");
-                    throw;
-                }
+                if (robustSharedAss == null && fullName.Contains("Robust.Shared,"))
+                    robustSharedAss = asm;
+                else if (clientAss == null && fullName.Contains("Content.Client,"))
+                    clientAss = asm;
+                else if (clientSharedAss == null && fullName.Contains("Content.Shared,"))
+                    clientSharedAss = asm;
+                
+                if (robustSharedAss != null && clientAss != null && clientSharedAss != null)
+                    break;
             }
 
             if (robustSharedAss != null && clientAss != null && clientSharedAss != null)
