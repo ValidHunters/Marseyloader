@@ -24,7 +24,7 @@ public static class HarmonyManager
             Harmony.DEBUG = true;
     }
 
-    public static Harmony? GetHarmony => _harmony;
+    public static Harmony? GetHarmony() => _harmony;
 }
 
 public static class GamePatcher
@@ -35,7 +35,7 @@ public static class GamePatcher
     /// <param name="patchlist">A list of patches</param>
     public static void Patch<T>(List<T> patchlist) where T : IPatch
     {
-        Harmony? harmony = HarmonyManager.GetHarmony;
+        Harmony? harmony = HarmonyManager.GetHarmony();
         if (harmony == null) return;
 
         foreach (T patch in patchlist)
@@ -83,20 +83,30 @@ public abstract class GameAssemblyManager
         int loops;
         for (loops = 0; loops < MarseyVars.MaxLoops; loops++)
         {
-            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            Assembly[] asmlist = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (Assembly asm in asmlist)
             {
-                string? fullName = asm.FullName;
-                if (fullName == null) continue;
+                try
+                {
+                    Console.WriteLine("Trying " + asm.FullName);
+                    string? fullName = asm.FullName;
+                    if (fullName == null) continue;
 
-                if (robustSharedAss == null && fullName.Contains("Robust.Shared,"))
-                    robustSharedAss = asm;
-                else if (clientAss == null && fullName.Contains("Content.Client,"))
-                    clientAss = asm;
-                else if (clientSharedAss == null && fullName.Contains("Content.Shared,"))
-                    clientSharedAss = asm;
+                    if (robustSharedAss == null && fullName.Contains("Robust.Shared,"))
+                        robustSharedAss = asm;
+                    else if (clientAss == null && fullName.Contains("Content.Client,"))
+                        clientAss = asm;
+                    else if (clientSharedAss == null && fullName.Contains("Content.Shared,"))
+                        clientSharedAss = asm;
 
-                if (robustSharedAss != null && clientAss != null && clientSharedAss != null)
-                    break;
+                    if (robustSharedAss != null && clientAss != null && clientSharedAss != null)
+                        break;
+                }
+                catch (AccessViolationException e)
+                {
+                    Console.WriteLine($"{asm.FullName} told you to fuck off");
+                    throw;
+                }
             }
 
             if (robustSharedAss != null && clientAss != null && clientSharedAss != null)

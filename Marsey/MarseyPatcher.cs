@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using HarmonyLib;
 using Marsey.Preloader;
+using Marsey.Stealthsey;
 using Marsey.Subversion;
 
 namespace Marsey;
@@ -15,14 +16,7 @@ namespace Marsey;
 /// </summary>
 public class MarseyPatcher
 {
-    /// <summary>
-    /// Boots up the patcher
-    ///
-    /// Executed by the loader.
-    /// </summary>
-    /// <param name="robClientAssembly">Robust.Client assembly as *loaded* by the *loader*</param>
-    /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
-    public static void Boot(Assembly? robClientAssembly)
+    public MarseyPatcher(Assembly? robClientAssembly)
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
         
@@ -33,8 +27,21 @@ public class MarseyPatcher
         Utility.SetupFlags();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         
+        // Hide the loader
+        Hidesey.Initialize();
+    }
+    
+    /// <summary>
+    /// Boots up the patcher
+    ///
+    /// Executed by the loader.
+    /// </summary>
+    /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
+    public void Boot()
+    {
         // Preload marseypatches, if available
         PreloadManager.Preload();
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Passed preload");
         
         // Initialize subverter if enabled and present
         if (MarseyVars.Subverter && Subverse.InitSubverter())
@@ -42,7 +49,7 @@ public class MarseyPatcher
             // Side-load custom code
             Subverse.PatchSubverter();
         }
-        
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Passed subverter");
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);

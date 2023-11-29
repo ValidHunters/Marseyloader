@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Marsey.Stealthsey;
 using Marsey.Subversion;
 namespace Marsey;
 
@@ -70,6 +71,9 @@ public static class AssemblyInitializer
 
 
         AssemblyFieldHandler.GetFields(DataType, out string name, out string description);
+        
+        // Hide the assembly
+        Hidesey.Hide(assembly);
 
         if (SubverterType == null)
         {
@@ -175,7 +179,7 @@ public static class AssemblyFieldHandler
     /// <summary>
     /// Sets Robust.Client assembly in class
     /// </summary>
-    public static void Init(Assembly RobustClient)
+    public static void Init(Assembly? RobustClient)
     {
         _robustAss = RobustClient;
     }
