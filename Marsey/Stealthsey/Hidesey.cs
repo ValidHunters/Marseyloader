@@ -17,11 +17,11 @@ public static class Hidesey
     private static List<Assembly> _hideseys = new List<Assembly>();
 
     /// <summary>
-    /// Starts Hidesey. Patches GetAssemblies and hides Harmony from assembly list.
+    /// Starts Hidesey. Patches GetAssemblies, GetReferencedAssemblies and hides Harmony from assembly list.
     /// </summary>
     public static void Initialize() // Finally, a patch loader that loads with a patch
-    {
-        Hide("0Harmony"); // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
+    {                               // Two patches even
+        Hide("0Harmony");    // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
         // Is it really insane to patch system functions?
         MethodInfo? target = typeof(AppDomain)
             .GetMethod("GetAssemblies", BindingFlags.Public | BindingFlags.Instance);
