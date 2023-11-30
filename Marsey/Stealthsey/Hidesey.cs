@@ -16,13 +16,11 @@ public static class Hidesey
     private static List<Assembly> _hideseys = new List<Assembly>();
 
     /// <summary>
-    /// Hides 0Harmony from assembly list
-    /// Finally, a patch loader that loads with a patch
+    /// Starts Hidesey. Patches GetAssemblies and hides Harmony from assembly list.
     /// </summary>
-    public static void Initialize()
+    public static void Initialize() // Finally, a patch loader that loads with a patch
     {
-        Hide("0Harmony");
-        AppDomain.CurrentDomain.GetAssemblies();
+        Hide("0Harmony"); // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
         // Is it really insane to patch system functions?
         MethodInfo? target = typeof(AppDomain)
             .GetMethod("GetAssemblies", BindingFlags.Public | BindingFlags.Instance);
@@ -41,16 +39,15 @@ public static class Hidesey
     /// Add assembly to _hideseys list
     /// </summary>
     /// <param name="marsey">string of assembly name</param>
-    public static void Hide(string marsey)
+    private static void Hide(string marsey)
     {
         Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
         foreach (Assembly asm in asms)
         {
-            if (asm.FullName != null && asm.FullName.Contains(marsey))
-            {
-                Hide(asm);
-                return;
-            }
+            if (asm.FullName == null || !asm.FullName.Contains(marsey)) continue;
+            
+            Hide(asm);
+            return;
         }
     }
     
@@ -63,6 +60,9 @@ public static class Hidesey
         _hideseys.Add(marsey);
     }
     
+    /// <summary>
+    /// Returns a list of only assemblies that are not hidden from a given list
+    /// </summary>
     public static Assembly[] LyingDomain(Assembly[] original)
     {
         return original.Where(assembly => !_hideseys.Contains(assembly)).ToArray();

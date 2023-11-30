@@ -20,7 +20,7 @@ public static class Redial
     /// </summary>
     public static void Disable()
     {
-        MethodInfo? prefix =
+        MethodInfo prefix =
             typeof(HideseyPatches)
                 .GetMethod("Skip", BindingFlags.Public | BindingFlags.Static)!;
         
@@ -30,7 +30,7 @@ public static class Redial
         
         foreach (Delegate dial in _phonebook)
         {
-            Manual.Prefix(dial.Method, prefix);
+            Manual.Prefix(dial.Method, prefix); // skip
         }
     }
 
@@ -56,7 +56,7 @@ public static class Redial
 
         MulticastDelegate? eventDelegate = (MulticastDelegate?)fInfo?.GetValue(AppDomain.CurrentDomain);
 
-        if (eventDelegate == null) return null;
+        if (eventDelegate == null) return null; // If event delegate is null we don't even have one
         
         Delegate[] delegates = eventDelegate.GetInvocationList();
 
