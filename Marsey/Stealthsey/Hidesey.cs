@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Loader;
-using Marsey.Handbreak;
+using Marsey.Handbrake;
 using Marsey.Subversion;
 
 namespace Marsey.Stealthsey;
@@ -28,11 +28,11 @@ public static class Hidesey
             .GetMethod("GetAssemblies", BindingFlags.Public | BindingFlags.Instance);
         MethodInfo? postfix =
             typeof(HideseyPatches)
-                .GetMethod("LieLoader", BindingFlags.Public | BindingFlags.Static);
+                .GetMethod("LieLoader", BindingFlags.Public | BindingFlags.Static)!;
         
-        if (target == null || postfix == null) return;
-        
-        Manual.ManualPostfix(target, postfix);
+        if (target == null) return;
+
+        Manual.Postfix(target, postfix);
         
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Hidesey started.");
     }

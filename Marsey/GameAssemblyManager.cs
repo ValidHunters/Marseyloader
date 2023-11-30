@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Threading;
 using HarmonyLib;
+using Marsey.Stealthsey;
 
 namespace Marsey;
 

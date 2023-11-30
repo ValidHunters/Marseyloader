@@ -13,10 +13,10 @@ public static class PreloadManager
     public static void Preload(string[]? path = null)
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
-        
+
         List<string>? preloads = Marserializer.Deserialize(path, filename: MarserializerFile);
 
-        if (preloads == null) return;
+        if (preloads == null || preloads.Count == 0) return;
         
         MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Preloading {preloads.Count} patches");
 

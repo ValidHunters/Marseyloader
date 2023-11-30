@@ -41,21 +41,20 @@ public class MarseyPatcher
     {
         // Preload marseypatches, if available
         PreloadManager.Preload();
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Passed preload");
-        
+
         // Initialize subverter if enabled and present
         if (MarseyVars.Subverter && Subverse.InitSubverter())
         {
             // Side-load custom code
             Subverse.PatchSubverter();
         }
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Passed subverter");
+        
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
 
         // Prepare marseypatches
-        FileHandler.LoadAssemblies(marserializer: true, filename: "patches.marsey");
+        FileHandler.LoadAssemblies(marserializer: true, filename: PatchListManager.MarserializerFile);
         List<MarseyPatch>? patches = PatchListManager.GetPatchList<MarseyPatch>();
 
         if (patches == null) return;

@@ -8,6 +8,7 @@ using HarmonyLib;
 using Marsey.Preloader;
 using Marsey.Subversion;
 using Marsey.Serializer;
+using Marsey.Stealthsey;
 
 namespace Marsey;
 
@@ -79,6 +80,7 @@ public abstract class FileHandler
         
         if (files == null) return;
 
+        
         foreach (string file in files) 
         { 
             LoadExactAssembly(file);
@@ -91,6 +93,8 @@ public abstract class FileHandler
     /// <param name="file">path to dll file</param>
     public static void LoadExactAssembly(string file)
     {
+        Redial.Disable(); // Disable any AssemblyLoad callbacks found
+        
         try
         {
             Assembly assembly = Assembly.LoadFrom(file);
@@ -105,6 +109,8 @@ public abstract class FileHandler
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, ex.Message);
         }
+        
+        Redial.Enable(); // Enable callbacks in case the game needs them
     }
 
     /// <summary>

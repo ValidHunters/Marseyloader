@@ -12,4 +12,9 @@ public static class HideseyPatches
     {
         __result = Hidesey.LyingDomain(__result);
     }
+
+    /// <summary>
+    /// This patch skips function execution
+    /// </summary>
+    public static bool Skip() => false;
 }
