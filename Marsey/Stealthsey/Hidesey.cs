@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.Loader;
 using Marsey.Handbrake;
 using Marsey.Subversion;
@@ -24,15 +25,26 @@ public static class Hidesey
         // Is it really insane to patch system functions?
         MethodInfo? target = typeof(AppDomain)
             .GetMethod("GetAssemblies", BindingFlags.Public | BindingFlags.Instance);
+        
         MethodInfo? postfix =
             typeof(HideseyPatches)
                 .GetMethod("LieLoader", BindingFlags.Public | BindingFlags.Static)!;
         
         if (target == null) return;
-
         Manual.Postfix(target, postfix);
         
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Hidesey started.");
+        target = 
+            Assembly.GetExecutingAssembly().GetType()
+                .GetMethod("GetReferencedAssemblies");
+         
+        postfix =
+            typeof(HideseyPatches)
+                .GetMethod("LieReference", BindingFlags.Public | BindingFlags.Static)!;
+        
+         if (target == null) return;
+         Manual.Postfix(target, postfix);
+
+         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Hidesey started.");
     }
     
     /// <summary>
@@ -66,5 +78,15 @@ public static class Hidesey
     public static Assembly[] LyingDomain(Assembly[] original)
     {
         return original.Where(assembly => !_hideseys.Contains(assembly)).ToArray();
+    }
+    
+    /// <summary>
+    /// Returns a list of only assemblynames that are not hidden from a given list
+    /// </summary>
+    public static AssemblyName[] LyingReference(AssemblyName[] original)
+    {
+        List<string?> hideseysNames = _hideseys.Select(a => a.GetName().Name).ToList();
+        AssemblyName[] result = original.Where(assembly => !hideseysNames.Contains(assembly.Name)).ToArray();
+        return result;
     }
 }

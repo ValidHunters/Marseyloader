@@ -16,6 +16,11 @@ public static class HideseyPatches
         __result = Hidesey.LyingDomain(__result);
     }
 
+    public static void LieReference(ref AssemblyName[] __result)
+    {
+        __result = Hidesey.LyingReference(__result);
+    }
+
     /// <summary>
     /// This patch skips function execution
     /// </summary>
