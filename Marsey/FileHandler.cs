@@ -23,14 +23,14 @@ public abstract class FileHandler
     public static void PrepAssemblies<T>(string[]? path = null) where T : IPatch
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
-        
+
         List<T>? patches = PatchListManager.GetPatchList<T>();
         string filename;
 
         if (typeof(T) == typeof(MarseyPatch))
         {
             filename = PatchListManager.MarserializerFile;
-            
+
             // Marseypatches need specialized logic to be able to load before all fields are initialized
             // As such, they're loaded separately
             if (patches != null)
@@ -39,9 +39,9 @@ public abstract class FileHandler
                     .Where(p => p.Enabled && ((p as MarseyPatch)!).Preload)
                     .Select(p => p.Asmpath)
                     .ToList();
-                
+
                 Marserializer.Serialize(path, PreloadManager.MarserializerFile, preloadpaths);
-                
+
                 // Remove any patches that are preloading from list
                 patches.RemoveAll(p => preloadpaths.Contains(p.Asmpath));
             }
@@ -50,7 +50,7 @@ public abstract class FileHandler
             filename = Subverter.MarserializerFile;
         else
             throw new ArgumentException("Unsupported patch type");
-        
+
         if (patches != null)
         {
             List<string> asmpaths = patches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
@@ -77,12 +77,12 @@ public abstract class FileHandler
             files = Marserializer.Deserialize(path, filename);
         else
             files = GetPatches(path);
-        
+
         if (files == null) return;
 
-        
-        foreach (string file in files) 
-        { 
+
+        foreach (string file in files)
+        {
             LoadExactAssembly(file);
         }
     }
@@ -94,7 +94,7 @@ public abstract class FileHandler
     public static void LoadExactAssembly(string file)
     {
         Redial.Disable(); // Disable any AssemblyLoad callbacks found
-        
+
         try
         {
             Assembly assembly = Assembly.LoadFrom(file);
@@ -109,7 +109,7 @@ public abstract class FileHandler
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, ex.Message);
         }
-        
+
         Redial.Enable(); // Enable callbacks in case the game needs them
     }
 
@@ -120,7 +120,7 @@ public abstract class FileHandler
     /// <returns>An array of strings containing the full paths to each DLL file in the specified subdirectory</returns>
     public static List<string> GetPatches(string[] subdir)
     {
-        var updatedSubdir = subdir.Prepend(Directory.GetCurrentDirectory()).ToArray();
+        string[] updatedSubdir = subdir.Prepend(Directory.GetCurrentDirectory()).ToArray();
         string path = Path.Combine(updatedSubdir);
 
         return Directory.GetFiles(path, "*.dll").ToList();

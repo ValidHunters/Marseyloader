@@ -12,7 +12,7 @@ public static class MarseyLogger
         FATL,
         DEBG
     }
-    
+
     /// <summary>
     /// Log function used by the loader
     /// </summary>
@@ -25,7 +25,7 @@ public static class MarseyLogger
 
         Console.WriteLine($"[MARSEY] [{logType.ToString()}] {message}");
     }
-    
+
     /// <summary>
     /// Log function used by patches
     /// </summary>
@@ -55,7 +55,7 @@ public abstract class Utility
 
     private static bool CheckEnv(string envName)
     {
-        var envVar = Environment.GetEnvironmentVariable(envName)!;
+        string envVar = Environment.GetEnvironmentVariable(envName)!;
         return !string.IsNullOrEmpty(envVar) && bool.Parse(envVar);
     }
 }

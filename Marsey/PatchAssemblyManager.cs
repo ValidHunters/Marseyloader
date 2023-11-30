@@ -18,13 +18,13 @@ public static class AssemblyInitializer
     public static void Initialize(Assembly assembly)
     {
         if (assembly == null) throw new ArgumentNullException(nameof(assembly));
-        
+
         Type? DataType = null;
         Type? MarseyType = assembly.GetType("MarseyPatch");
         Type? SubverterType = assembly.GetType("SubverterPatch");
 
         bool preloadField = false;
-        
+
         if (MarseyType != null && SubverterType != null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} is both a marseypatch and a subverter!");
@@ -39,7 +39,7 @@ public static class AssemblyInitializer
 
             bool ignoreField = AssemblyFieldHandler.DetermineIgnore(DataType);
             preloadField = AssemblyFieldHandler.DeterminePreload(DataType);
-            
+
             if (ignoreField)
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} MarseyPatch is ignoring fields, not assigning");
             else if (preloadField && targets != null)
@@ -55,23 +55,23 @@ public static class AssemblyInitializer
                 return;
             }
         }
-        
+
         // Subverter logic
         if (SubverterType != null)
             DataType = SubverterType;
-        
+
         if (DataType == null)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, MarseyType != null 
-                ? $"{Path.GetFileName(assembly.Location)}: MarseyPatch in subverter folder" 
-                : SubverterType != null ? $"{Path.GetFileName(assembly.Location)}: SubverterPatch in Marsey folder" 
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, MarseyType != null
+                ? $"{Path.GetFileName(assembly.Location)}: MarseyPatch in subverter folder"
+                : SubverterType != null ? $"{Path.GetFileName(assembly.Location)}: SubverterPatch in Marsey folder"
                 : $"{assembly.GetName().Name} had no supported data type. Is it namespaced?");
             return;
         }
 
 
         AssemblyFieldHandler.GetFields(DataType, out string name, out string description);
-        
+
         // Hide the assembly
         Hidesey.Hide(assembly);
 
@@ -95,8 +95,8 @@ public static class PatchListManager
 {
     private static readonly List<MarseyPatch> _patchAssemblies = new List<MarseyPatch>();
     private static int _patchcount = 0;
-    public const string MarserializerFile = "patches.marsey"; 
-    
+    public const string MarserializerFile = "patches.marsey";
+
     /// <summary>
     /// Checks if the amount of patches in folder equals the amount of patches in list.
     /// If not - resets the lists.
@@ -105,7 +105,7 @@ public static class PatchListManager
     {
         if (FileHandler.GetPatches(new[] { MarseyVars.MarseyPatchFolder }).Count != _patchcount)
             return;
-        
+
         ResetList();
         Subverter.ResetList();
     }
@@ -114,7 +114,7 @@ public static class PatchListManager
     {
         _patchcount++;
     }
-    
+
     /// <summary>
     /// Adds to patch list if none present
     /// </summary>
@@ -136,12 +136,12 @@ public static class PatchListManager
             throw new ArgumentException("Invalid patch type");
 
         if (patchList == null || patchList.Any(p => p.Asmpath == assemblypath)) return;
-    
+
         IncrementPatchCount();
-    
+
         patchList.Add(patch);
     }
-    
+
     /// <summary>
     /// Returns a either a MarseyPatch list or a Subverter depending if the bool is true
     /// </summary>
@@ -150,10 +150,10 @@ public static class PatchListManager
     {
         if (typeof(T) == typeof(MarseyPatch))
             return _patchAssemblies as List<T>;
-        
+
         if (typeof(T) == typeof(SubverterPatch))
             return Subverter.GetSubverterPatches() as List<T>;
-        
+
         throw new ArgumentException("Invalid patch type passed");
     }
 
@@ -183,7 +183,7 @@ public static class AssemblyFieldHandler
     {
         _robustAss = RobustClient;
     }
-    
+
     /// <summary>
     /// Sets other assemblies to fields in class
     /// </summary>
@@ -193,7 +193,7 @@ public static class AssemblyFieldHandler
         _robustSharedAss = robustSharedAss;
         _clientSharedAss = clientSharedAss;
     }
-    
+
     /// <summary>
     /// Initializes logger class in patches that have it.
     /// Executed only by the loader.
@@ -223,10 +223,10 @@ public static class AssemblyFieldHandler
     /// <exception cref="Nullable">Returns null if any field in MarseyPatch is missing</exception>
     public static List<FieldInfo>? GetPatchAssemblyFields(Type marseyPatchType)
     {
-        var fieldNames = new[] { "RobustClient", "RobustShared", "ContentClient", "ContentShared" };
-        var targets = new List<FieldInfo>();
+        string[] fieldNames = new[] { "RobustClient", "RobustShared", "ContentClient", "ContentShared" };
+        List<FieldInfo> targets = new List<FieldInfo>();
 
-        foreach (var fieldName in fieldNames)
+        foreach (string fieldName in fieldNames)
         {
             var field = marseyPatchType.GetField(fieldName);
             if (field == null) return null; // Not all fields could be caught, no point proceeding.
@@ -243,7 +243,7 @@ public static class AssemblyFieldHandler
     public static bool DetermineIgnore(Type DataType)
     {
         FieldInfo? ignoreFieldInfo = DataType.GetField("ignoreFields");
-            
+
         if (ignoreFieldInfo != null)
             return ignoreFieldInfo.GetValue(null) is bool;
 
@@ -285,7 +285,7 @@ public static class AssemblyFieldHandler
     {
         target.SetValue(null, _robustAss);
     }
-    
+
     /// <summary>
     /// Sets patch delegate to MarseyLogger::Log(AssemblyName, string)
     /// Executed only by the Loader.
@@ -320,9 +320,9 @@ public static class AssemblyFieldHandler
         name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
         description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
     }
-    
+
     /// <summary>
-    /// Checks if GameAssemblyManager has finished capturing assemblies 
+    /// Checks if GameAssemblyManager has finished capturing assemblies
     /// </summary>
     /// <returns>True if any of the assemblies are filled</returns>
     public static bool ClientInitialized()
