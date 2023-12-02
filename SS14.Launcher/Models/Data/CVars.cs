@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Marsey.Stealthsey;
 using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.Models.Data;
@@ -50,6 +51,12 @@ public static class CVars
     /// Log patcher output to a separate file
     /// </summary>
     public static readonly CVarDef<bool> SeparateLogging = CVarDef.Create("SeparateLogging", false);
+
+    /// <summary>
+    /// Define strict level
+    /// </summary>
+    public static readonly CVarDef<int> MarseyHide =
+        CVarDef.Create("HideLevel", 2);
 
     /// <summary>
     /// Enable logging of launched client instances to file.

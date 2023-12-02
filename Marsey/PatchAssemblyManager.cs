@@ -72,8 +72,8 @@ public static class AssemblyInitializer
 
         AssemblyFieldHandler.GetFields(DataType, out string name, out string description);
 
-        // Hide the assembly
-        Hidesey.Hide(assembly);
+        if (MarseyVars.MarseyHide <= HideLevel.Duplicit)
+            Hidesey.Hide(assembly); // Hide assembly
 
         if (SubverterType == null)
         {

@@ -5,10 +5,14 @@
              xmlns:mainWindowTabs="clr-namespace:SS14.Launcher.ViewModels.MainWindowTabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SS14.Launcher.Views.MainWindowTabs.OptionsTabView"
-             Name="NewsTab">
+             Name="OptionsTab">
     <Design.DataContext>
         <mainWindowTabs:OptionsTabViewModel />
     </Design.DataContext>
+    
+    <UserControl.Resources>
+        <mainWindowTabs:HideLevelDescriptionConverter x:Key="HideLevelDescriptionConverter" />
+    </UserControl.Resources>
 
     <TabControl>
         <TabItem Header="Game">
@@ -75,6 +79,16 @@
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Exits client if any patch fails to apply. Useful when you need all patches applied or debugging a patch."
                                    Margin="8" />
+                        
+                        <TextBlock Margin="4, 0" Text="Hide Level" Classes="NanoHeadingMedium" />
+                        <ComboBox VerticalAlignment="Center" Margin="4" Items="{Binding HideLevels}" SelectedItem="{Binding HideLevel}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding HideLevel, Converter={StaticResource HideLevelDescriptionConverter}}" Margin="8" />
                         
                         <TextBlock Margin="4, 0" Text="Logging" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patches</CheckBox>

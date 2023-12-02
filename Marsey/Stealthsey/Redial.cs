@@ -1,10 +1,8 @@
 using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
 using HarmonyLib;
 using Marsey.Handbrake;
-using MonoMod.Utils;
 
 namespace Marsey.Stealthsey;
 

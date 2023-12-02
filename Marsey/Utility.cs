@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Marsey.Stealthsey;
 
 namespace Marsey;
 
@@ -40,7 +41,8 @@ public static class MarseyLogger
 
     private static void SharedLog(string message)
     {
-        Console.WriteLine($"[{MarseyVars.MarseyLoggerPrefix}] {message}");
+        if (MarseyVars.MarseyHide < HideLevel.Explicit)
+            Console.WriteLine($"[{MarseyVars.MarseyLoggerPrefix}] {message}");
     }
 }
 public abstract class Utility

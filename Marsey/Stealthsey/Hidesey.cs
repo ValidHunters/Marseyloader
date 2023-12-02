@@ -2,12 +2,40 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.Loader;
 using Marsey.Handbrake;
-using Marsey.Subversion;
 
 namespace Marsey.Stealthsey;
+
+public enum HideLevel
+{
+    // Note that this only protects you from programmatic checks.
+
+    /// <summary>
+    /// Hidesey is disabled.
+    /// </summary>
+    Disabled = 0,
+    /// <summary>
+    /// Patcher is hidden from the game programmatically
+    /// </summary>
+    /// <remarks>This is required for playing the game past engine version 183.0.0,
+    /// As 0Harmony is detected by the game at runtime</remarks>
+    Duplicit = 1,
+    /// <summary>
+    /// Patcher and patches are hidden from the game programmatically
+    /// </summary>
+    Normal = 2,
+    /// <summary>
+    /// <para>Patcher and patches are hidden from the game programmatically</para>
+    /// <para>Patcher does not log anything</para>
+    /// </summary>
+    Explicit = 3,
+    /// <summary>
+    /// <para>Patcher and patches are hidden from the game programmatically</para>
+    /// <para>Patcher does not log anything</para>
+    /// <para>Preloads and subversions are disabled</para>
+    /// </summary>
+    Unconditional = 4
+}
 
 /// <summary>
 /// Hides marseys from the game
@@ -21,7 +49,15 @@ public static class Hidesey
     /// </summary>
     public static void Initialize() // Finally, a patch loader that loads with a patch
     {                               // Two patches even
-        Hide("0Harmony");    // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
+        string envVar = Environment.GetEnvironmentVariable("MARSEY_HIDE_LEVEL")!;
+        if (int.TryParse(envVar, out int hideLevelValue) && Enum.IsDefined(typeof(HideLevel), hideLevelValue))
+        {
+            MarseyVars.MarseyHide = (HideLevel)hideLevelValue;
+        }
+        
+        if (MarseyVars.MarseyHide == HideLevel.Disabled) return;
+        
+        Hide("0Harmony"); // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
         
         Facade.Imposition("Marsey");
         

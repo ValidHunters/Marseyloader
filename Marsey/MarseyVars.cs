@@ -1,3 +1,5 @@
+using Marsey.Stealthsey;
+
 namespace Marsey;
 
 public abstract class MarseyVars
@@ -24,6 +26,14 @@ public abstract class MarseyVars
     /// </summary>
     public const string MarseyPatchFolder = "Marsey";
 
+    /// <summary>
+    /// Defines how strict is Hidesey
+    /// </summary>
+    public static HideLevel MarseyHide = HideLevel.Normal;
+    
+    /// <summary>
+    /// Log patcher output to separate file
+    /// </summary>
     public static bool SeparateLogger;
     
     /// <summary>

@@ -22,7 +22,7 @@ public static class Facade
     /// <summary>
     /// Hides an array of type from patch
     /// </summary>
-    public static void Imposition(Type[] patch)
+    private static void Imposition(Type[] patch)
     {
         foreach (Type t in patch)
             Imposition(t);

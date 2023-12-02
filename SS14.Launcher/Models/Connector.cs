@@ -486,6 +486,8 @@ public class Connector : ReactiveObject
         
         if (MarseyVars.Subverter)
             EnvVar("MARSEY_SUBVERTER", "true");
+        
+        EnvVar("MARSEY_HIDE_LEVEL", $"{_cfg.GetCVar(CVars.MarseyHide)}");
 
         if (_cfg.GetCVar(CVars.DynamicPgo))
         {

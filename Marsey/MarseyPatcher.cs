@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
 using HarmonyLib;
 using Marsey.Preloader;
 using Marsey.Stealthsey;
@@ -39,16 +36,19 @@ public class MarseyPatcher
     /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
     public void Boot()
     {
-        // Preload marseypatches, if available
-        PreloadManager.Preload();
-
-        // Initialize subverter if enabled and present
-        if (MarseyVars.Subverter && Subverse.InitSubverter())
+        if (MarseyVars.MarseyHide < HideLevel.Unconditional)
         {
-            // Side-load custom code
-            Subverse.PatchSubverter();
+            // Preload marseypatches, if available
+            PreloadManager.Preload();
+
+            // Initialize subverter if enabled and present
+            if (MarseyVars.Subverter && Subverse.InitSubverter())
+            {
+                // Side-load custom code
+                Subverse.PatchSubverter();
+            }
         }
-        
+
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
