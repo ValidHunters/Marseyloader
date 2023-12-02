@@ -55,7 +55,6 @@ internal class Program
             return false;
         }
 
-
         if (!TryGetLoader(clientAssembly, out var loader))
             return false;
 

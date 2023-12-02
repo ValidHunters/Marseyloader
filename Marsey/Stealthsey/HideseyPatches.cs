@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 
 namespace Marsey.Stealthsey;
@@ -16,9 +17,17 @@ public static class HideseyPatches
         __result = Hidesey.LyingDomain(__result);
     }
 
+    /// <summary>
+    /// Same but with referenced assemblies
+    /// </summary>
     public static void LieReference(ref AssemblyName[] __result)
     {
         __result = Hidesey.LyingReference(__result);
+    }
+
+    public static void LieTyper(ref Type[] __result)
+    {
+        __result = Hidesey.LyingTyper(__result);
     }
 
     /// <summary>
