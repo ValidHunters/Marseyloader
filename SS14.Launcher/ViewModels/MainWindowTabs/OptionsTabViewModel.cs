@@ -1,5 +1,8 @@
 using System.Diagnostics;
+using System.Windows.Input;
+using Avalonia.Interactivity;
 using DynamicData;
+using Microsoft.Toolkit.Mvvm.Input;
 using Splat;
 using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
@@ -11,11 +14,13 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs;
 
 public class OptionsTabViewModel : MainWindowTabViewModel
 {
-    public DataManager Cfg { get; }
+    private DataManager Cfg { get; }
     private readonly LoginManager _loginManager;
     private readonly DataManager _dataManager;
     private readonly IEngineManager _engineManager;
     private readonly ContentManager _contentManager;
+    
+    public ICommand SetUsernameCommand { get; }
 
     public OptionsTabViewModel()
     {
@@ -24,6 +29,8 @@ public class OptionsTabViewModel : MainWindowTabViewModel
         _dataManager = Locator.Current.GetRequiredService<DataManager>();
         _engineManager = Locator.Current.GetRequiredService<IEngineManager>();
         _contentManager = Locator.Current.GetRequiredService<ContentManager>();
+        
+        SetUsernameCommand = new RelayCommand(OnSetUsernameClick);
     }
 
 #if RELEASE
@@ -113,6 +120,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel
             Cfg.CommitConfig();
         }
     }
+    
+    public bool SeparateLogging
+    {
+        get => Cfg.GetCVar(CVars.SeparateLogging);
+        set
+        {
+            Cfg.SetCVar(CVars.SeparateLogging, value);
+            Cfg.CommitConfig();
+        }
+    }
 
     public bool DisableSigning
     {
@@ -141,9 +158,13 @@ public class OptionsTabViewModel : MainWindowTabViewModel
         {
             LoginInfo LI = _loginManager.ActiveAccount!.LoginInfo;
             LI.Username = value;
-            _dataManager.ChangeLogin(ChangeReason.Update, LI);
-            _dataManager.CommitConfig();
         }
+    }
+    
+    private void OnSetUsernameClick()
+    {
+        _dataManager.ChangeLogin(ChangeReason.Update, _loginManager.ActiveAccount?.LoginInfo!);
+        _dataManager.CommitConfig();
     }
 
     public void ClearEngines()

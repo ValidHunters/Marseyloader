@@ -23,7 +23,7 @@ public static class MarseyLogger
         if (logType == MarseyLogger.LogType.DEBG && MarseyVars.DebugAllowed != true)
             return;
 
-        Console.WriteLine($"[MARSEY] [{logType.ToString()}] {message}");
+        SharedLog($"[{logType.ToString()}] {message}");
     }
 
     /// <summary>
@@ -35,7 +35,12 @@ public static class MarseyLogger
     public static void Log(AssemblyName asm, string message)
     {
         if (MarseyVars.PatchLogAllowed)
-            Console.WriteLine($"[{asm.Name}] {message}");
+            SharedLog($"[{asm.Name}] {message}");
+    }
+
+    private static void SharedLog(string message)
+    {
+        Console.WriteLine($"[{MarseyVars.MarseyLoggerPrefix}] {message}");
     }
 }
 public abstract class Utility
@@ -51,6 +56,7 @@ public abstract class Utility
         MarseyVars.DebugAllowed = CheckEnv("MARSEY_LOADER_DEBUG");
         MarseyVars.ThrowOnFail = CheckEnv("MARSEY_THROW_FAIL");
         MarseyVars.Subverter = CheckEnv("MARSEY_SUBVERTER");
+        MarseyVars.SeparateLogger = CheckEnv("MARSEY_SEPARATE_LOGGER");
     }
 
     private static bool CheckEnv(string envName)

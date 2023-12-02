@@ -24,6 +24,13 @@ public abstract class MarseyVars
     /// </summary>
     public const string MarseyPatchFolder = "Marsey";
 
+    public static bool SeparateLogger;
+    
+    /// <summary>
+    /// Log identified for marseyloader
+    /// </summary>
+    public const string MarseyLoggerPrefix = "MARSEY";
+
     /// <summary>
     /// Should code side-loading be enabled
     /// This is only true if any subverter patch is enabled

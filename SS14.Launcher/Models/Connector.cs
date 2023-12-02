@@ -7,10 +7,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls.Shapes;
 using DynamicData;
 using ReactiveUI;
 using Serilog;
@@ -21,6 +23,7 @@ using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 using Marsey;
 using Marsey.Subversion;
+using Path = System.IO.Path;
 
 namespace SS14.Launcher.Models;
 
@@ -468,6 +471,9 @@ public class Connector : ReactiveObject
         }
         
         Subverse.CheckEnabled();
+        
+        if (_cfg.GetCVar(CVars.SeparateLogging))
+            EnvVar("MARSEY_SEPARATE_LOGGER", "true");
 
         if (_cfg.GetCVar(CVars.LogLoaderDebug))
             EnvVar("MARSEY_LOADER_DEBUG", "true");
@@ -545,7 +551,15 @@ public class Connector : ReactiveObject
                 4096,
                 FileOptions.Asynchronous);
 
-            PipeOutput(process, fileStdout, fileStderr);
+            FileStream fileStdmarsey = new FileStream(
+                LauncherPaths.PathClientStdmarseyLog,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.Delete | FileShare.ReadWrite,
+                4096,
+                FileOptions.Asynchronous);
+
+            PipeOutput(process, fileStdout, fileStderr, fileStdmarsey);
         }
 
         return process;
@@ -562,9 +576,9 @@ public class Connector : ReactiveObject
         // Implemented in private repo for Steam.
     }
 
-    private static async void PipeOutput(Process process, Stream targetStdout, Stream targetStderr)
+    private static async void PipeOutput(Process process, Stream targetStdout, Stream targetStderr, Stream targetStdmarsey)
     {
-        async Task DoPipe(StreamReader reader, Stream writer)
+        async Task DoPipe(StreamReader reader, Stream writer, Stream? marseyWriter = null)
         {
             var readStream = reader.BaseStream;
             var buf = new byte[4096];
@@ -576,13 +590,18 @@ public class Connector : ReactiveObject
                     Log.Debug("EOF, ending pipe logging for {pid}.", process.Id);
                     return;
                 }
-
-                await writer.WriteAsync(buf.AsMemory(0, read));
+            
+                if (MarseyVars.SeparateLogger && marseyWriter != null && buf.AsSpan(0, read).StartsWith(Encoding.UTF8.GetBytes($"[{MarseyVars.MarseyLoggerPrefix}]")))
+                {
+                    await marseyWriter.WriteAsync(buf.AsMemory(0, read));
+                }
+                else
+                    await writer.WriteAsync(buf.AsMemory(0, read));
             }
         }
 
         await Task.WhenAll(
-            DoPipe(process.StandardOutput, targetStdout),
+            DoPipe(process.StandardOutput, targetStdout, targetStdmarsey),
             DoPipe(process.StandardError, targetStderr));
     }
 

@@ -45,6 +45,11 @@ public static class CVars
     /// Throw an exception if a patch fails to apply.
     /// </summary>
     public static readonly CVarDef<bool> ThrowPatchFail = CVarDef.Create("ThrowPatchFail", false);
+    
+    /// <summary>
+    /// Log patcher output to a separate file
+    /// </summary>
+    public static readonly CVarDef<bool> SeparateLogging = CVarDef.Create("SeparateLogging", false);
 
     /// <summary>
     /// Enable logging of launched client instances to file.

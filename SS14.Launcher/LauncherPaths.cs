@@ -15,12 +15,11 @@ public static class LauncherPaths
     public static readonly string ServerContentDirName = "server content";
     public static readonly string LogsDirName = "logs";
     public static readonly string MarseyPatchesDirName = "Marsey";
-    public static readonly string EnabledPatchesDirName = "Enabled";
     public static readonly string LauncherLogName = "launcher.log";
     public static readonly string ClientMacLogName = "client.mac.log";
     public static readonly string ClientStdoutLogName = "client.stdout.log";
     public static readonly string ClientStderrLogName = "client.stderr.log";
-
+    public static readonly string ClientStdmarseyLogName = "client.marsey.log";
     public static readonly string DirLauncherInstall = GetInstallDir();
     public static readonly string DirUserData = GetUserDataDir();
     public static readonly string DirLocalData = GetLocalUserDataDir();
@@ -30,11 +29,11 @@ public static class LauncherPaths
     public static readonly string DirServerContent = Path.Combine(DirUserData, ServerContentDirName);
     public static readonly string DirLogs = Path.Combine(DirUserData, LogsDirName);
     public static readonly string DirPatch = Path.Combine(DirLauncherInstall, MarseyPatchesDirName);
-    public static readonly string DirEnPatch = Path.Combine(DirPatch, EnabledPatchesDirName);
     public static readonly string PathLauncherLog = Path.Combine(DirLogs, LauncherLogName);
     public static readonly string PathClientMacLog = Path.Combine(DirLogs, ClientMacLogName);
     public static readonly string PathClientStdoutLog = Path.Combine(DirLogs, ClientStdoutLogName);
     public static readonly string PathClientStderrLog = Path.Combine(DirLogs, ClientStderrLogName);
+    public static readonly string PathClientStdmarseyLog = Path.Combine(DirLogs, ClientStdmarseyLogName);
     public static readonly string PathPublicKey = Path.Combine(DirLauncherInstall, "signing_key");
     public static readonly string PathContentDb = Path.Combine(DirLocalData, "content.db");
     public static readonly string PathOverrideAssetsDb = Path.Combine(DirLocalData, "override_assets.db");
@@ -43,7 +42,7 @@ public static class LauncherPaths
     {
         Ensure(DirLogs);
         Ensure(DirLocalData);
-        Ensure(DirEnPatch);
+        Ensure(DirPatch);
         Ensure(DirEngineInstallations);
         Ensure(DirModuleInstallations);
 
