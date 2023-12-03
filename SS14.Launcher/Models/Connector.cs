@@ -471,9 +471,6 @@ public class Connector : ReactiveObject
         }
         
         Subverse.CheckEnabled();
-        
-        if (_cfg.GetCVar(CVars.SeparateLogging))
-            EnvVar("MARSEY_SEPARATE_LOGGER", "true");
 
         if (_cfg.GetCVar(CVars.LogLoaderDebug))
             EnvVar("MARSEY_LOADER_DEBUG", "true");
@@ -488,6 +485,8 @@ public class Connector : ReactiveObject
             EnvVar("MARSEY_SUBVERTER", "true");
         
         EnvVar("MARSEY_HIDE_LEVEL", $"{_cfg.GetCVar(CVars.MarseyHide)}");
+        
+        MarseyVars.SeparateLogger = _cfg.GetCVar(CVars.SeparateLogging);
 
         if (_cfg.GetCVar(CVars.DynamicPgo))
         {
@@ -592,10 +591,11 @@ public class Connector : ReactiveObject
                     Log.Debug("EOF, ending pipe logging for {pid}.", process.Id);
                     return;
                 }
-            
+
                 if (MarseyVars.SeparateLogger && marseyWriter != null && buf.AsSpan(0, read).StartsWith(Encoding.UTF8.GetBytes($"[{MarseyVars.MarseyLoggerPrefix}]")))
                 {
                     await marseyWriter.WriteAsync(buf.AsMemory(0, read));
+                    await marseyWriter.FlushAsync();
                 }
                 else
                     await writer.WriteAsync(buf.AsMemory(0, read));
