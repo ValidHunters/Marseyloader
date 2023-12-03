@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using HarmonyLib;
+using Marsey.Stealthsey;
 
 namespace Marsey.Subversion;
 
@@ -36,8 +37,15 @@ public static class Subverse
     /// <summary>
     /// Enables subverter if any of the of the subverter patches are enabled
     /// </summary>
+    /// <remarks>If MarseyHide is set to unconditional - defaults to false</remarks>
     public static void CheckEnabled()
     {
+        if (MarseyVars.MarseyHide >= HideLevel.Unconditional)
+        {
+            MarseyVars.Subverter = false;
+            return;
+        }
+        
         List<SubverterPatch> patches = Subverter.GetSubverterPatches();
 
         if (patches.Any(p => p.Enabled))

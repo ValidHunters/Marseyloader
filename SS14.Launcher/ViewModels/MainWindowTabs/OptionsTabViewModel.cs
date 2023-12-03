@@ -225,14 +225,11 @@ public class HideLevelDescriptionConverter : IValueConverter
     {
         return (HideLevel)(value ?? HideLevel.Normal) switch
         {
-            HideLevel.Disabled => "Hidesey is disabled.",
-            HideLevel.Duplicit =>
-                "Patcher is hidden from the game programmatically. This is required for playing the game past engine version 183.0.0, as 0Harmony is detected by the game at runtime.",
+            HideLevel.Disabled => "Hidesey is disabled. Servers with engine version 183.0.0 or above crash the client.",
+            HideLevel.Duplicit => "Patcher is hidden from the game programmatically. For cases when admins are more interested what patches are you using, rather than if you are using them.",
             HideLevel.Normal => "Patcher and patches are hidden from the game programmatically.",
-            HideLevel.Explicit =>
-                "Patcher and patches are hidden from the game programmatically. Patcher does not log anything.",
-            HideLevel.Unconditional =>
-                "Patcher and patches are hidden from the game programmatically. Patcher does not log anything. Preloads and subversions are disabled.",
+            HideLevel.Explicit => "Patcher and patches are hidden from the game programmatically. Patcher does not log anything.",
+            HideLevel.Unconditional => "Patcher and patches are hidden from the game programmatically. Patcher does not log anything. Preloads and subversions are disabled.",
             _ => "Unknown hide level."
         };
     }

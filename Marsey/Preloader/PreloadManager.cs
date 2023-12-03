@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Marsey.Serializer;
+using Marsey.Stealthsey;
 
 namespace Marsey.Preloader;
 
@@ -12,6 +13,8 @@ public static class PreloadManager
 
     public static void Preload(string[]? path = null)
     {
+        if (MarseyVars.MarseyHide >= HideLevel.Unconditional) return;
+        
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
         List<string>? preloads = Marserializer.Deserialize(path, filename: MarserializerFile);

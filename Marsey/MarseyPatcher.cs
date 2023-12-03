@@ -36,20 +36,17 @@ public class MarseyPatcher
     /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
     public void Boot()
     {
-        if (MarseyVars.MarseyHide < HideLevel.Unconditional)
-        {
-            // Preload marseypatches, if available
-            PreloadManager.Preload();
+        // Preload marseypatches, if available
+        PreloadManager.Preload();
 
-            // Initialize subverter if enabled and present
-            if (MarseyVars.Subverter && Subverse.InitSubverter())
-            {
-                // Side-load custom code
-                Subverse.PatchSubverter();
-            }
+        // Initialize subverter if enabled and present
+        if (MarseyVars.Subverter && Subverse.InitSubverter())
+        {
+            // Side-load custom code
+            Subverse.PatchSubverter();
         }
 
-        // Manage game assemblies
+            // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
 
@@ -64,5 +61,7 @@ public class MarseyPatcher
 
         // Execute patches
         GamePatcher.Patch(patches);
+        
+        Hidesey.Disperse();
     }
 }

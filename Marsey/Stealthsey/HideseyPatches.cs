@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace Marsey.Stealthsey;
 
@@ -15,6 +17,16 @@ public static class HideseyPatches
     public static void LieLoader(ref Assembly[] __result)
     {
         __result = Hidesey.LyingDomain(__result);
+    }
+    
+    public static void LieContext(ref IEnumerable<Assembly> __result)
+    {
+        __result = Hidesey.LyingContext(__result);
+    }
+
+    public static void LieManifest(ref IEnumerable<AssemblyLoadContext> __result)
+    {
+        __result = Hidesey.LyingManifest(__result);
     }
 
     /// <summary>

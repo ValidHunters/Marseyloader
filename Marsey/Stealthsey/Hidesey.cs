@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Loader;
+using HarmonyLib;
 using Marsey.Handbrake;
 
 namespace Marsey.Stealthsey;
@@ -13,12 +15,14 @@ public enum HideLevel
     /// <summary>
     /// Hidesey is disabled.
     /// </summary>
+    /// <remarks>
+    /// Servers with engine version 183.0.0 or above crash the client.
+    /// </remarks>
     Disabled = 0,
     /// <summary>
-    /// Patcher is hidden from the game programmatically
+    /// <para>Patcher is hidden from the game programmatically.</para>
+    /// <para>Patches are not hidden for cases when an admin wants to know *what* patches are you running, rather than if you have any.</para>
     /// </summary>
-    /// <remarks>This is required for playing the game past engine version 183.0.0,
-    /// As 0Harmony is detected by the game at runtime</remarks>
     Duplicit = 1,
     /// <summary>
     /// Patcher and patches are hidden from the game programmatically
@@ -48,37 +52,46 @@ public static class Hidesey
     /// Starts Hidesey. Patches GetAssemblies, GetReferencedAssemblies and hides Harmony from assembly list.
     /// </summary>
     public static void Initialize() // Finally, a patch loader that loads with a patch
-    {                               // Two patches even
-        string envVar = Environment.GetEnvironmentVariable("MARSEY_HIDE_LEVEL")!;
-        if (int.TryParse(envVar, out int hideLevelValue) && Enum.IsDefined(typeof(HideLevel), hideLevelValue))
-        {
-            MarseyVars.MarseyHide = (HideLevel)hideLevelValue;
-        }
-        
+    {                               // Five patches even
+
         if (MarseyVars.MarseyHide == HideLevel.Disabled) return;
         
-        Hide("0Harmony"); // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
+        Disperse();
         
         Facade.Imposition("Marsey");
-        
+
         Perjurize(); // Patch detection methods
 
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Hidesey started.");
     }
     
     /// <summary>
+    /// General function to hide assemblies matching name from detection methods
+    /// </summary>
+    /// <remarks>Because certain assemblies are loaded later this is called twice</remarks>
+    public static void Disperse()
+    {
+        if (MarseyVars.MarseyHide == HideLevel.Disabled) return;
+        
+        Hide("0Harmony"); // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
+        Hide("Mono.Cecil");
+        Hide("MonoMod", true);
+        Hide("MonoMod.Iced");
+        Hide("System.Reflection.Emit,");
+    }
+
+    /// <summary>
     /// Add assembly to _hideseys list
     /// </summary>
     /// <param name="marsey">string of assembly name</param>
-    private static void Hide(string marsey)
+    private static void Hide(string marsey, bool recursive = false)
     {
         Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
         foreach (Assembly asm in asms)
         {
             if (asm.FullName == null || !asm.FullName.Contains(marsey)) continue;
-            
             Hide(asm);
-            return;
+            if (!recursive) return;
         }
     }
     
@@ -107,6 +120,14 @@ public static class Hidesey
         target = typeof(Assembly).GetMethod("GetTypes");
         postfix = typeof(HideseyPatches).GetMethod("LieTyper", BindingFlags.Public | BindingFlags.Static)!;
         if (target != null) Manual.Postfix(target, postfix);
+
+        target = typeof(AssemblyLoadContext).GetProperty("Assemblies")!.GetGetMethod();
+        postfix = typeof(HideseyPatches).GetMethod("LieContext", BindingFlags.Public | BindingFlags.Static)!;
+        if (target != null) Manual.Postfix(target, postfix);
+        
+        target = typeof(AssemblyLoadContext).GetProperty("All")!.GetGetMethod();
+        postfix = typeof(HideseyPatches).GetMethod("LieManifest", BindingFlags.Public | BindingFlags.Static)!;
+        if (target != null) Manual.Postfix(target, postfix);
     }
 
     
@@ -117,7 +138,17 @@ public static class Hidesey
     {
         return original.Where(assembly => !_hideseys.Contains(assembly)).ToArray();
     }
-    
+
+    public static IEnumerable<Assembly> LyingContext(IEnumerable<Assembly> original)
+    {
+        return original.Where(assembly => !_hideseys.Contains(assembly));
+    }
+
+    public static IEnumerable<AssemblyLoadContext> LyingManifest(IEnumerable<AssemblyLoadContext> original)
+    {
+        return original.Where(context => context.Name != "Assembly.Load(byte[], ...)");
+    }
+
     /// <summary>
     /// Returns a list of only assemblynames that are not hidden from a given list
     /// </summary>
