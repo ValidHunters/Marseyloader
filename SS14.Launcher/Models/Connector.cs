@@ -12,7 +12,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls.Shapes;
 using DynamicData;
 using ReactiveUI;
 using Serilog;
@@ -22,8 +21,8 @@ using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 using Marsey;
+using Marsey.Stealthsey;
 using Marsey.Subversion;
-using Path = System.IO.Path;
 
 namespace SS14.Launcher.Models;
 
@@ -486,6 +485,7 @@ public class Connector : ReactiveObject
         
         EnvVar("MARSEY_HIDE_LEVEL", $"{_cfg.GetCVar(CVars.MarseyHide)}");
         
+        MarseyVars.MarseyHide = (HideLevel)_cfg.GetCVar(CVars.MarseyHide);
         MarseyVars.SeparateLogger = _cfg.GetCVar(CVars.SeparateLogging);
 
         if (_cfg.GetCVar(CVars.DynamicPgo))
@@ -552,13 +552,20 @@ public class Connector : ReactiveObject
                 4096,
                 FileOptions.Asynchronous);
 
-            FileStream fileStdmarsey = new FileStream(
-                LauncherPaths.PathClientStdmarseyLog,
-                FileMode.Create,
-                FileAccess.Write,
-                FileShare.Delete | FileShare.ReadWrite,
-                4096,
-                FileOptions.Asynchronous);
+            FileStream? fileStdmarsey = null;
+            if (MarseyVars.MarseyHide < HideLevel.Explicit)
+            {
+                fileStdmarsey = new FileStream(
+                    LauncherPaths.PathClientStdmarseyLog,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.Delete | FileShare.ReadWrite,
+                    4096,
+                    FileOptions.Asynchronous);
+            }
+            else
+                File.Delete(LauncherPaths.PathClientStdmarseyLog);
+            
 
             PipeOutput(process, fileStdout, fileStderr, fileStdmarsey);
         }
@@ -577,7 +584,7 @@ public class Connector : ReactiveObject
         // Implemented in private repo for Steam.
     }
 
-    private static async void PipeOutput(Process process, Stream targetStdout, Stream targetStderr, Stream targetStdmarsey)
+    private static async void PipeOutput(Process process, Stream targetStdout, Stream targetStderr, Stream? targetStdmarsey)
     {
         async Task DoPipe(StreamReader reader, Stream writer, Stream? marseyWriter = null)
         {

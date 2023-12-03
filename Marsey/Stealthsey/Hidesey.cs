@@ -31,6 +31,7 @@ public enum HideLevel
     /// <summary>
     /// <para>Patcher and patches are hidden from the game programmatically</para>
     /// <para>Patcher does not log anything</para>
+    /// <para>Separate logging is disabled</para>
     /// </summary>
     Explicit = 3,
     /// <summary>
@@ -53,18 +54,19 @@ public static class Hidesey
     /// </summary>
     public static void Initialize() // Finally, a patch loader that loads with a patch
     {                               // Five patches even
-
-        if (MarseyVars.MarseyHide == HideLevel.Disabled) return;
+        MarseyVars.MarseyHide = GetHideseyLevel();
         
+        if (MarseyVars.MarseyHide == HideLevel.Disabled) return;
+
         Disperse();
         
         Facade.Imposition("Marsey");
 
         Perjurize(); // Patch detection methods
 
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Hidesey started.");
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Hidesey started. Running {MarseyVars.MarseyHide.ToString()} configuration.");
     }
-    
+
     /// <summary>
     /// General function to hide assemblies matching name from detection methods
     /// </summary>
@@ -130,6 +132,18 @@ public static class Hidesey
         if (target != null) Manual.Postfix(target, postfix);
     }
 
+    /// <summary>
+    /// Checks HideLevel env variable, defaults to Normal
+    /// </summary>
+    private static HideLevel GetHideseyLevel()
+    {
+        string envVar = Environment.GetEnvironmentVariable("MARSEY_HIDE_LEVEL")!;
+        
+        if (int.TryParse(envVar, out int hideLevelValue) && Enum.IsDefined(typeof(HideLevel), hideLevelValue)) 
+            return (HideLevel)hideLevelValue;
+        
+        return HideLevel.Normal;
+    }
     
     /// <summary>
     /// Returns a list of only assemblies that are not hidden from a given list
