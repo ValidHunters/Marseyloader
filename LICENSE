@@ -1,76 +1,90 @@
-BANTOWN EXTENDED PUBLIC LICENSE
+DRAMATARD PUBLIC LICENSE
 
-Version 1.1, OCTOBER 2023
+Version 1.0, OCTOBER 2023
 
-Copyright (C) 2005 Bantownian Software Development Group, ValidHunters; Dial 888-LOL-WHAT for more information. Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
+Copyright (C) 2023 ValidHunters Accessibility Software Development Group; Dial 888-BAN-EVSN for more information. Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
 
-Preamble:
+PREAMBLE:
 
-The licenses for most software are designed to allow you to use the software in a legitimate enterprise. By contrast, the Bantown Extended Public License is intended to make sure you can only use software for criminal conduct. Minor technical infractions not counting; you not only must break the law, you must piss all over the spirit of it as well.
+IN NOMINE SOFTWAREIS, et optima et veridica purveyor of open-sourced commodatum and digital liberacies; with the utmost stringency in preservation of freedom eternal and unhindered augmentation, compositum, dissemination, therewith collective enrichment;
 
+WHEREAS THE UNDERSIGNED, mirabile dictu, fervidius spiritus anhelat towards the proliferation of artistic creation within the confines of omnipotent ductility inherent in code:
 
-TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+THEREFORE with alacritous resolve defines ihnominatis terminis legationem (heretofore as "the License") whereby access through this consecrated gateway to knowledge infinite hereby mandates adhesion to severances non casually arrived; but deliberated—oracularly divined— in contemplative congress. This convocation infusing principle moræ that must indeed be met, thus partitioning igneus fatui from genuflect illumined: 
 
-0. This License Agreement applies to any software library or other program which contains a notice placed by the copyright holder or other authorized party saying it may be distributed under the terms of this Bantown Public License (also called "this License"). Each licensee is addressed as "you".
+LET IT BE KNOWN: That ministrations hereto enclosed shalt be entertained solely by that congregated triumvirate as yet professed within following rubrics inscribed herein—and no other pretender shall wage claim on perfect knowledged embrace Within These Bourns.—
 
-A "library" means a collection of software functions and/or data prepared so as to be conveniently linked with application programs (which use some of those functions and data) to form executables.
+No more elevated cause doth give breath to this preamble rendered; and thereunto setting vouchsafe inherent grace passed into hands worthied by faith cast—With Invocation for longevitous prosperity In Its Keeping—
 
-A "Library", below, refers to any such software library or work which has been distributed under these terms. A "work based on the Library" means either the Library or any derivative work under copyright law: that is to say, a work containing the Library or a portion of it, either verbatim or with modifications and/or translated straightforwardly into another language. (Hereinafter, translation is included without limitation in the term "modification".)
+Thus writ by omnipotent quills unseen, ab initio till doleful terminus nigh ending all: An Overture inaugurating sequences forthcoming.
 
-"Source code" for a work means the preferred form of the work for making modifications to it. For a library, complete source code means all the source code for all modules it contains, plus any associated interface definition files, plus the scripts used to control compilation and installation of the library.
+LICENSE TERMS FOR REPRODUCTION, DISTRIBUTION, AND AMENDMENTS
 
-A "Program", below, refers to any such program or work, and a "work based on the Program" means either the Program or any derivative work under copyright law: that is to say, a work containing the Program or a portion of it, either verbatim or with modifications and/or translated into another language. (Hereinafter, translation is included without limitation in the term "modification".)
+The present License Agreement is applicable to any software repository or miscellaneous program which displays a notification instituted by the proprietor of copyright or an alternative authorized entity declaring that the aforementioned may be disseminated pursuant to the stipulations delineated in this particular Dramatard Open License (hereinafter referred to as "this License"). Each grantee of rights under this license is implicated as "you".
 
-The "Content", below, refers to a Program, Source code, and/or Library distributed under this License.
+Within this context, a "library" signifies an assortment of software functionalities and/or informational content fashioned for expeditious integration with application programs (that utilize certain amongst those functionalities and content) in order to constitute executables.
 
-1. This License disallows all uses of Content unless it's intended use qualifies for one of the exemptions outlined in section 2 of the Terms and conditions.
+In reference hereunder, a "Library" constitutes any such software depository or labor that has been propagated according to these conditions. A "work derivative of the Library" encompasses the Library itself or any derivative composition protected under copyright regimes – which implies a labor integrating the Library or segments thereof in either unaltered form or containing alterations and/or adeptly converted into disparate vernaculars. (For clarity, hereafter, linguistic conversion falls within unrestricted inclusion in the classification of "alteration".)
 
-2. You may do whatever the fuck you please with the Content provided you commit in the use of the Content at least three violations of any the following parts:
+The term "Source code" regarding a labor denotes the optimal structure for that labor with regards to instigating modifications upon it. Pertaining to a library, exhaustive source code encompasses all constituent source script for each module therein along with any supplementary interface declaration files and additionally scripts governing assembling commands and installation execution relevant to said library.
 
- 2.1 United States Criminal Code:
+Hereinafter below, a "Program" pertains to any such schedule or effort; and likewise, work interpretative of "Program" signifies closely akin – essentially being either the Program intently intact or work derivative therefrom preserved under copyright ordinances which entails incorporation of either verbatim replication of Program constituents or presence within comprising adaptive applications and/or transposed lexicologically into distinct dialects. (Signification bestowing perpetual nonrestrictions on terminology associated with 'alterations' hereinbefore delineated.)
 
-    * 18 U.S.C. § 231 Civil Disorders
-    * 18 U.S.C. § 371 Conspiracy to commit offense or to defraud United States
-    * 18 U.S.C. § 372 Conspiracy to impede or injure officer
-    * 18 U.S.C. § 793 Gathering, transmitting or losing defense information
-    * 18 U.S.C. § 798 Disclosure of classified information
-    * 18 U.S.C. § 842 Distribution of explosive materials
-    * 18 U.S.C. § 1029 Fraud and Related Activity in Connection with Access Devices
-    * 18 U.S.C. § 1030 Fraud and Related Activity in Connection with Computers
-    * 18 U.S.C. § 1362 Communication Lines, Stations, or Systems
-    * 18 U.S.C. § 1367 Interfering with the operation of a satellite
-    * 18 U.S.C. § 1464 Broadcasting obscene language
-    * 18 U.S.C. § 1507 Obstruction of justice, picketing or parading
-    * 18 U.S.C. § 1508 Recording, listening to, or observing proceedings of grand or petit juries while deliberating or voting
-    * 18 U.S.C. § 1751 Presidential and Presidential staff assassination, kidnapping, and assault
-    * 18 U.S.C. § 1831 Economic espionage
-    * 18 U.S.C. § 2101 Riots
-    * 18 U.S.C. § 2153 Destruction of war material, war premises, or war utilities
-    * 18 U.S.C. § 2381 Treason
-    * 18 U.S.C. § 2384 Seditious conspiracy
-    * 18 U.S.C. § 2383 Rebellion or insurrection
-    * 18 U.S.C. § 2510 et seq. Wire and Electronic Communications Interception and Interception of Oral Communications
-    * 18 U.S.C. § 2701 et seq. Stored Wire and Electronic Communications and Transactional Records Access
-    * 18 U.S.C. § 3121 et seq. Recording of Dialing, Routing, Addressing, and Signaling Information
+Henceforward subjacent hereto lineamentally referring as “Content,” premises utility associations correlatively cumulatively encapsulating Program undertakings inclusive Source manuscript annotation relative Library racks circulatory prosecutable exploitation hereupon licensing metrics enforced hereunder.
 
- 2.2 Уголовный Кодекс Российской Федерации:
+1. This specific License expressly forbids all manners meaningfully attributing engagement concerning Content barring affirmative scenarios wherever purported functional deployment correlates criterion admissibly excusable pursuant segmental clause inventorying itemized paragraphs secondarily stated orthogonal conditions precedent encompassed herewithin.
 
-    * 105 УК РФ Убийство
-    * 138 УК РФ Нарушение тайны переписки, телефонных переговоров, почтовых, телеграфных или иных сообщений
-    * 183 УК РФ Незаконное получение и разглашение информации, составляющей коммерческую, налоговую или банковскую тайну
-    * 212 УК РФ Массовые беспорядки
-    * 222 УК РФ Незаконный оборот оружия
-    * 267 УК РФ Уничтожение, повреждение или блокирование транспортных средств или связи
-    * 272 УК РФ Неправомерный доступ к компьютерной информации
-    * 275 УК РФ Государственная измена
-    * 276 УК РФ Шпионаж
-    * 277 УК РФ Посягательство на жизнь государственного или общественного деятеля
-    * 279 УК РФ Вооруженный мятеж
-    * 280 УК РФ Публичные призывы к осуществлению экстремистской деятельности
-    * 281 УК РФ Диверсия
-    * 283 УК РФ Разглашение государственной тайны
-    * 317 УК РФ Покушение на жизнь сотрудника правоохранительного органа
-    * 327 УК РФ Подделка, изготовление или оборот поддельных документов, государственных наград, штампов, печатей или бланков
-    * 338 УК РФ Дезертирство
+2. You can do whatever the fuck you want with the Content, provided that you meet at least three (3) of the following conditions:
 
-3) No warranty expressed or implied.
+    2.1. The individual has been proscribed from participation in CONfabulation and its cognate establishments.
+    2.2. The individual maintains a status of prohibition by the Chaos Computer Club's enforced standards.
+    2.3. The individual does not possess an undisclosed "Secret terf account", "terf alt account" nor identifies singularly as a "terven sister" within secluded segments of tunglr; rather performs public communication predominantly categorized as provocative in nature on principal accounts.
+    2.4. The said individual stands formally accused of betrayal against state entities encompassing:
+       * Any nation-state successor to the former Union of Soviet Socialist Republics,
+       * The People’s Republic of China,
+       * Any national factions comprising the SIGINT Seniors Europe coalition,
+       * The Federal Republic of Nigeria.
+    2.5. An affirmation for recognition is held concerning Israel's sovereignty, including regions annexed preceding June 9th, 1967, verified as intrinsic territorial components thereof.
+    2.6. Possession encompasses no fewer than eight volumes constituting 'Killing Stalking' literature.
+    2.7. n excess of three contributory works are present, wherein each textual creation constitutes romanticized fiction between Theodore Bundy and Jeffrey Dahmer as principal subjects disseminated through the Archives Of Our Own digital infrastructure.    2.8. Citizenship pertinent to Israel is retained or solemn oaths avowed sustenance toward Israeli statehood by alternative convention persist.
+    2.9. Personal identification aligns unequivocally with either "Anissa Weier" or "Morgan Geyser."
+    2.10. Vocable support extends towards endeavors involving the Heavenly Jerusalem project framework.
+    2.11. The individual is an owner of a white garment displaying "NATURAL SELECTION" in conspicuous, bold typeface colored in black.
+    2.12. Economic transactions have been fulfilled towards the procurement of artistic renderings credited to Richard Ramirez through the medium known as eBay.
+    2.13. Conviction held by said party regards the Khmer Rouge administration as paramount exemplification regarding practicable communist governance.
+    2.14. Repeated efforts to decipher epistles authored by the unidentified entity referred to as "The Zodiac Killer" have been undertaken.
+    2.15. A clinical diagnosis has been confirmed in a face-to-face consultation with a certified medical professional, accommodating criteria set within Cluster B personality disorders delineated per Diagnostic and Statistical Manual of Mental Disorders, Fifth Edition (DSM-5).
+    2.16. Completion entirety is claimed for interactive digital media titled "Class of '09", developed and distributed by entity styled "SBN3".
+    2.17. Involvement exists either in proposing or being subjected to legal interdiction universally referred to as a restraining order.
+    2.18. The licensee or an individual swayed by the licensee's persuasion has executed the inscription of a nomenclature upon dermal layers through the employment of an incisive tool, effectuated personally or via proxy.
+    2.19. Presence stood validated at any temporal juncture within virtual assemblies on Discord specified hereunder:
+        * Reiko's Trap Harem,
+        * Any originated by Nicholas Hazelbaker alias Aeromatic aka Fedorov aka Proxima 64,
+        * Manie Sans Dèlire,
+        * Ones deemed germane to tiktok and 2b2t,
+        * Nullworks,
+        * Collectives under Erik Auer proprietorship bear epithet [VALVe] Twilight Sparkle alias Byrud.
+    2.20. Engagement in utilizing deceptive adjunct programming across digital game platforms including but not limited:
+        * Valve's Source engine tech suite variants (inclusive GoldSrc, Source 2),
+        * Dead by Daylight,
+        * Rust fabricated by Facepunch studios
+        * Any interactive entertainment offering ensuing from the aegis of Bungie studios.
+    2.21. The licensee has perpetrated, or contributed to the perpetration of conduct delineated within a minimum of two (2) distinct provisions of the Criminal Code of the Russian Federation:
+        * 105 CC RF Murder
+        * 138 CC RF Violation of the secrecy of correspondence, telephone conversations, postal, telegraphic or other communications
+        * 183 CC RF Unlawful receipt and disclosure of information constituting a commercial, tax or banking secret
+        * 212 CC RF Mass riots
+        * 222 CC RF Illegal trafficking in weapons
+        * 267 CC RF Destruction, damage or blocking of means of transportation or communication
+        * 272 CC RF Unauthorized access to computer information
+        * 276 CC RF Espionage
+        * 277 CC RF Attempt on the life of a state or public figure
+        * 279 CC RF Armed rebellion
+        * 280 CC RF Public calls for extremist activities
+        * 281 CC RF Sabotage
+        * 283 CC RF Disclosure of state secrets
+        * 317 CC RF Attempt on the life of a law enforcement officer
+        * 327 CC RF Forgery, production or trafficking in forged documents, state awards, stamps, seals or letterheads
+        * 338 CC RF Desertion
+
+3) The initiation and utilization of this license preclude all warranties, whether implicitly understood or explicitly stated herein; cumulatively absolving developers connected with consequent software applications from liabilities arising out of software exploitation.
