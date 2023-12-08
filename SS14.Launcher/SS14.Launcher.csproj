@@ -41,6 +41,7 @@
     <PackageReference Include="Lib.Harmony" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" />
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="ReactiveUI.Fody" />
     <PackageReference Include="Robust.Shared.AuthLib" />

@@ -25,9 +25,16 @@
   <ItemGroup>
     <PackageReference Include="Lib.Harmony" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NSec.Cryptography" />
     <PackageReference Include="Robust.Natives" />
     <PackageReference Include="SharpZstd.Interop" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\.nuget\packages\newtonsoft.json\13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

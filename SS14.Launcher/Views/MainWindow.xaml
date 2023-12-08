@@ -101,9 +101,9 @@
 
     <ContentControl Classes="OverlayBox" IsVisible="{Binding OutOfDate}">
       <StackPanel Orientation="Vertical">
-        <TextBlock HorizontalAlignment="Center" Classes="NanoHeadingMedium" Text="Launcher out of date" />
+        <TextBlock HorizontalAlignment="Center" Classes="NanoHeadingMedium" Text="Loader out of date" />
         <TextBlock Margin="0, 10" TextAlignment="Center"
-                   Text="This launcher is out of date.&#x0a;Please download a new version from our website." />
+                   Text="Loader is out of date&#x0a;Some method is detected or an important feature is present. Get an update from github." />
         <DockPanel LastChildFill="False">
           <Button DockPanel.Dock="Right" Content="Exit" Command="{Binding ExitPressed}" />
           <Button DockPanel.Dock="Left" Content="Download (manual)" Command="{Binding DownloadPressed}" />

@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DynamicData;
+using Marsey;
+using Marsey.API;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
@@ -136,8 +138,10 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
 
     public async void OnWindowInitialized()
     {
+        BusyTask = "Checking MarseyApi";
+        await MarseyApi.Initialize(_cfg.GetCVar(CVars.MarseyApiEndpoint), _cfg.GetCVar(CVars.MarseyApi));
         BusyTask = "Checking for launcher update...";
-        await CheckLauncherUpdate();
+        CheckLauncherUpdate();
         BusyTask = "Refreshing login status...";
         await CheckAccounts();
         BusyTask = null;
@@ -166,19 +170,25 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         Helpers.OpenUri(new Uri(ConfigConstants.WebsiteUrl));
     }
 
-    private async Task CheckLauncherUpdate()
+    private void CheckLauncherUpdate()
     {
         // await Task.Delay(1000);
         if (!ConfigConstants.DoVersionCheck)
         {
             return;
         }
-
         try
         {
-            var curVersion = await _http.GetStringAsync(ConfigConstants.LauncherVersionUrl);
-            var versions = curVersion.Trim().Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            OutOfDate = Array.IndexOf(versions, ConfigConstants.CurrentLauncherVersion) == -1;
+            Version? minimum = MarseyApi.GetMinimumVersion();
+
+            if (minimum == null)
+            {
+                OutOfDate = false;
+                return;
+            }
+            
+            int comp = MarseyVars.MarseyVersion.CompareTo(minimum);
+            if (comp < 0) OutOfDate = true;
         }
         catch (HttpRequestException e)
         {
@@ -194,7 +204,11 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
 
     public void DownloadPressed()
     {
-        Helpers.OpenUri(new Uri(ConfigConstants.DownloadUrl));
+        string? url = MarseyApi.GetReleasesURL();
+        if (string.IsNullOrEmpty(url))
+            url = ConfigConstants.DownloadUrl;
+        
+        Helpers.OpenUri(new Uri(url));
     }
 
     public void DismissEarlyAccessPressed()

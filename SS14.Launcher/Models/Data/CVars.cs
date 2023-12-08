@@ -92,6 +92,16 @@ public static class CVars
     /// Currently selected login in the drop down.
     /// </summary>
     public static readonly CVarDef<string> SelectedLogin = CVarDef.Create("SelectedLogin", "");
+    
+    /// <summary>
+    /// Enable MarseyApi
+    /// </summary>
+    public static readonly CVarDef<bool> MarseyApi = CVarDef.Create("MarseyApi", true);
+    
+    /// <summary>
+    /// MarseyApi endpoint url
+    /// </summary>
+    public static readonly CVarDef<string> MarseyApiEndpoint = CVarDef.Create("MarseyApiEndpoint", "https://fujo.love/api/v1");
 
     //public static readonly CVarDef<string> Fingerprint = CVarDef.Create("Fingerprint", "");
 

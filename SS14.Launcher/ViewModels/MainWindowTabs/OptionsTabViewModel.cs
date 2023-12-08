@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Data.Converters;
-using Avalonia.Interactivity;
 using DynamicData;
+using Marsey;
 using Marsey.Stealthsey;
 using Microsoft.Toolkit.Mvvm.Input;
 using Splat;
@@ -28,6 +29,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     private readonly ContentManager _contentManager;
     
     public ICommand SetUsernameCommand { get; }
+    public ICommand SetEndpointCommand { get; }
     public IEnumerable<HideLevel> HideLevels { get; } = Enum.GetValues(typeof(HideLevel)).Cast<HideLevel>();
 
     
@@ -40,6 +42,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         _contentManager = Locator.Current.GetRequiredService<ContentManager>();
         
         SetUsernameCommand = new RelayCommand(OnSetUsernameClick);
+        SetEndpointCommand = new RelayCommand(OnSetEndpointClick);
     }
 
 #if RELEASE
@@ -161,6 +164,38 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         }
     }
 
+    public bool MarseyApi
+    {
+        get => Cfg.GetCVar(CVars.MarseyApi);
+        set
+        {
+            Cfg.SetCVar(CVars.MarseyApi, value);
+            Cfg.CommitConfig();
+        }
+    }
+
+    private string _endpoint = "";
+    public string MarseyApiEndpoint
+    {
+        get => Cfg.GetCVar(CVars.MarseyApiEndpoint);
+        set => _endpoint = value;
+    }
+
+    public bool MarseySlightOutOfDate
+    {
+        get
+        {
+            if (Latest == null) return false;
+            int dist = MarseyVars.MarseyVersion.CompareTo(Marsey.API.MarseyApi.GetLatestVersion());
+            return dist < 0;
+
+        }
+    }
+
+    public string Current => MarseyVars.MarseyVersion.ToString();
+
+    public string? Latest => Marsey.API.MarseyApi.GetLatestVersion()?.ToString();
+
     public bool OverrideAssets
     {
         get => Cfg.GetCVar(CVars.OverrideAssets);
@@ -186,6 +221,22 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         _dataManager.ChangeLogin(ChangeReason.Update, _loginManager.ActiveAccount?.LoginInfo!);
         _dataManager.CommitConfig();
     }
+    
+    private void OnSetEndpointClick()
+    {
+        if (_endpoint == "") return;
+        
+        Task.Run(async () =>
+        {
+            bool result = await Marsey.API.MarseyApi.MarseyHello().ConfigureAwait(false);
+            if (result)
+            {
+                Cfg.SetCVar(CVars.MarseyApiEndpoint, _endpoint);
+                Cfg.CommitConfig();
+            }
+        });
+    }
+
 
     public void ClearEngines()
     {

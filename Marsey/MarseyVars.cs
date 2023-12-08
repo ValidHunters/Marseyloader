@@ -1,12 +1,21 @@
+using System;
 using Marsey.Stealthsey;
 
 namespace Marsey;
 
 public abstract class MarseyVars
 {
+    /// <summary>
+    /// Due to the nature of how Marseyloader is compiled (its not) we cannot check it's version 
+    /// </summary>
+    public static readonly Version MarseyVersion = new Version("2.3.3");
 
     /// <summary>
-    ///
+    /// Default MarseyAPI endpoint url
+    /// </summary>
+    public const string MarseyApiEndpoint = "https://fujo.love/api/v1";
+    
+    /// <summary>
     /// Namespace identifier for Harmony
     /// </summary>
     public const string Identifier = "com.validhunters.marseyloader";
