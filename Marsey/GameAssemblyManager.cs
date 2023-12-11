@@ -41,84 +41,93 @@ public static class GamePatcher
 
         foreach (T patch in patchlist)
         {
-            AssemblyName assemblyName = patch.Asm.GetName();
-            MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Patching {assemblyName}");
-
-            try
-            {
-                harmony.PatchAll(patch.Asm);
-            }
-            catch (Exception e)
-            {
-                string errorMessage = $"Failed to patch {assemblyName.Name}!\n{e}";
-
-                if (MarseyVars.ThrowOnFail)
-                    throw new PatchAssemblyException(errorMessage);
-
-                MarseyLogger.Log(MarseyLogger.LogType.FATL, errorMessage);
-            }
+            PatchAssembly(harmony, patch);
         }
     }
 
+    private static void PatchAssembly<T>(Harmony harmony, T patch) where T : IPatch
+    {
+        AssemblyName assemblyName = patch.Asm.GetName();
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Patching {assemblyName}");
+
+        try
+        {
+            harmony.PatchAll(patch.Asm);
+        }
+        catch (Exception e)
+        {
+            HandlePatchException(assemblyName.Name!, e);
+        }
+    }
+
+    private static void HandlePatchException(string assemblyName, Exception e)
+    {
+        string errorMessage = $"Failed to patch {assemblyName}!\n{e}";
+
+        if (MarseyVars.ThrowOnFail)
+            throw new PatchAssemblyException(errorMessage);
+
+        MarseyLogger.Log(MarseyLogger.LogType.FATL, errorMessage);
+    }
+
+
 }
 
-public abstract class GameAssemblyManager
+public static class GameAssemblyManager
 {
-    /// <summary>
-    /// Obtains game assemblies.
-    /// The function ends only when Robust.Shared,
-    /// Content.Client and Content.Shared are initialized by the game,
-    /// or MarseyVars.MaxLoops loops have been made without obtaining all the assemblies.
-    ///
-    /// Executed only by the Loader.
-    /// </summary>
-    /// <exception cref="Exception">Excepts if manager couldn't get game assemblies after $MaxLoops loops.</exception>
-    /// <see cref="MarseyVars.MaxLoops"/>
-    /// <remarks>Subversion patches skip this entirely and are loaded before game assemblies are obtained by the engine</remarks>
     public static void GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss)
+    {
+        InitializeAssemblyVariables(out clientAss, out robustSharedAss, out clientSharedAss);
+
+        if (!TryGetAssemblies(ref clientAss, ref robustSharedAss, ref clientSharedAss))
+            LogMissingAssemblies(clientAss, robustSharedAss, clientSharedAss);
+
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, "Received assemblies.");
+    }
+
+    private static void InitializeAssemblyVariables(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss)
     {
         clientAss = null;
         robustSharedAss = null;
         clientSharedAss = null;
+    }
 
-        int loops;
-        for (loops = 0; loops < MarseyVars.MaxLoops; loops++)
+    private static bool TryGetAssemblies(ref Assembly? clientAss, ref Assembly? robustSharedAss, ref Assembly? clientSharedAss)
+    {
+        for (int loops = 0; loops < MarseyVars.MaxLoops; loops++)
         {
-            Assembly[] asmlist = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (Assembly asm in asmlist)
-            {
-                string? fullName = asm.FullName;
-                if (fullName == null) continue;
-
-                if (robustSharedAss == null && fullName.Contains("Robust.Shared,"))
-                    robustSharedAss = asm;
-                else if (clientAss == null && fullName.Contains("Content.Client,"))
-                    clientAss = asm;
-                else if (clientSharedAss == null && fullName.Contains("Content.Shared,"))
-                    clientSharedAss = asm;
-                
-                if (robustSharedAss != null && clientAss != null && clientSharedAss != null)
-                    break;
-            }
-
-            if (robustSharedAss != null && clientAss != null && clientSharedAss != null)
-            {
-                MarseyLogger.Log(MarseyLogger.LogType.INFO, "Received assemblies.");
-                break;
-            }
+            if (FindAssemblies(ref clientAss, ref robustSharedAss, ref clientSharedAss))
+                return true;
 
             Thread.Sleep(MarseyVars.LoopCooldown);
         }
-
-        if (loops >= MarseyVars.MaxLoops)
-            LogMissingAssemblies(clientAss, robustSharedAss, clientSharedAss);
+        return false;
     }
 
-    /// <summary>
-    /// Warn that assemblies could not be received.
-    /// Executed only when MarseyVars.MaxLoops was exhausted.
-    /// </summary>
-    /// <see cref="MarseyVars.MaxLoops"/>
+    private static bool FindAssemblies(ref Assembly? clientAss, ref Assembly? robustSharedAss, ref Assembly? clientSharedAss)
+    {
+        Assembly[] asmlist = AppDomain.CurrentDomain.GetAssemblies();
+        foreach (Assembly asm in asmlist)
+        {
+            string? fullName = asm.FullName;
+            if (fullName == null) continue;
+
+            AssignAssembly(ref clientAss, "Content.Client,", asm);
+            AssignAssembly(ref robustSharedAss, "Robust.Shared,", asm);
+            AssignAssembly(ref clientSharedAss, "Content.Shared,", asm);
+
+            if (clientAss != null && robustSharedAss != null && clientSharedAss != null)
+                return true;
+        }
+        return false;
+    }
+
+    private static void AssignAssembly(ref Assembly? targetAssembly, string assemblyName, Assembly asm)
+    {
+        if (targetAssembly == null && asm.FullName?.Contains(assemblyName) == true)
+            targetAssembly = asm;
+    }
+
     private static void LogMissingAssemblies(Assembly? clientAss, Assembly? robustSharedAss, Assembly? clientSharedAss)
     {
         if (clientAss == null)
@@ -129,3 +138,4 @@ public abstract class GameAssemblyManager
             MarseyLogger.Log(MarseyLogger.LogType.WARN, "Robust.Shared assembly was not received");
     }
 }
+

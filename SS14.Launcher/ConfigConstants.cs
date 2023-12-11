@@ -25,8 +25,8 @@ public static class ConfigConstants
     // Amount of time to wait to let a redialling client properly die
     public const int LauncherCommandsRedialWaitTimeout = 1000;
 
-    public static readonly string AuthUrl = "https://cdn.spacestationmultiverse.com/wizden-hub-mirror/";
-    public static readonly Uri[] DefaultHubUrls = { new("https://central.spacestation14.io/hub/") };
+    public static readonly string AuthUrl = "https://central.spacestation14.io/auth/";
+    public static readonly Uri[] DefaultHubUrls = { new("https://cdn.spacestationmultiverse.com/wizden-hub-mirror/") };
     public const string DiscordUrl = "https://rdrama.net";
     public const string AccountBaseUrl = "https://central.spacestation14.io/web/Identity/Account/";
     public const string AccountManagementUrl = $"{AccountBaseUrl}Manage";
