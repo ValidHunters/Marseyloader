@@ -298,22 +298,31 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
     private static readonly string[] Titles =
     {
         "Space Station 14 Launcher", "Dramalauncher",
-        "Literally a launcher with cheats",
-        "Marsey is the cutest cat",
-        "An rslur made this one", "Marsey.",
-        "God, King & Bussy", "Moonyware",
-        "World's greatest spergatory launcher",
-        "as seen in moony's head", "banned from wizden",
-        "russian paradise", "ransomware launchpad",
-        "incel matchmaking service", "public enemy number 1",
-        "Robustcontrol", "RSHOE come back",
-        "What they think SSMV is",
-        "Go on, disable engine sig checks",
-        "As audited on discord.gg/ss14",
-        "Sigmund Goldberg died for this",
-        "Trans rights!", "The mayocide is coming",
-        "Sandbox bypass simulator", "DIY murder tutorials"
+        "Marsey", "Moonyware", "Marseyloader",
+        "Robustcontrol", "Mirailoader", "Almost BepInEx",
+        "Video game launcher", "MIT-certified funny",
+        "戏剧装载机", "Oldest anarchy launcher in ss14",
+        "ILVerifier", "Space Station 13", "BYOND",
+        "Goonstation", "BYONDCONTROL", "Unitystation",
+        "Stationeers", "RE:SS2D", "Schizostation 14"
     };
 
-    public string RandomTitle =>  "Marseyloader: " + Titles[Random.Next(Titles.Length)];
+    private static readonly string[] TagLines =
+    {
+        "Marsey is the cutest cat", "Not a cheat loader",
+        "PR self-merging solutions", "RSHOE please come back",
+        "As audited on discord.gg/ss14", "Leading disabler of engine signature checks",
+        "Sigmund Goldberg died for this", "Sandbox sidestep simulator", "DIY bomb tutorials",
+        "incel matchmaking service", "#1 ransomware provider", "God, King & Bussy",
+        "The mayocide is coming", "Leading forum for misandrists", "Trans Rights!",
+        "Largest long bacon provider", "天安門大屠殺", "Shitcode tester",
+        "The code for the client literally calls itself a cheat client",
+        "Tumblr client for fujoshis", "Cheap airfare and hotels", "Aliyah consulting",
+        "Friday Night Funkin mod manager", "download .apk MOD (Infinite money, health, free admin)",
+        "Disaster generator", "if (OperatingSystem.IsWindows())", "Primary cause of binary blob discussions",
+        "George Bush did 9/11 and yet I'm the bad guy", "Hybristophiliac support group",
+        "Space game but awesome", "Game SUCKS I go bed", "Go be ironic on wizden"
+    };
+
+    public string RandomTitle => Titles[Random.Next(Titles.Length)] + ": " + TagLines[Random.Next(TagLines.Length)];
 }
