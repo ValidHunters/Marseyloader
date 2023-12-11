@@ -32,11 +32,13 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         private void LoadPatches()
         {
             FileHandler.LoadAssemblies();
-            List<MarseyPatch> marseys =
-                PatchListManager.GetPatchList<MarseyPatch>() ?? throw new InvalidOperationException();
+
+            List<MarseyPatch> marseys = PatchListManager.GetPatchList<MarseyPatch>();
             LoadPatchList(marseys, MarseyPatches, "marseypatches");
+
             if (!SubverterPresent) return;
-            List<SubverterPatch> subverters = PatchListManager.GetPatchList<SubverterPatch>() ?? throw new InvalidOperationException();
+
+            List<SubverterPatch> subverters = PatchListManager.GetPatchList<SubverterPatch>();
             LoadPatchList(subverters, SubverterPatches, "subverterpatches");
         }
 
@@ -49,9 +51,9 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             });
         }
 
-        private void LoadPatchList<T>(List<T> patches, ObservableCollection<T> patchList, string patchName) where T : IPatch
+        private void LoadPatchList<T>(List<T> patches, ICollection<T> patchList, string patchName) where T : IPatch
         {
-            foreach (var patch in patches)
+            foreach (T patch in patches)
             {
                 patchList.Add(patch);
             }
@@ -65,7 +67,7 @@ public class PathToFileNameConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        var path = value as string;
+        string? path = value as string;
         return Path.GetFileName(path);
     }
 

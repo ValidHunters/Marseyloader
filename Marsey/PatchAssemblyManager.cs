@@ -31,10 +31,19 @@ public static class AssemblyInitializer
         Type? marseyType = assembly.GetType("MarseyPatch");
         Type? subverterType = assembly.GetType("SubverterPatch");
 
-        if (marseyType == null || subverterType == null) return marseyType ?? subverterType;
-        MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} is both a marseypatch and a subverter!");
-        return null;
+        if (marseyType != null && subverterType != null)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} is both a marseypatch and a subverter!");
+            return null;
+        }
+    
+        if (marseyType == null && subverterType == null)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} does not contain a marseypatch or a subverter!");
+            return null;
+        }
 
+        return marseyType ?? subverterType;
     }
 
     private static void ProcessDataType(Assembly assembly, Type dataType)
@@ -90,10 +99,6 @@ public static class AssemblyInitializer
     }
 }
 
-
-/// <summary>
-/// Manages patch lists
-/// </summary>
 /// <summary>
 /// Manages patch lists.
 /// </summary>
@@ -143,6 +148,7 @@ public static class PatchListManager
         _patches.Clear();
     }
 }
+
 /// <summary>
 /// Validates and manages patch assembly fields
 /// </summary>
@@ -205,7 +211,7 @@ public static class AssemblyFieldHandler
 
         foreach (string fieldName in fieldNames)
         {
-            var field = marseyPatchType.GetField(fieldName);
+            FieldInfo? field = marseyPatchType.GetField(fieldName);
             if (field == null) return null; // Not all fields could be caught, no point proceeding.
             targets.Add(field);
         }
@@ -267,20 +273,30 @@ public static class AssemblyFieldHandler
     /// Sets patch delegate to MarseyLogger::Log(AssemblyName, string)
     /// Executed only by the Loader.
     /// </summary>
-    /// <see cref="InitLogger"/>
     /// <param name="patch">Assembly from MarseyPatch</param>
     private static void SetupLogger(Assembly patch)
     {
-        Type marseyLoggerType = patch.GetType("MarseyLogger")!;
+        Type? marseyLoggerType = patch.GetType("MarseyLogger");
+        MethodInfo? logMethod = typeof(MarseyLogger).GetMethod("Log", new[] { typeof(AssemblyName), typeof(string) });
+        FieldInfo? logDelegateField = marseyLoggerType?.GetNestedType("Forward", BindingFlags.Public)?.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static);
 
-        Type logDelegateType = marseyLoggerType.GetNestedType("Forward", BindingFlags.Public)!;
+        if (marseyLoggerType == null || logMethod == null || logDelegateField == null)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, "Failed to connect patch to marseylogger. Patch has invalid MarseyLogger type?");
+            return;
+        }
 
-        MethodInfo logMethod = typeof(MarseyLogger).GetMethod("Log", new []{typeof(AssemblyName), typeof(string)})!;
-
-        Delegate logDelegate = Delegate.CreateDelegate(logDelegateType, null, logMethod);
-
-        marseyLoggerType.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static)!.SetValue(null, logDelegate);
+        try
+        {
+            Delegate logDelegate = Delegate.CreateDelegate(logDelegateField.FieldType, logMethod);
+            logDelegateField.SetValue(null, logDelegate);
+        }
+        catch (Exception e)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to to assign logger delegate: {e.Message}");
+        }
     }
+
 
     /// <summary>
     /// Obtains patch metadata like name and description
@@ -304,7 +320,7 @@ public static class AssemblyFieldHandler
     /// <returns>True if any of the assemblies are filled</returns>
     public static bool ClientInitialized()
     {
-        return _clientAss != null || _robustSharedAss != null || _clientSharedAss != null;
+        return _clientAss != null || _clientSharedAss != null;
     }
 
 }

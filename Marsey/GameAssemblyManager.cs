@@ -76,9 +76,9 @@ public static class GameAssemblyManager
 {
     private static readonly Dictionary<string, Assembly?> _assemblies = new Dictionary<string, Assembly?>
     {
-        { "Content.Client", null },
-        { "Robust.Shared", null },
-        { "Content.Shared", null }
+        { "Content.Client,", null },
+        { "Robust.Shared,", null },
+        { "Content.Shared,", null }
     };
 
     /// <summary>
@@ -89,9 +89,9 @@ public static class GameAssemblyManager
         if (!TryGetAssemblies())
             LogMissingAssemblies();
 
-        clientAss = _assemblies["Content.Client"];
-        robustSharedAss = _assemblies["Robust.Shared"];
-        clientSharedAss = _assemblies["Content.Shared"];
+        clientAss = _assemblies["Content.Client,"];
+        robustSharedAss = _assemblies["Robust.Shared,"];
+        clientSharedAss = _assemblies["Content.Shared,"];
 
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "Received assemblies.");
     }
@@ -116,7 +116,7 @@ public static class GameAssemblyManager
             string? fullName = asm.FullName;
             if (fullName == null) continue;
 
-            foreach (var entry in _assemblies.Keys.ToList())
+            foreach (string entry in _assemblies.Keys.ToList())
             {
                 AssignAssembly(entry, asm);
             }
@@ -135,7 +135,7 @@ public static class GameAssemblyManager
 
     private static void LogMissingAssemblies()
     {
-        foreach (var entry in _assemblies)
+        foreach (KeyValuePair<string, Assembly?> entry in _assemblies)
         {
             if (entry.Value == null)
                 MarseyLogger.Log(MarseyLogger.LogType.WARN, $"{entry.Key} assembly was not received.");
