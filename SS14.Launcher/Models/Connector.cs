@@ -416,12 +416,133 @@ public class Connector : ReactiveObject
         IEnumerable<string> extraArgs,
         List<(string, string)> env)
     {
-        var pubKey = LauncherPaths.PathPublicKey;
         var engineVersion = launchInfo.ModuleInfo.Single(x => x.Module == "Robust").Version;
+        var startInfo = await GetLoaderStartInfo(engineVersion, launchInfo.Version, env);
+
+        ConfigureEnvironmentVariables(startInfo, launchInfo, engineVersion);
+        ConfigureLogging(startInfo);
+        SetDynamicPgo(startInfo);
+        UnfuckGlibcLinux(startInfo);
+        ConfigureMultiWindow(launchInfo, startInfo);
+
+        startInfo.UseShellExecute = false;
+        startInfo.ArgumentList.AddRange(extraArgs);
+
+        Log.Debug("Preparing patch assemblies.");
+        FileHandler.PrepAssemblies();
+
+        Process? process = Process.Start(startInfo);
+        if (process != null && _cfg.GetCVar(CVars.LogClient))
+        {
+            SetupManualPipeLogging(process);
+        }
+
+        return process;
+    }
+    
+    private void ConfigureEnvironmentVariables(ProcessStartInfo startInfo, ContentLaunchInfo launchInfo, string engineVersion)
+    {
+        // Set environment variables for engine modules.
+        foreach (var (moduleName, moduleVersion) in launchInfo.ModuleInfo)
+        {
+            if (moduleName == "Robust")
+                continue;
+    
+            var modulePath = _engineManager.GetEngineModule(moduleName, moduleVersion);
+            var envVar = $"ROBUST_MODULE_{moduleName.ToUpperInvariant().Replace('.', '_')}";
+            startInfo.EnvironmentVariables[envVar] = modulePath;
+        }
+    
+        // Set other necessary environment variables.
+        startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = _cfg.GetCVar(CVars.DisableSigning) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_LOADER_DEBUG"] = _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_LOG_PATCHES"] = _cfg.GetCVar(CVars.LogPatches) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_SUBVERTER"] = MarseyVars.Subverter ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_HIDE_LEVEL"] = $"{_cfg.GetCVar(CVars.MarseyHide)}";
+        startInfo.EnvironmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
+    }
+    
+    private void ConfigureLogging(ProcessStartInfo startInfo)
+    {
+        if (!_cfg.GetCVar(CVars.LogClient)) return;
+        
+        startInfo.RedirectStandardOutput = true;
+        startInfo.RedirectStandardError = true;
+    
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            startInfo.EnvironmentVariables["SS14_LOG_CLIENT"] = LauncherPaths.PathClientMacLog;
+        }
+    }
+    
+    private void SetDynamicPgo(ProcessStartInfo startInfo)
+    {
+        if (_cfg.GetCVar(CVars.DynamicPgo))
+        {
+            Log.Debug("Dynamic PGO is enabled.");
+            startInfo.EnvironmentVariables["DOTNET_TieredPGO"] = "1";
+            startInfo.EnvironmentVariables["DOTNET_TC_QuickJitForLoops"] = "1";
+            startInfo.EnvironmentVariables["DOTNET_ReadyToRun"] = "0";
+        }
+    }
+    
+    private void UnfuckGlibcLinux(ProcessStartInfo startInfo)
+    {
+        if (OperatingSystem.IsLinux())
+        {
+            // https://github.com/space-wizards/RobustToolbox/issues/2563
+            startInfo.EnvironmentVariables["GLIBC_TUNABLES"] = "glibc.rtld.dynamic_sort=1";
+        }
+    }
+    
+    private void SetupManualPipeLogging(Process process)
+    {
+        // Set up manual-pipe logging for new client with PID.
+        Log.Debug("Setting up manual-pipe logging for new client with PID {pid}.", process.Id);
+    
+        var fileStdout = new FileStream(
+            LauncherPaths.PathClientStdoutLog,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.Delete | FileShare.ReadWrite,
+            4096,
+            FileOptions.Asynchronous);
+    
+        var fileStderr = new FileStream(
+            LauncherPaths.PathClientStderrLog,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.Delete | FileShare.ReadWrite,
+            4096,
+            FileOptions.Asynchronous);
+    
+        FileStream? fileStdmarsey = null;
+        if (MarseyVars.MarseyHide < HideLevel.Explicit)
+        {
+            fileStdmarsey = new FileStream(
+                LauncherPaths.PathClientStdmarseyLog,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.Delete | FileShare.ReadWrite,
+                4096,
+                FileOptions.Asynchronous);
+        }
+        else
+        {
+            File.Delete(LauncherPaths.PathClientStdmarseyLog);
+        }
+    
+        PipeOutput(process, fileStdout, fileStderr, fileStdmarsey);
+    }
+
+
+    private async Task<ProcessStartInfo> GetLoaderStartInfo(string engineVersion, long contentVersion, List<(string, string)> env)
+    {
+        var startInfo = await GetLoaderStartInfo();
         var binPath = _engineManager.GetEnginePath(engineVersion);
         var sig = _engineManager.GetEngineSignature(engineVersion);
-
-        var startInfo = await GetLoaderStartInfo();
+        var pubKey = LauncherPaths.PathPublicKey;
 
         startInfo.ArgumentList.Add(binPath);
         startInfo.ArgumentList.Add(sig);
@@ -432,152 +553,14 @@ public class Connector : ReactiveObject
             startInfo.EnvironmentVariables[k] = v;
         }
 
-        EnvVar("SS14_LOADER_CONTENT_DB", LauncherPaths.PathContentDb);
-        EnvVar("SS14_LOADER_CONTENT_VERSION", launchInfo.Version.ToString());
+        startInfo.EnvironmentVariables["SS14_LOADER_CONTENT_DB"] = LauncherPaths.PathContentDb;
+        startInfo.EnvironmentVariables["SS14_LOADER_CONTENT_VERSION"] = contentVersion.ToString();
+        startInfo.EnvironmentVariables["SS14_LAUNCHER_PATH"] = Process.GetCurrentProcess().MainModule!.FileName;
 
-        // Env vars for engine modules.
-        {
-            foreach (var (moduleName, moduleVersion) in launchInfo.ModuleInfo)
-            {
-                if (moduleName == "Robust")
-                    continue;
-
-                var modulePath = _engineManager.GetEngineModule(moduleName, moduleVersion);
-
-                var envVar = $"ROBUST_MODULE_{moduleName.ToUpperInvariant().Replace('.', '_')}";
-                EnvVar(envVar, modulePath);
-            }
-        }
-
-        if (_cfg.GetCVar(CVars.DisableSigning))
-            EnvVar("SS14_DISABLE_SIGNING", "true");
-
-        EnvVar("SS14_LAUNCHER_PATH", Process.GetCurrentProcess().MainModule!.FileName);
-
-        // ReSharper disable once ReplaceWithSingleAssignment.False
-        var manualPipeLogging = false;
-        if (_cfg.GetCVar(CVars.LogClient))
-        {
-            manualPipeLogging = true;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                EnvVar("SS14_LOG_CLIENT", LauncherPaths.PathClientMacLog);
-            }
-
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-        }
-        
-        Subverse.CheckEnabled();
-
-        if (_cfg.GetCVar(CVars.LogLoaderDebug))
-            EnvVar("MARSEY_LOADER_DEBUG", "true");
-
-        if (_cfg.GetCVar(CVars.LogPatches))
-            EnvVar("MARSEY_LOG_PATCHES", "true");
-
-        if (_cfg.GetCVar(CVars.ThrowPatchFail))
-            EnvVar("MARSEY_THROW_FAIL", "true");
-        
-        if (MarseyVars.Subverter)
-            EnvVar("MARSEY_SUBVERTER", "true");
-        
-        EnvVar("MARSEY_HIDE_LEVEL", $"{_cfg.GetCVar(CVars.MarseyHide)}");
-        
-        MarseyVars.MarseyHide = (HideLevel)_cfg.GetCVar(CVars.MarseyHide);
-        MarseyVars.SeparateLogger = _cfg.GetCVar(CVars.SeparateLogging);
-
-        if (_cfg.GetCVar(CVars.DynamicPgo))
-        {
-            Log.Debug("Dynamic PGO is enabled.");
-            EnvVar("DOTNET_TieredPGO", "1");
-            EnvVar("DOTNET_TC_QuickJitForLoops", "1");
-            EnvVar("DOTNET_ReadyToRun", "0");
-        }
-
-        if (OperatingSystem.IsLinux())
-        {
-            // Work around https://github.com/space-wizards/RobustToolbox/issues/2563
-            // Yuck.
-            EnvVar("GLIBC_TUNABLES", "glibc.rtld.dynamic_sort=1");
-        }
-
-        ConfigureMultiWindow(launchInfo, startInfo);
-
-        // DON'T ENABLE THIS THE LOADER USES THE LAUNCHER .NET VERSION ALWAYS SO ROLLFORWARD SHOULDN'T BE SPECIFIED.
-        // DON'T KEEP FORGETTING THAT ABOVE LINE LIKE I DID.
-        // EnvVar("DOTNET_ROLL_FORWARD", "Major");
-        EnvVar("DOTNET_MULTILEVEL_LOOKUP", "0");
-
-        startInfo.UseShellExecute = false;
-        startInfo.ArgumentList.AddRange(extraArgs);
-
-        /*
-        foreach (var arg in startInfo.ArgumentList)
-        {
-            Log.Debug("arg: {Arg}", arg);
-        }
-        */
-
-        Log.Debug("Preparing patch assemblies.");
-        
-        FileHandler.PrepAssemblies<MarseyPatch>();
-        
-        if (MarseyVars.Subverter)
-        {
-            FileHandler.PrepAssemblies<SubverterPatch>();
-            Log.Debug("Subverter enabled.");
-        }
-
-        var process = Process.Start(startInfo);
-
-        if (manualPipeLogging && process != null)
-        {
-            Log.Debug("Setting up manual-pipe logging for new client with PID {pid}.", process.Id);
-
-            var fileStdout = new FileStream(
-                LauncherPaths.PathClientStdoutLog,
-                FileMode.Create,
-                FileAccess.Write,
-                FileShare.Delete | FileShare.ReadWrite,
-                4096,
-                FileOptions.Asynchronous);
-
-            var fileStderr = new FileStream(
-                LauncherPaths.PathClientStderrLog,
-                FileMode.Create,
-                FileAccess.Write,
-                FileShare.Delete | FileShare.ReadWrite,
-                4096,
-                FileOptions.Asynchronous);
-
-            FileStream? fileStdmarsey = null;
-            if (MarseyVars.MarseyHide < HideLevel.Explicit)
-            {
-                fileStdmarsey = new FileStream(
-                    LauncherPaths.PathClientStdmarseyLog,
-                    FileMode.Create,
-                    FileAccess.Write,
-                    FileShare.Delete | FileShare.ReadWrite,
-                    4096,
-                    FileOptions.Asynchronous);
-            }
-            else
-                File.Delete(LauncherPaths.PathClientStdmarseyLog);
-            
-
-            PipeOutput(process, fileStdout, fileStderr, fileStdmarsey);
-        }
-
-        return process;
-
-        void EnvVar(string envVar, string? value)
-        {
-            startInfo.EnvironmentVariables[envVar] = value;
-            // Log.Debug("Env: {EnvVar} = {Value}", envVar, value);
-        }
+        return startInfo;
     }
+    
+    
 
     private static void ConfigureMultiWindow(ContentLaunchInfo launchInfo, ProcessStartInfo startInfo)
     {

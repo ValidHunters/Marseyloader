@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using HarmonyLib;
 using Marsey.Stealthsey;
@@ -69,34 +70,37 @@ public static class GamePatcher
 
         MarseyLogger.Log(MarseyLogger.LogType.FATL, errorMessage);
     }
-
-
 }
 
 public static class GameAssemblyManager
 {
+    private static readonly Dictionary<string, Assembly?> _assemblies = new Dictionary<string, Assembly?>
+    {
+        { "Content.Client", null },
+        { "Robust.Shared", null },
+        { "Content.Shared", null }
+    };
+
+    /// <summary>
+    /// Retrieves game assemblies and logs if any are missing.
+    /// </summary>
     public static void GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss)
     {
-        InitializeAssemblyVariables(out clientAss, out robustSharedAss, out clientSharedAss);
+        if (!TryGetAssemblies())
+            LogMissingAssemblies();
 
-        if (!TryGetAssemblies(ref clientAss, ref robustSharedAss, ref clientSharedAss))
-            LogMissingAssemblies(clientAss, robustSharedAss, clientSharedAss);
+        clientAss = _assemblies["Content.Client"];
+        robustSharedAss = _assemblies["Robust.Shared"];
+        clientSharedAss = _assemblies["Content.Shared"];
 
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "Received assemblies.");
     }
 
-    private static void InitializeAssemblyVariables(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss)
-    {
-        clientAss = null;
-        robustSharedAss = null;
-        clientSharedAss = null;
-    }
-
-    private static bool TryGetAssemblies(ref Assembly? clientAss, ref Assembly? robustSharedAss, ref Assembly? clientSharedAss)
+    private static bool TryGetAssemblies()
     {
         for (int loops = 0; loops < MarseyVars.MaxLoops; loops++)
         {
-            if (FindAssemblies(ref clientAss, ref robustSharedAss, ref clientSharedAss))
+            if (FindAssemblies())
                 return true;
 
             Thread.Sleep(MarseyVars.LoopCooldown);
@@ -104,7 +108,7 @@ public static class GameAssemblyManager
         return false;
     }
 
-    private static bool FindAssemblies(ref Assembly? clientAss, ref Assembly? robustSharedAss, ref Assembly? clientSharedAss)
+    private static bool FindAssemblies()
     {
         Assembly[] asmlist = AppDomain.CurrentDomain.GetAssemblies();
         foreach (Assembly asm in asmlist)
@@ -112,30 +116,30 @@ public static class GameAssemblyManager
             string? fullName = asm.FullName;
             if (fullName == null) continue;
 
-            AssignAssembly(ref clientAss, "Content.Client,", asm);
-            AssignAssembly(ref robustSharedAss, "Robust.Shared,", asm);
-            AssignAssembly(ref clientSharedAss, "Content.Shared,", asm);
+            foreach (var entry in _assemblies.Keys.ToList())
+            {
+                AssignAssembly(entry, asm);
+            }
 
-            if (clientAss != null && robustSharedAss != null && clientSharedAss != null)
+            if (_assemblies.Values.All(a => a != null))
                 return true;
         }
         return false;
     }
 
-    private static void AssignAssembly(ref Assembly? targetAssembly, string assemblyName, Assembly asm)
+    private static void AssignAssembly(string assemblyName, Assembly asm)
     {
-        if (targetAssembly == null && asm.FullName?.Contains(assemblyName) == true)
-            targetAssembly = asm;
+        if (_assemblies[assemblyName] == null && asm.FullName?.Contains(assemblyName) == true)
+            _assemblies[assemblyName] = asm;
     }
 
-    private static void LogMissingAssemblies(Assembly? clientAss, Assembly? robustSharedAss, Assembly? clientSharedAss)
+    private static void LogMissingAssemblies()
     {
-        if (clientAss == null)
-            MarseyLogger.Log(MarseyLogger.LogType.WARN, "Content.Client assembly was not received.");
-        if (clientSharedAss == null)
-            MarseyLogger.Log(MarseyLogger.LogType.WARN, "Client.Shared assembly was not received.");
-        if (robustSharedAss == null)
-            MarseyLogger.Log(MarseyLogger.LogType.WARN, "Robust.Shared assembly was not received");
+        foreach (var entry in _assemblies)
+        {
+            if (entry.Value == null)
+                MarseyLogger.Log(MarseyLogger.LogType.WARN, $"{entry.Key} assembly was not received.");
+        }
     }
 }
 

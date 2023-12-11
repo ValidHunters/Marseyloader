@@ -18,45 +18,45 @@ namespace Marsey;
 public abstract class FileHandler
 {
     /// <summary>
-    /// Serialize enabled patches
+    /// Serialize enabled patches.
     /// </summary>
-    public static void PrepAssemblies<T>(string[]? path = null) where T : IPatch
+    public static void PrepAssemblies(string[]? path = null)
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
-        List<T>? patches = PatchListManager.GetPatchList<T>();
-        string filename;
+        List<MarseyPatch> marseyPatches = PatchListManager.GetPatchList<MarseyPatch>();
+        List<SubverterPatch> subverterPatches = PatchListManager.GetPatchList<SubverterPatch>();
 
-        if (typeof(T) == typeof(MarseyPatch))
+        // Marseypatches need specialized logic to be able to load before all fields are initialized
+        // As such, they're loaded separately
+        List<string> preloadpaths = marseyPatches
+            .Where(p => p.Enabled && p.Preload)
+            .Select(p => p.Asmpath)
+            .ToList();
+
+        if (preloadpaths.Any())
         {
-            filename = PatchListManager.MarserializerFile;
+            Marserializer.Serialize(path, PatchListManager.MarserializerFile, preloadpaths);
 
-            // Marseypatches need specialized logic to be able to load before all fields are initialized
-            // As such, they're loaded separately
-            if (patches != null)
-            {
-                List<string> preloadpaths = patches
-                    .Where(p => p.Enabled && ((p as MarseyPatch)!).Preload)
-                    .Select(p => p.Asmpath)
-                    .ToList();
-
-                Marserializer.Serialize(path, PreloadManager.MarserializerFile, preloadpaths);
-
-                // Remove any patches that are preloading from list
-                patches.RemoveAll(p => preloadpaths.Contains(p.Asmpath));
-            }
+            // Remove any patches that are preloading from list
+            marseyPatches.RemoveAll(p => preloadpaths.Contains(p.Asmpath));
         }
-        else if (typeof(T) == typeof(SubverterPatch))
-            filename = Subverter.MarserializerFile;
-        else
-            throw new ArgumentException("Unsupported patch type");
 
-        if (patches != null)
+        // Serialize remaining MarseyPatches
+        List<string> marseyAsmpaths = marseyPatches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
+        if (marseyAsmpaths.Any())
         {
-            List<string> asmpaths = patches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
-            Marserializer.Serialize(path, filename, asmpaths);
+            Marserializer.Serialize(path, PatchListManager.MarserializerFile, marseyAsmpaths);
+        }
+
+        // Serialize SubverterPatches
+        List<string> subverterAsmpaths = subverterPatches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
+        if (subverterAsmpaths.Any())
+        {
+            Marserializer.Serialize(path, Subverter.MarserializerFile, subverterAsmpaths);
         }
     }
+
 
     /// <summary>
     /// Loads assemblies from a specified folder.
@@ -68,18 +68,14 @@ public abstract class FileHandler
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
-        List<string>? files;
-
-        if (marserializer == false)
+        if (!marserializer)
+        {
             PatchListManager.RecheckPatches();
+        }
 
-        if (marserializer && filename != null)
-            files = Marserializer.Deserialize(path, filename);
-        else
-            files = GetPatches(path);
-
-        if (files == null) return;
-
+        List<string> files = marserializer && filename != null
+            ? Marserializer.Deserialize(path, filename) ?? new List<string>()
+            : GetPatches(path);
 
         foreach (string file in files)
         {
@@ -88,9 +84,9 @@ public abstract class FileHandler
     }
 
     /// <summary>
-    /// Loads single assembly by name
+    /// Loads an assembly from the specified file path and initializes it.
     /// </summary>
-    /// <param name="file">path to dll file</param>
+    /// <param name="file">The file path of the assembly to load.</param>
     public static void LoadExactAssembly(string file)
     {
         Redial.Disable(); // Disable any AssemblyLoad callbacks found
@@ -102,16 +98,25 @@ public abstract class FileHandler
         }
         catch (FileNotFoundException)
         {
-            if (file.EndsWith("Subverter.dll")) return;
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{file} could not be found");
+            if (!file.EndsWith("Subverter.dll"))
+            {
+                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{file} could not be found");
+            }
         }
         catch (PatchAssemblyException ex)
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, ex.Message);
         }
-
-        Redial.Enable(); // Enable callbacks in case the game needs them
+        catch (Exception ex) // Catch any other exceptions that may occur
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"An unexpected error occurred while loading {file}: {ex.Message}");
+        }
+        finally
+        {
+            Redial.Enable(); // Enable callbacks in case the game needs them
+        }
     }
+
 
     /// <summary>
     /// Retrieves the file paths of all DLL files in a specified subdirectory
@@ -120,9 +125,23 @@ public abstract class FileHandler
     /// <returns>An array of strings containing the full paths to each DLL file in the specified subdirectory</returns>
     public static List<string> GetPatches(string[] subdir)
     {
-        string[] updatedSubdir = subdir.Prepend(Directory.GetCurrentDirectory()).ToArray();
-        string path = Path.Combine(updatedSubdir);
+        try
+        {
+            string[] updatedSubdir = subdir.Prepend(Directory.GetCurrentDirectory()).ToArray();
+            string path = Path.Combine(updatedSubdir);
 
-        return Directory.GetFiles(path, "*.dll").ToList();
+            if (Directory.Exists(path))
+            {
+                return Directory.GetFiles(path, "*.dll").ToList();
+            }
+            
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Directory {path} does not exist");
+            return new List<string>();
+        }
+        catch (Exception ex)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to find patches: {ex.Message}");
+            return new List<string>();
+        }
     }
 }
