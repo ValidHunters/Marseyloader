@@ -15,24 +15,25 @@ public static class Subverse
     private static SubverterPatch? _subverter = null;
 
     /// <summary>
-    /// Initializes the subverter library
+    /// Initializes the subverter library.
     /// </summary>
-    /// <returns>True if the library was initialized successfully</returns>
+    /// <returns>True if the library was initialized successfully.</returns>
     public static bool InitSubverter()
     {
         string path = Path.Combine(Directory.GetCurrentDirectory(), "Subverter.dll");
         FileHandler.LoadExactAssembly(path);
-        
+    
         List<SubverterPatch> patches = Subverter.GetSubverterPatches();
-        foreach (SubverterPatch p in patches.Where(p => p.Name == "Subverter"))
-        {
-            AssignSubverter(p);
-            patches.Clear();
-            return true;
-        }
+        SubverterPatch? subverterPatch = patches.FirstOrDefault(p => p.Name == "Subverter");
+
+        if (subverterPatch == null) return false;
         
-        return false;
+        AssignSubverter(subverterPatch);
+        patches.Clear();
+        
+        return true;
     }
+
 
     /// <summary>
     /// Enables subverter if any of the of the subverter patches are enabled

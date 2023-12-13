@@ -13,31 +13,36 @@ public enum HideLevel
     // Note that this only protects you from programmatic checks.
 
     /// <summary>
-    /// Hidesey is disabled.
+    /// Hidesey is disabled. No measures are taken to hide the patcher or patches.
     /// </summary>
     /// <remarks>
-    /// Servers with engine version 183.0.0 or above crash the client.
+    /// Clients on engine version 183.0.0 or above will experience crashes.
     /// </remarks>
     Disabled = 0,
     /// <summary>
-    /// <para>Patcher is hidden from the game programmatically.</para>
-    /// <para>Patches are not hidden for cases when an admin wants to know *what* patches are you running, rather than if you have any.</para>
+    /// Patcher is hidden from the game.
     /// </summary>
+    /// <remarks>s
+    /// Patches remain visible to allow administrators to inspect which patches are being used.
+    /// This is the "friend server" option.
+    /// </remarks>
     Duplicit = 1,
     /// <summary>
-    /// Patcher and patches are hidden from the game programmatically
+    /// Patcher and patches are hidden.
     /// </summary>
+    /// <remarks>
+    /// This is the default option.
+    /// </remarks>
     Normal = 2,
     /// <summary>
-    /// <para>Patcher and patches are hidden from the game programmatically</para>
-    /// <para>Patcher does not log anything</para>
-    /// <para>Separate logging is disabled</para>
+    /// Patcher and patches are hidden.
+    /// Marseylogging is disabled.
     /// </summary>
     Explicit = 3,
     /// <summary>
-    /// <para>Patcher and patches are hidden from the game programmatically</para>
-    /// <para>Patcher does not log anything</para>
-    /// <para>Preloads and subversions are disabled</para>
+    /// Patcher, patches are hidden.
+    /// Patch logging is disabled.
+    /// Subversion and preloads are disabled.
     /// </summary>
     Unconditional = 4
 }
@@ -51,6 +56,7 @@ public static class Hidesey
 
     /// <summary>
     /// Starts Hidesey. Patches GetAssemblies, GetReferencedAssemblies and hides Harmony from assembly list.
+    /// Requires MarseyHide to not be Disabled.
     /// </summary>
     public static void Initialize() // Finally, a patch loader that loads with a patch
     {                               // Five patches even
@@ -69,6 +75,7 @@ public static class Hidesey
 
     /// <summary>
     /// General function to hide assemblies matching name from detection methods
+    /// Requires MarseyHide to not be Disabled.
     /// </summary>
     /// <remarks>Because certain assemblies are loaded later this is called twice</remarks>
     public static void Disperse()
@@ -99,38 +106,67 @@ public static class Hidesey
     
     /// <summary>
     /// If we have the assembly object
+    /// Requires MarseyHide to be Normal or above.
     /// </summary>
     /// <param name="marsey">marsey assembly</param>
     public static void Hide(Assembly marsey)
     {
+        if (MarseyVars.MarseyHide < HideLevel.Normal) return;
+        
         Facade.Cloak(marsey);
         _hideseys.Add(marsey);
     }
 
+    /// <summary>
+    /// Undermines system functions, hides what doesnt belong from view
+    /// </summary>
+    /// <exception cref="HideseyException">Thrown if ThrowOnFail is true and any of the patches fails to apply</exception>
     private static void Perjurize()
     {
-        MethodInfo? target, postfix;
+        (MethodInfo?, MethodInfo?)[] postfixPatches = new (MethodInfo?, MethodInfo?)[]
+        {
+            (
+                typeof(AppDomain).GetMethod("GetAssemblies", BindingFlags.Public | BindingFlags.Instance), 
+                typeof(HideseyPatches).GetMethod("LieLoader", BindingFlags.Public | BindingFlags.Static)
+            ),
+            (
+                Assembly.GetExecutingAssembly().GetType().GetMethod("GetReferencedAssemblies"), 
+                typeof(HideseyPatches).GetMethod("LieReference", BindingFlags.Public | BindingFlags.Static)
+            ),
+            (
+                typeof(Assembly).GetMethod("GetTypes"), 
+                typeof(HideseyPatches).GetMethod("LieTyper", BindingFlags.Public | BindingFlags.Static)
+            ),
+            (
+                typeof(AssemblyLoadContext).GetProperty("Assemblies")!.GetGetMethod(), 
+                typeof(HideseyPatches).GetMethod("LieContext", BindingFlags.Public | BindingFlags.Static)
+            ),
+            (
+                typeof(AssemblyLoadContext).GetProperty("All")!.GetGetMethod(), 
+                typeof(HideseyPatches).GetMethod("LieManifest", BindingFlags.Public | BindingFlags.Static)
+            )
+        };
 
-        target = typeof(AppDomain).GetMethod("GetAssemblies", BindingFlags.Public | BindingFlags.Instance);
-        postfix = typeof(HideseyPatches).GetMethod("LieLoader", BindingFlags.Public | BindingFlags.Static)!;
-        if (target != null) Manual.Postfix(target, postfix);
+        foreach ((MethodInfo? original, MethodInfo? patch) in postfixPatches)
+        {
+            if (original != null && patch != null)
+            {
+                Manual.Patch(original, patch, HarmonyPatchType.Postfix);
+            }
+            else
+            {
+                string message = $"Failed to patch {original?.Name} using {patch?.Name}";
 
-        target = Assembly.GetExecutingAssembly().GetType().GetMethod("GetReferencedAssemblies");
-        postfix = typeof(HideseyPatches).GetMethod("LieReference", BindingFlags.Public | BindingFlags.Static)!;
-        if (target != null) Manual.Postfix(target, postfix);
-
-        target = typeof(Assembly).GetMethod("GetTypes");
-        postfix = typeof(HideseyPatches).GetMethod("LieTyper", BindingFlags.Public | BindingFlags.Static)!;
-        if (target != null) Manual.Postfix(target, postfix);
-
-        target = typeof(AssemblyLoadContext).GetProperty("Assemblies")!.GetGetMethod();
-        postfix = typeof(HideseyPatches).GetMethod("LieContext", BindingFlags.Public | BindingFlags.Static)!;
-        if (target != null) Manual.Postfix(target, postfix);
-        
-        target = typeof(AssemblyLoadContext).GetProperty("All")!.GetGetMethod();
-        postfix = typeof(HideseyPatches).GetMethod("LieManifest", BindingFlags.Public | BindingFlags.Static)!;
-        if (target != null) Manual.Postfix(target, postfix);
+                // Close client if any of the hidesey patches fail
+                if (MarseyVars.ThrowOnFail)
+                    throw new HideseyException(message);
+            
+                MarseyLogger.Log(MarseyLogger.LogType.FATL, message);
+            }
+        }
     }
+
+
 
     /// <summary>
     /// Checks HideLevel env variable, defaults to Normal
@@ -144,7 +180,9 @@ public static class Hidesey
         
         return HideLevel.Normal;
     }
-    
+
+    #region LyingPatches
+
     /// <summary>
     /// Returns a list of only assemblies that are not hidden from a given list
     /// </summary>
@@ -181,5 +219,7 @@ public static class Hidesey
         Type[] hiddentypes = Facade.GetTypes();
         return original.Except(hiddentypes).ToArray();
     }
+
+    #endregion
 
 }

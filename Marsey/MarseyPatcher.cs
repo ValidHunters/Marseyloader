@@ -46,22 +46,24 @@ public class MarseyPatcher
             Subverse.PatchSubverter();
         }
 
-            // Manage game assemblies
+        // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
 
         // Prepare marseypatches
         FileHandler.LoadAssemblies(marserializer: true, filename: PatchListManager.MarserializerFile);
-        List<MarseyPatch>? patches = PatchListManager.GetPatchList<MarseyPatch>();
-
-        if (patches == null) return;
-
-        // Connect patches to internal logger
-        AssemblyFieldHandler.InitLogger(patches);
-
-        // Execute patches
-        GamePatcher.Patch(patches);
+        List<MarseyPatch> patches = PatchListManager.GetPatchList<MarseyPatch>();
         
+        //
+        if (patches.Count != 0)
+        {
+            // Connect patches to internal logger
+            AssemblyFieldHandler.InitLogger(patches);
+
+            // Execute patches
+            GamePatcher.Patch(patches);
+        }
+
         Hidesey.Disperse();
     }
 }

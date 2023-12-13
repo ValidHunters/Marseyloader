@@ -27,34 +27,25 @@ public abstract class FileHandler
         List<MarseyPatch> marseyPatches = PatchListManager.GetPatchList<MarseyPatch>();
         List<SubverterPatch> subverterPatches = PatchListManager.GetPatchList<SubverterPatch>();
 
-        // Marseypatches need specialized logic to be able to load before all fields are initialized
-        // As such, they're loaded separately
+        // Serialize preloading MarseyPatches
         List<string> preloadpaths = marseyPatches
             .Where(p => p.Enabled && p.Preload)
             .Select(p => p.Asmpath)
             .ToList();
-
+        
+        Marserializer.Serialize(path, PatchListManager.MarserializerFile, preloadpaths);
+        
+        // If we actually do have any - remove them from the marseypatch list
         if (preloadpaths.Any())
-        {
-            Marserializer.Serialize(path, PatchListManager.MarserializerFile, preloadpaths);
-
-            // Remove any patches that are preloading from list
             marseyPatches.RemoveAll(p => preloadpaths.Contains(p.Asmpath));
-        }
 
         // Serialize remaining MarseyPatches
         List<string> marseyAsmpaths = marseyPatches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
-        if (marseyAsmpaths.Any())
-        {
-            Marserializer.Serialize(path, PatchListManager.MarserializerFile, marseyAsmpaths);
-        }
+        Marserializer.Serialize(path, PatchListManager.MarserializerFile, marseyAsmpaths);
 
         // Serialize SubverterPatches
         List<string> subverterAsmpaths = subverterPatches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
-        if (subverterAsmpaths.Any())
-        {
-            Marserializer.Serialize(path, Subverter.MarserializerFile, subverterAsmpaths);
-        }
+        Marserializer.Serialize(path, Subverter.MarserializerFile, subverterAsmpaths);
     }
 
 

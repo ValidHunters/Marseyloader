@@ -28,12 +28,12 @@ public static class Redial
         
         foreach (Delegate dial in _phonebook)
         {
-            Manual.Prefix(dial.Method, prefix); // skip
+            Manual.Patch(dial.Method, prefix, HarmonyPatchType.Prefix); // skip
         }
     }
 
     /// <summary>
-    /// Unpatches AssemblyLoad callbacks
+    /// Enables caught AssemblyLoad callbacks
     /// </summary>
     public static void Enable()
     {

@@ -12,10 +12,13 @@ namespace Marsey;
 /// </summary>
 public static class AssemblyInitializer
 {
-    /// <summary>
-    /// Initializes the specified assembly.
-    /// </summary>
-    /// <param name="assembly">The assembly to initialize.</param>
+    private static readonly Dictionary<string, Func<Assembly, string, string, bool, IPatch>> PatchFactory =
+        new Dictionary<string, Func<Assembly, string, string, bool, IPatch>>
+        {
+            { "MarseyPatch", (assembly, name, description, preloadField) => new MarseyPatch(assembly.Location, assembly, name, description, preloadField) },
+            { "SubverterPatch", (assembly, name, description, preloadField) => new SubverterPatch(assembly.Location, assembly, name, description) }
+        };
+
     public static void Initialize(Assembly assembly)
     {
         if (assembly == null) throw new ArgumentNullException(nameof(assembly));
@@ -28,49 +31,65 @@ public static class AssemblyInitializer
 
     private static Type? GetDataType(Assembly assembly)
     {
-        Type? marseyType = assembly.GetType("MarseyPatch");
-        Type? subverterType = assembly.GetType("SubverterPatch");
-
-        if (marseyType != null && subverterType != null)
+        // Check for each patch type name defined in the PatchFactory dictionary
+        Type? patchType = null;
+        foreach (string patchTypeName in PatchFactory.Keys)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} is both a marseypatch and a subverter!");
-            return null;
-        }
-    
-        if (marseyType == null && subverterType == null)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} does not contain a marseypatch or a subverter!");
-            return null;
+            Type? type = assembly.GetType(patchTypeName);
+            
+            if (type == null) continue;
+            
+            // Discard patch if it has multiple data types
+            if (patchType != null)
+            {
+                MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} contains multiple patch types!");
+                return null;
+            }
+            
+            patchType = type;
         }
 
-        return marseyType ?? subverterType;
+        // Patch found, bail
+        if (patchType != null) 
+            return patchType;
+        
+        // If no patch type was found, log an error
+        MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} does not contain any recognized patch types!");
+        return null;
+
     }
-
+    
     private static void ProcessDataType(Assembly assembly, Type dataType)
     {
+        string typeName = dataType.Name;
         bool preloadField = AssemblyFieldHandler.DeterminePreload(dataType);
+        
+        if (typeName == "MarseyPatch")
+        {
+            if (AssemblyFieldHandler.DetermineIgnore(dataType))
+            {
+                MarseyLogger.Log(MarseyLogger.LogType.DEBG,
+                    $"{assembly.GetName().Name} is ignoring fields, not assigning");
+                return;
+            }
 
-        if (AssemblyFieldHandler.DetermineIgnore(dataType))
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} is ignoring fields, not assigning");
-            return;
-        }
+            List<FieldInfo>? targets = AssemblyFieldHandler.GetPatchAssemblyFields(dataType);
+            if (targets == null)
+            {
+                MarseyLogger.Log(MarseyLogger.LogType.FATL,
+                    $"Couldn't get assembly fields on {assembly.GetName().Name}.");
+                return;
+            }
 
-        List<FieldInfo>? targets = AssemblyFieldHandler.GetPatchAssemblyFields(dataType);
-        if (targets == null)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Couldn't get assembly fields on {assembly.GetName().Name}.");
-            return;
-        }
-
-        if (preloadField)
-        {
-            FieldInfo target = targets[0]; // Robust.Client
-            AssemblyFieldHandler.SetPreloadTarget(target);
-        }
-        else
-        {
-            AssemblyFieldHandler.SetAssemblyTargets(targets);
+            if (preloadField)
+            {
+                FieldInfo target = targets[0]; // Robust.Client
+                AssemblyFieldHandler.SetPreloadTarget(target);
+            }
+            else
+            {
+                AssemblyFieldHandler.SetAssemblyTargets(targets);
+            }
         }
 
         AssemblyFieldHandler.GetFields(dataType, out string name, out string description);
@@ -80,25 +99,15 @@ public static class AssemblyInitializer
     private static void TryCreateAddPatch(Assembly assembly, MemberInfo? dataType, string name, string description, bool preloadField)
     {
         if (dataType == null) return;
+
+        // Check if its even valid
+        if (!PatchFactory.TryGetValue(dataType.Name, out Func<Assembly, string, string, bool, IPatch>? createPatch)) return;
         
-        switch (dataType.Name)
-        {
-            case "MarseyPatch":
-            {
-                MarseyPatch patch = new MarseyPatch(assembly.Location, assembly, name, description, preloadField);
-                PatchListManager.AddPatchToList(patch);
-                break;
-            }
-            case "SubverterPatch":
-            {
-                SubverterPatch patch = new SubverterPatch(assembly.Location, assembly, name, description);
-                Subverter.AddSubvert(patch);
-                break;
-            }
-        }
+        Hidesey.Hide(assembly); // Conceal assembly from the game
+        IPatch? patch = createPatch(assembly, name, description, preloadField);
+        PatchListManager.AddPatchToList(patch);
     }
 }
-
 /// <summary>
 /// Manages patch lists.
 /// </summary>
@@ -134,7 +143,6 @@ public static class PatchListManager
     /// <summary>
     /// Returns the list of patches of a specific type.
     /// </summary>
-    /// <returns>A list of patches of type T.</returns>
     public static List<T> GetPatchList<T>() where T : IPatch
     {
         return _patches.OfType<T>().ToList();
@@ -278,14 +286,21 @@ public static class AssemblyFieldHandler
     {
         Type? marseyLoggerType = patch.GetType("MarseyLogger");
         MethodInfo? logMethod = typeof(MarseyLogger).GetMethod("Log", new[] { typeof(AssemblyName), typeof(string) });
-        FieldInfo? logDelegateField = marseyLoggerType?.GetNestedType("Forward", BindingFlags.Public)?.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static);
+        FieldInfo? logDelegateField = marseyLoggerType?.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static);
 
         if (marseyLoggerType == null || logMethod == null || logDelegateField == null)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, "Failed to connect patch to marseylogger. Patch has invalid MarseyLogger type?");
+            List<string> missingComps = new List<string>();
+            if (marseyLoggerType == null) missingComps.Add("MarseyLoggerType");
+            if (logMethod == null) missingComps.Add("LogMethod");
+            if (logDelegateField == null) missingComps.Add("LogDelegateField");
+
+            string missingCompStr = string.Join(", ", missingComps);
+
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to connect patch to marseylogger. Missing components: {missingCompStr}.");
             return;
         }
-
+        
         try
         {
             Delegate logDelegate = Delegate.CreateDelegate(logDelegateField.FieldType, logMethod);
