@@ -8,6 +8,7 @@
     <PackageVersion Include="NSec.Cryptography" Version="22.4.0"/>
     <PackageVersion Include="SharpZstd.Interop" Version="1.5.2-beta2"/>
     <PackageVersion Include="JetBrains.Annotations" Version="2023.2.0-eap3" />
+    <PackageVersion Include="Microsoft.NET.ILLink.Tasks" Version="8.0.0" />
     <!-- Loader -->
     <PackageVersion Include="Robust.Natives" Version="0.1.1"/>
     <!-- Launcher -->

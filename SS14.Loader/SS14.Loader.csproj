@@ -25,6 +25,7 @@
     <PackageReference Include="NSec.Cryptography" />
     <PackageReference Include="Robust.Natives" />
     <PackageReference Include="SharpZstd.Interop" />
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
   </ItemGroup>
 
 </Project>
