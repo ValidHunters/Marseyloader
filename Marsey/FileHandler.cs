@@ -33,7 +33,7 @@ public abstract class FileHandler
             .Select(p => p.Asmpath)
             .ToList();
         
-        Marserializer.Serialize(path, PatchListManager.MarserializerFile, preloadpaths);
+        Marserializer.Serialize(path, PreloadManager.MarserializerFile, preloadpaths);
         
         // If we actually do have any - remove them from the marseypatch list
         if (preloadpaths.Any())

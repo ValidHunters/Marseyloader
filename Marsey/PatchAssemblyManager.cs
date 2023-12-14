@@ -243,6 +243,7 @@ public static class AssemblyFieldHandler
 
     /// <summary>
     /// Is the patch asking to be loaded before the game?
+    /// If marseypatch has a bool called "preload" - check it.
     /// </summary>
     /// <param name="DataType">Patch class type</param>
     public static bool DeterminePreload(Type DataType)
