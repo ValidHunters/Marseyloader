@@ -27,61 +27,55 @@ namespace Marsey.API
             return await SendHelloRequest($"{_endpoint}/marsey");
         }
 
-        private static async Task<bool> SendHelloRequest(string url)
+        private static void Log(MarseyLogger.LogType type, string message)
         {
-            if (!_enabled) return false;
-            
+            MarseyLogger.Log(type, message);
+        }
+
+        private static async Task<JObject?> GetJsonResponse(string url)
+        {
+            if (!_enabled) return null;
+    
             try
             {
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    JObject json = JObject.Parse(content);
-                    if (json["message"] != null && json["version"] != null)
-                    {
-                        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Endpoint hello'd correctly!");
-                        return true;
-                    }
+                    return JObject.Parse(content);
                 }
             }
             catch (Exception ex)
             {
-                MarseyLogger.Log(MarseyLogger.LogType.INFO, $"{url}: MarseyApi excepted! \n{ex.Message}");
+                Log(MarseyLogger.LogType.INFO, $"{url}: MarseyApi excepted! \n{ex.Message}");
             }
 
-            MarseyLogger.Log(MarseyLogger.LogType.INFO, $"{url}: MarseyApi endpoint did not return a proper hello.");
-            return false;
+            Log(MarseyLogger.LogType.INFO, $"{url}: Endpoint did not return a proper response.");
+            return null;
+        }
+
+        private static async Task<bool> SendHelloRequest(string url)
+        {
+            JObject? json = await GetJsonResponse(url);
+            
+            if (json?["message"] == null || json?["version"] == null) return false;
+            
+            Log(MarseyLogger.LogType.DEBG, "Endpoint hello'd correctly!");
+            return true;
         }
 
         private static async Task UpdateMarseyVersion()
         {
-            if (!_enabled) return;
-            
-            try
+            JObject? json = await GetJsonResponse($"{_endpoint}/version");
+            if (json?["latest"] != null && json?["minimum"] != null && json?["releases"] != null)
             {
-                HttpResponseMessage response = await _httpClient.GetAsync($"{_endpoint}/version");
-                if (response.IsSuccessStatusCode)
-                {
-                    string content = await response.Content.ReadAsStringAsync();
-                    JObject json = JObject.Parse(content);
-                    if (json["latest"] != null && json["minimum"] != null && json["releases"] != null)
-                    {
-                        Version latest = new Version(json["latest"]!.ToString());
-                        Version minimum = new Version(json["minimum"]!.ToString());
-                        _versions = new List<Version> { latest, minimum };
-                        _releases = json["releases"]!.ToString();
-                        return;
-                    }
-                }
+                Version latest = new Version(json["latest"]!.ToString());
+                Version minimum = new Version(json["minimum"]!.ToString());
+                _versions = new List<Version> { latest, minimum };
+                _releases = json["releases"]!.ToString();
             }
-            catch (Exception ex)
-            {
-                MarseyLogger.Log(MarseyLogger.LogType.INFO, $"{_endpoint}: MarseyApi excepted! \n{ex.Message}");
-            }
-
-            MarseyLogger.Log(MarseyLogger.LogType.INFO, $"{_endpoint}: MarseyApi endpoint did not return a proper version.");
         }
+
 
         public static Version? GetLatestVersion() => _versions?[0];
         public static Version? GetMinimumVersion() => _versions?[1];

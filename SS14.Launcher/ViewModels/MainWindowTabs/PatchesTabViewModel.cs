@@ -9,6 +9,7 @@ using Avalonia.Data.Converters;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
 using Marsey;
+using Marsey.Patches;
 using Marsey.Subversion;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
@@ -33,12 +34,12 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         {
             FileHandler.LoadAssemblies();
 
-            List<MarseyPatch> marseys = PatchListManager.GetPatchList<MarseyPatch>();
+            List<MarseyPatch> marseys = Marsyfier.GetMarseyPatches();
             LoadPatchList(marseys, MarseyPatches, "marseypatches");
 
             if (!SubverterPresent) return;
 
-            List<SubverterPatch> subverters = PatchListManager.GetPatchList<SubverterPatch>();
+            List<SubverterPatch> subverters = Subverter.GetSubverterPatches();
             LoadPatchList(subverters, SubverterPatches, "subverterpatches");
         }
 

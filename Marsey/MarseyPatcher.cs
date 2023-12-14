@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
-using Marsey.Preloader;
+using Marsey.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 
@@ -37,7 +37,7 @@ public class MarseyPatcher
     public void Boot()
     {
         // Preload marseypatches, if available
-        PreloadManager.Preload();
+        Marsyfier.Preload();
 
         // Initialize subverter if enabled and present
         if (MarseyVars.Subverter && Subverse.InitSubverter())
@@ -51,8 +51,8 @@ public class MarseyPatcher
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
 
         // Prepare marseypatches
-        FileHandler.LoadAssemblies(marserializer: true, filename: PatchListManager.MarserializerFile);
-        List<MarseyPatch> patches = PatchListManager.GetPatchList<MarseyPatch>();
+        FileHandler.LoadAssemblies(marserializer: true, filename: Marsyfier.MarserializerFile);
+        List<MarseyPatch> patches = Marsyfier.GetMarseyPatches();
         
         //
         if (patches.Count != 0)

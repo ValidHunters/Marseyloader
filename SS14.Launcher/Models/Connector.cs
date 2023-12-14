@@ -419,17 +419,17 @@ public class Connector : ReactiveObject
         var engineVersion = launchInfo.ModuleInfo.Single(x => x.Module == "Robust").Version;
         var startInfo = await GetLoaderStartInfo(engineVersion, launchInfo.Version, env);
 
+        Marsify();
+        
         ConfigureEnvironmentVariables(startInfo, launchInfo, engineVersion);
         ConfigureLogging(startInfo);
         SetDynamicPgo(startInfo);
         UnfuckGlibcLinux(startInfo);
         ConfigureMultiWindow(launchInfo, startInfo);
+        
 
         startInfo.UseShellExecute = false;
         startInfo.ArgumentList.AddRange(extraArgs);
-
-        Log.Debug("Preparing patch assemblies.");
-        FileHandler.PrepAssemblies();
 
         Process? process = Process.Start(startInfo);
         if (process != null && _cfg.GetCVar(CVars.LogClient))
@@ -459,6 +459,7 @@ public class Connector : ReactiveObject
         startInfo.EnvironmentVariables["MARSEY_LOG_PATCHES"] = _cfg.GetCVar(CVars.LogPatches) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_SUBVERTER"] = MarseyVars.Subverter ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyVars.SeparateLogger ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_HIDE_LEVEL"] = $"{_cfg.GetCVar(CVars.MarseyHide)}";
         startInfo.EnvironmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
     }
@@ -516,7 +517,8 @@ public class Connector : ReactiveObject
             FileShare.Delete | FileShare.ReadWrite,
             4096,
             FileOptions.Asynchronous);
-    
+
+        File.Delete(LauncherPaths.PathClientStdmarseyLog);
         FileStream? fileStdmarsey = null;
         if (MarseyVars.MarseyHide < HideLevel.Explicit)
         {
@@ -528,11 +530,7 @@ public class Connector : ReactiveObject
                 4096,
                 FileOptions.Asynchronous);
         }
-        else
-        {
-            File.Delete(LauncherPaths.PathClientStdmarseyLog);
-        }
-    
+
         PipeOutput(process, fileStdout, fileStderr, fileStdmarsey);
     }
 
@@ -559,7 +557,17 @@ public class Connector : ReactiveObject
 
         return startInfo;
     }
-    
+
+    private void Marsify()
+    {
+        Log.Debug("Preparing patch assemblies.");
+        FileHandler.PrepAssemblies();
+        
+        Subverse.CheckEnabled();
+        
+        if (MarseyVars.Subverter)
+            Log.Debug("Subverter enabled.");
+    }
     
 
     private static void ConfigureMultiWindow(ContentLaunchInfo launchInfo, ProcessStartInfo startInfo)

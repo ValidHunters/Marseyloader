@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using HarmonyLib;
-using Marsey.Preloader;
+using Marsey.Patches;
 using Marsey.Subversion;
 using Marsey.Serializer;
 using Marsey.Stealthsey;
@@ -24,8 +24,8 @@ public abstract class FileHandler
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
-        List<MarseyPatch> marseyPatches = PatchListManager.GetPatchList<MarseyPatch>();
-        List<SubverterPatch> subverterPatches = PatchListManager.GetPatchList<SubverterPatch>();
+        List<MarseyPatch> marseyPatches = Marsyfier.GetMarseyPatches();
+        List<SubverterPatch> subverterPatches = Subverter.GetSubverterPatches();
 
         // Serialize preloading MarseyPatches
         List<string> preloadpaths = marseyPatches
@@ -33,7 +33,7 @@ public abstract class FileHandler
             .Select(p => p.Asmpath)
             .ToList();
         
-        Marserializer.Serialize(path, PreloadManager.MarserializerFile, preloadpaths);
+        Marserializer.Serialize(path, Marsyfier.PreloadMarserializerFile, preloadpaths);
         
         // If we actually do have any - remove them from the marseypatch list
         if (preloadpaths.Any())
@@ -41,7 +41,7 @@ public abstract class FileHandler
 
         // Serialize remaining MarseyPatches
         List<string> marseyAsmpaths = marseyPatches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
-        Marserializer.Serialize(path, PatchListManager.MarserializerFile, marseyAsmpaths);
+        Marserializer.Serialize(path, Marsyfier.MarserializerFile, marseyAsmpaths);
 
         // Serialize SubverterPatches
         List<string> subverterAsmpaths = subverterPatches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();

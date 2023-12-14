@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Marsey.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 namespace Marsey;
@@ -114,7 +115,6 @@ public static class AssemblyInitializer
 public static class PatchListManager
 {
     private static readonly List<IPatch> _patches = new List<IPatch>();
-    public const string MarserializerFile = "patches.marsey";
 
     /// <summary>
     /// Checks if the amount of patches in folder equals the amount of patches in list.
@@ -123,7 +123,7 @@ public static class PatchListManager
     public static void RecheckPatches()
     {
         int folderPatchCount = FileHandler.GetPatches(new[] { MarseyVars.MarseyPatchFolder }).Count;
-        if (folderPatchCount != _patches.OfType<MarseyPatch>().Count() + _patches.OfType<SubverterPatch>().Count())
+        if (folderPatchCount != _patches.Count)
         {
             ResetList();
         }
