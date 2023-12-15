@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using HarmonyLib;
+using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Subversion;
 using Marsey.Serializer;
