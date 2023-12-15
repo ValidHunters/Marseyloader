@@ -29,7 +29,7 @@ public static class Marsyfier
         
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
-        List<string>? preloads = Marserializer.Deserialize(path, filename: MarserializerFile);
+        List<string>? preloads = Marserializer.Deserialize(path, filename: PreloadMarserializerFile);
 
         if (preloads == null || preloads.Count == 0) return;
         
