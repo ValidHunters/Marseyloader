@@ -15,6 +15,7 @@ namespace Marsey.Subversion;
 /// </summary>
 public static class Subverse
 {
+    public static string SubverterFile = "Subverter.dll";
     private static SubverterPatch? _subverter = null;
 
     /// <summary>
@@ -23,7 +24,7 @@ public static class Subverse
     /// <returns>True if the library was initialized successfully.</returns>
     public static bool InitSubverter()
     {
-        string path = Path.Combine(Directory.GetCurrentDirectory(), "Subverter.dll");
+        string path = Path.Combine(Directory.GetCurrentDirectory(), SubverterFile);
         FileHandler.LoadExactAssembly(path);
     
         List<SubverterPatch> patches = Subverter.GetSubverterPatches();
@@ -67,7 +68,7 @@ public static class Subverse
     /// <returns></returns>
     public static bool CheckSubverterDuplicate(SubverterPatch subverter)
     {
-        return subverter.Asmpath == _subverter?.Asmpath;
+        return subverter == _subverter;
     }
 
     public static bool CheckSubverterPresent()
@@ -83,7 +84,6 @@ public static class Subverse
     {
         if (_subverter != null) GamePatcher.Patch(new List<SubverterPatch>() { _subverter });
     }
-    
     
     private static void AssignSubverter(SubverterPatch subverter)
     {

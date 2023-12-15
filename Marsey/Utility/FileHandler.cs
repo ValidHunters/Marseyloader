@@ -89,7 +89,7 @@ public abstract class FileHandler
         }
         catch (FileNotFoundException)
         {
-            if (!file.EndsWith("Subverter.dll"))
+            if (!file.EndsWith(Subverse.SubverterFile))
             {
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{file} could not be found");
             }

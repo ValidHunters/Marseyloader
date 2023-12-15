@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
+using Marsey.Utility;
 
 namespace Marsey.Subversion;
 
@@ -12,7 +13,6 @@ namespace Marsey.Subversion;
 public static class Subverter
 {
     public const string MarserializerFile = "subversion.marsey";
-
     public static List<SubverterPatch> GetSubverterPatches() => PatchListManager.GetPatchList<SubverterPatch>();
 }
 
@@ -22,13 +22,19 @@ public class SubverterPatch : IPatch
     public Assembly Asm { get; set; }
     public string Name { get; set; } 
     public string Desc { get; set; }
-    public bool Enabled { get; set; } = false;
+    public bool Enabled { get; set; }
     
     public SubverterPatch(string asmpath, Assembly asm, string name, string desc)
     {
-        this.Asmpath = asmpath;
-        this.Name = name;
-        this.Desc = desc;
-        this.Asm = asm;
+        Asmpath = asmpath;
+        Name = name;
+        Desc = desc;
+        Asm = asm;
+
+        if (Subverse.CheckSubverterDuplicate(this))
+        {
+            throw new PatchAssemblyException(
+                "Tried to create a SubverterPatch that is the same as Subverter! Remove Subverter.dll from the patches folder!");
+        }
     }
 }

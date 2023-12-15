@@ -41,9 +41,9 @@ public static class Marsyfier
             FileHandler.LoadExactAssembly(patch);
         }
 
-        List<MarseyPatch>? preloadedPatches = Marsyfier.GetMarseyPatches();
+        List<MarseyPatch> preloadedPatches = GetMarseyPatches();
 
-        if (preloadedPatches != null) GamePatcher.Patch(preloadedPatches);
+        if (preloadedPatches.Count != 0) GamePatcher.Patch(preloadedPatches);
         
         PatchListManager.ResetList();
     }
@@ -60,7 +60,7 @@ public class MarseyPatch : IPatch
     public string Name { get; set; } // Patch's name
     public string Desc { get; set; } // Patch's description
     public bool Preload { get; set; } = false; // Is the patch getting loaded before game assemblies
-    public bool Enabled { get; set; } = false; // Is the patch enabled or not.
+    public bool Enabled { get; set; } // Is the patch enabled or not.
 
     public MarseyPatch(string asmpath, Assembly asm, string name, string desc, bool preload = false)
     {
