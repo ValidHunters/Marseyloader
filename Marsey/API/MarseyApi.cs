@@ -17,15 +17,26 @@ namespace Marsey.API
 
         public static async Task Initialize(string endpoint, bool enabled)
         {
-            _endpoint = endpoint;
-            _enabled = enabled;
-
-            await UpdateMarseyVersion();
+            if (!enabled) return;
+    
+            if (await MarseyHello(endpoint))
+            {
+                _endpoint = endpoint;
+                _enabled = true; // Since were aborting early if enabled is false - set directly
+        
+                await UpdateMarseyVersion();
+            }
+            else
+            {
+                MarseyLogger.Log(MarseyLogger.LogType.WARN, "MarseyAPI failed! Disabling.");
+                _enabled = false;
+            }
         }
 
-        public static async Task<bool> MarseyHello()
+
+        public static async Task<bool> MarseyHello(string endpoint)
         {
-            return await SendHelloRequest($"{_endpoint}/marsey");
+            return await SendHelloRequest($"{endpoint}/marsey");
         }
 
         private static void Log(MarseyLogger.LogType type, string message)
@@ -48,10 +59,11 @@ namespace Marsey.API
             }
             catch (Exception ex)
             {
-                Log(MarseyLogger.LogType.INFO, $"{url}: MarseyApi excepted! \n{ex.Message}");
+                Log(MarseyLogger.LogType.DEBG, $"{url}: MarseyApi excepted! \n{ex.Message}");
+                return null;
             }
 
-            Log(MarseyLogger.LogType.INFO, $"{url}: Endpoint did not return a proper response.");
+            Log(MarseyLogger.LogType.DEBG, $"{url}: Endpoint did not return a proper response.");
             return null;
         }
 
@@ -78,8 +90,8 @@ namespace Marsey.API
         }
 
 
-        public static Version? GetLatestVersion() => _versions?[0];
-        public static Version? GetMinimumVersion() => _versions?[1];
-        public static string? GetReleasesURL() => _releases;
+        public static Version? GetLatestVersion() => _versions != null && _versions.Count > 0 ? _versions[0] : null;
+        public static Version? GetMinimumVersion() => _versions != null && _versions.Count > 1 ? _versions[1] : null;
+        public static string GetReleasesURL() => _releases;
     }
 }

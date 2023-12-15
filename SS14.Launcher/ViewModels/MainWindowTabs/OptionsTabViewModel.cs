@@ -229,7 +229,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         
         Task.Run(async () =>
         {
-            bool result = await Marsey.API.MarseyApi.MarseyHello().ConfigureAwait(false);
+            bool result = await Marsey.API.MarseyApi.MarseyHello(_endpoint).ConfigureAwait(false);
             if (result)
             {
                 Cfg.SetCVar(CVars.MarseyApiEndpoint, _endpoint);
