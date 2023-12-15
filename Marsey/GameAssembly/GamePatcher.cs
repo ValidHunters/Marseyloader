@@ -16,15 +16,15 @@ public static class GamePatcher
     /// <param name="patchlist">A list of patches</param>
     public static void Patch<T>(List<T> patchlist) where T : IPatch
     {
-        Harmony? harmony = HarmonyManager.GetHarmony();
-        if (harmony == null) return;
+        Harmony harmony = HarmonyManager.GetHarmony();
 
         foreach (T patch in patchlist)
         {
             PatchAssembly(harmony, patch);
         }
     }
-
+    
+    /// <inheritdoc cref="GamePatcher.Patch"/>
     private static void PatchAssembly<T>(Harmony harmony, T patch) where T : IPatch
     {
         AssemblyName assemblyName = patch.Asm.GetName();
@@ -40,6 +40,10 @@ public static class GamePatcher
         }
     }
 
+    /// <summary>
+    /// Logic for managing patches that failed applying. Depending on config - throws exception or ignored.
+    /// </summary>
+    /// <exception cref="PatchAssemblyException">Thrown if ThrowOnFail is true.</exception>
     private static void HandlePatchException(string assemblyName, Exception e)
     {
         string errorMessage = $"Failed to patch {assemblyName}!\n{e}";

@@ -5,7 +5,7 @@ namespace Marsey.GameAssembly;
 
 public static class HarmonyManager
 {
-    private static Harmony? _harmony;
+    private static Harmony _harmony = default!;
 
     /// <summary>
     /// Sets the _harmony field in the class.
@@ -21,5 +21,5 @@ public static class HarmonyManager
             Harmony.DEBUG = true;
     }
 
-    public static Harmony? GetHarmony() => _harmony;
+    public static Harmony GetHarmony() => _harmony;
 }

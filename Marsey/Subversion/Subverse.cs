@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using HarmonyLib;
+using System.Reflection;
 using Marsey.Config;
 using Marsey.GameAssembly;
 using Marsey.Stealthsey;
@@ -41,6 +42,7 @@ public static class Subverse
 
     /// <summary>
     /// Enables subverter if any of the of the subverter patches are enabled
+    /// Used by the launcher to determine if it should load subversions
     /// </summary>
     /// <remarks>If MarseyHide is set to unconditional - defaults to false</remarks>
     public static void CheckEnabled()
@@ -68,9 +70,21 @@ public static class Subverse
     /// <returns></returns>
     public static bool CheckSubverterDuplicate(SubverterPatch subverter)
     {
-        return subverter == _subverter;
+        if (CheckSubverterPresent())
+            return CheckSubverterDuplicate(subverter.Asm);
+
+        return false;
+    }
+    
+    public static bool CheckSubverterDuplicate(Assembly assembly)
+    {
+        return assembly == _subverter?.Asm;
     }
 
+    /// <summary>
+    /// Check if subverter is already defined.
+    /// Used by the launcher in the plugins/patches tab.
+    /// </summary>
     public static bool CheckSubverterPresent()
     {
         return _subverter != null;

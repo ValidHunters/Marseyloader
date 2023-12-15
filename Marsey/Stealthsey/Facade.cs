@@ -7,10 +7,13 @@ using Marsey.Utility;
 
 namespace Marsey.Stealthsey;
 
+/// <summary>
+/// Manages hiding types from the executing assembly
+/// </summary>
 public static class Facade
 {
-    private static List<Type> _types = new List<Type>();
-    private static List<string> _keywords = new List<string> { "Robust", "Content", "Wizards", "Microsoft", "System" };
+    private static readonly List<Type> _types = new List<Type>();
+    private static readonly List<string> _keywords = new List<string> { "Robust", "Content", "Wizards", "Microsoft", "System" };
     
     /// <summary>
     /// Hides type from executing assembly
@@ -35,7 +38,7 @@ public static class Facade
     public static void Imposition(string name)
     {
         Type[] assemblyTypes = Assembly.GetExecutingAssembly().GetTypes();
-        foreach (Type t in assemblyTypes.Where(t => t.Namespace!.StartsWith(name)))
+        foreach (Type? t in assemblyTypes.Where(t => t.Namespace != null && t.Namespace.StartsWith(name)))
         {
             Imposition(t);
         }
@@ -51,6 +54,8 @@ public static class Facade
         try
         {
             typeArray = patch.GetTypes();
+            
+            // Hide types if their namespace isn't null and doesn't start with any of the protected keywords
             Imposition(typeArray.Where(type => type.Namespace != null && !_keywords.Any(keyword => type.Namespace.StartsWith(keyword))).ToArray());
         }
         catch (ReflectionTypeLoadException)
@@ -60,5 +65,5 @@ public static class Facade
     }
 
 
-    public static Type[] GetTypes() => _types.ToArray();
+    public static IEnumerable<Type> GetTypes() => _types.ToArray();
 }

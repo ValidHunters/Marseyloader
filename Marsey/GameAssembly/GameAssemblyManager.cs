@@ -32,6 +32,10 @@ public static class GameAssemblyManager
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "Received assemblies.");
     }
 
+    /// <summary>
+    /// Searches for assemblies defined in the _assemblies dictionary.
+    /// </summary>
+    /// <returns>True if all assemblies in dictionary have been found, false otherwise</returns>
     private static bool TryGetAssemblies()
     {
         for (int loops = 0; loops < MarseyVars.MaxLoops; loops++)
@@ -43,7 +47,8 @@ public static class GameAssemblyManager
         }
         return false;
     }
-
+    
+    /// <inheritdoc cref="TryGetAssemblies"/>
     private static bool FindAssemblies()
     {
         Assembly[] asmlist = AppDomain.CurrentDomain.GetAssemblies();
@@ -63,12 +68,18 @@ public static class GameAssemblyManager
         return false;
     }
 
+    /// <summary>
+    /// Assigns an assembly to the dictionary if it matches the provided name and is not already assigned.
+    /// </summary>
     private static void AssignAssembly(string assemblyName, Assembly asm)
     {
         if (_assemblies[assemblyName] == null && asm.FullName?.Contains(assemblyName) == true)
             _assemblies[assemblyName] = asm;
     }
 
+    /// <summary>
+    /// If any assemblies are missing - notify.
+    /// </summary>
     private static void LogMissingAssemblies()
     {
         foreach (KeyValuePair<string, Assembly?> entry in _assemblies)

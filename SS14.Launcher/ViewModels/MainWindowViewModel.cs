@@ -6,9 +6,13 @@ using System.Net.Http;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DynamicData;
+using HarmonyLib;
 using Marsey;
 using Marsey.API;
 using Marsey.Config;
+using Marsey.GameAssembly;
+using Marsey.Stealthsey;
+using Marsey.Subversion;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
@@ -46,6 +50,10 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         _cfg = Locator.Current.GetRequiredService<DataManager>();
         _loginMgr = Locator.Current.GetRequiredService<LoginManager>();
         _http = Locator.Current.GetRequiredService<HttpClient>();
+        
+        HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
+        Hidesey.Initialize();
+        Subverse.InitSubverter();
 
         ServersTab = new ServerListTabViewModel(this);
         NewsTab = new NewsTabViewModel();

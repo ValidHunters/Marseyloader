@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using Marsey.Patches;
@@ -65,32 +66,38 @@ public static class AssemblyInitializer
         string typeName = dataType.Name;
         bool preloadField = AssemblyFieldHandler.DeterminePreload(dataType);
         
-        if (typeName == "MarseyPatch")
+        switch (typeName)
         {
-            if (AssemblyFieldHandler.DetermineIgnore(dataType))
-            {
+            case "MarseyPatch" when AssemblyFieldHandler.DetermineIgnore(dataType):
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG,
                     $"{assembly.GetName().Name} is ignoring fields, not assigning");
                 return;
-            }
-
-            List<FieldInfo>? targets = AssemblyFieldHandler.GetPatchAssemblyFields(dataType);
-            if (targets == null)
+            case "MarseyPatch":
             {
-                MarseyLogger.Log(MarseyLogger.LogType.FATL,
-                    $"Couldn't get assembly fields on {assembly.GetName().Name}.");
+                List<FieldInfo>? targets = AssemblyFieldHandler.GetPatchAssemblyFields(dataType);
+                if (targets == null)
+                {
+                    MarseyLogger.Log(MarseyLogger.LogType.FATL,
+                        $"Couldn't get assembly fields on {assembly.GetName().Name}.");
+                    return;
+                }
+
+                if (preloadField)
+                {
+                    FieldInfo target = targets[0]; // Robust.Client
+                    AssemblyFieldHandler.SetPreloadTarget(target);
+                }
+                else
+                {
+                    AssemblyFieldHandler.SetAssemblyTargets(targets);
+                }
+
+                break;
+            }
+            case "SubverterPatch" when Subverse.CheckSubverterPresent() && Subverse.CheckSubverterDuplicate(assembly):
+                MarseyLogger.Log(MarseyLogger.LogType.FATL, 
+                    $"{Path.GetFileName(assembly.Location)}: Tried to create a SubverterPatch with the same assembly as Subverter!");
                 return;
-            }
-
-            if (preloadField)
-            {
-                FieldInfo target = targets[0]; // Robust.Client
-                AssemblyFieldHandler.SetPreloadTarget(target);
-            }
-            else
-            {
-                AssemblyFieldHandler.SetAssemblyTargets(targets);
-            }
         }
 
         AssemblyFieldHandler.GetFields(dataType, out string name, out string description);
@@ -105,7 +112,8 @@ public static class AssemblyInitializer
         if (!PatchFactory.TryGetValue(dataType.Name, out Func<Assembly, string, string, bool, IPatch>? createPatch)) return;
         
         Hidesey.Hide(assembly); // Conceal assembly from the game
-        IPatch? patch = createPatch(assembly, name, description, preloadField);
+        
+        IPatch patch = createPatch(assembly, name, description, preloadField);
         PatchListManager.AddPatchToList(patch);
     }
 }

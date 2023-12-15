@@ -44,33 +44,33 @@ public static class Manual
     
     private static void Prefix(MethodBase method, MethodInfo prefix)
     {
-        Harmony? harm = HarmonyManager.GetHarmony();
-        harm?.Patch(method, prefix: prefix);
+        Harmony harm = HarmonyManager.GetHarmony();
+        harm.Patch(method, prefix: prefix);
     }
 
     private static void Postfix(MethodBase method, MethodInfo postfix)
     {
-        Harmony? harm = HarmonyManager.GetHarmony();
-        harm?.Patch(method, postfix: postfix);
+        Harmony harm = HarmonyManager.GetHarmony();
+        harm.Patch(method, postfix: postfix);
     }
 
     private static void Transpiler(MethodBase method, MethodInfo transpiler)
     {
-        Harmony? harm = HarmonyManager.GetHarmony();
-        harm?.Patch(method, transpiler: transpiler);
+        Harmony harm = HarmonyManager.GetHarmony();
+        harm.Patch(method, transpiler: transpiler);
     }
 
     private static void Finalizer(MethodBase method, MethodInfo finalizer)
     {
-        Harmony? harm = HarmonyManager.GetHarmony();
-        harm?.Patch(method, finalizer: finalizer);
+        Harmony harm = HarmonyManager.GetHarmony();
+        harm.Patch(method, finalizer: finalizer);
     }
     
     private static void Reverse(MethodBase method, MethodInfo reversepatch)
     {
-        Harmony? harm = HarmonyManager.GetHarmony();
-        ReversePatcher? rPatcher = harm?.CreateReversePatcher(method, reversepatch);
-        rPatcher?.Patch();
+        Harmony harm = HarmonyManager.GetHarmony();
+        ReversePatcher rPatcher = harm.CreateReversePatcher(method, reversepatch);
+        rPatcher.Patch();
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public static class Manual
     /// <param name="patchType">type of patches</param>
     public static void Unpatch(MethodInfo method, HarmonyPatchType patchType)
     {
-        Harmony? harm = HarmonyManager.GetHarmony();
-        harm?.Unpatch(method, patchType);
+        Harmony harm = HarmonyManager.GetHarmony();
+        harm.Unpatch(method, patchType);
     }
 }

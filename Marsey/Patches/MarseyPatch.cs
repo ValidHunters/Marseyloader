@@ -18,11 +18,12 @@ public static class Marsyfier
     public const string MarserializerFile = "patches.marsey";
     public const string PreloadMarserializerFile = "preload.marsey";
 
-    public static List<MarseyPatch> GetMarseyPatches()
-    {
-        return PatchListManager.GetPatchList<MarseyPatch>();
-    }
+    public static List<MarseyPatch> GetMarseyPatches() => PatchListManager.GetPatchList<MarseyPatch>();
 
+    /// <summary>
+    /// Start preload of marseypatches that are flagged as such
+    /// </summary>
+    /// <remarks>Aborts if HideLevel is set to Unconditional or above.</remarks>
     public static void Preload(string[]? path = null)
     {
         if (MarseyVars.MarseyHide >= HideLevel.Unconditional) return;

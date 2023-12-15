@@ -10,6 +10,9 @@ using Marsey.Utility;
 
 namespace Marsey.Stealthsey;
 
+/// <summary>
+/// Level of concealment from the game
+/// </summary>
 public enum HideLevel
 {
     // Note that this only protects you from programmatic checks.
@@ -24,7 +27,7 @@ public enum HideLevel
     /// <summary>
     /// Patcher is hidden from the game.
     /// </summary>
-    /// <remarks>s
+    /// <remarks>
     /// Patches remain visible to allow administrators to inspect which patches are being used.
     /// This is the "friend server" option.
     /// </remarks>
@@ -50,7 +53,7 @@ public enum HideLevel
 }
 
 /// <summary>
-/// Hides marseys from the game
+/// Hides patches from the game
 /// </summary>
 public static class Hidesey
 {
@@ -218,7 +221,7 @@ public static class Hidesey
     /// </summary>
     public static Type[] LyingTyper(Type[] original)
     {
-        Type[] hiddentypes = Facade.GetTypes();
+        IEnumerable<Type> hiddentypes = Facade.GetTypes();
         return original.Except(hiddentypes).ToArray();
     }
 

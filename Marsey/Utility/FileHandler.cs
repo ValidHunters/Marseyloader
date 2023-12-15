@@ -18,7 +18,15 @@ namespace Marsey.Utility;
 public abstract class FileHandler
 {
     /// <summary>
+    /// <para>
     /// Serialize enabled patches.
+    /// Executed by the launcher at connection.
+    /// </para>
+    /// 
+    /// <para>
+    /// We cant directly give marseys to the loader or tell it what patches to load because its started in a separate process.
+    /// Because of this we leave an array of paths to assemblies to enabled patches for the loader to read.
+    /// </para>
     /// </summary>
     public static void PrepAssemblies(string[]? path = null)
     {
