@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DynamicData;
 using Marsey;
 using Marsey.API;
+using Marsey.Config;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;

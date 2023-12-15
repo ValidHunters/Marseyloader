@@ -1,9 +1,12 @@
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Marsey.Config;
+using Marsey.GameAssembly;
 using Marsey.PatchAssembly;
 using Marsey.Serializer;
 using Marsey.Stealthsey;
+using Marsey.Utility;
 
 namespace Marsey.Patches;
 

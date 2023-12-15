@@ -2,7 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using HarmonyLib;
+using Marsey.Config;
+using Marsey.GameAssembly;
 using Marsey.Stealthsey;
+using Marsey.Utility;
 
 namespace Marsey.Subversion;
 

@@ -1,6 +1,8 @@
 using Marsey.Patches;
 using System.Collections.Generic;
 using System.Linq;
+using Marsey.Config;
+using Marsey.Utility;
 
 namespace Marsey.PatchAssembly;
 

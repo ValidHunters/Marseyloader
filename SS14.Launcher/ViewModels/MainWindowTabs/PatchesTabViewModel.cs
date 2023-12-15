@@ -8,9 +8,10 @@ using System.Windows.Input;
 using Avalonia.Data.Converters;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
-using Marsey;
+using Marsey.Config;
 using Marsey.Patches;
 using Marsey.Subversion;
+using Marsey.Utility;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {

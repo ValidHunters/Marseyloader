@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
+using Marsey.Config;
+using Marsey.GameAssembly;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
+using Marsey.Utility;
 
 namespace Marsey;
 
@@ -22,7 +25,7 @@ public class MarseyPatcher
         AssemblyFieldHandler.Init(robClientAssembly);
         
         // Initialize loader
-        Utility.SetupFlags();
+        Utility.Utility.SetupFlags();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         
         // Hide the loader

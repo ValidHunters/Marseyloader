@@ -1,8 +1,10 @@
 using System;
 using System.Reflection;
+using Marsey.Config;
+using Marsey.PatchAssembly;
 using Marsey.Stealthsey;
 
-namespace Marsey;
+namespace Marsey.Utility;
 
 public static class MarseyLogger
 {

@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
-using HarmonyLib;
+using Marsey.Config;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
-using Marsey.Subversion;
 using Marsey.Serializer;
 using Marsey.Stealthsey;
+using Marsey.Subversion;
 
-namespace Marsey;
+namespace Marsey.Utility;
 
 /// <summary>
 /// Handles file operations in the patch folder

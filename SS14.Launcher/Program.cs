@@ -26,6 +26,7 @@ using TerraFX.Interop.Windows;
 using LogEventLevel = Serilog.Events.LogEventLevel;
 using Marsey;
 using Marsey.Subversion;
+using Marsey.Utility;
 
 namespace SS14.Launcher;
 

@@ -21,8 +21,10 @@ using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 using Marsey;
+using Marsey.Config;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
+using Marsey.Utility;
 
 namespace SS14.Launcher.Models;
 

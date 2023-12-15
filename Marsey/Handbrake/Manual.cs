@@ -1,5 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
+using Marsey.GameAssembly;
+using Marsey.Utility;
 
 namespace Marsey.Handbrake;
 

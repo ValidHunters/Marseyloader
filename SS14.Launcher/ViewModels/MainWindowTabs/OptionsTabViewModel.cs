@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Avalonia.Data.Converters;
 using DynamicData;
 using Marsey;
+using Marsey.Config;
 using Marsey.Stealthsey;
 using Microsoft.Toolkit.Mvvm.Input;
 using Splat;

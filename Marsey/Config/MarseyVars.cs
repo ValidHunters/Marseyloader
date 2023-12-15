@@ -1,7 +1,8 @@
 using System;
 using Marsey.Stealthsey;
+using Marsey.Utility;
 
-namespace Marsey;
+namespace Marsey.Config;
 
 public abstract class MarseyVars
 {

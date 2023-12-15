@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using HarmonyLib;
 using Marsey.Handbrake;
+using Marsey.Utility;
 
 namespace Marsey.Stealthsey;
 

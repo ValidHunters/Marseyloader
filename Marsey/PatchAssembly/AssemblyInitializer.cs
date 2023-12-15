@@ -4,6 +4,7 @@ using System.Reflection;
 using Marsey.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
+using Marsey.Utility;
 
 namespace Marsey.PatchAssembly;
 

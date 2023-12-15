@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Marsey.Utility;
 using Newtonsoft.Json.Linq;
 
 namespace Marsey.API
