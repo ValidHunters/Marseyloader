@@ -8,7 +8,7 @@
 | PatchAssembly | Initializes assemblies, handles data fields, manages patch lists |
 | Handbrake     | Manual patching directly from MarseyPatcher                      |
 | Patches       | MarseyPatch objects, Patch types                                 |
-| Serializer    | serialization                                                    |
-| Stealthsey    | hiding assemblies and types from the game                        |
-| Subversion    | sideloading code, sideloading helper library                     |
+| Serializer    | Serialization                                                    |
+| Stealthsey    | Hiding assemblies and types from the game                        |
+| Subversion    | Sideloading code, sideloading helper library                     |
 | Utility       | Logging, file operations, exceptions                             |
