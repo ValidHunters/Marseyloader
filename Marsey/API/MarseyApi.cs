@@ -34,6 +34,7 @@ namespace Marsey.API
         }
 
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public static async Task<bool> MarseyHello(string endpoint)
         {
             return await SendHelloRequest($"{endpoint}/marsey");
