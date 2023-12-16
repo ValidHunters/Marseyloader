@@ -4,7 +4,7 @@ using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.Patches;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace Marsey.GameAssembly;
 

@@ -10,7 +10,7 @@ using Marsey.Serializer;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 
-namespace Marsey.Utility;
+namespace Marsey.Misc;
 
 /// <summary>
 /// Handles file operations in the patch folder

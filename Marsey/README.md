@@ -11,4 +11,4 @@
 | Serializer    | Serialization                                                    |
 | Stealthsey    | Hiding assemblies and types from the game                        |
 | Subversion    | Sideloading code, sideloading helper library                     |
-| Utility       | Logging, file operations, exceptions                             |
+| Misc          | Logging, file operations, exceptions                             |

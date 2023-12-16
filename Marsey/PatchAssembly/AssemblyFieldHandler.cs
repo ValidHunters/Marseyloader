@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Marsey.Patches;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace Marsey.PatchAssembly;
 

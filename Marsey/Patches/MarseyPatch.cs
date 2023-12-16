@@ -6,7 +6,7 @@ using Marsey.GameAssembly;
 using Marsey.PatchAssembly;
 using Marsey.Serializer;
 using Marsey.Stealthsey;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace Marsey.Patches;
 

@@ -4,7 +4,7 @@ using Marsey.Config;
 using Marsey.PatchAssembly;
 using Marsey.Stealthsey;
 
-namespace Marsey.Utility;
+namespace Marsey.Misc;
 
 public static class MarseyLogger
 {

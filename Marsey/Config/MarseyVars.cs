@@ -1,6 +1,6 @@
 using System;
 using Marsey.Stealthsey;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace Marsey.Config;
 

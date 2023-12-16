@@ -11,7 +11,7 @@ using Serilog;
 using Marsey.Config;
 using Marsey.Patches;
 using Marsey.Subversion;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {

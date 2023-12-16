@@ -6,7 +6,7 @@ using System.Runtime.Loader;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.Handbrake;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace Marsey.Stealthsey;
 

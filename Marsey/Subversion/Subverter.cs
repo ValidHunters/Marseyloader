@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace Marsey.Subversion;
 

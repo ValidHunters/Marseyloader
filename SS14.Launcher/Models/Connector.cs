@@ -24,7 +24,7 @@ using Marsey;
 using Marsey.Config;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace SS14.Launcher.Models;
 

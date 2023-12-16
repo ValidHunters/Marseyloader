@@ -1,6 +1,6 @@
 using System;
 
-namespace Marsey.Utility;
+namespace Marsey.Misc;
 
 public class PatchAssemblyException : Exception
 {

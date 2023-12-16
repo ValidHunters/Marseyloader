@@ -8,7 +8,7 @@ using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace Marsey;
 
@@ -17,7 +17,31 @@ namespace Marsey;
 /// </summary>
 public class MarseyPatcher
 {
-    public MarseyPatcher(Assembly? robClientAssembly)
+    private static MarseyPatcher? _instance;
+    
+    public static MarseyPatcher Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                throw new Exception("MarseyPatcher is not created. Call CreateInstance with the client assembly first.");
+            }
+            return _instance;
+        }
+    }
+    
+    public static void CreateInstance(Assembly? robClientAssembly)
+    {
+        if (_instance != null)
+        {
+            throw new Exception("Instance already created.");
+        }
+        
+        _instance = new MarseyPatcher(robClientAssembly);
+    }
+    
+    private MarseyPatcher(Assembly? robClientAssembly)
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
         
@@ -25,7 +49,7 @@ public class MarseyPatcher
         AssemblyFieldHandler.Init(robClientAssembly);
         
         // Initialize loader
-        Utility.Utility.SetupFlags();
+        Utility.SetupFlags();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         
         // Hide the loader
@@ -58,7 +82,6 @@ public class MarseyPatcher
         FileHandler.LoadAssemblies(marserializer: true, filename: Marsyfier.MarserializerFile);
         List<MarseyPatch> patches = Marsyfier.GetMarseyPatches();
         
-        //
         if (patches.Count != 0)
         {
             // Connect patches to internal logger

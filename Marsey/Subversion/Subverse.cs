@@ -6,7 +6,7 @@ using System.Reflection;
 using Marsey.Config;
 using Marsey.GameAssembly;
 using Marsey.Stealthsey;
-using Marsey.Utility;
+using Marsey.Misc;
 
 namespace Marsey.Subversion;
 
