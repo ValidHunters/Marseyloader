@@ -76,7 +76,7 @@ public static class CVars
     /// <summary>
     /// Log messages coming from patches
     /// </summary>
-    public static readonly CVarDef<bool> LogPatches = CVarDef.Create("LogPatches", true);
+    public static readonly CVarDef<bool> LogPatcher = CVarDef.Create("LogPatcher", true);
 
     /// <summary>
     /// Log debug messages coming from loader

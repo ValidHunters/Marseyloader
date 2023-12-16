@@ -1,5 +1,6 @@
 using System;
 using Marsey.Config;
+using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Stealthsey;
 
@@ -12,9 +13,9 @@ public static class Envsey
     /// Sets an env variable to null
     /// </summary>
     /// <param name="envName">Name of env var</param>
+    [HideLevelRequirement(HideLevel.Normal)]
     public static void CleanFlag(string envName)
     {
-        if (MarseyVars.MarseyHide >= HideLevel.Normal)
-            Environment.SetEnvironmentVariable(envName, null);
+        Environment.SetEnvironmentVariable(envName, null);
     }
 }

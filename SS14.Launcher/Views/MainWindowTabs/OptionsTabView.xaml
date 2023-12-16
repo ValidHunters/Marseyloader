@@ -101,9 +101,9 @@
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding HideLevel, Converter={StaticResource HideLevelDescriptionConverter}}" Margin="8" />
                         
                         <TextBlock Margin="4, 0" Text="Logging" Classes="NanoHeadingMedium" />
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patches</CheckBox>
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patcher</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                   Text="Write MarseyLogger patch output to log"
+                                   Text="Write MarseyLogger output to log"
                                    Margin="8" />
     
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLoaderDebug}">Enable Loader Debug Logs</CheckBox>

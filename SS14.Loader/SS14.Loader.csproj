@@ -18,8 +18,7 @@
     <Compile Include="../SS14.Launcher/Utility/ZStd.cs" />
     <Compile Include="../SS14.Launcher/Utility/Libc.cs" />
     <Compile Include="../SS14.Launcher/Utility/SqliteBlobStream.cs" />
-    <Compile Include="../Marsey/*.cs" />
-    <Compile Include="../Marsey/*/*.cs" />
+    <Compile Include="../Marsey/**/*.cs" Exclude="../Marsey/**/obj/**/*.cs;../Marsey/**/bin/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup>

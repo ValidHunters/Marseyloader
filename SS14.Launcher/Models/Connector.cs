@@ -458,7 +458,7 @@ public class Connector : ReactiveObject
         // Set other necessary environment variables.
         startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = _cfg.GetCVar(CVars.DisableSigning) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_LOADER_DEBUG"] = _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_LOG_PATCHES"] = _cfg.GetCVar(CVars.LogPatches) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_LOGGING"] = _cfg.GetCVar(CVars.LogPatcher) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_SUBVERTER"] = MarseyVars.Subverter ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyVars.SeparateLogger ? "true" : null;

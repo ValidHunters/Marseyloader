@@ -37,26 +37,24 @@ public static class MarseyLogger
     /// <see cref="AssemblyFieldHandler.SetupLogger"/>
     public static void Log(AssemblyName asm, string message)
     {
-        if (MarseyVars.PatchLogAllowed)
-            SharedLog($"[{asm.Name}] {message}");
+        SharedLog($"[{asm.Name}] {message}");
     }
 
     private static void SharedLog(string message)
     {
-        if (MarseyVars.MarseyHide < HideLevel.Explicit)
+        if (MarseyVars.Logging)
             Console.WriteLine($"[{MarseyVars.MarseyLoggerPrefix}] {message}");
     }
 }
 public abstract class Utility
 {
     /// <summary>
-    /// Checks loader environment variables, sets relevant flags in MarseyVars
-    ///
+    /// Checks loader environment variables, sets relevant flags in MarseyVars.
     /// Executed only by the loader.
     /// </summary>
     public static void SetupFlags()
     {
-        MarseyVars.PatchLogAllowed = CheckEnv("MARSEY_LOG_PATCHES");
+        MarseyVars.Logging = CheckEnv("MARSEY_LOGGING");
         MarseyVars.DebugAllowed = CheckEnv("MARSEY_LOADER_DEBUG");
         MarseyVars.ThrowOnFail = CheckEnv("MARSEY_THROW_FAIL");
         MarseyVars.Subverter = CheckEnv("MARSEY_SUBVERTER");

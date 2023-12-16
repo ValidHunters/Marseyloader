@@ -7,6 +7,7 @@ using HarmonyLib;
 using Marsey.Config;
 using Marsey.Handbrake;
 using Marsey.Misc;
+using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Stealthsey;
 
@@ -63,12 +64,19 @@ public static class Hidesey
     /// Starts Hidesey. Patches GetAssemblies, GetReferencedAssemblies and hides Harmony from assembly list.
     /// Requires MarseyHide to not be Disabled.
     /// </summary>
-    public static void Initialize() // Finally, a patch loader that loads with a patch
-    {                               // Five patches even
+    /// <param name="IgnoreAttributes">Are access control attributes ignored</param>
+    public static void Initialize(bool IgnoreAttributes = false) // Finally, a patch loader that loads with a patch
+    {                                                           // Five patches even
         MarseyVars.MarseyHide = GetHideseyLevel();
+        if (!IgnoreAttributes)
+            HideLevelExec.Initialize();
         
-        if (MarseyVars.MarseyHide == HideLevel.Disabled) return;
+        Load();
+    }
 
+    [HideLevelRequirement(HideLevel.Duplicit)]
+    private static void Load()
+    {
         Disperse();
         
         Facade.Imposition("Marsey");
@@ -83,10 +91,9 @@ public static class Hidesey
     /// Requires MarseyHide to not be Disabled.
     /// </summary>
     /// <remarks>Because certain assemblies are loaded later this is called twice</remarks>
+    [HideLevelRequirement(HideLevel.Duplicit)]
     public static void Disperse()
     {
-        if (MarseyVars.MarseyHide == HideLevel.Disabled) return;
-        
         Hide("0Harmony"); // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
         Hide("Mono.Cecil");
         Hide("MonoMod", true);
@@ -111,15 +118,23 @@ public static class Hidesey
     
     /// <summary>
     /// If we have the assembly object
-    /// Requires MarseyHide to be Normal or above.
     /// </summary>
     /// <param name="marsey">marsey assembly</param>
-    public static void Hide(Assembly marsey)
+    private static void Hide(Assembly marsey)
     {
-        if (MarseyVars.MarseyHide < HideLevel.Normal) return;
-        
         Facade.Cloak(marsey);
         _hideseys.Add(marsey);
+    }
+
+    /// <summary>
+    /// Entrypoint for patch assemblies
+    /// Requires HideLevel to be Normal or above
+    /// </summary>
+    /// <param name="marsey">Assembly from a patch</param>
+    [HideLevelRequirement(HideLevel.Normal)]
+    public static void HidePatch(Assembly marsey)
+    {
+        Hide(marsey);
     }
 
     /// <summary>

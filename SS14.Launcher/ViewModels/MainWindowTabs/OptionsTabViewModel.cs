@@ -106,10 +106,10 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
 
     public bool LogPatches
     {
-        get => Cfg.GetCVar(CVars.LogPatches);
+        get => Cfg.GetCVar(CVars.LogPatcher);
         set
         {
-            Cfg.SetCVar(CVars.LogPatches, value);
+            Cfg.SetCVar(CVars.LogPatcher, value);
             Cfg.CommitConfig();
         }
     }

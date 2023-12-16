@@ -4,6 +4,7 @@ using System.Runtime.Loader;
 using HarmonyLib;
 using Marsey.Handbrake;
 using Marsey.Misc;
+using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Stealthsey;
 
@@ -17,6 +18,7 @@ public static class Redial
     /// <summary>
     /// Disables AssemblyLoad Callbacks in CurrentDomain
     /// </summary>
+    [HideLevelRequirement(HideLevel.Normal)]
     public static void Disable()
     {
         MethodInfo prefix =

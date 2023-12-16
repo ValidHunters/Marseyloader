@@ -7,6 +7,7 @@ using Marsey.PatchAssembly;
 using Marsey.Serializer;
 using Marsey.Stealthsey;
 using Marsey.Misc;
+using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Patches;
 
@@ -24,10 +25,9 @@ public static class Marsyfier
     /// Start preload of marseypatches that are flagged as such
     /// </summary>
     /// <remarks>Aborts if HideLevel is set to Unconditional or above.</remarks>
+    [HideLevelRestriction(HideLevel.Unconditional)]
     public static void Preload(string[]? path = null)
     {
-        if (MarseyVars.MarseyHide >= HideLevel.Unconditional) return;
-        
         path ??= new[] { MarseyVars.MarseyPatchFolder };
 
         List<string>? preloads = Marserializer.Deserialize(path, filename: PreloadMarserializerFile);

@@ -7,6 +7,7 @@ using Marsey.Config;
 using Marsey.GameAssembly;
 using Marsey.Stealthsey;
 using Marsey.Misc;
+using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Subversion;
 
@@ -45,14 +46,9 @@ public static class Subverse
     /// Used by the launcher to determine if it should load subversions
     /// </summary>
     /// <remarks>If MarseyHide is set to unconditional - defaults to false</remarks>
+    [HideLevelRestriction(HideLevel.Unconditional)]
     public static void CheckEnabled()
     {
-        if (MarseyVars.MarseyHide >= HideLevel.Unconditional)
-        {
-            MarseyVars.Subverter = false;
-            return;
-        }
-        
         List<SubverterPatch> patches = Subverter.GetSubverterPatches();
 
         if (patches.Any(p => p.Enabled))

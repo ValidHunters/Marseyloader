@@ -73,8 +73,7 @@
     <RobustLinkAssemblies Include="TerraFX.Interop.Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="../Marsey/*.cs" />
-    <Compile Include="../Marsey/*/*.cs" />
+    <Compile Include="../Marsey/**/*.cs" Exclude="../Marsey/**/obj/**/*.cs;../Marsey/**/bin/**/*.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="signing_key" />

@@ -57,18 +57,18 @@ public abstract class MarseyVars
     /// <see cref="Subversion.Subverse.CheckEnabled"/>
     /// </summary>
     public static bool Subverter;
+
+    /// <summary>
+    /// Should we log anything from the loader
+    /// <see cref="Utility.SetupFlags"/>
+    /// </summary>
+    public static bool Logging;
     
     /// <summary>
     /// Log DEBG messages
     /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool DebugAllowed;
-
-    /// <summary>
-    /// Log messages sent from patches
-    /// <see cref="Utility.SetupFlags"/>
-    /// </summary>
-    public static bool PatchLogAllowed;
 
     /// <summary>
     /// Throws an exception on client if any patch had failed applying.
