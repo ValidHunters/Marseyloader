@@ -53,6 +53,7 @@
     <PackageReference Include="Mono.Posix.NETStandard" />
     <PackageReference Include="SharpZstd.Interop" />
     <PackageReference Include="SpaceWizards.Sodium" />
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Utility\runtime.json" />
