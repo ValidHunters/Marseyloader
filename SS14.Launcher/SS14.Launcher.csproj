@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <!--<PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>-->
-    <TargetFramework>net7.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <DefineConstants Condition="'$(FullRelease)' == 'True'">FULL_RELEASE;$(DefineConstants)</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -38,7 +37,6 @@
     <PackageReference Include="CodeHollow.FeedReader" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="DynamicData" />
-    <PackageReference Include="Lib.Harmony" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" />
     <PackageReference Include="Newtonsoft.Json" />
@@ -55,6 +53,7 @@
     <PackageReference Include="Mono.Posix.NETStandard" />
     <PackageReference Include="SharpZstd.Interop" />
     <PackageReference Include="SpaceWizards.Sodium" />
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Utility\runtime.json" />
@@ -80,6 +79,9 @@
     <Content Include="signing_key">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Harmony\Harmony\Harmony.csproj" />
   </ItemGroup>
   <Import Project="..\MSBuild\Robust.Trimming.targets" />
 </Project>

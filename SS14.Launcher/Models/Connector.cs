@@ -522,6 +522,9 @@ public class Connector : ReactiveObject
 
         File.Delete(LauncherPaths.PathClientStdmarseyLog);
         FileStream? fileStdmarsey = null;
+        
+        MarseyVars.SeparateLogger = _cfg.GetCVar(CVars.SeparateLogging);
+        
         if (MarseyVars.MarseyHide < HideLevel.Explicit)
         {
             fileStdmarsey = new FileStream(
@@ -651,7 +654,7 @@ public class Connector : ReactiveObject
             basePath = Path.GetFullPath(Path.Combine(
                 LauncherPaths.DirLauncherInstall,
                 "..", "..", "..", "..",
-                "SS14.Loader", "bin", "Debug", "net7.0"));
+                "SS14.Loader", "bin", "Debug", "net8.0"));
         }
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))

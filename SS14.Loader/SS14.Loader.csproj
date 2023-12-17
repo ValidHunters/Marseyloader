@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Harmony\Harmony\Harmony.csproj" />
     <ProjectReference Include="..\Robust.LoaderApi\Robust.LoaderApi\Robust.LoaderApi.csproj" />
   </ItemGroup>
 
@@ -22,12 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NSec.Cryptography" />
     <PackageReference Include="Robust.Natives" />
     <PackageReference Include="SharpZstd.Interop" />
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
   </ItemGroup>
 
 </Project>

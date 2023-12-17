@@ -6,9 +6,11 @@
     <!-- Launcher-loader shared stuff -->
     <PackageVersion Include="Lib.Harmony" Version="2.3.0-prerelease.2" />
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="7.0.4" />
+    <PackageVersion Include="MonoMod.Utils" Version="25.0.3" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NSec.Cryptography" Version="22.4.0" />
     <PackageVersion Include="SharpZstd.Interop" Version="1.5.2-beta2" />
+    <PackageVersion Include="Microsoft.NET.ILLink.Tasks" Version="8.0.0" />
     <!-- Loader -->
     <PackageVersion Include="Robust.Natives" Version="0.1.1" />
     <!-- Launcher -->
