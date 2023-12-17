@@ -522,6 +522,9 @@ public class Connector : ReactiveObject
 
         File.Delete(LauncherPaths.PathClientStdmarseyLog);
         FileStream? fileStdmarsey = null;
+        
+        MarseyVars.SeparateLogger = _cfg.GetCVar(CVars.SeparateLogging);
+        
         if (MarseyVars.MarseyHide < HideLevel.Explicit)
         {
             fileStdmarsey = new FileStream(

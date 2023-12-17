@@ -44,6 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MSBuild", "MSBuild", "{3B5F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marsey", "Marsey\Marsey.csproj", "{739A4128-01A5-45B5-9923-266546FF6A80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harmony", "Harmony\Harmony\Harmony.csproj", "{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,18 @@ Global
 		{739A4128-01A5-45B5-9923-266546FF6A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{739A4128-01A5-45B5-9923-266546FF6A80}.Release|x64.ActiveCfg = Release|Any CPU
 		{739A4128-01A5-45B5-9923-266546FF6A80}.Release|x86.ActiveCfg = Release|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Debug|x64.Build.0 = Debug|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Debug|x86.Build.0 = Debug|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Release|x64.ActiveCfg = Release|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Release|x64.Build.0 = Release|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Release|x86.ActiveCfg = Release|Any CPU
+		{90CCA895-8B5E-49C8-AFCE-E0A152FA5245}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{31D3CCC5-36F4-48C3-8885-E029A2026B57} = {12BB41B7-34BA-44EF-9ECA-434A276D83BD}
