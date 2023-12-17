@@ -59,17 +59,21 @@ public enum HideLevel
 public static class Hidesey
 {
     private static List<Assembly> _hideseys = new List<Assembly>();
+    private static bool _initialized = false;
 
     /// <summary>
     /// Starts Hidesey. Patches GetAssemblies, GetReferencedAssemblies and hides Harmony from assembly list.
     /// Requires MarseyHide to not be Disabled.
     /// </summary>
-    /// <param name="IgnoreAttributes">Are access control attributes ignored</param>
-    public static void Initialize(bool IgnoreAttributes = false) // Finally, a patch loader that loads with a patch
+    public static void Initialize() // Finally, a patch loader that loads with a patch
     {                                                           // Five patches even
+        if (_initialized)
+            return;
+
+        _initialized = true;
+        
         MarseyVars.MarseyHide = GetHideseyLevel();
-        if (!IgnoreAttributes)
-            HideLevelExec.Initialize();
+        HideLevelExec.Initialize();
         
         Load();
     }
@@ -94,11 +98,21 @@ public static class Hidesey
     [HideLevelRequirement(HideLevel.Duplicit)]
     public static void Disperse()
     {
-        Hide("0Harmony"); // https://github.com/space-wizards/RobustToolbox/blob/962f5dc650297b883e8842aea8b41393d4808ac9/Robust.Client/GameController/GameController.Standalone.cs#L77
-        Hide("Mono.Cecil");
-        Hide("MonoMod", true);
-        Hide("MonoMod.Iced");
-        Hide("System.Reflection.Emit,");
+        (string, bool)[] assembliesToHide = new (string, bool)[]
+        {
+            ("0Harmony", false),
+            ("Mono.Cecil", false),
+            ("MonoMod", true),
+            ("MonoMod.Iced", false),
+            ("System.Reflection.Emit,", false),
+            ("Marsey", false),
+            ("Harmony", false)
+        };
+
+        foreach ((string assembly, bool recursive) in assembliesToHide)
+        {
+            Hide(assembly, recursive);
+        }
     }
 
     /// <summary>

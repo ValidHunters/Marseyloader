@@ -52,7 +52,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         _http = Locator.Current.GetRequiredService<HttpClient>();
         
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
-        Hidesey.Initialize(IgnoreAttributes: true);
+        Hidesey.Initialize();
         Subverse.InitSubverter();
 
         ServersTab = new ServerListTabViewModel(this);
