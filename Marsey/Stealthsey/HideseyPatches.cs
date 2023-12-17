@@ -54,8 +54,9 @@ public static class HideseyPatches
     /// <summary>
     /// Prefix patch that checks if MarseyHide matches or above the attributed HideLevelRequirement
     /// </summary>
-    private static bool LevelCheck(MethodBase __originalMethod)
+    public static bool LevelCheck(MethodBase __originalMethod)
     {
+        
         string fullMethodName = $"{__originalMethod.DeclaringType?.FullName}::{__originalMethod.Name}";
         string parameters = string.Join(", ", __originalMethod.GetParameters().Select(p => p.ParameterType.Name));
         fullMethodName += $"({parameters})";

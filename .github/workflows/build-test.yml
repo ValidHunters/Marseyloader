@@ -24,3 +24,5 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: SS14.Launcher.Tests
         run: dotnet test SS14.Launcher.Tests/SS14.Launcher.Tests.csproj -v n
+      - name: Test Hidesey
+        run: dotnet test Marsey.Tests/Marsey.Tests.csproj -v n
