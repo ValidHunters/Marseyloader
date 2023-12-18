@@ -10,7 +10,7 @@ namespace Marsey.HideseyTests;
 public class HideLevelTests
 {
     [Test]
-    public void TestMethodWithHideLevelRequirement_Executes_AtRequiredLevel()
+    public void HideLevelRequirement_Executes_AtRequiredLevel()
     {
         // Arrange
         MarseyVars.MarseyHide = HideLevel.Normal; // Set the current HideLevel to Normal
