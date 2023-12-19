@@ -24,8 +24,6 @@ public static class Marsyfier
     /// <summary>
     /// Start preload of marseypatches that are flagged as such
     /// </summary>
-    /// <remarks>Aborts if HideLevel is set to Unconditional or above.</remarks>
-    [HideLevelRestriction(HideLevel.Unconditional)]
     public static void Preload(string[]? path = null)
     {
         path ??= new[] { MarseyVars.MarseyPatchFolder };

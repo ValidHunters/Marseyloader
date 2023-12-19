@@ -319,8 +319,8 @@ public class HideLevelDescriptionConverter : IValueConverter
             HideLevel.Disabled => "Hidesey is disabled. Servers with engine version 183.0.0 or above will crash the client.",
             HideLevel.Duplicit => "Patcher is hidden from the game. Patches remain visible to allow administrators to inspect which patches are being used.",
             HideLevel.Normal => "Patcher and patches are hidden.",
-            HideLevel.Explicit => "Patcher and patches are hidden. Patch logging is disabled.",
-            HideLevel.Unconditional => "Patcher, patches are hidden. Patch logging, subversion and preloads are disabled.",
+            HideLevel.Explicit => "Patcher and patches are hidden. Separate patch logging is disabled.",
+            HideLevel.Unconditional => "Patcher, patches are hidden. Separate patch logging, Subversion is disabled.",
             _ => "Unknown hide level."
         };
     }

@@ -43,13 +43,13 @@ public enum HideLevel
     Normal = 2,
     /// <summary>
     /// Patcher and patches are hidden.
-    /// Marseylogging is disabled.
+    /// Separate patch logging is disabled.
     /// </summary>
     Explicit = 3,
     /// <summary>
     /// Patcher, patches are hidden.
-    /// Patch logging is disabled.
-    /// Subversion and preloads are disabled.
+    /// Separate patch logging is disabled.
+    /// Subversion is disabled.
     /// </summary>
     Unconditional = 4
 }
