@@ -15,8 +15,6 @@ Space Station 14 launcher with client-side modding/patching support.
 * Locally change username for screenshots (This doesn't change your username in-game)
 * Marsey.
 
-**Project is in maintenance mode - Only bugs and crashes are going to be addressed** 
-
 ### Contributing
 If you have any feature you want added to the main repository you are free to submit a pull request.
 
@@ -38,6 +36,10 @@ Additionally, custom code can be loaded to the game using the [Subverter](https:
 
 ### FAQ
 
+#### Where do I ask for help?
+
+Github issues or on the [discord server](https://discord.gg/5RjbK7EzEm).
+
 #### How do I make a patch?
 [Example Marseypatches](https://github.com/ValidHunters/ExampleMarseyPatch)
 
@@ -52,9 +54,6 @@ Wherever clicking on the "Open patch directory" in the "Plugins" tab leads you
 
 #### Can you do X?
 No.
-
-#### Dotnet 8 when?
-now
 
 #### IL logs?
 Enable loader debug, will be on your desktop
