@@ -4,14 +4,17 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Data.Converters;
 using DynamicData;
 using Marsey;
 using Marsey.Config;
+using Marsey.Misc;
 using Marsey.Stealthsey;
 using Microsoft.Toolkit.Mvvm.Input;
+using Serilog;
 using Splat;
 using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
@@ -29,6 +32,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     private readonly IEngineManager _engineManager;
     private readonly ContentManager _contentManager;
     
+    public ICommand SetHWIdCommand { get; }
     public ICommand SetUsernameCommand { get; }
     public ICommand SetEndpointCommand { get; }
     public IEnumerable<HideLevel> HideLevels { get; } = Enum.GetValues(typeof(HideLevel)).Cast<HideLevel>();
@@ -41,7 +45,8 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         _dataManager = Locator.Current.GetRequiredService<DataManager>();
         _engineManager = Locator.Current.GetRequiredService<IEngineManager>();
         _contentManager = Locator.Current.GetRequiredService<ContentManager>();
-        
+
+        SetHWIdCommand = new RelayCommand(OnSetHWIdClick);
         SetUsernameCommand = new RelayCommand(OnSetUsernameClick);
         SetEndpointCommand = new RelayCommand(OnSetEndpointClick);
     }
@@ -181,6 +186,13 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         get => Cfg.GetCVar(CVars.MarseyApiEndpoint);
         set => _endpoint = value;
     }
+    
+    private string _HWIdString = "";
+    public string HWIdString
+    {
+        get => Cfg.GetCVar(CVars.ForcedHWId);
+        set => _HWIdString = value;
+    }
 
     public bool MarseySlightOutOfDate
     {
@@ -216,6 +228,23 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             LI.Username = value;
         }
     }
+    
+    private void OnSetHWIdClick()
+    {
+        // Check if _HWIdString is a valid hex string (allowing empty string) and pad it if necessary
+        if (Regex.IsMatch(_HWIdString, "^[a-fA-F0-9]*$")) // '*' allows for zero or more characters
+        {
+        
+            Cfg.SetCVar(CVars.ForcedHWId, _HWIdString);
+            Cfg.CommitConfig();
+        }
+        else
+        {
+            Log.Warning("Passed HWId is not a valid hexadecimal string! Refusing to apply.");
+        }
+    }
+
+
     
     private void OnSetUsernameClick()
     {

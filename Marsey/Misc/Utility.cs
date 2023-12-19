@@ -21,12 +21,23 @@ public static class MarseyLogger
     /// </summary>
     /// <param name="logType">Log level</param>
     /// <param name="message">Log message</param>
-    public static void Log(MarseyLogger.LogType logType, string message)
+    public static void Log(LogType logType, string message)
     {
-        if (logType == MarseyLogger.LogType.DEBG && MarseyVars.DebugAllowed != true)
+        if (logType == LogType.DEBG && MarseyVars.DebugAllowed != true)
             return;
 
         SharedLog($"[{logType.ToString()}] {message}");
+    }
+    
+    /// <summary>
+    /// Ditto but specifying a system used
+    /// </summary>
+    public static void Log(LogType logType, string system, string message)
+    {
+        if (logType == LogType.DEBG && MarseyVars.DebugAllowed != true)
+            return;
+
+        SharedLog($"[{logType.ToString()}] [{system}] {message}");
     }
 
     /// <summary>

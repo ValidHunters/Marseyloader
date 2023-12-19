@@ -72,9 +72,6 @@
     <RobustLinkAssemblies Include="TerraFX.Interop.Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="../Marsey/**/*.cs" Exclude="../Marsey/**/obj/**/*.cs;../Marsey/**/bin/**/*.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="signing_key" />
     <Content Include="signing_key">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -82,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Harmony\Harmony\Harmony.csproj" />
+    <ProjectReference Include="..\Marsey\Marsey.csproj" />
   </ItemGroup>
   <Import Project="..\MSBuild\Robust.Trimming.targets" />
 </Project>

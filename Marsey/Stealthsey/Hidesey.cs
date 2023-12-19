@@ -7,6 +7,7 @@ using HarmonyLib;
 using Marsey.Config;
 using Marsey.Handbrake;
 using Marsey.Misc;
+using Marsey.Stealthsey.Game;
 using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Stealthsey;
@@ -86,8 +87,9 @@ public static class Hidesey
         Facade.Imposition("Marsey");
 
         Perjurize(); // Patch detection methods
-
+        
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Hidesey started. Running {MarseyVars.MarseyHide.ToString()} configuration.");
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Retrying.");
     }
 
     /// <summary>
@@ -106,13 +108,26 @@ public static class Hidesey
             ("MonoMod.Iced", false),
             ("System.Reflection.Emit,", false),
             ("Marsey", false),
-            ("Harmony", false)
+            ("Harmony", true)
         };
 
         foreach ((string assembly, bool recursive) in assembliesToHide)
         {
             Hide(assembly, recursive);
         }
+    }
+
+    /// <summary>
+    /// This gets executed after game assemblies have been loaded into the appdomain
+    /// Requires Normal or above MarseyHide
+    /// </summary>
+    [HideLevelRequirement(HideLevel.Normal)]
+    public static void PostLoad()
+    {
+        HWID.Force();
+        
+        // Cleanup
+        Disperse();
     }
 
     /// <summary>

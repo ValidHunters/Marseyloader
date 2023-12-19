@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using HarmonyLib;
@@ -13,25 +14,29 @@ namespace Marsey.Stealthsey;
 /// </summary>
 public static class Redial
 {
-    private static Delegate[]? _phonebook;
-    
+    private static readonly string EventFieldName = "AssemblyLoad";
+    private static Delegate[] _phonebook = Array.Empty<Delegate>();
+
+    private static Delegate[] Phonebook
+    {
+        get => _phonebook;
+        set => _phonebook = value ?? Array.Empty<Delegate>();
+    }
+
     /// <summary>
     /// Disables AssemblyLoad Callbacks in CurrentDomain
     /// </summary>
     [HideLevelRequirement(HideLevel.Normal)]
     public static void Disable()
     {
-        MethodInfo prefix =
-            typeof(HideseyPatches)
-                .GetMethod("Skip", BindingFlags.Public | BindingFlags.Static)!;
-        
-        _phonebook = FillPhonebook();
+        MethodInfo prefix = typeof(HideseyPatches)
+            .GetMethod("Skip", BindingFlags.Public | BindingFlags.Static)!;
 
-        if (_phonebook == null) return;
-        
-        foreach (Delegate dial in _phonebook)
+        Phonebook = FillPhonebook();
+
+        foreach (Delegate dial in Phonebook)
         {
-            Manual.Patch(dial.Method, prefix, HarmonyPatchType.Prefix); // skip
+            Manual.Patch(dial.Method, prefix, HarmonyPatchType.Prefix);
         }
     }
 
@@ -40,9 +45,7 @@ public static class Redial
     /// </summary>
     public static void Enable()
     {
-        if (_phonebook == null) return;
-        
-        foreach (Delegate dial in _phonebook)
+        foreach (Delegate dial in Phonebook)
         {
             Manual.Unpatch(dial.Method, HarmonyPatchType.Prefix);
         }
@@ -51,17 +54,24 @@ public static class Redial
     /// <summary>
     /// Returns a list of AssemblyLoad delegates
     /// </summary>
-    private static Delegate[]? FillPhonebook()
+    private static Delegate[] FillPhonebook()
     {
-        FieldInfo? fInfo = typeof(AssemblyLoadContext).GetField("AssemblyLoad", BindingFlags.Static | BindingFlags.NonPublic);
+        FieldInfo? fInfo = typeof(AssemblyLoadContext).GetField(EventFieldName, BindingFlags.Static | BindingFlags.NonPublic);
 
         MulticastDelegate? eventDelegate = (MulticastDelegate?)fInfo?.GetValue(AppDomain.CurrentDomain);
 
-        if (eventDelegate == null) return null; // If event delegate is null we don't even have one
-        
+        if (eventDelegate == null)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "No AssemblyLoad delegates found.");
+            return Array.Empty<Delegate>();
+        }
+
         Delegate[] delegates = eventDelegate.GetInvocationList();
 
-        if (delegates != _phonebook) MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Redialing {delegates.Length} delegates.");
+        if (!delegates.SequenceEqual(Phonebook))
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Redialing {delegates.Length} delegates.");
+        }
 
         return delegates;
     }

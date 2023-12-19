@@ -92,6 +92,11 @@ public static class CVars
     /// Currently selected login in the drop down.
     /// </summary>
     public static readonly CVarDef<string> SelectedLogin = CVarDef.Create("SelectedLogin", "");
+
+    /// <summary>
+    /// HWId to use on servers
+    /// </summary>
+    public static readonly CVarDef<string> ForcedHWId = CVarDef.Create("ForcedHWId", "");
     
     /// <summary>
     /// Enable MarseyApi

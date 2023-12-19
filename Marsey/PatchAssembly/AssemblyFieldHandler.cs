@@ -179,6 +179,11 @@ public static class AssemblyFieldHandler
         description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
     }
 
+    public static List<Assembly?> GetGameAssemblies()
+    {
+        return [_robustAss, _robustSharedAss, _clientAss, _clientSharedAss];
+    }
+    
     /// <summary>
     /// Checks if GameAssemblyManager has finished capturing assemblies
     /// </summary>

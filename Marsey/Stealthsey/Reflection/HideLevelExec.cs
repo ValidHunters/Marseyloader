@@ -54,7 +54,7 @@ public static class HideLevelExec
 
         if (hideLevelRequirement == null && hideLevelRestriction == null) return;
         
-        MethodInfo? prefix = typeof(HideseyPatches).GetMethod("LevelCheck", BindingFlags.NonPublic | BindingFlags.Static);
+        MethodInfo? prefix = typeof(HideseyPatches).GetMethod("LevelCheck", BindingFlags.Public | BindingFlags.Static);
         Manual.Patch(method, prefix, HarmonyPatchType.Prefix);
     }
 }

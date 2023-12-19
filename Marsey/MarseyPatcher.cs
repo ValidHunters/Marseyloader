@@ -9,6 +9,7 @@ using Marsey.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 using Marsey.Misc;
+using Marsey.Stealthsey.Game;
 
 namespace Marsey;
 
@@ -77,6 +78,9 @@ public class MarseyPatcher
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
         AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
+        
+        // Post assembly-load hide methods
+        Hidesey.PostLoad();
 
         // Prepare marseypatches
         FileHandler.LoadAssemblies(marserializer: true, filename: Marsyfier.MarserializerFile);
@@ -90,7 +94,5 @@ public class MarseyPatcher
             // Execute patches
             GamePatcher.Patch(patches);
         }
-
-        Hidesey.Disperse();
     }
 }
