@@ -186,7 +186,17 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         get => Cfg.GetCVar(CVars.MarseyApiEndpoint);
         set => _endpoint = value;
     }
-    
+
+    public bool ForcingHWid
+    {
+        get => Cfg.GetCVar(CVars.ForcingHWId);
+        set
+        {
+            Cfg.SetCVar(CVars.ForcingHWId, value);
+            Cfg.CommitConfig();
+        }
+    }
+
     private string _HWIdString = "";
     public string HWIdString
     {

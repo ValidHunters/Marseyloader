@@ -94,6 +94,11 @@ public static class CVars
     public static readonly CVarDef<string> SelectedLogin = CVarDef.Create("SelectedLogin", "");
 
     /// <summary>
+    /// Do we force hwid change
+    /// </summary>
+    public static readonly CVarDef<bool> ForcingHWId = CVarDef.Create("ForcingHWId", false);
+    
+    /// <summary>
     /// HWId to use on servers
     /// </summary>
     public static readonly CVarDef<string> ForcedHWId = CVarDef.Create("ForcedHWId", "");

@@ -45,7 +45,7 @@ public abstract class MarseyVars
     /// Log patcher output to separate file
     /// </summary>
     public static bool SeparateLogger;
-    
+
     /// <summary>
     /// Log identified for marseyloader
     /// </summary>

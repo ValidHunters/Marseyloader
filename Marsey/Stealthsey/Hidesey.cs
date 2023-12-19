@@ -118,16 +118,22 @@ public static class Hidesey
     }
 
     /// <summary>
-    /// This gets executed after game assemblies have been loaded into the appdomain
-    /// Requires Normal or above MarseyHide
+    /// This gets executed after game assemblies have been loaded into the appdomain.
     /// </summary>
-    [HideLevelRequirement(HideLevel.Normal)]
     public static void PostLoad()
     {
         HWID.Force();
         
         // Cleanup
         Disperse();
+    }
+
+    /// <summary>
+    /// This gets executed after MarseyPatcher finished its job.
+    /// </summary>
+    public static void Cleanup()
+    {
+        // Include methods here if needed
     }
 
     /// <summary>

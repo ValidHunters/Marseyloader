@@ -118,7 +118,9 @@
                             <TextBlock FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"
                                        Text="This is easy to detect."/>
                         </StackPanel>
+                        
                         <TextBlock Margin="4, 0" Text="HWID" Classes="NanoHeadingMedium" />
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForcingHWid}">Force HWId</CheckBox>
                         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
                                        Text="Change your hwid. Can be set to be empty or any hexadecimal string."
@@ -126,6 +128,7 @@
                             <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="HWIdTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding HWIdString}"/>
                             <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set Username" Command="{Binding SetHWIdCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
+                        
                         <TextBlock Margin="4, 0" Text="MarseyApi" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyApi}">Enabled</CheckBox>
                         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
@@ -135,6 +138,7 @@
                             <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="MarseyApiEndpoint" VerticalAlignment="Center" Margin="4" Text="{Binding MarseyApiEndpoint}"/>
                             <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set API URL" Command="{Binding SetEndpointCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
+                        
                         <TextBlock Margin="4, 0" Text="Misc" Classes="NanoHeadingMedium" />
                         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"

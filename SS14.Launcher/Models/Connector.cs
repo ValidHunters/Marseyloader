@@ -463,7 +463,10 @@ public class Connector : ReactiveObject
         startInfo.EnvironmentVariables["MARSEY_SUBVERTER"] = MarseyVars.Subverter ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyVars.SeparateLogger ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_HIDE_LEVEL"] = $"{_cfg.GetCVar(CVars.MarseyHide)}";
+
+        startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
+        
         startInfo.EnvironmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
     }
     

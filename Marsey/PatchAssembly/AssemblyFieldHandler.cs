@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Marsey.GameAssembly;
 using Marsey.Patches;
 using Marsey.Misc;
 
@@ -11,29 +12,6 @@ namespace Marsey.PatchAssembly;
 /// </summary>
 public static class AssemblyFieldHandler
 {
-    private static Assembly? _robustAss;
-    private static Assembly? _clientAss;
-    private static Assembly? _robustSharedAss;
-    private static Assembly? _clientSharedAss;
-
-    /// <summary>
-    /// Sets Robust.Client assembly in class
-    /// </summary>
-    public static void Init(Assembly? RobustClient)
-    {
-        _robustAss = RobustClient;
-    }
-
-    /// <summary>
-    /// Sets other assemblies to fields in class
-    /// </summary>
-    public static void SetAssemblies(Assembly? clientAss, Assembly? robustSharedAss, Assembly? clientSharedAss)
-    {
-        _clientAss = clientAss;
-        _robustSharedAss = robustSharedAss;
-        _clientSharedAss = clientSharedAss;
-    }
-
     /// <summary>
     /// Initializes logger class in patches that have it.
     /// Executed only by the loader.
@@ -112,10 +90,10 @@ public static class AssemblyFieldHandler
     /// <param name="targets">Array of assemblies from the MarseyPatch class</param>
     public static void SetAssemblyTargets(List<FieldInfo> targets)
     {
-        targets[0].SetValue(null, _robustAss);
-        targets[1].SetValue(null,_robustSharedAss);
-        targets[2].SetValue(null,_clientAss);
-        targets[3].SetValue(null,_clientSharedAss);
+        targets[0].SetValue(null, GameAssemblies.RobustClient);
+        targets[1].SetValue(null,GameAssemblies.RobustShared);
+        targets[2].SetValue(null,GameAssemblies.ContentClient);
+        targets[3].SetValue(null,GameAssemblies.ContentShared);
     }
 
     /// <summary>
@@ -124,7 +102,7 @@ public static class AssemblyFieldHandler
     /// <param name="target">MarseyPatch.RobustClient from a patch assembly</param>
     public static void SetPreloadTarget(FieldInfo target)
     {
-        target.SetValue(null, _robustAss);
+        target.SetValue(null, GameAssemblies.RobustClient);
     }
 
     /// <summary>
@@ -178,19 +156,4 @@ public static class AssemblyFieldHandler
         name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
         description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
     }
-
-    public static List<Assembly?> GetGameAssemblies()
-    {
-        return [_robustAss, _robustSharedAss, _clientAss, _clientSharedAss];
-    }
-    
-    /// <summary>
-    /// Checks if GameAssemblyManager has finished capturing assemblies
-    /// </summary>
-    /// <returns>True if any of the assemblies are filled</returns>
-    public static bool ClientInitialized()
-    {
-        return _clientAss != null || _clientSharedAss != null;
-    }
-
 }

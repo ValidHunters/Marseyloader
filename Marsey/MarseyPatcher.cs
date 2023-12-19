@@ -46,8 +46,8 @@ public class MarseyPatcher
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
         
-        // Initialize FieldHandler
-        AssemblyFieldHandler.Init(robClientAssembly);
+        // Initialize GameAssemblies
+        GameAssemblies.Initialize(robClientAssembly);
         
         // Initialize loader
         Utility.SetupFlags();
@@ -77,7 +77,7 @@ public class MarseyPatcher
 
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
-        AssemblyFieldHandler.SetAssemblies(clientAss, robustSharedAss, clientSharedAss);
+        GameAssemblies.AssignAssemblies(robustSharedAss, clientAss, clientSharedAss);
         
         // Post assembly-load hide methods
         Hidesey.PostLoad();
@@ -94,5 +94,7 @@ public class MarseyPatcher
             // Execute patches
             GamePatcher.Patch(patches);
         }
+        
+        Hidesey.Cleanup();
     }
 }
