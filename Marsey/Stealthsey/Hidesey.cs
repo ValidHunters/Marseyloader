@@ -123,6 +123,7 @@ public static class Hidesey
     public static void PostLoad()
     {
         HWID.Force();
+        DiscordRPC.Disable();
         
         // Cleanup
         Disperse();

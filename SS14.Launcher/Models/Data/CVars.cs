@@ -96,6 +96,11 @@ public static class CVars
     /// <summary>
     /// Do we force hwid change
     /// </summary>
+    public static readonly CVarDef<bool> DisableRPC = CVarDef.Create("DisableRPC", false);
+    
+    /// <summary>
+    /// Do we force hwid change
+    /// </summary>
     public static readonly CVarDef<bool> ForcingHWId = CVarDef.Create("ForcingHWId", false);
     
     /// <summary>

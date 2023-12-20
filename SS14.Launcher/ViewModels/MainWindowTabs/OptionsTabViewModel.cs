@@ -187,6 +187,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         set => _endpoint = value;
     }
 
+    public bool DisableRPC
+    {
+        get => Cfg.GetCVar(CVars.DisableRPC);
+        set
+        {
+            Cfg.SetCVar(CVars.DisableRPC, value);
+            Cfg.CommitConfig();
+        }
+    }
+
     public bool ForcingHWid
     {
         get => Cfg.GetCVar(CVars.ForcingHWId);

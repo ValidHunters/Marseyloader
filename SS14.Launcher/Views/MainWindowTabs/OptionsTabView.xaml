@@ -83,6 +83,20 @@
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
+                        
+                        <TextBlock Margin="4, 0" Text="Game" Classes="NanoHeadingMedium" />
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DisableRPC}">Disable RPC</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Does not let Discord RPC initialize, hiding your username and server from your profile."
+                                   Margin="8" />
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForcingHWid}">Force HWId</CheckBox>
+                        <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
+                                       Text="Change your hwid. Can be set to be empty or any hexadecimal string."
+                                       Margin="8"/>
+                            <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="HWIdTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding HWIdString}"/>
+                            <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set Username" Command="{Binding SetHWIdCommand}" VerticalAlignment="Center" Margin="4"/>
+                        </Grid>
 
                         <TextBlock Margin="4, 0" Text="Patching" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ThrowPatchFail}">Except On Patch Fail</CheckBox>
@@ -91,14 +105,17 @@
                                    Margin="8" />
                         
                         <TextBlock Margin="4, 0" Text="Hide Level" Classes="NanoHeadingMedium" />
-                        <ComboBox VerticalAlignment="Center" Margin="4" Items="{Binding HideLevels}" SelectedItem="{Binding HideLevel}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding HideLevel, Converter={StaticResource HideLevelDescriptionConverter}}" Margin="8" />
+                        <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Sets degree to which Marsey hides itself</TextBlock>
+                            <ComboBox Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="4" Items="{Binding HideLevels}" SelectedItem="{Binding HideLevel}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding HideLevel, Converter={StaticResource HideLevelDescriptionConverter}}" Margin="8" />
+                        </Grid>
                         
                         <TextBlock Margin="4, 0" Text="Logging" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patcher</CheckBox>
@@ -118,16 +135,6 @@
                             <TextBlock FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"
                                        Text="This is easy to detect."/>
                         </StackPanel>
-                        
-                        <TextBlock Margin="4, 0" Text="HWID" Classes="NanoHeadingMedium" />
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForcingHWid}">Force HWId</CheckBox>
-                        <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
-                                       Text="Change your hwid. Can be set to be empty or any hexadecimal string."
-                                       Margin="8"/>
-                            <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="HWIdTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding HWIdString}"/>
-                            <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set Username" Command="{Binding SetHWIdCommand}" VerticalAlignment="Center" Margin="4"/>
-                        </Grid>
                         
                         <TextBlock Margin="4, 0" Text="MarseyApi" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyApi}">Enabled</CheckBox>

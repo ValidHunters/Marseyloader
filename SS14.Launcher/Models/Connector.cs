@@ -421,6 +421,7 @@ public class Connector : ReactiveObject
         var engineVersion = launchInfo.ModuleInfo.Single(x => x.Module == "Robust").Version;
         var startInfo = await GetLoaderStartInfo(engineVersion, launchInfo.Version, env);
 
+        ConfigureMarsey(startInfo);
         Marsify();
         
         ConfigureEnvironmentVariables(startInfo, launchInfo, engineVersion);
@@ -457,16 +458,6 @@ public class Connector : ReactiveObject
     
         // Set other necessary environment variables.
         startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = _cfg.GetCVar(CVars.DisableSigning) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_LOADER_DEBUG"] = _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_LOGGING"] = _cfg.GetCVar(CVars.LogPatcher) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_SUBVERTER"] = MarseyVars.Subverter ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyVars.SeparateLogger ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_HIDE_LEVEL"] = $"{_cfg.GetCVar(CVars.MarseyHide)}";
-
-        startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
-        
         startInfo.EnvironmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
     }
     
@@ -485,13 +476,12 @@ public class Connector : ReactiveObject
     
     private void SetDynamicPgo(ProcessStartInfo startInfo)
     {
-        if (_cfg.GetCVar(CVars.DynamicPgo))
-        {
-            Log.Debug("Dynamic PGO is enabled.");
-            startInfo.EnvironmentVariables["DOTNET_TieredPGO"] = "1";
-            startInfo.EnvironmentVariables["DOTNET_TC_QuickJitForLoops"] = "1";
-            startInfo.EnvironmentVariables["DOTNET_ReadyToRun"] = "0";
-        }
+        if (!_cfg.GetCVar(CVars.DynamicPgo)) return;
+        
+        Log.Debug("Dynamic PGO is enabled.");
+        startInfo.EnvironmentVariables["DOTNET_TieredPGO"] = "1";
+        startInfo.EnvironmentVariables["DOTNET_TC_QuickJitForLoops"] = "1";
+        startInfo.EnvironmentVariables["DOTNET_ReadyToRun"] = "0";
     }
     
     private void UnfuckGlibcLinux(ProcessStartInfo startInfo)
@@ -566,7 +556,27 @@ public class Connector : ReactiveObject
 
         return startInfo;
     }
-
+    
+    private void ConfigureMarsey(ProcessStartInfo startInfo)
+    {
+        // Logging
+        startInfo.EnvironmentVariables["MARSEY_LOADER_DEBUG"] = _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_LOGGING"] = _cfg.GetCVar(CVars.LogPatcher) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyVars.SeparateLogger ? "true" : null;
+        
+        // Safety
+        startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_HIDE_LEVEL"] = $"{_cfg.GetCVar(CVars.MarseyHide)}";
+        
+        // Game
+        startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
+        startInfo.EnvironmentVariables["MARSEY_DISABLE_PRESENCE"] = _cfg.GetCVar(CVars.DisableRPC) ? "true" : null;
+        
+        // Subversion
+        startInfo.EnvironmentVariables["MARSEY_SUBVERTER"] = MarseyVars.Subverter ? "true" : null;
+    }
+    
     private void Marsify()
     {
         Log.Debug("Preparing patch assemblies.");
