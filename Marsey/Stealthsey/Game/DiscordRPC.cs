@@ -3,7 +3,6 @@ using HarmonyLib;
 using Marsey.GameAssembly;
 using Marsey.Handbrake;
 using Marsey.Misc;
-using static System.Boolean;
 
 namespace Marsey.Stealthsey.Game;
 
@@ -31,9 +30,9 @@ public static class DiscordRPC
     private static bool CheckEnv()
     {
         bool toggle;
-        string envVal = Environment.GetEnvironmentVariable(EnvName);
+        string? envVal = Environment.GetEnvironmentVariable(EnvName);
         Envsey.CleanFlag(EnvName);
-        TryParse(envVal, out toggle);
+        bool.TryParse(envVal, out toggle);
         return toggle;
     }
 }
