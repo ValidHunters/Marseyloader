@@ -22,7 +22,6 @@ public static class HWID
     /// Patching the HWId function and replacing it with a custom HWId.
     /// </summary>
     /// <remarks>Requires Normal or above MarseyHide</remarks>
-    [HideLevelRequirement(HideLevel.Normal)]
     public static void Force()
     {
         /// Only accepts a hexidecimal string, so you don't get to write "FUCK YOU PJB/SLOTH/RANE/MOONY/FAYE/SMUG/EXEC/ALLAH/EMO/ONIKS/MORTY".
@@ -42,7 +41,7 @@ public static class HWID
 
     private static bool IsForcingEnabled()
     {
-        string envVar = Environment.GetEnvironmentVariable(ForcingEnvName);
+        string? envVar = Environment.GetEnvironmentVariable(ForcingEnvName);
         return !string.IsNullOrEmpty(envVar) && bool.Parse(envVar);
     }
 
