@@ -67,7 +67,7 @@ public class MarseyPatcher
     {
         // Preload marseypatches, if available
         Marsyfier.Preload();
-
+        
         // Initialize subverter if enabled and present
         if (MarseyVars.Subverter && Subverse.InitSubverter())
         {

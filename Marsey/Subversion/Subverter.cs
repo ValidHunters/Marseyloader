@@ -4,6 +4,8 @@ using System.Reflection;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Misc;
+using Marsey.Stealthsey;
+using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Subversion;
 
@@ -13,6 +15,17 @@ namespace Marsey.Subversion;
 public static class Subverter
 {
     public const string MarserializerFile = "subversion.marsey";
+
+    /// <summary>
+    /// Hides a subversion module from the game
+    /// </summary>
+    /// <remarks>Assigned to a delegate in Subverter.dll</remarks>
+    [HideLevelRequirement(HideLevel.Unconditional)]
+    private static void Hide(Assembly asm)
+    {
+        Hidesey.HidePatch(asm);
+    }
+    
     public static List<SubverterPatch> GetSubverterPatches() => PatchListManager.GetPatchList<SubverterPatch>();
 }
 

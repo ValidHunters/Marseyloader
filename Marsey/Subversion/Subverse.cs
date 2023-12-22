@@ -35,9 +35,42 @@ public static class Subverse
         if (subverterPatch == null) return false;
         
         AssignSubverter(subverterPatch);
+        SetHidesey();
         patches.Clear();
         
         return true;
+    }
+
+    private static void SetHidesey()
+    {
+        if (_subverter == null) return;
+        
+        Type? subverterPatchType = _subverter.Asm.GetType("SubverterPatch");
+        MethodInfo? hideMethod = typeof(Subverter).GetMethod("Hide", BindingFlags.NonPublic | BindingFlags.Static);
+        FieldInfo? hideDelegateField = subverterPatchType?.GetField("hideDelegate", BindingFlags.Public | BindingFlags.Static);
+
+        if (subverterPatchType == null || hideMethod == null || hideDelegateField == null)
+        {
+            List<string> missingComps = new List<string>();
+            if (subverterPatchType == null) missingComps.Add("subverterPatchType");
+            if (hideMethod == null) missingComps.Add("hideMethod");
+            if (hideDelegateField == null) missingComps.Add("hideDelegateField");
+
+            string missingCompStr = string.Join(", ", missingComps);
+
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to connect patch to subverter. Missing components: {missingCompStr}.");
+            return;
+        }
+        
+        try
+        {
+            Delegate logDelegate = Delegate.CreateDelegate(hideDelegateField.FieldType, hideMethod);
+            hideDelegateField.SetValue(null, logDelegate);
+        }
+        catch (Exception e)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to to assign hide delegate: {e.Message}");
+        }
     }
 
 
@@ -46,7 +79,6 @@ public static class Subverse
     /// Used by the launcher to determine if it should load subversions
     /// </summary>
     /// <remarks>If MarseyHide is set to unconditional - defaults to false</remarks>
-    [HideLevelRestriction(HideLevel.Unconditional)]
     public static void CheckEnabled()
     {
         List<SubverterPatch> patches = Subverter.GetSubverterPatches();

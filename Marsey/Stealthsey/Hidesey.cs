@@ -49,7 +49,7 @@ public enum HideLevel
     /// <summary>
     /// Patcher, patches are hidden.
     /// Separate patch logging is disabled.
-    /// Subversion is disabled.
+    /// Subversion patches are hidden and cannot be reflected by the game.
     /// </summary>
     Unconditional = 4
 }
