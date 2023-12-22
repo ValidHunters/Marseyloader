@@ -421,8 +421,8 @@ public class Connector : ReactiveObject
         var engineVersion = launchInfo.ModuleInfo.Single(x => x.Module == "Robust").Version;
         var startInfo = await GetLoaderStartInfo(engineVersion, launchInfo.Version, env);
 
-        ConfigureMarsey(startInfo);
         Marsify();
+        ConfigureMarsey(startInfo);
         
         ConfigureEnvironmentVariables(startInfo, launchInfo, engineVersion);
         ConfigureLogging(startInfo);

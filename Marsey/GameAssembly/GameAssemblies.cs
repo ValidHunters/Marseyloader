@@ -17,7 +17,7 @@ public static class GameAssemblies
         _robustClient = RobustClient;
     }
 
-    public static void AssignAssemblies(Assembly robustShared, Assembly contentClient, Assembly contentShared)
+    public static void AssignAssemblies(Assembly? robustShared, Assembly? contentClient, Assembly? contentShared)
     {
         _robustShared = robustShared;
         _contentClient = contentClient;
