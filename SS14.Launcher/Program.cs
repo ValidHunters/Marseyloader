@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Logging;
+using Avalonia.Media;
 using Avalonia.ReactiveUI;
 using Serilog;
 using Splat;
@@ -221,6 +222,11 @@ internal static class Program
 
         return AppBuilder.Configure(() => new App(overrideAssets))
             .UsePlatformDetect()
+            .With(new FontManagerOptions
+            {
+                // Necessary workaround for #84 on Linux
+                DefaultFamilyName = "avares://SS14.Launcher/Assets/Fonts/noto_sans/*.ttf#Noto Sans"
+            })
             .UseReactiveUI();
     }
 
