@@ -42,6 +42,21 @@ public static class CVars
     public static readonly CVarDef<bool> DisableSigning = CVarDef.Create("DisableSigning", false);
 
     /// <summary>
+    /// Enable local overriding of engine versions.
+    /// </summary>
+    /// <remarks>
+    /// If enabled and on a development build,
+    /// the launcher will pull all engine versions and modules from <see cref="EngineOverridePath"/>.
+    /// This can be set to <c>RobustToolbox/release/</c> to instantly pull in packaged engine builds.
+    /// </remarks>
+    public static readonly CVarDef<bool> EngineOverrideEnabled = CVarDef.Create("EngineOverrideEnabled", false);
+
+    /// <summary>
+    /// Path to load engines from when using <see cref="EngineOverrideEnabled"/>.
+    /// </summary>
+    public static readonly CVarDef<string> EngineOverridePath = CVarDef.Create("EngineOverridePath", "");
+
+    /// <summary>
     /// Enable logging of launched client instances to file.
     /// </summary>
     public static readonly CVarDef<bool> LogClient = CVarDef.Create("LogClient", false);

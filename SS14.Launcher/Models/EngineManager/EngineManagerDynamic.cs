@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
@@ -23,6 +24,8 @@ namespace SS14.Launcher.Models.EngineManager;
 /// </summary>
 public sealed class EngineManagerDynamic : IEngineManager
 {
+    public const string OverrideVersionName = "_OVERRIDE_";
+
     private readonly DataManager _cfg;
     private readonly HttpClient _http;
 
@@ -34,6 +37,13 @@ public sealed class EngineManagerDynamic : IEngineManager
 
     public string GetEnginePath(string engineVersion)
     {
+#if DEVELOPMENT
+        if (_cfg.GetCVar(CVars.EngineOverrideEnabled))
+        {
+            return FindOverrideZip("Robust.Client", _cfg.GetCVar(CVars.EngineOverridePath));
+        }
+#endif
+
         if (!_cfg.EngineInstallations.Lookup(engineVersion).HasValue)
         {
             throw new ArgumentException("We do not have that engine version!");
@@ -44,11 +54,21 @@ public sealed class EngineManagerDynamic : IEngineManager
 
     public string GetEngineModule(string moduleName, string moduleVersion)
     {
+#if DEVELOPMENT
+        if (_cfg.GetCVar(CVars.EngineOverrideEnabled))
+            moduleVersion = OverrideVersionName;
+#endif
+
         return Path.Combine(LauncherPaths.DirModuleInstallations, moduleName, moduleVersion);
     }
 
     public string GetEngineSignature(string engineVersion)
     {
+#if DEVELOPMENT
+        if (_cfg.GetCVar(CVars.EngineOverrideEnabled))
+            return "DEADBEEF";
+#endif
+
         return _cfg.EngineInstallations.Lookup(engineVersion).Value.Signature;
     }
 
@@ -57,6 +77,15 @@ public sealed class EngineManagerDynamic : IEngineManager
         Helpers.DownloadProgressCallback? progress = null,
         CancellationToken cancel = default)
     {
+#if DEVELOPMENT
+        if (_cfg.GetCVar(CVars.EngineOverrideEnabled))
+        {
+            // Engine override means we don't need to download anything, we have it locally!
+            // At least, if we don't, we'll just blame the developer that enabled it.
+            return false;
+        }
+#endif
+
         if (_cfg.EngineInstallations.Lookup(engineVersion).HasValue)
         {
             // Already have the engine version, we're good.
@@ -122,6 +151,16 @@ public sealed class EngineManagerDynamic : IEngineManager
         Helpers.DownloadProgressCallback? progress = null,
         CancellationToken cancel = default)
     {
+#if DEVELOPMENT
+        if (_cfg.GetCVar(CVars.EngineOverrideEnabled))
+        {
+            // For modules we have to extract them from the zip to disk first.
+            // So it's a little more involved than just giving a different zip path to the launch code.
+            await CopyOverrideModule(moduleName);
+            return true;
+        }
+#endif
+
         // Currently the module handling code assumes all modules need straight extract to disk.
         // This works for CEF, but who knows what the future might hold?
 
@@ -151,16 +190,13 @@ public sealed class EngineManagerDynamic : IEngineManager
 
         Log.Debug("Downloading module: {EngineDownloadUrl}", platformData.Url);
 
-        var moduleDiskPath = Path.Combine(LauncherPaths.DirModuleInstallations, moduleName);
-        var moduleVersionDiskPath = Path.Combine(moduleDiskPath, moduleVersion);
+        GetModulePaths(
+            moduleName,
+            moduleVersion,
+            out var moduleDiskPath,
+            out var moduleVersionDiskPath);
 
-        await Task.Run(() =>
-        {
-            // Avoid disk IO hang.
-            Helpers.EnsureDirectoryExists(moduleDiskPath);
-            Helpers.EnsureDirectoryExists(moduleVersionDiskPath);
-            Helpers.ClearDirectory(moduleVersionDiskPath);
-        }, CancellationToken.None);
+        await ClearModuleDir(moduleDiskPath, moduleVersionDiskPath);
 
         {
             await using var tempFile = TempFile.CreateTempFile();
@@ -193,18 +229,7 @@ public sealed class EngineManagerDynamic : IEngineManager
             // CEF is so horrifically huge I'm enabling disk compression on it.
             Helpers.MarkDirectoryCompress(moduleVersionDiskPath);
 
-            Helpers.ExtractZipToDirectory(moduleVersionDiskPath, tempFile);
-
-            // Chmod required files.
-            if (OperatingSystem.IsLinux())
-            {
-                switch (moduleName)
-                {
-                    case "Robust.Client.WebView":
-                        Helpers.ChmodPlusX(Path.Combine(moduleVersionDiskPath, "Robust.Client.WebView"));
-                        break;
-                }
-            }
+            ExtractModule(moduleName, moduleVersionDiskPath, tempFile);
         }
 
         _cfg.AddEngineModule(new InstalledEngineModule(moduleName, moduleVersion));
@@ -213,6 +238,61 @@ public sealed class EngineManagerDynamic : IEngineManager
         Log.Debug("Done installing module!");
 
         return true;
+
+    }
+
+    private async Task CopyOverrideModule(string name)
+    {
+        GetModulePaths(
+            name,
+            OverrideVersionName,
+            out var modPath,
+            out var modVersionPath);
+
+        await ClearModuleDir(modPath, modVersionPath);
+
+        var zipPath = FindOverrideZip(name, _cfg.GetCVar(CVars.EngineOverridePath));
+        using var zip = File.OpenRead(zipPath);
+
+        // Note: not marking directory as compressed since it would take a while to start.
+        ExtractModule(name, modVersionPath, zip);
+    }
+
+    private static void GetModulePaths(
+        string module,
+        string version,
+        out string moduleDiskPath,
+        out string moduleVersionDiskPath)
+    {
+        moduleDiskPath = Path.Combine(LauncherPaths.DirModuleInstallations, module);
+        moduleVersionDiskPath = Path.Combine(moduleDiskPath, version);
+    }
+
+    private static async Task ClearModuleDir(string modDiskPath, string modVersionDiskPath)
+    {
+        await Task.Run(() =>
+        {
+            // Avoid disk IO hang.
+            Helpers.EnsureDirectoryExists(modDiskPath);
+            Helpers.EnsureDirectoryExists(modVersionDiskPath);
+            Helpers.ClearDirectory(modVersionDiskPath);
+        }, CancellationToken.None);
+    }
+
+    private static void ExtractModule(string moduleName, string moduleVersionDiskPath, FileStream tempFile)
+    {
+        Helpers.ExtractZipToDirectory(moduleVersionDiskPath, tempFile);
+
+        // Chmod required files.
+        if (OperatingSystem.IsLinux())
+        {
+            switch (moduleName)
+            {
+                case "Robust.Client.WebView":
+                    Helpers.ChmodPlusX(Path.Combine(moduleVersionDiskPath, "Robust.Client.WebView"));
+                    break;
+            }
+        }
     }
 
     private static unsafe bool VerifyModuleSignature(FileStream stream, string signature)
@@ -319,6 +399,30 @@ public sealed class EngineManagerDynamic : IEngineManager
         }
 
         _cfg.CommitConfig();
+    }
+
+    private static string FindOverrideZip(string name, string dir)
+    {
+        var foundRids = new List<string>();
+
+        var regex = new Regex(@$"^{Regex.Escape(name)}_([a-z\-\d]+)\.zip$");
+        foreach (var item in Directory.EnumerateFiles(dir))
+        {
+            var fileName = Path.GetFileName(item);
+            var match = regex.Match(fileName);
+            if (!match.Success)
+                continue;
+
+            foundRids.Add(match.Groups[1].Value);
+        }
+
+        var rid = RidUtility.FindBestRid(foundRids);
+        if (rid == null)
+            throw new UpdateException($"Unable to find overriden {name} for current platform");
+
+        var path = Path.Combine(dir, $"{name}_{rid}.zip");
+        Log.Warning("Using override for {Name}: {Path}", name, path);
+        return path;
     }
 
     private sealed class VersionInfo
