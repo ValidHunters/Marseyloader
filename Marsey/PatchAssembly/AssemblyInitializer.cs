@@ -94,10 +94,6 @@ public static class AssemblyInitializer
 
                 break;
             }
-            case "SubverterPatch" when Subverse.CheckSubverterPresent() && Subverse.CheckSubverterDuplicate(assembly):
-                MarseyLogger.Log(MarseyLogger.LogType.FATL, 
-                    $"{Path.GetFileName(assembly.Location)}: Tried to create a SubverterPatch with the same assembly as Subverter!");
-                return;
         }
 
         AssemblyFieldHandler.GetFields(dataType, out string name, out string description);

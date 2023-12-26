@@ -18,7 +18,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
     public class PatchesTabViewModel : MainWindowTabViewModel
     {
         public override string Name => "Plugins";
-        public bool SubverterPresent { get; set; }
         public ObservableCollection<MarseyPatch> MarseyPatches { get; } = new ObservableCollection<MarseyPatch>();
         public ObservableCollection<SubverterPatch> SubverterPatches { get; } = new ObservableCollection<SubverterPatch>();
 
@@ -26,7 +25,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         public PatchesTabViewModel()
         {
-            SubverterPresent = Subverse.CheckSubverterPresent();
             OpenPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.MarseyPatchFolder));
             LoadPatches();
         }
@@ -37,8 +35,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
             List<MarseyPatch> marseys = Marsyfier.GetMarseyPatches();
             LoadPatchList(marseys, MarseyPatches, "marseypatches");
-
-            if (!SubverterPresent) return;
 
             List<SubverterPatch> subverters = Subverter.GetSubverterPatches();
             LoadPatchList(subverters, SubverterPatches, "subverterpatches");
@@ -76,28 +72,6 @@ public class PathToFileNameConverter : IValueConverter
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return value;
-    }
-}
-
-public class BooleanToVisibilityConverter : IValueConverter
-{
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        if (value is bool booleanValue)
-        {
-            return booleanValue;
-        }
-        throw new InvalidOperationException("Invalid boolean value");
-    }
-
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        if (value == null) throw new ArgumentNullException(nameof(value));
-        if (value is bool visibilityValue)
-        {
-            return visibilityValue;
-        }
-        throw new InvalidOperationException("Invalid visibility value");
     }
 }
 
