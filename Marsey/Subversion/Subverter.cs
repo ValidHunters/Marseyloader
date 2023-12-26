@@ -35,6 +35,7 @@ public class SubverterPatch : IPatch
     public Assembly Asm { get; set; }
     public string Name { get; set; } 
     public string Desc { get; set; }
+    public MethodInfo? Entry { get; set; }
     public bool Enabled { get; set; }
     
     public SubverterPatch(string asmpath, Assembly asm, string name, string desc)

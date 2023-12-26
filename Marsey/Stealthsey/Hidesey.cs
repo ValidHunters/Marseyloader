@@ -89,7 +89,6 @@ public static class Hidesey
         Perjurize(); // Patch detection methods
         
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Hidesey started. Running {MarseyVars.MarseyHide.ToString()} configuration.");
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Retrying.");
     }
 
     /// <summary>

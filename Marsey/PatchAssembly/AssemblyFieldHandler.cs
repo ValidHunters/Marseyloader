@@ -13,25 +13,56 @@ namespace Marsey.PatchAssembly;
 public static class AssemblyFieldHandler
 {
     /// <summary>
-    /// Initializes logger class in patches that have it.
-    /// Executed only by the loader.
-    /// MarseyLogger example can be found in the BasePatch MarseyPatch example.
+    /// Initialize helper classes in patches
     /// </summary>
-    public static void InitLogger(List<MarseyPatch> patches)
+    public static void InitHelpers(IEnumerable<IPatch> patches)
     {
-        foreach (MarseyPatch patch in patches)
+        foreach (IPatch patch in patches)
         {
             Assembly assembly = patch.Asm;
-
-            // Check for a logger class
-            Type? marseyLoggerType = assembly.GetType("MarseyLogger");
-
-            if (marseyLoggerType != null)
-                SetupLogger(assembly);
-            else
-                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyLogger class");
+            string? assemblyName = assembly.GetName().Name;
+            
+            InitLogger(assembly, assemblyName);
+            InitEntry(assembly, patch, assemblyName);
         }
     }
+
+    /// <summary>
+    /// Initializes MarseyLogger
+    /// </summary>
+    private static void InitLogger(Assembly assembly, string? assemblyName)
+    {
+        Type? loggerType = assembly.GetType("MarseyLogger");
+        if (loggerType != null)
+        {
+            SetupLogger(assembly);
+        }
+        else
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no MarseyLogger class");
+        }
+    }
+
+    /// <summary>
+    /// Initializes MarseyEntry
+    /// </summary>
+    private static void InitEntry(Assembly assembly, IPatch patch, string? assemblyName)
+    {
+        Type? entryType = assembly.GetType("MarseyEntry");
+        if (entryType != null)
+        {
+            MethodInfo? entryMethod = GetEntry(assembly, entryType);
+            if (entryMethod != null)
+            {
+                patch.Entry = entryMethod;
+            }
+        }
+        else
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no MarseyEntry class");
+        }
+    }
+
 
     /// <summary>
     /// Obtains fields for each of the game's assemblies.
@@ -138,6 +169,15 @@ public static class AssemblyFieldHandler
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to to assign logger delegate: {e.Message}");
         }
+    }
+
+    /// <summary>
+    /// Get methodhandle for the entrypoint function in patch
+    /// </summary>
+    private static MethodInfo? GetEntry(Assembly patch, Type entryType)
+    {
+        MethodInfo? entry = entryType.GetMethod("Entry", BindingFlags.Public | BindingFlags.Static);
+        return entry;
     }
 
 

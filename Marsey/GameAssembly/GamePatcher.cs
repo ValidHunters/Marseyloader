@@ -33,6 +33,7 @@ public static class GamePatcher
         try
         {
             harmony.PatchAll(patch.Asm);
+            Doorbreak.Enter(patch.Entry);
         }
         catch (Exception e)
         {
