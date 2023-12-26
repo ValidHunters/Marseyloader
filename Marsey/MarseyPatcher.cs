@@ -89,7 +89,7 @@ public class MarseyPatcher
         if (patches.Count != 0)
         {
             // Connect patches to internal logger
-            AssemblyFieldHandler.InitLogger(patches);
+            AssemblyFieldHandler.InitHelpers(patches);
 
             // Execute patches
             GamePatcher.Patch(patches);

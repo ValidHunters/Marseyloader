@@ -32,15 +32,17 @@ public static class Marsyfier
 
         if (preloads == null || preloads.Count == 0) return;
         
-        MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Preloading {preloads.Count} patches");
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, "Preloader",$"Preloading {preloads.Count} patches.");
 
         foreach (string patch in preloads)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Preloading {patch}");
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG,"Preloader",$"Preloading {patch}");
             FileHandler.LoadExactAssembly(patch);
         }
 
         List<MarseyPatch> preloadedPatches = GetMarseyPatches();
+        
+        AssemblyFieldHandler.InitHelpers(preloadedPatches);
 
         if (preloadedPatches.Count != 0) GamePatcher.Patch(preloadedPatches);
         
@@ -58,6 +60,7 @@ public class MarseyPatch : IPatch
     public Assembly Asm { get; set; } // Assembly containing the patch
     public string Name { get; set; } // Patch's name
     public string Desc { get; set; } // Patch's description
+    public MethodInfo? Entry { get; set; } // Method to execute on patch, if available
     public bool Preload { get; set; } = false; // Is the patch getting loaded before game assemblies
     public bool Enabled { get; set; } // Is the patch enabled or not.
 

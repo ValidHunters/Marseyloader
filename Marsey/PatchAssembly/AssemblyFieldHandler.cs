@@ -13,25 +13,45 @@ namespace Marsey.PatchAssembly;
 public static class AssemblyFieldHandler
 {
     /// <summary>
-    /// Initializes logger class in patches that have it.
-    /// Executed only by the loader.
-    /// MarseyLogger example can be found in the BasePatch MarseyPatch example.
+    /// Initialize helper classes in patches
     /// </summary>
-    public static void InitLogger(List<MarseyPatch> patches)
+    public static void InitHelpers(IEnumerable<IPatch> patches)
     {
-        foreach (MarseyPatch patch in patches)
+        InitLoggerAndEntry(patches);
+    }
+    
+    /// <summary>
+    /// Initializes logger and entry classes in patches that have them.
+    /// Executed only by the loader.
+    /// </summary>
+    private static void InitLoggerAndEntry(IEnumerable<IPatch> patches)
+    {
+        foreach (IPatch patch in patches)
         {
             Assembly assembly = patch.Asm;
 
             // Check for a logger class
             Type? marseyLoggerType = assembly.GetType("MarseyLogger");
-
             if (marseyLoggerType != null)
                 SetupLogger(assembly);
             else
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyLogger class");
+
+            // Check for an entry class
+            Type? marseyEntryType = assembly.GetType("MarseyEntry");
+            if (marseyEntryType != null)
+            {
+                MethodInfo? entry = GetEntry(assembly, marseyEntryType);
+                if (entry != null) 
+                    patch.Entry = entry;
+            }
+            else
+            {
+                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyEntry class");
+            }
         }
     }
+
 
     /// <summary>
     /// Obtains fields for each of the game's assemblies.
@@ -138,6 +158,15 @@ public static class AssemblyFieldHandler
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to to assign logger delegate: {e.Message}");
         }
+    }
+
+    /// <summary>
+    /// Get methodhandle for the entrypoint function in patch
+    /// </summary>
+    private static MethodInfo? GetEntry(Assembly patch, Type entryType)
+    {
+        MethodInfo? entry = entryType.GetMethod("Entry", BindingFlags.Public | BindingFlags.Static);
+        return entry;
     }
 
 
