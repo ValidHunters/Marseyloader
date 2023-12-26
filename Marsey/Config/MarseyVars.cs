@@ -52,13 +52,6 @@ public abstract class MarseyVars
     public const string MarseyLoggerPrefix = "MARSEY";
 
     /// <summary>
-    /// Should code side-loading be enabled
-    /// This is only true if any subverter patch is enabled
-    /// <see cref="Subversion.Subverse.CheckEnabled"/>
-    /// </summary>
-    public static bool Subverter;
-
-    /// <summary>
     /// Should we log anything from the loader
     /// <see cref="Utility.SetupFlags"/>
     /// </summary>

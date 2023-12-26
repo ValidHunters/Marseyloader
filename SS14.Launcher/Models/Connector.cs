@@ -572,20 +572,12 @@ public class Connector : ReactiveObject
         startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
         startInfo.EnvironmentVariables["MARSEY_DISABLE_PRESENCE"] = _cfg.GetCVar(CVars.DisableRPC) ? "true" : null;
-        
-        // Subversion
-        startInfo.EnvironmentVariables["MARSEY_SUBVERTER"] = MarseyVars.Subverter ? "true" : null;
     }
     
     private void Marsify()
     {
         Log.Debug("Preparing patch assemblies.");
         FileHandler.PrepAssemblies();
-        
-        Subverse.CheckEnabled();
-        
-        if (MarseyVars.Subverter)
-            Log.Debug("Subverter enabled.");
     }
     
 

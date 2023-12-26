@@ -21,22 +21,13 @@ namespace Marsey.Subversion;
 /// </summary>
 public static class Subverse
 {
-    /// <summary>
-    /// Enables subverter if any of the of the subverter patches are enabled
-    /// Used by the launcher to determine if it should load subversions
-    /// </summary>
-    /// <remarks>If MarseyHide is set to unconditional - defaults to false</remarks>
-    public static void CheckEnabled()
+    private static List<string>? _subverters = null;
+    
+    public static bool CheckSubversions()
     {
-        List<SubverterPatch> patches = Subverter.GetSubverterPatches();
+        _subverters = Marserializer.Deserialize(new string[]{MarseyVars.MarseyPatchFolder}, Subverter.MarserializerFile);
 
-        if (patches.Any(p => p.Enabled))
-        {
-            MarseyVars.Subverter = true;
-            return;
-        }
-
-        MarseyVars.Subverter = false;
+        return _subverters != null && _subverters.Count != 0;
     }
     
     /// <summary>
@@ -58,7 +49,7 @@ public static class Subverse
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", "Detour");
         MethodInfo? loadGameAssemblyMethod = AccessTools.Method(AccessTools.TypeByName("Robust.Shared.ContentPack.BaseModLoader"), "InitMod");
     
-        foreach (string path in GetSubverters())
+        foreach (string path in _subverters!)
         {
             Assembly subverterAssembly = Assembly.LoadFrom(path);
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Sideloading {path}");
@@ -74,19 +65,6 @@ public static class Subverse
         return true;
     }
     
-    private static IEnumerable<string> GetSubverters()
-    {
-        string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Marsey");
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Loading from {directoryPath}");
-        
-        List<string> patches = Marserializer.Deserialize(new string[] { directoryPath }, Subverter.MarserializerFile) ?? new List<string>();
-
-        foreach (string filePath in patches)
-        {
-            yield return filePath;
-        }
-    }
-
     private static MethodInfo? CheckEntry(Assembly assembly)
     {
         Type? entryType = assembly.GetType("MarseyEntry");

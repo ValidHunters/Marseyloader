@@ -69,7 +69,8 @@ public class MarseyPatcher
         Marsyfier.Preload();
         
         // Side-load custom code
-        Subverse.PatchSubverter();
+        if (Subverse.CheckSubversions()) 
+            Subverse.PatchSubverter();
 
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);

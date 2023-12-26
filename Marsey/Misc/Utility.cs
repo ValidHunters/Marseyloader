@@ -68,7 +68,6 @@ public abstract class Utility
         MarseyVars.Logging = CheckEnv("MARSEY_LOGGING");
         MarseyVars.DebugAllowed = CheckEnv("MARSEY_LOADER_DEBUG");
         MarseyVars.ThrowOnFail = CheckEnv("MARSEY_THROW_FAIL");
-        MarseyVars.Subverter = CheckEnv("MARSEY_SUBVERTER");
         MarseyVars.SeparateLogger = CheckEnv("MARSEY_SEPARATE_LOGGER");
     }
 
