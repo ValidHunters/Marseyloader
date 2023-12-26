@@ -17,38 +17,49 @@ public static class AssemblyFieldHandler
     /// </summary>
     public static void InitHelpers(IEnumerable<IPatch> patches)
     {
-        InitLoggerAndEntry(patches);
-    }
-    
-    /// <summary>
-    /// Initializes logger and entry classes in patches that have them.
-    /// Executed only by the loader.
-    /// </summary>
-    private static void InitLoggerAndEntry(IEnumerable<IPatch> patches)
-    {
         foreach (IPatch patch in patches)
         {
             Assembly assembly = patch.Asm;
+            string? assemblyName = assembly.GetName().Name;
+            
+            InitLogger(assembly, assemblyName);
+            InitEntry(assembly, patch, assemblyName);
+        }
+    }
 
-            // Check for a logger class
-            Type? marseyLoggerType = assembly.GetType("MarseyLogger");
-            if (marseyLoggerType != null)
-                SetupLogger(assembly);
-            else
-                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyLogger class");
+    /// <summary>
+    /// Initializes MarseyLogger
+    /// </summary>
+    private static void InitLogger(Assembly assembly, string? assemblyName)
+    {
+        Type? loggerType = assembly.GetType("MarseyLogger");
+        if (loggerType != null)
+        {
+            SetupLogger(assembly);
+        }
+        else
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no MarseyLogger class");
+        }
+    }
 
-            // Check for an entry class
-            Type? marseyEntryType = assembly.GetType("MarseyEntry");
-            if (marseyEntryType != null)
+    /// <summary>
+    /// Initializes MarseyEntry
+    /// </summary>
+    private static void InitEntry(Assembly assembly, IPatch patch, string? assemblyName)
+    {
+        Type? entryType = assembly.GetType("MarseyEntry");
+        if (entryType != null)
+        {
+            MethodInfo? entryMethod = GetEntry(assembly, entryType);
+            if (entryMethod != null)
             {
-                MethodInfo? entry = GetEntry(assembly, marseyEntryType);
-                if (entry != null) 
-                    patch.Entry = entry;
+                patch.Entry = entryMethod;
             }
-            else
-            {
-                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assembly.GetName().Name} has no MarseyEntry class");
-            }
+        }
+        else
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no MarseyEntry class");
         }
     }
 

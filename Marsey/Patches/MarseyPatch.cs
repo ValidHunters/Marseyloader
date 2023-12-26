@@ -32,11 +32,11 @@ public static class Marsyfier
 
         if (preloads == null || preloads.Count == 0) return;
         
-        MarseyLogger.Log(MarseyLogger.LogType.INFO, "Preloader",$"Preloading {preloads.Count} patches.");
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, "Preloader", $"Preloading {preloads.Count} patches.");
 
         foreach (string patch in preloads)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG,"Preloader",$"Preloading {patch}");
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Preloader", $"Preloading {patch}");
             FileHandler.LoadExactAssembly(patch);
         }
 
