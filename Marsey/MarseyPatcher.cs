@@ -41,7 +41,8 @@ public class MarseyPatcher
         
         _instance = new MarseyPatcher(robClientAssembly);
     }
-    
+   
+    /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
     private MarseyPatcher(Assembly? robClientAssembly)
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
@@ -62,18 +63,13 @@ public class MarseyPatcher
     ///
     /// Executed by the loader.
     /// </summary>
-    /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
     public void Boot()
     {
         // Preload marseypatches, if available
         Marsyfier.Preload();
         
-        // Initialize subverter if enabled and present
-        if (MarseyVars.Subverter && Subverse.InitSubverter())
-        {
-            // Side-load custom code
-            Subverse.PatchSubverter();
-        }
+        // Side-load custom code
+        Subverse.PatchSubverter();
 
         // Manage game assemblies
         GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);

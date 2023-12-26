@@ -174,7 +174,7 @@ public static class AssemblyFieldHandler
     /// <summary>
     /// Get methodhandle for the entrypoint function in patch
     /// </summary>
-    private static MethodInfo? GetEntry(Assembly patch, Type entryType)
+    public static MethodInfo? GetEntry(Assembly patch, Type entryType)
     {
         MethodInfo? entry = entryType.GetMethod("Entry", BindingFlags.Public | BindingFlags.Static);
         return entry;

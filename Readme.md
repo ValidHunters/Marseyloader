@@ -10,13 +10,17 @@ Space Station 14 launcher with client-side modding/patching support.
 
 * **Integration with the Harmony patching library.**
 * * Full functionality regarding methods in client/shared content/engine assemblies.
-* * Sideloading custom code using [Subverter](https://github.com/Subversionary/Subverter)
+* * Sideloading custom code as part of the game
 * * Win/Mac/Linux support
 * * No injectors used, entirely based on reflection
 * * Patches are hidden from game
 * Enabled multiaccount
+* Privacy changes
 * * Tokens are updated only on connect or account switch to evade alt detection
-* Locally change username for screenshots (This doesn't change your username in-game)
+* * HWId spoofing
+* * Forcibly disable Discord RPC
+* * Wizden hub mirror set as default hub
+* * Locally change username for screenshots (This doesn't change your username in-game)
 * Marsey.
 
 ### Contributing
@@ -36,19 +40,13 @@ Marseyloader uses the [Harmony](https://github.com/pardeike/Harmony) patching li
 
 Example patches can be found in the [ExampleMarseyPatch](https://github.com/ValidHunters/ExampleMarseyPatch) repository.
 
-Additionally, custom code can be loaded to the game using the [Subverter](https://github.com/Subversionary/Subverter) helper patch.
-
 ### FAQ
 
 #### Where do I ask for help?
-
 Github issues or on the [discord server](https://discord.gg/5RjbK7EzEm).
 
 #### How do I make a patch?
 [Example Marseypatches](https://github.com/ValidHunters/ExampleMarseyPatch)
-
-#### How do I enable subversion?
-Compile [Subverter](https://github.com/Subversionary/Subverter), put "Subverter.dll" in the directory with the executable.
 
 #### What is subversion for?
 Subversion is used for adding your custom code (and not patching existing code) to the game, like custom commands and what not that can fully interact with the game as if they were part of the original code.

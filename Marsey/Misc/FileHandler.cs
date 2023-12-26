@@ -97,10 +97,7 @@ public abstract class FileHandler
         }
         catch (FileNotFoundException)
         {
-            if (!file.EndsWith(Subverse.SubverterFile))
-            {
-                MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{file} could not be found");
-            }
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{file} could not be found");
         }
         catch (PatchAssemblyException ex)
         {

@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using HarmonyLib;
 using Marsey.Config;
 using Marsey.GameAssembly;
+using Marsey.Handbrake;
 using Marsey.Stealthsey;
 using Marsey.Misc;
+using Marsey.PatchAssembly;
+using Marsey.Serializer;
 using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Subversion;
@@ -17,63 +21,6 @@ namespace Marsey.Subversion;
 /// </summary>
 public static class Subverse
 {
-    public static string SubverterFile = "Subverter.dll";
-    private static SubverterPatch? _subverter = null;
-
-    /// <summary>
-    /// Initializes the subverter library.
-    /// </summary>
-    /// <returns>True if the library was initialized successfully.</returns>
-    public static bool InitSubverter()
-    {
-        string path = Path.Combine(Directory.GetCurrentDirectory(), SubverterFile);
-        FileHandler.LoadExactAssembly(path);
-    
-        List<SubverterPatch> patches = Subverter.GetSubverterPatches();
-        SubverterPatch? subverterPatch = patches.FirstOrDefault(p => p.Name == "Subverter");
-
-        if (subverterPatch == null) return false;
-        
-        AssignSubverter(subverterPatch);
-        SetHidesey();
-        patches.Clear();
-        
-        return true;
-    }
-
-    private static void SetHidesey()
-    {
-        if (_subverter == null) return;
-        
-        Type? subverterPatchType = _subverter.Asm.GetType("SubverterPatch");
-        MethodInfo? hideMethod = typeof(Subverter).GetMethod("Hide", BindingFlags.NonPublic | BindingFlags.Static);
-        FieldInfo? hideDelegateField = subverterPatchType?.GetField("hideDelegate", BindingFlags.Public | BindingFlags.Static);
-
-        if (subverterPatchType == null || hideMethod == null || hideDelegateField == null)
-        {
-            List<string> missingComps = new List<string>();
-            if (subverterPatchType == null) missingComps.Add("subverterPatchType");
-            if (hideMethod == null) missingComps.Add("hideMethod");
-            if (hideDelegateField == null) missingComps.Add("hideDelegateField");
-
-            string missingCompStr = string.Join(", ", missingComps);
-
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to connect patch to subverter. Missing components: {missingCompStr}.");
-            return;
-        }
-        
-        try
-        {
-            Delegate logDelegate = Delegate.CreateDelegate(hideDelegateField.FieldType, hideMethod);
-            hideDelegateField.SetValue(null, logDelegate);
-        }
-        catch (Exception e)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to to assign hide delegate: {e.Message}");
-        }
-    }
-
-
     /// <summary>
     /// Enables subverter if any of the of the subverter patches are enabled
     /// Used by the launcher to determine if it should load subversions
@@ -91,32 +38,6 @@ public static class Subverse
 
         MarseyVars.Subverter = false;
     }
-
-    /// <summary>
-    /// Check if a patch is loaded from the same place subverter is
-    /// </summary>
-    /// <returns></returns>
-    public static bool CheckSubverterDuplicate(SubverterPatch subverter)
-    {
-        if (CheckSubverterPresent())
-            return CheckSubverterDuplicate(subverter.Asm);
-
-        return false;
-    }
-    
-    public static bool CheckSubverterDuplicate(Assembly assembly)
-    {
-        return assembly == _subverter?.Asm;
-    }
-
-    /// <summary>
-    /// Check if subverter is already defined.
-    /// Used by the launcher in the plugins/patches tab.
-    /// </summary>
-    public static bool CheckSubverterPresent()
-    {
-        return _subverter != null;
-    }
     
     /// <summary>
     /// Patches subverter ahead of everything else
@@ -124,11 +45,54 @@ public static class Subverse
     /// </summary>
     public static void PatchSubverter()
     {
-        if (_subverter != null) GamePatcher.Patch(new List<SubverterPatch>() { _subverter });
+        MethodInfo Target = AccessTools.Method(AccessTools.TypeByName("Robust.Shared.ContentPack.ModLoader"), "TryLoadModules");
+        MethodInfo Prefix = typeof(Subverse).GetMethod("Prefix", BindingFlags.NonPublic | BindingFlags.Static)!;
+        
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Hooking {Target.Name} with {Prefix.Name}");
+        
+        Manual.Patch(Target, Prefix, HarmonyPatchType.Prefix);
+    }
+
+    private static bool Prefix(object __instance)
+    {
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", "Detour");
+        MethodInfo? loadGameAssemblyMethod = AccessTools.Method(AccessTools.TypeByName("Robust.Shared.ContentPack.BaseModLoader"), "InitMod");
+    
+        foreach (string path in GetSubverters())
+        {
+            Assembly subverterAssembly = Assembly.LoadFrom(path);
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Sideloading {path}");
+            loadGameAssemblyMethod.Invoke(__instance, new object[] { subverterAssembly });
+            
+            MethodInfo? Entry = CheckEntry(subverterAssembly);
+            if (Entry != null)
+                Doorbreak.Enter(Entry);
+            
+            Hidesey.HidePatch(subverterAssembly);
+        }
+        
+        return true;
     }
     
-    private static void AssignSubverter(SubverterPatch subverter)
+    private static IEnumerable<string> GetSubverters()
     {
-        _subverter = subverter;
+        string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Marsey");
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Loading from {directoryPath}");
+        
+        List<string> patches = Marserializer.Deserialize(new string[] { directoryPath }, Subverter.MarserializerFile) ?? new List<string>();
+
+        foreach (string filePath in patches)
+        {
+            yield return filePath;
+        }
+    }
+
+    private static MethodInfo? CheckEntry(Assembly assembly)
+    {
+        Type? entryType = assembly.GetType("MarseyEntry");
+        if (entryType == null) return null;
+        
+        MethodInfo? entryMethod = AssemblyFieldHandler.GetEntry(assembly, entryType);
+        return entryMethod != null ? entryMethod : null;
     }
 }

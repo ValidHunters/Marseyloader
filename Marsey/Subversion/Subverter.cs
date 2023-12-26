@@ -44,11 +44,5 @@ public class SubverterPatch : IPatch
         Name = name;
         Desc = desc;
         Asm = asm;
-
-        if (Subverse.CheckSubverterDuplicate(this))
-        {
-            throw new PatchAssemblyException(
-                "Tried to create a SubverterPatch that is the same as Subverter! Remove Subverter.dll from the patches folder!");
-        }
     }
 }

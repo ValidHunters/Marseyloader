@@ -53,7 +53,6 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         Hidesey.Initialize();
-        Subverse.InitSubverter();
 
         ServersTab = new ServerListTabViewModel(this);
         NewsTab = new NewsTabViewModel();
