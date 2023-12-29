@@ -48,6 +48,12 @@ public static class Subverse
     {
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", "Detour");
         MethodInfo? loadGameAssemblyMethod = AccessTools.Method(AccessTools.TypeByName("Robust.Shared.ContentPack.BaseModLoader"), "InitMod");
+        
+        if (loadGameAssemblyMethod == null)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, "Subversion", "Failed to find InitMod method.");
+            return true;
+        }
     
         foreach (string path in _subverters!)
         {
@@ -55,9 +61,11 @@ public static class Subverse
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Sideloading {path}");
             loadGameAssemblyMethod.Invoke(__instance, new object[] { subverterAssembly });
             
-            MethodInfo? Entry = CheckEntry(subverterAssembly);
-            if (Entry != null)
-                Doorbreak.Enter(Entry);
+            MethodInfo? entryMethod = CheckEntry(subverterAssembly);
+            if (entryMethod != null)
+            {
+                Doorbreak.Enter(entryMethod);
+            }
             
             Hidesey.HidePatch(subverterAssembly);
         }
