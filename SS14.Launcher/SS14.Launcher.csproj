@@ -78,7 +78,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Harmony\Harmony\Harmony.csproj" />
     <ProjectReference Include="..\Marsey\Marsey.csproj" />
   </ItemGroup>
   <Import Project="..\MSBuild\Robust.Trimming.targets" />

@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Harmony\Harmony\Harmony.csproj" />
     <ProjectReference Include="..\Marsey\Marsey.csproj" />
     <ProjectReference Include="..\Robust.LoaderApi\Robust.LoaderApi\Robust.LoaderApi.csproj" />
   </ItemGroup>

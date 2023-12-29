@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Lib.Harmony" />
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="NUnit"/>
         <PackageReference Include="NUnit3TestAdapter"/>
@@ -24,9 +25,13 @@
         <PackageVersion Include="NUnit.Analyzers" Version="3.6.1"/>
         <PackageVersion Include="coverlet.collector" Version="6.0.0"/>
     </ItemGroup>
-    
+
     <ItemGroup>
       <ProjectReference Include="..\Marsey\Marsey.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Marsey\Marsey.csproj" />
+    </ItemGroup>
+    
 </Project>

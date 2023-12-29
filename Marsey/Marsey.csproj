@@ -7,11 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Lib.Harmony" />
         <PackageReference Include="Newtonsoft.Json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Harmony\Harmony\Harmony.csproj" />
     </ItemGroup>
 
 </Project>
