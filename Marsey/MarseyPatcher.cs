@@ -47,6 +47,8 @@ public class MarseyPatcher
     private MarseyPatcher(Assembly? robClientAssembly, ManualResetEvent mre)
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
+
+        _flag = mre;
         
         // Initialize GameAssemblies
         GameAssemblies.Initialize(robClientAssembly);
