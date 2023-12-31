@@ -60,9 +60,13 @@ internal class Program
 
         SQLitePCL.Batteries_V2.Init();
 
+        ManualResetEvent mre = new ManualResetEvent(false);
+        
         // Start the MarseyPatcher
-        MarseyPatcher.CreateInstance(clientAssembly);
+        MarseyPatcher.CreateInstance(clientAssembly, mre);
+        mre.WaitOne();
         new Thread(() => MarseyPatcher.Instance.Boot()).Start();
+
 
         var launcher = Environment.GetEnvironmentVariable("SS14_LAUNCHER_PATH");
         var redialApi = launcher != null ? new RedialApi(launcher) : null;
@@ -77,7 +81,7 @@ internal class Program
         }
 
         var args = new MainArgs(_engineArgs, _fileApi, redialApi, extraMounts);
-
+        
         try
         {
             loader.Main(args);

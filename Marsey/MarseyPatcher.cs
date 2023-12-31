@@ -19,6 +19,7 @@ namespace Marsey;
 public class MarseyPatcher
 {
     private static MarseyPatcher? _instance;
+    private static ManualResetEvent? _flag;
     
     public static MarseyPatcher Instance
     {
@@ -32,18 +33,18 @@ public class MarseyPatcher
         }
     }
     
-    public static void CreateInstance(Assembly? robClientAssembly)
+    public static void CreateInstance(Assembly? robClientAssembly, ManualResetEvent mre)
     {
         if (_instance != null)
         {
             throw new Exception("Instance already created.");
         }
         
-        _instance = new MarseyPatcher(robClientAssembly);
+        _instance = new MarseyPatcher(robClientAssembly, mre);
     }
    
     /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
-    private MarseyPatcher(Assembly? robClientAssembly)
+    private MarseyPatcher(Assembly? robClientAssembly, ManualResetEvent mre)
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
         
@@ -56,18 +57,21 @@ public class MarseyPatcher
         
         // Hide the loader
         Hidesey.Initialize();
+
+        // Preload marseypatches, if available
+        // Its placed here because we might want to patch things before the loader has even a chance to execute anything
+        Marsyfier.Preload();
+        
+        // Tell the loader were done here, start the game
+        _flag.Set();
     }
     
     /// <summary>
     /// Boots up the patcher
-    ///
     /// Executed by the loader.
     /// </summary>
     public void Boot()
     {
-        // Preload marseypatches, if available
-        Marsyfier.Preload();
-        
         // Side-load custom code
         if (Subverse.CheckSubversions()) 
             Subverse.PatchSubverter();

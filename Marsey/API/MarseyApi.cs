@@ -22,7 +22,6 @@ namespace Marsey.API
             if (await MarseyHello(endpoint))
             {
                 _endpoint = endpoint;
-                _enabled = true; // Since were aborting early if enabled is false - set directly
         
                 await UpdateMarseyVersion();
             }
@@ -35,9 +34,9 @@ namespace Marsey.API
 
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public static async Task<bool> MarseyHello(string endpoint)
+        public static Task<bool> MarseyHello(string endpoint)
         {
-            return await SendHelloRequest($"{endpoint}/marsey");
+            return SendHelloRequest($"{endpoint}/marsey");
         }
 
         private static void Log(MarseyLogger.LogType type, string message)
@@ -80,6 +79,9 @@ namespace Marsey.API
 
         private static async Task UpdateMarseyVersion()
         {
+            // Add a check to see if _versions is already populated
+            if (_versions != null && _versions.Count != 0) return;
+            
             JObject? json = await GetJsonResponse($"{_endpoint}/version");
             if (json?["latest"] != null && json?["minimum"] != null && json?["releases"] != null)
             {
