@@ -40,31 +40,33 @@
 
         <Control DockPanel.Dock="Top" Height="8" />
 
-        <Grid DockPanel.Dock="Right" VerticalAlignment="Bottom" RowDefinitions="Auto,Auto">
-          <!-- Favorite add/remove button -->
-          <Button Grid.Row="0" HorizontalAlignment="Right"
-                  Content="{Binding FavoriteButtonText}"
-                  Command="{Binding FavoriteButtonPressed}" />
+        <views:RowSideAlignedPanel>
+          <ItemsControl VerticalAlignment="Bottom" ItemsSource="{Binding CacheData.Links}" Name="Links">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="models:ServerInfoLink">
+                <views:ServerInfoLinkControl DataContext="{Binding}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
 
-          <!-- Raise to top button. -->
-          <Button Grid.Row="1" HorizontalAlignment="Right"
-                  IsVisible="{Binding ViewedInFavoritesPane}" Classes="OpenRight"
-                  Content="Raise to top"
-                  Command="{Binding FavoriteRaiseButtonPressed}" />
-        </Grid>
+          <DockPanel Dock="Right">
+            <!-- Favorite add/remove button -->
+            <Button Classes="OpenRight"
+                    Content="{Binding FavoriteButtonText}"
+                    Command="{Binding FavoriteButtonPressed}" />
 
-        <ItemsControl VerticalAlignment="Bottom" ItemsSource="{Binding CacheData.Links}">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="models:ServerInfoLink">
-              <views:ServerInfoLinkControl DataContext="{Binding}" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            <!-- Raise to top button. -->
+            <Button IsVisible="{Binding ViewedInFavoritesPane}"
+                    Classes="OpenLeft"
+                    Content="Raise to top"
+                    Command="{Binding FavoriteRaiseButtonPressed}" />
+          </DockPanel>
+        </views:RowSideAlignedPanel>
       </DockPanel>
     </Expander>
   </Panel>
