@@ -12,7 +12,7 @@ public static class MarseyVars
     /// <summary>
     /// Due to the nature of how Marseyloader is compiled (its not) we cannot check it's version 
     /// </summary>
-    public static readonly Version MarseyVersion = new Version("2.9.0");
+    public static readonly Version MarseyVersion = new Version("2.10.0");
 
     /// <summary>
     /// Default MarseyAPI endpoint url
