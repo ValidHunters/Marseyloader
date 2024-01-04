@@ -43,4 +43,10 @@ public static class MarseyVars
     /// Log identified for marseyloader
     /// </summary>
     public static readonly string MarseyLoggerPrefix = "MARSEY";
+    
+    /// <summary>
+    /// Refuse to play on servers over this engine version if hidesey is disabled
+    /// <seealso cref="Abjure"/>
+    /// </summary>
+    public static readonly Version Detection = new Version("183.0.0");
 }

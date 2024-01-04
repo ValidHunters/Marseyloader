@@ -421,6 +421,13 @@ public class Connector : ReactiveObject
         var engineVersion = launchInfo.ModuleInfo.Single(x => x.Module == "Robust").Version;
         var startInfo = await GetLoaderStartInfo(engineVersion, launchInfo.Version, env);
 
+        // Abort if engine version hates us and we dont hide ourselves
+        if (Abjure.CheckMalbox(engineVersion, (HideLevel)_cfg.GetCVar(CVars.MarseyHide)))
+        {
+            Log.Warning("Engine version over 183 with hidesey disabled, aborting.");
+            return null;
+        }
+
         Marsify();
         ConfigureMarsey(startInfo);
         
