@@ -25,6 +25,7 @@ using Marsey.Config;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 using Marsey.Misc;
+using Marsey.Stealthsey.Game;
 
 namespace SS14.Launcher.Models;
 
@@ -577,7 +578,12 @@ public class Connector : ReactiveObject
         
         // Game
         startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
+        
+        if (_cfg.GetCVar(CVars.RandHWID)) 
+            startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = HWID.GenerateRandom(32);
+        else 
+            startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
+        
         startInfo.EnvironmentVariables["MARSEY_DISABLE_PRESENCE"] = _cfg.GetCVar(CVars.DisableRPC) ? "true" : null;
     }
     

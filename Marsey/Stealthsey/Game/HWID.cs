@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
@@ -65,6 +66,20 @@ public static class HWID
             MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Invalid HWID format, must be hexadecimal: {ex.Message}.\nSetting to null.");
             _hwId = Array.Empty<byte>();
         }
+    }
+    
+    public static string GenerateRandom(int length)
+    {
+        Random random = new Random();
+        const string chars = "0123456789abcdef";
+        StringBuilder result = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++)
+        {
+            result.Append(chars[random.Next(chars.Length)]);
+        }
+
+        return result.ToString();
     }
 
     private static void PatchCalcMethod()

@@ -197,12 +197,23 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         }
     }
 
-    public bool ForcingHWid
+    public bool ForcingHWID
     {
         get => Cfg.GetCVar(CVars.ForcingHWId);
         set
         {
             Cfg.SetCVar(CVars.ForcingHWId, value);
+            OnPropertyChanged(nameof(ForcingHWID));
+            Cfg.CommitConfig();
+        }
+    }
+    
+    public bool RandHWID
+    {
+        get => Cfg.GetCVar(CVars.RandHWID);
+        set
+        {
+            Cfg.SetCVar(CVars.RandHWID, value);
             Cfg.CommitConfig();
         }
     }
