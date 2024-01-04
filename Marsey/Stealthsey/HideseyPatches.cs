@@ -62,20 +62,20 @@ public static class HideseyPatches
         fullMethodName += $"({parameters})";
         
         if (__originalMethod.GetCustomAttributes(typeof(HideLevelRequirement), false).FirstOrDefault() is HideLevelRequirement hideLevelRequirement 
-            && MarseyVars.MarseyHide < hideLevelRequirement.Level)
+            && MarseyConf.MarseyHide < hideLevelRequirement.Level)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, 
                 $"Not executing {fullMethodName} due to lower MarseyHide level. " +
-                        $"Required: {hideLevelRequirement.Level}, Current: {MarseyVars.MarseyHide}");
+                        $"Required: {hideLevelRequirement.Level}, Current: {MarseyConf.MarseyHide}");
             return false;
         }
         
         if (__originalMethod.GetCustomAttributes(typeof(HideLevelRestriction), false).FirstOrDefault() is HideLevelRestriction hideLevelRestriction 
-            && MarseyVars.MarseyHide >= hideLevelRestriction.MaxLevel)
+            && MarseyConf.MarseyHide >= hideLevelRestriction.MaxLevel)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, 
                 $"Not executing {fullMethodName} due to equal or above MarseyHide level. " +
-                $"Threshold: {hideLevelRestriction.MaxLevel}, Current: {MarseyVars.MarseyHide}");
+                $"Threshold: {hideLevelRestriction.MaxLevel}, Current: {MarseyConf.MarseyHide}");
             return false;
         }
 

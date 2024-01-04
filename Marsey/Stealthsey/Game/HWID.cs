@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using HarmonyLib;
+using Marsey.Config;
 using Marsey.GameAssembly;
 using Marsey.Handbrake;
 using Marsey.Misc;
@@ -15,7 +16,6 @@ namespace Marsey.Stealthsey.Game;
 public static class HWID
 {
     private static byte[] _hwId = Array.Empty<byte>();
-    private const string ForcingEnvName = "MARSEY_FORCINGHWID";
     private const string HWIDEnv = "MARSEY_FORCEDHWID";
 
     /// <summary>
@@ -30,19 +30,13 @@ public static class HWID
         /// Don't forget a VPN or a proxy!
         
         // Check if forcing is enabled
-        if (!IsForcingEnabled())
+        if (!MarseyConf.ForceHWID)
             return;
 
         string hwid = GetForcedHWId();
         string cleanedHwid = CleanHwid(hwid);
         ForceHWID(cleanedHwid);
         PatchCalcMethod();
-    }
-
-    private static bool IsForcingEnabled()
-    {
-        string? envVar = Environment.GetEnvironmentVariable(ForcingEnvName);
-        return !string.IsNullOrEmpty(envVar) && bool.Parse(envVar);
     }
 
     private static string GetForcedHWId()

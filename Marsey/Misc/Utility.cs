@@ -23,7 +23,7 @@ public static class MarseyLogger
     /// <param name="message">Log message</param>
     public static void Log(LogType logType, string message)
     {
-        if (logType == LogType.DEBG && MarseyVars.DebugAllowed != true)
+        if (logType == LogType.DEBG && MarseyConf.DebugAllowed != true)
             return;
 
         SharedLog($"[{logType.ToString()}] {message}");
@@ -34,7 +34,7 @@ public static class MarseyLogger
     /// </summary>
     public static void Log(LogType logType, string system, string message)
     {
-        if (logType == LogType.DEBG && MarseyVars.DebugAllowed != true)
+        if (logType == LogType.DEBG && MarseyConf.DebugAllowed != true)
             return;
 
         SharedLog($"[{logType.ToString()}] [{system}] {message}");
@@ -53,7 +53,7 @@ public static class MarseyLogger
 
     private static void SharedLog(string message)
     {
-        if (MarseyVars.Logging)
+        if (MarseyConf.Logging)
             Console.WriteLine($"[{MarseyVars.MarseyLoggerPrefix}] {message}");
     }
 }
@@ -65,10 +65,12 @@ public abstract class Utility
     /// </summary>
     public static void SetupFlags()
     {
-        MarseyVars.Logging = CheckEnv("MARSEY_LOGGING");
-        MarseyVars.DebugAllowed = CheckEnv("MARSEY_LOADER_DEBUG");
-        MarseyVars.ThrowOnFail = CheckEnv("MARSEY_THROW_FAIL");
-        MarseyVars.SeparateLogger = CheckEnv("MARSEY_SEPARATE_LOGGER");
+        MarseyConf.Logging = CheckEnv("MARSEY_LOGGING");
+        MarseyConf.DebugAllowed = CheckEnv("MARSEY_LOADER_DEBUG");
+        MarseyConf.ThrowOnFail = CheckEnv("MARSEY_THROW_FAIL");
+        MarseyConf.SeparateLogger = CheckEnv("MARSEY_SEPARATE_LOGGER");
+        MarseyConf.ForceHWID = CheckEnv("MARSEY_FORCINGHWID");
+        MarseyConf.KillRPC = CheckEnv("MARSEY_DISABLE_PRESENCE");
     }
 
     private static bool CheckEnv(string envName)

@@ -1,5 +1,6 @@
 using System.Reflection;
 using HarmonyLib;
+using Marsey.Config;
 using Marsey.GameAssembly;
 using Marsey.Handbrake;
 using Marsey.Misc;
@@ -8,11 +9,9 @@ namespace Marsey.Stealthsey.Game;
 
 public static class DiscordRPC
 {
-    private static string EnvName = "MARSEY_DISABLE_PRESENCE";
-    
     public static void Disable()
     {
-        if (!CheckEnv()) return;
+        if (!MarseyConf.KillRPC) return;
         
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "DiscordRPC", "Disabling.");
         
@@ -25,14 +24,5 @@ public static class DiscordRPC
         MethodInfo PrefSkip = typeof(HideseyPatches).GetMethod("Skip", BindingFlags.Public | BindingFlags.Static)!;
         
         Manual.Patch(DRPCinit, PrefSkip, HarmonyPatchType.Prefix);
-    }
-
-    private static bool CheckEnv()
-    {
-        bool toggle;
-        string? envVal = Environment.GetEnvironmentVariable(EnvName);
-        Envsey.CleanFlag(EnvName);
-        bool.TryParse(envVal, out toggle);
-        return toggle;
     }
 }

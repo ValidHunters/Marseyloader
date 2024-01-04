@@ -49,7 +49,7 @@ public static class GamePatcher
     {
         string errorMessage = $"Failed to patch {assemblyName}!\n{e}";
 
-        if (MarseyVars.ThrowOnFail)
+        if (MarseyConf.ThrowOnFail)
             throw new PatchAssemblyException(errorMessage);
 
         MarseyLogger.Log(MarseyLogger.LogType.FATL, errorMessage);

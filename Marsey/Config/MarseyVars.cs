@@ -4,7 +4,10 @@ using Marsey.Misc;
 
 namespace Marsey.Config;
 
-public abstract class MarseyVars
+/// <summary>
+/// Variables only changed at compile
+/// </summary>
+public static class MarseyVars
 {
     /// <summary>
     /// Due to the nature of how Marseyloader is compiled (its not) we cannot check it's version 
@@ -14,58 +17,30 @@ public abstract class MarseyVars
     /// <summary>
     /// Default MarseyAPI endpoint url
     /// </summary>
-    public const string MarseyApiEndpoint = "https://fujo.love/api/v1";
+    public static readonly string MarseyApiEndpoint = "https://fujo.love/api/v1";
     
     /// <summary>
     /// Namespace identifier for Harmony
     /// </summary>
-    public const string Identifier = "com.validhunters.marseyloader";
+    public static readonly string Identifier = "com.validhunters.marseyloader";
 
     /// <summary>
     /// Max amount of loops allowed to catch game assemblies
     /// </summary>
-    public const int MaxLoops = 50;
+    public static readonly int MaxLoops = 50;
 
     /// <summary>
     /// Cooldown to try the loop again, in ms
     /// </summary>
-    public const int LoopCooldown = 200;
+    public static readonly int LoopCooldown = 200;
 
     /// <summary>
     /// Marseypatches are saved to this one
     /// </summary>
-    public const string MarseyPatchFolder = "Marsey";
-
-    /// <summary>
-    /// Defines how strict is Hidesey
-    /// </summary>
-    public static HideLevel MarseyHide = HideLevel.Normal;
-    
-    /// <summary>
-    /// Log patcher output to separate file
-    /// </summary>
-    public static bool SeparateLogger;
+    public static readonly string MarseyPatchFolder = "Marsey";
 
     /// <summary>
     /// Log identified for marseyloader
     /// </summary>
-    public const string MarseyLoggerPrefix = "MARSEY";
-
-    /// <summary>
-    /// Should we log anything from the loader
-    /// <see cref="Utility.SetupFlags"/>
-    /// </summary>
-    public static bool Logging;
-    
-    /// <summary>
-    /// Log DEBG messages
-    /// <see cref="Utility.SetupFlags"/>
-    /// </summary>
-    public static bool DebugAllowed;
-
-    /// <summary>
-    /// Throws an exception on client if any patch had failed applying.
-    /// <see cref="Utility.SetupFlags"/>
-    /// </summary>
-    public static bool ThrowOnFail;
+    public static readonly string MarseyLoggerPrefix = "MARSEY";
 }

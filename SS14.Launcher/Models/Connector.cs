@@ -517,9 +517,9 @@ public class Connector : ReactiveObject
         File.Delete(LauncherPaths.PathClientStdmarseyLog);
         FileStream? fileStdmarsey = null;
         
-        MarseyVars.SeparateLogger = _cfg.GetCVar(CVars.SeparateLogging);
+        MarseyConf.SeparateLogger = _cfg.GetCVar(CVars.SeparateLogging);
         
-        if (MarseyVars.MarseyHide < HideLevel.Explicit)
+        if (MarseyConf.MarseyHide < HideLevel.Explicit)
         {
             fileStdmarsey = new FileStream(
                 LauncherPaths.PathClientStdmarseyLog,
@@ -562,7 +562,7 @@ public class Connector : ReactiveObject
         // Logging
         startInfo.EnvironmentVariables["MARSEY_LOADER_DEBUG"] = _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_LOGGING"] = _cfg.GetCVar(CVars.LogPatcher) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyVars.SeparateLogger ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyConf.SeparateLogger ? "true" : null;
         
         // Safety
         startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
@@ -601,7 +601,7 @@ public class Connector : ReactiveObject
                     return;
                 }
 
-                if (MarseyVars.SeparateLogger && marseyWriter != null && buf.AsSpan(0, read).StartsWith(Encoding.UTF8.GetBytes($"[{MarseyVars.MarseyLoggerPrefix}]")))
+                if (MarseyConf.SeparateLogger && marseyWriter != null && buf.AsSpan(0, read).StartsWith(Encoding.UTF8.GetBytes($"[{MarseyVars.MarseyLoggerPrefix}]")))
                 {
                     await marseyWriter.WriteAsync(buf.AsMemory(0, read));
                     await marseyWriter.FlushAsync();

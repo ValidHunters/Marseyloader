@@ -73,7 +73,7 @@ public static class Hidesey
 
         _initialized = true;
         
-        MarseyVars.MarseyHide = GetHideseyLevel();
+        MarseyConf.MarseyHide = GetHideseyLevel();
         HideLevelExec.Initialize();
         
         Load();
@@ -88,7 +88,7 @@ public static class Hidesey
 
         Perjurize(); // Patch detection methods
         
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Hidesey started. Running {MarseyVars.MarseyHide.ToString()} configuration.");
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Hidesey started. Running {MarseyConf.MarseyHide.ToString()} configuration.");
     }
 
     /// <summary>
@@ -213,7 +213,7 @@ public static class Hidesey
                 string message = $"Failed to patch {original?.Name} using {patch?.Name}";
 
                 // Close client if any of the hidesey patches fail
-                if (MarseyVars.ThrowOnFail)
+                if (MarseyConf.ThrowOnFail)
                     throw new HideseyException(message);
             
                 MarseyLogger.Log(MarseyLogger.LogType.FATL, message);
