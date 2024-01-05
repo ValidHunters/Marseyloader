@@ -71,7 +71,7 @@ public static class AssemblyInitializer
             case "MarseyPatch" when AssemblyFieldHandler.DetermineIgnore(dataType):
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG,
                     $"{assembly.GetName().Name} is ignoring fields, not assigning");
-                return;
+                break;
             case "MarseyPatch":
             {
                 List<FieldInfo>? targets = AssemblyFieldHandler.GetPatchAssemblyFields(dataType);
