@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace SS14.Launcher;
 
@@ -14,12 +16,13 @@ public static class HappyEyeballsHttp
     // This is the workaround.
     //
     // Implementation taken from https://github.com/ppy/osu-framework/pull/4191/files
-    public static HttpClient CreateHttpClient()
+    public static HttpClient CreateHttpClient(bool autoRedirect = true)
     {
         var handler = new SocketsHttpHandler
         {
             ConnectCallback = OnConnect,
-            AutomaticDecompression = DecompressionMethods.All
+            AutomaticDecompression = DecompressionMethods.All,
+            AllowAutoRedirect = autoRedirect
         };
 
         return new HttpClient(handler);
@@ -59,11 +62,12 @@ public static class HappyEyeballsHttp
 
                 return await AttemptConnection(AddressFamily.InterNetworkV6, context, localToken);
             }
-            catch
+            catch (Exception e)
             {
                 // very naively fallback to ipv4 permanently for this execution based on the response of the first connection attempt.
                 // note that this may cause users to eventually get switched to ipv4 (on a random failure when they are switching networks, for instance)
                 // but in the interest of keeping this implementation simple, this is acceptable.
+                Log.Error(e, "Error occured in HappyEyeballsHttp, disabling IPv6");
                 _useIPv6 = false;
             }
             finally
