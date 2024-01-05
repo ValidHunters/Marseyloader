@@ -12,6 +12,7 @@ using Avalonia.Logging;
 using Avalonia.Media;
 using Avalonia.ReactiveUI;
 using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 using Splat;
 using SS14.Launcher.Api;
 using SS14.Launcher.Models;
@@ -86,7 +87,7 @@ internal static class Program
 
         var logCfg = new LoggerConfiguration()
             .MinimumLevel.Debug()
-            .WriteTo.Console();
+            .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen);
 
         Log.Logger = logCfg.CreateLogger();
 
@@ -105,7 +106,7 @@ internal static class Program
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Is(cfg.GetCVar(CVars.LogLauncherVerbose) ? LogEventLevel.Verbose : LogEventLevel.Debug)
-                .WriteTo.Console()
+                .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
                 .WriteTo.File(LauncherPaths.PathLauncherLog)
                 .CreateLogger();
         }
