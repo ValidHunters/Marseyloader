@@ -98,7 +98,8 @@ internal static class Program
         Locator.CurrentMutable.RegisterConstant(cfg);
 
         CheckWindows7();
-        CheckBadAntivirus();
+        // Bad antivirus check disabled: I assume Avast/AVG fixed their shit.
+        // CheckBadAntivirus();
 
         if (cfg.GetCVar(CVars.LogLauncher))
         {
