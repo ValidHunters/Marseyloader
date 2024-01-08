@@ -122,9 +122,9 @@ public static class AssemblyFieldHandler
     public static void SetAssemblyTargets(List<FieldInfo> targets)
     {
         targets[0].SetValue(null, GameAssemblies.RobustClient);
-        targets[1].SetValue(null,GameAssemblies.RobustShared);
-        targets[2].SetValue(null,GameAssemblies.ContentClient);
-        targets[3].SetValue(null,GameAssemblies.ContentShared);
+        targets[1].SetValue(null, GameAssemblies.RobustShared);
+        targets[2].SetValue(null, GameAssemblies.ContentClient);
+        targets[3].SetValue(null, GameAssemblies.ContentShared);
     }
 
     /// <summary>

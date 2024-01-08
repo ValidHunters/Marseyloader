@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Runtime.Loader;
 using HarmonyLib;
 using Marsey.Config;
+using Marsey.GameAssembly.Patches;
 using Marsey.Handbrake;
 using Marsey.Misc;
-using Marsey.Stealthsey.Game;
 using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Stealthsey;

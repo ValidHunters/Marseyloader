@@ -3,13 +3,13 @@ using System.Text;
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
-using Marsey.GameAssembly;
 using Marsey.Handbrake;
 using Marsey.Misc;
 using Marsey.PatchAssembly;
+using Marsey.Stealthsey;
 using Marsey.Stealthsey.Reflection;
 
-namespace Marsey.Stealthsey.Game;
+namespace Marsey.GameAssembly.Patches;
 
 /// <summary>
 /// Manages HWId variable given to the game.

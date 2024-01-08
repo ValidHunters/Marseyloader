@@ -9,7 +9,6 @@ using Marsey.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 using Marsey.Misc;
-using Marsey.Stealthsey.Game;
 
 namespace Marsey;
 

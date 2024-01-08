@@ -1,3 +1,4 @@
+using Marsey.GameAssembly.Patches;
 using Marsey.Misc;
 using Marsey.Stealthsey;
 
@@ -38,7 +39,7 @@ public static class MarseyConf
 
     /// <summary>
     /// Hook HWID
-    /// <see cref="Marsey.Stealthsey.Game.HWID"/>
+    /// <see cref="HWID"/>
     /// </summary>
     public static bool ForceHWID;
 

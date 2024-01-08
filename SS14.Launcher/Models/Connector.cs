@@ -22,10 +22,10 @@ using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 using Marsey;
 using Marsey.Config;
+using Marsey.GameAssembly.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 using Marsey.Misc;
-using Marsey.Stealthsey.Game;
 
 namespace SS14.Launcher.Models;
 
