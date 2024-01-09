@@ -232,7 +232,26 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             if (Latest == null) return false;
             int dist = MarseyVars.MarseyVersion.CompareTo(Marsey.API.MarseyApi.GetLatestVersion());
             return dist < 0;
+        }
+    }
 
+    public bool MarseyJam
+    {
+        get => Cfg.GetCVar(CVars.JamDials);
+        set
+        {
+            Cfg.SetCVar(CVars.JamDials, value);
+            Cfg.CommitConfig();
+        }
+    }
+
+    public bool MarseyHole
+    {
+        get => Cfg.GetCVar(CVars.Blackhole);
+        set
+        {
+            Cfg.SetCVar(CVars.Blackhole, value);
+            Cfg.CommitConfig();
         }
     }
 

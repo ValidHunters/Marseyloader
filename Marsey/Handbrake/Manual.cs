@@ -74,7 +74,7 @@ public static class Manual
     }
 
     /// <summary>
-    /// Removes **all** patches of type from a method
+    /// Removes all patches of type from a method
     /// </summary>
     /// <param name="method">target method that has patches applies</param>
     /// <param name="patchType">type of patches</param>

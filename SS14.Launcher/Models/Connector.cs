@@ -429,7 +429,7 @@ public class Connector : ReactiveObject
         // Abort if engine version hates us and we dont hide ourselves
         if (Abjure.CheckMalbox(engineVersion, (HideLevel)_cfg.GetCVar(CVars.MarseyHide)))
         {
-            Log.Warning("Engine version over 183 with hidesey disabled, aborting.");
+            Log.Error("Engine version over 183 with hidesey disabled, aborting.");
             return null;
         }
 
@@ -589,22 +589,21 @@ public class Connector : ReactiveObject
         // Safety
         startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_HIDE_LEVEL"] = $"{_cfg.GetCVar(CVars.MarseyHide)}";
-        
-        // Game
+        startInfo.EnvironmentVariables["MARSEY_JAMMER"] = _cfg.GetCVar(CVars.JamDials) ? "true" : null; // Redial
+        startInfo.EnvironmentVariables["MARSEY_DISABLE_REC"] = _cfg.GetCVar(CVars.Blackhole) ? "true" : null; // Remote Execute Command
+        startInfo.EnvironmentVariables["MARSEY_DISABLE_PRESENCE"] = _cfg.GetCVar(CVars.DisableRPC) ? "true" : null; // Hide discord RPC
+
+        // HWID
         startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null;
-        
         if (_cfg.GetCVar(CVars.RandHWID)) 
             startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = HWID.GenerateRandom(32);
         else 
             startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
         
-        startInfo.EnvironmentVariables["MARSEY_DISABLE_PRESENCE"] = _cfg.GetCVar(CVars.DisableRPC) ? "true" : null;
-
-        if (MarseyConf.DumpAssemblies)
-        {
-            startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
-            startInfo.EnvironmentVariables["MARSEY_DUMP_FORKID"] = _forkid;
-        }
+        // Dumper
+        if (!MarseyConf.DumpAssemblies) return;
+        startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
+        startInfo.EnvironmentVariables["MARSEY_DUMP_FORKID"] = _forkid;
     }
 
     private void MarseyCleanup()

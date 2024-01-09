@@ -60,16 +60,24 @@ public class MarseyPatcher
         // Hide the loader
         Hidesey.Initialize();
 
-        // Preload marseypatches, if available
-        // Its placed here because we might want to patch things before the loader has even a chance to execute anything
-        Marsyfier.Preload();
-
-        // Patch assembly loading methods, if enabled
-        // Exists for the same reason as above actually
-        Dumper.Patch();
+        Preload();
         
         // Tell the loader were done here, start the game
         _flag.Set();
+    }
+
+    // We might want to patch things before the loader has even a chance to execute anything
+    public void Preload()
+    {
+        // Preload marseypatches, if available
+        Marsyfier.Preload();
+        
+        // If set - Disable redialing and remote command execution
+        Jammer.Patch();
+        Blackhole.Patch();
+
+        // Patch assembly loading methods, if enabled
+        Dumper.Patch();
     }
     
     /// <summary>

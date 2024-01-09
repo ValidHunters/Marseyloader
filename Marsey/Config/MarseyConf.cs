@@ -44,8 +44,14 @@ public static class MarseyConf
     /// <see cref="DiscordRPC"/>
     public static bool KillRPC;
     
-    ///
+    /// <see cref="Dumper"/>
     public static bool DumpAssemblies;
+    
+    /// <see cref="Jammer"/>
+    public static bool JamDials;
+
+    /// <see cref="Blackhole"/>
+    public static bool DisableREC;
 
     public static readonly Dictionary<string, Action<bool>> EnvVarMap = new Dictionary<string, Action<bool>>
     {
@@ -55,6 +61,8 @@ public static class MarseyConf
         { "MARSEY_SEPARATE_LOGGER", value => SeparateLogger = value },
         { "MARSEY_FORCINGHWID", value => ForceHWID = value },
         { "MARSEY_DISABLE_PRESENCE", value => KillRPC = value },
-        { "MARSEY_DUMP_ASSEMBLIES", value => DumpAssemblies = value }
+        { "MARSEY_DUMP_ASSEMBLIES", value => DumpAssemblies = value },
+        { "MARSEY_JAMMER", value => JamDials = value },
+        { "MARSEY_DISABLE_REC", value => DisableREC = value }
     };
 }

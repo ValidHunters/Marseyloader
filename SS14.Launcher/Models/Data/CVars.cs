@@ -43,22 +43,6 @@ public static class CVars
     public static readonly CVarDef<bool> DisableSigning = CVarDef.Create("DisableSigning", false);
 
     /// <summary>
-    /// Throw an exception if a patch fails to apply.
-    /// </summary>
-    public static readonly CVarDef<bool> ThrowPatchFail = CVarDef.Create("ThrowPatchFail", false);
-    
-    /// <summary>
-    /// Log patcher output to a separate file
-    /// </summary>
-    public static readonly CVarDef<bool> SeparateLogging = CVarDef.Create("SeparateLogging", false);
-
-    /// <summary>
-    /// Define strict level
-    /// </summary>
-    public static readonly CVarDef<int> MarseyHide =
-        CVarDef.Create("HideLevel", 2);
-
-    /// <summary>
     /// Enable logging of launched client instances to file.
     /// </summary>
     public static readonly CVarDef<bool> LogClient = CVarDef.Create("LogClient", false);
@@ -74,54 +58,9 @@ public static class CVars
     public static readonly CVarDef<bool> LogLauncherVerbose = CVarDef.Create("LogLauncherVerbose", false);
 
     /// <summary>
-    /// Log messages coming from patches
-    /// </summary>
-    public static readonly CVarDef<bool> LogPatcher = CVarDef.Create("LogPatcher", true);
-
-    /// <summary>
-    /// Log debug messages coming from loader
-    /// </summary>
-    public static readonly CVarDef<bool> LogLoaderDebug = CVarDef.Create("LogLoaderDebug", false);
-
-    /// <summary>
-    /// Enable multi-account support on release builds.
-    /// </summary>
-    public static readonly CVarDef<bool> MultiAccounts = CVarDef.Create("MultiAccounts", false);
-
-    /// <summary>
     /// Currently selected login in the drop down.
     /// </summary>
     public static readonly CVarDef<string> SelectedLogin = CVarDef.Create("SelectedLogin", "");
-
-    /// <summary>
-    /// Do we force hwid change
-    /// </summary>
-    public static readonly CVarDef<bool> DisableRPC = CVarDef.Create("DisableRPC", false);
-    
-    /// <summary>
-    /// Do we force hwid change
-    /// </summary>
-    public static readonly CVarDef<bool> ForcingHWId = CVarDef.Create("ForcingHWId", false);
-    
-    /// <summary>
-    /// Do we force hwid change
-    /// </summary>
-    public static readonly CVarDef<bool> RandHWID = CVarDef.Create("RandHWID", false);
-    
-    /// <summary>
-    /// HWId to use on servers
-    /// </summary>
-    public static readonly CVarDef<string> ForcedHWId = CVarDef.Create("ForcedHWId", "");
-    
-    /// <summary>
-    /// Enable MarseyApi
-    /// </summary>
-    public static readonly CVarDef<bool> MarseyApi = CVarDef.Create("MarseyApi", true);
-    
-    /// <summary>
-    /// MarseyApi endpoint url
-    /// </summary>
-    public static readonly CVarDef<string> MarseyApiEndpoint = CVarDef.Create("MarseyApiEndpoint", "https://fujo.love/api/v1");
 
     //public static readonly CVarDef<string> Fingerprint = CVarDef.Create("Fingerprint", "");
 
@@ -151,6 +90,83 @@ public static class CVars
     /// </summary>
     /// <seealso cref="ServerFilter.PlayerCountMax"/>
     public static readonly CVarDef<int> FilterPlayerCountMaxValue = CVarDef.Create("FilterPlayerCountMaxValue", 0);
+    
+    // MarseyCVars start here
+    
+    // Stealthsey
+    
+    /// <summary>
+    /// Define strict level
+    /// </summary>
+    public static readonly CVarDef<int> MarseyHide = CVarDef.Create("HideLevel", 2);
+    
+    // Logging
+
+    /// <summary>
+    /// Log messages coming from patches
+    /// </summary>
+    public static readonly CVarDef<bool> LogPatcher = CVarDef.Create("LogPatcher", true);
+
+    /// <summary>
+    /// Log debug messages coming from loader
+    /// </summary>
+    public static readonly CVarDef<bool> LogLoaderDebug = CVarDef.Create("LogLoaderDebug", false);
+    
+    /// <summary>
+    /// Log patcher output to a separate file
+    /// </summary>
+    public static readonly CVarDef<bool> SeparateLogging = CVarDef.Create("SeparateLogging", false);
+    
+    // Behavior
+    
+    /// <summary>
+    /// Throw an exception if a patch fails to apply.
+    /// </summary>
+    public static readonly CVarDef<bool> ThrowPatchFail = CVarDef.Create("ThrowPatchFail", false);
+
+    /// <summary>
+    /// Do we disable RPC?
+    /// </summary>
+    public static readonly CVarDef<bool> DisableRPC = CVarDef.Create("DisableRPC", false);
+
+    /// <summary>
+    /// Do we disable redialing?
+    /// </summary>
+    public static readonly CVarDef<bool> JamDials = CVarDef.Create("JamDials", false);
+    
+    /// <summary>
+    /// Do we disable remote command execution
+    /// </summary>
+    public static readonly CVarDef<bool> Blackhole = CVarDef.Create("Blackhole", false);
+
+    /// <summary>
+    /// Do we force a hwid value
+    /// </summary>
+    public static readonly CVarDef<bool> ForcingHWId = CVarDef.Create("ForcingHWId", false);
+
+    // HWID
+    
+    /// <summary>
+    /// Do we use a random HWID each time?
+    /// </summary>
+    public static readonly CVarDef<bool> RandHWID = CVarDef.Create("RandHWID", false);
+
+    /// <summary>
+    /// HWId to use on servers
+    /// </summary>
+    public static readonly CVarDef<string> ForcedHWId = CVarDef.Create("ForcedHWId", "");
+
+    // API
+    
+    /// <summary>
+    /// Enable MarseyApi
+    /// </summary>
+    public static readonly CVarDef<bool> MarseyApi = CVarDef.Create("MarseyApi", true);
+
+    /// <summary>
+    /// MarseyApi endpoint url
+    /// </summary>
+    public static readonly CVarDef<string> MarseyApiEndpoint = CVarDef.Create("MarseyApiEndpoint", "https://fujo.love/api/v1");
 }
 
 /// <summary>

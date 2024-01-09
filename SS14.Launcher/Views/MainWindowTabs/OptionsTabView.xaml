@@ -97,13 +97,20 @@
                             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding HideLevel, Converter={StaticResource HideLevelDescriptionConverter}}" Margin="8" />
                         </Grid>
                         
+                        <!-- Game block -->
                         <TextBlock Margin="4, 0" Text="Game" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DisableRPC}">Disable RPC</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Does not let Discord RPC initialize, hiding your username and server from your profile."
                                    Margin="8" />
                         
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyJam}">Disable Redial</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Does not let game admins (or the game itself) to reconnect you to another station."
+                                   Margin="8" />
+                        
                         <!-- HWID Block -->
+                        <TextBlock Margin="4, 0" Text="HWID" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForcingHWID}">Force HWID</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" 
                                    Text="Force change HWID when joining a server"
@@ -138,12 +145,9 @@
                                    Margin="8" />
             
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SeparateLogging}">Separate game and patcher logs</CheckBox>
-                        <StackPanel Orientation="Vertical" Margin="8">
-                            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                       Text="Split game and patcher output into two separate files."/>
-                            <TextBlock FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap"
-                                       Text="This is easy to detect."/>
-                        </StackPanel>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Log Marsey to client.marsey.log instead."
+                                   Margin="8"/>
                         
                         <TextBlock Margin="4, 0" Text="MarseyApi" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyApi}">Enabled</CheckBox>
@@ -156,18 +160,27 @@
                         </Grid>
                         
                         <TextBlock Margin="4, 0" Text="Misc" Classes="NanoHeadingMedium" />
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump assemblies</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Dumps all loaded assemblies of a server, then closes the game and disables itself."
+                                   Margin="8" />
+                        
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyHole}">Whitelist RemoteExecuteCommand</CheckBox>
+                        <StackPanel Margin="8">
+                            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                       Text="Allows only whitelisted commands to use RemoteExecuteCommand."/>
+                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" TextWrapping="Wrap"
+                                       Text="May break functions in game. Your mileage may vary."/>
+                        </StackPanel>
+                        
                         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
-                                       Text="Change your account's name to something else. This does not change your in-game username"
+                                       Text="Change your account's name to something else. This does not change your in-game username, requires a restart."
                                        Margin="8"/>
                             <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="UsernameTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding Username}"/>
                             <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set Username" Command="{Binding SetUsernameCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
                         
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump assemblies</CheckBox>
-                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                   Text="Dumps all loaded assemblies of a server, then closes the game and disables itself."
-                                   Margin="8" />
                     </StackPanel>
                 </DockPanel>
             </ScrollViewer>
