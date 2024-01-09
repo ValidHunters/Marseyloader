@@ -48,7 +48,8 @@ public static class Dumper
     // ReSharper disable once UnusedMember.Local
     private static void TLMPostfix()
     {
-        MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Dumper exited with {counter} assemblies.");
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Dumper", $"Dumps saved to {path}");
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, "Dumper", $"Exited with {counter} assemblies.");
         Environment.Exit(0);
     }
 
@@ -59,7 +60,5 @@ public static class Dumper
 
         string loc = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
         path = Path.Combine(loc, "Dumper/", $"{fork}/");
-
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Dumper", $"Dump saved to {path}");
     }
 }
