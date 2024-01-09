@@ -163,6 +163,11 @@
                             <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="UsernameTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding Username}"/>
                             <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set Username" Command="{Binding SetUsernameCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
+                        
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump assemblies</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Dumps all loaded assemblies of a server, then closes the game and disables itself."
+                                   Margin="8" />
                     </StackPanel>
                 </DockPanel>
             </ScrollViewer>

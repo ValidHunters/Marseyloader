@@ -36,15 +36,25 @@ public static class MarseyConf
     /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool ThrowOnFail;
-
-    /// <summary>
-    /// Hook HWID
+    
     /// <see cref="HWID"/>
-    /// </summary>
     public static bool ForceHWID;
 
-    /// <summary>
-    /// Hook Discord RPC
-    /// </summary>
+
+    /// <see cref="DiscordRPC"/>
     public static bool KillRPC;
+    
+    ///
+    public static bool DumpAssemblies;
+
+    public static readonly Dictionary<string, Action<bool>> EnvVarMap = new Dictionary<string, Action<bool>>
+    {
+        { "MARSEY_LOGGING", value => Logging = value },
+        { "MARSEY_LOADER_DEBUG", value => DebugAllowed = value },
+        { "MARSEY_THROW_FAIL", value => ThrowOnFail = value },
+        { "MARSEY_SEPARATE_LOGGER", value => SeparateLogger = value },
+        { "MARSEY_FORCINGHWID", value => ForceHWID = value },
+        { "MARSEY_DISABLE_PRESENCE", value => KillRPC = value },
+        { "MARSEY_DUMP_ASSEMBLIES", value => DumpAssemblies = value }
+    };
 }

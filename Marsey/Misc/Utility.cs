@@ -65,12 +65,11 @@ public abstract class Utility
     /// </summary>
     public static void SetupFlags()
     {
-        MarseyConf.Logging = CheckEnv("MARSEY_LOGGING");
-        MarseyConf.DebugAllowed = CheckEnv("MARSEY_LOADER_DEBUG");
-        MarseyConf.ThrowOnFail = CheckEnv("MARSEY_THROW_FAIL");
-        MarseyConf.SeparateLogger = CheckEnv("MARSEY_SEPARATE_LOGGER");
-        MarseyConf.ForceHWID = CheckEnv("MARSEY_FORCINGHWID");
-        MarseyConf.KillRPC = CheckEnv("MARSEY_DISABLE_PRESENCE");
+        foreach (KeyValuePair<string, Action<bool>> kvp in MarseyConf.EnvVarMap)
+        {
+            bool value = CheckEnv(kvp.Key);
+            kvp.Value(value);
+        }
     }
 
     private static bool CheckEnv(string envName)

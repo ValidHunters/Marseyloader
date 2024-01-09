@@ -4,6 +4,7 @@ using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.GameAssembly;
+using Marsey.GameAssembly.Patches;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Stealthsey;
@@ -62,6 +63,10 @@ public class MarseyPatcher
         // Preload marseypatches, if available
         // Its placed here because we might want to patch things before the loader has even a chance to execute anything
         Marsyfier.Preload();
+
+        // Patch assembly loading methods, if enabled
+        // Exists for the same reason as above actually
+        Dumper.Patch();
         
         // Tell the loader were done here, start the game
         _flag.Set();

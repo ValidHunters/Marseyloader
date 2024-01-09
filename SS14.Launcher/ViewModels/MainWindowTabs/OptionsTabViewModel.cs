@@ -275,6 +275,12 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         }
     }
 
+    public bool DumpAssemblies
+    {
+        get => MarseyConf.DumpAssemblies;
+        set => MarseyConf.DumpAssemblies = value;
+    }
+
 
     
     private void OnSetUsernameClick()

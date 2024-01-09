@@ -281,6 +281,10 @@ public class Connector : ReactiveObject
                 args.Add(parsedAddr.ToString());
             }
 
+            // Steal forkid for the dumper
+            // I am not going to go through cvars in startinfo.
+            _forkid = serverBuildInformation?.ForkId;
+
             // Pass build info to client. This is not critical to the client's function,
             // it was added to aid client replay recording.
 
@@ -429,8 +433,7 @@ public class Connector : ReactiveObject
             return null;
         }
 
-        Marsify();
-        ConfigureMarsey(startInfo);
+        Marsify(startInfo);
         
         ConfigureEnvironmentVariables(startInfo, launchInfo, engineVersion);
         ConfigureLogging(startInfo);
@@ -565,6 +568,17 @@ public class Connector : ReactiveObject
         return startInfo;
     }
     
+    private void Marsify(ProcessStartInfo startInfo)
+    {
+        Log.Debug("Preparing patch assemblies.");
+        FileHandler.PrepAssemblies();
+        
+        ConfigureMarsey(startInfo);
+        MarseyCleanup();
+    }
+
+    // TODO: Make this a json or something like holy shit
+    private string? _forkid;
     private void ConfigureMarsey(ProcessStartInfo startInfo)
     {
         // Logging
@@ -585,14 +599,18 @@ public class Connector : ReactiveObject
             startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
         
         startInfo.EnvironmentVariables["MARSEY_DISABLE_PRESENCE"] = _cfg.GetCVar(CVars.DisableRPC) ? "true" : null;
+
+        if (MarseyConf.DumpAssemblies)
+        {
+            startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
+            startInfo.EnvironmentVariables["MARSEY_DUMP_FORKID"] = _forkid;
+        }
     }
-    
-    private void Marsify()
+
+    private void MarseyCleanup()
     {
-        Log.Debug("Preparing patch assemblies.");
-        FileHandler.PrepAssemblies();
+        MarseyConf.DumpAssemblies = false;
     }
-    
 
     private static void ConfigureMultiWindow(ContentLaunchInfo launchInfo, ProcessStartInfo startInfo)
     {

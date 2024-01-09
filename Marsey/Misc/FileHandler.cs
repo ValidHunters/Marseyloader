@@ -140,4 +140,19 @@ public abstract class FileHandler
             return new List<string>();
         }
     }
+
+    /// <summary>
+    /// Saves assembly from stream to file.
+    /// Used by the dumper
+    /// </summary>
+    /// <see cref="GameAssembly.Patches.Dumper"/>
+    public static void SaveAssembly(string path, string name, Stream asmStream)
+    {
+        Directory.CreateDirectory(path);
+        
+        string fullpath = Path.Combine(path, name);
+        
+        using FileStream st = new FileStream(fullpath, FileMode.Create, FileAccess.Write);
+        asmStream.CopyTo(st);
+    }
 }
