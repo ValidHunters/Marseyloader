@@ -6,7 +6,7 @@ using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.GameAssembly;
-using Marsey.Handbrake;
+using Marsey.Handbreak;
 using Marsey.Stealthsey;
 using Marsey.Misc;
 using Marsey.PatchAssembly;
@@ -36,12 +36,18 @@ public static class Subverse
     /// </summary>
     public static void PatchSubverter()
     {
-        MethodInfo Target = AccessTools.Method(AccessTools.TypeByName("Robust.Shared.ContentPack.ModLoader"), "TryLoadModules");
-        MethodInfo Prefix = typeof(Subverse).GetMethod("Prefix", BindingFlags.NonPublic | BindingFlags.Static)!;
         
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Hooking {Target.Name} with {Prefix.Name}");
+        MethodInfo? Target = Helpers.GetMethod("Robust.Shared.ContentPack.ModLoader", "TryLoadModules");
+        MethodInfo? Prefix = Helpers.GetMethod(typeof(Subverse), "Prefix");
+
+        if (Target != null && Prefix != null)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Hooking {Target.Name} with {Prefix.Name}");
+            Manual.Patch(Target, Prefix, HarmonyPatchType.Prefix);
+            return;
+        }
         
-        Manual.Patch(Target, Prefix, HarmonyPatchType.Prefix);
+        MarseyLogger.Log(MarseyLogger.LogType.ERRO, "Subverter failed load!");
     }
 
     private static bool Prefix(object __instance)

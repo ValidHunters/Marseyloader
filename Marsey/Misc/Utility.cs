@@ -12,6 +12,7 @@ public static class MarseyLogger
     {
         INFO,
         WARN,
+        ERRO,
         FATL,
         DEBG
     }

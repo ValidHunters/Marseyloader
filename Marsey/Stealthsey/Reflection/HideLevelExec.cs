@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
-using Marsey.Handbrake;
+using Marsey.Handbreak;
 using Marsey.Misc;
 
 namespace Marsey.Stealthsey.Reflection;

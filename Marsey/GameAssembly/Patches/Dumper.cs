@@ -1,7 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
-using Marsey.Handbrake;
+using Marsey.Handbreak;
 using Marsey.Misc;
 using Marsey.Stealthsey;
 
@@ -17,17 +17,28 @@ public static class Dumper
         if (!MarseyConf.DumpAssemblies) return;
         
         GetExactPath();
-        Type? ModLoader = AccessTools.TypeByName("Robust.Shared.ContentPack.ModLoader");
+        Type? ModLoader = Helpers.TypeFromQualifiedName("Robust.Shared.ContentPack.ModLoader");
+
+        if (ModLoader == null)
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "ModLoader is null.");
+            return;
+        }
         
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Dumper", "Patching TLM");
-        MethodInfo? TryLoadModules = AccessTools.Method(ModLoader, "TryLoadModules");
-        MethodInfo? TLMPmi = typeof(Dumper).GetMethod("TLMPostfix", BindingFlags.NonPublic | BindingFlags.Static);
-        Manual.Patch(TryLoadModules, TLMPmi, HarmonyPatchType.Postfix);
+        Helpers.PatchMethod(ModLoader, 
+            "TryLoadModules", 
+            typeof(Dumper), 
+            "TLMPostfix", 
+            HarmonyPatchType.Postfix);
         
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Dumper", "Patching LGA");
-        MethodInfo? LoadGameAssembly = AccessTools.Method(ModLoader, "LoadGameAssembly", new[] { typeof(Stream), typeof(Stream), typeof(bool) });
-        MethodInfo? LGAPmi = typeof(Dumper).GetMethod("LGAPrefix", BindingFlags.NonPublic | BindingFlags.Static);
-        Manual.Patch(LoadGameAssembly, LGAPmi, HarmonyPatchType.Prefix);
+        Helpers.PatchMethod(ModLoader, 
+            "LoadGameAssembly",
+            typeof(Dumper),
+            "LGAPrefix",
+            HarmonyPatchType.Prefix, 
+            new[] { typeof(Stream), typeof(Stream), typeof(bool) });
     }
     
     /// <summary>

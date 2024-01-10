@@ -3,7 +3,7 @@ using HarmonyLib;
 using Marsey.GameAssembly;
 using Marsey.Misc;
 
-namespace Marsey.Handbrake;
+namespace Marsey.Handbreak;
 
 /// <summary>
 /// In some cases we are required to patch functions from the comfort of the loader
@@ -12,33 +12,37 @@ public static class Manual
 {
     public static void Patch(MethodInfo? method, MethodInfo? patch, HarmonyPatchType type)
     {
-        if (method == null || patch == null)
+        try
         {
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"HardPatch failed! Tried to patch method {method?.Name} with {patch?.Name} ({type.ToString()}).");
-            return;
-        }
+            if (method == null || patch == null)
+                throw new HandBreakException($"Attempted to patch {method} with {patch}, but one of them is null!");
 
-        switch (type)
+            switch (type)
+            {
+                case HarmonyPatchType.Prefix:
+                    Prefix(method, patch);
+                    break;
+                case HarmonyPatchType.Postfix:
+                    Postfix(method, patch);
+                    break;
+                case HarmonyPatchType.Transpiler:
+                    Transpiler(method, patch);
+                    break;
+                case HarmonyPatchType.Finalizer:
+                    Finalizer(method, patch);
+                    break;
+                case HarmonyPatchType.ReversePatch:
+                    Reverse(method, patch);
+                    break;
+                case HarmonyPatchType.All:
+                default:
+                    MarseyLogger.Log(MarseyLogger.LogType.ERRO, $"Passed an invalid patchtype: {type.ToString()}");
+                    break;
+            }
+        }
+        catch (HandBreakException e)
         {
-            case HarmonyPatchType.Prefix:
-                Prefix(method, patch);
-                break;
-            case HarmonyPatchType.Postfix:
-                Postfix(method, patch);
-                break;
-            case HarmonyPatchType.Transpiler:
-                Transpiler(method, patch);
-                break;
-            case HarmonyPatchType.Finalizer:
-                Finalizer(method, patch);
-                break;
-            case HarmonyPatchType.ReversePatch:
-                Reverse(method,patch);
-                break;
-            case HarmonyPatchType.All:
-            default:
-                MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Passed an invalid patchtype: {type.ToString()}");
-                break;
+            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "HandBreak", e.ToString());
         }
     }
     

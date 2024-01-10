@@ -2,6 +2,11 @@ using System;
 
 namespace Marsey.Misc;
 
+public class HandBreakException : Exception
+{
+    public HandBreakException(string message) : base(message) {}
+}
+
 public class PatchAssemblyException : Exception
 {
     public PatchAssemblyException(string message) : base(message) {}

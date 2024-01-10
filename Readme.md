@@ -19,6 +19,7 @@ Space Station 14 launcher with client-side modding/patching support.
 * * Tokens are updated only on connect or account switch to evade alt detection
 * * HWId spoofing
 * * Forcibly disable Discord RPC
+* * Disable Redialing (Forced reconnects)
 * * Wizden hub mirror set as default hub
 * * Locally change username for screenshots (This doesn't change your username in-game)
 * Marsey.

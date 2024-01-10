@@ -3,7 +3,7 @@ using System.Text;
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
-using Marsey.Handbrake;
+using Marsey.Handbreak;
 using Marsey.Misc;
 using Marsey.PatchAssembly;
 using Marsey.Stealthsey;
@@ -33,6 +33,8 @@ public static class HWID
         // Check if forcing is enabled
         if (!MarseyConf.ForceHWID)
             return;
+        
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, "HWIDForcer", "Starting");
 
         string hwid = GetForcedHWId();
         string cleanedHwid = CleanHwid(hwid);
@@ -54,7 +56,6 @@ public static class HWID
 
     private static void ForceHWID(string cleanedHwid)
     {
-        MarseyLogger.Log(MarseyLogger.LogType.INFO, "HWIDForcer", "Priming");
         try
         {
             _hwId = Enumerable.Range(0, cleanedHwid.Length / 2)
@@ -84,20 +85,13 @@ public static class HWID
 
     private static void PatchCalcMethod()
     {
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "HWIDForcer", "Starting capture");
-        Assembly? robustAssembly = GameAssemblies.RobustShared;
-        if (robustAssembly == null) return;
-
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "HWIDForcer", "Type");
-        Type? hwIdType = robustAssembly.GetType("Robust.Shared.Network.HWId");
-        if (hwIdType == null) return;
-
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "HWIDForcer", "Method");
-        MethodInfo? calcMethod = hwIdType.GetMethod("Calc", BindingFlags.Public | BindingFlags.Static);
-        if (calcMethod == null) return;
-
-        MethodInfo recalcMethod = typeof(HWID).GetMethod("RecalcHwid", BindingFlags.Static | BindingFlags.NonPublic)!;
-        Manual.Patch(calcMethod, recalcMethod, HarmonyPatchType.Postfix);
+        Helpers.PatchMethod(
+            Helpers.TypeFromQualifiedName("Robust.Shared.Network.HWId"),
+            "Calc",
+            typeof(HWID),
+            "RecalcHwid",
+            HarmonyPatchType.Postfix
+            );
     }
 
     private static void RecalcHwid(ref byte[] __result)

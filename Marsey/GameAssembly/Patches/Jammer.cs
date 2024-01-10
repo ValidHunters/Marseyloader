@@ -1,7 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
-using Marsey.Handbrake;
+using Marsey.Handbreak;
 using Marsey.Misc;
 using Marsey.Stealthsey;
 
@@ -20,17 +20,13 @@ public static class Jammer
         
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "Jammer", "Disabling redialer");
         
-        Type? GameCont = AccessTools.TypeByName("Robust.Client.GameController");
-        MethodInfo? Redial = AccessTools.Method(GameCont, "Redial");
-        MethodInfo? RedialSkip = typeof(Jammer).GetMethod("Disable", BindingFlags.NonPublic | BindingFlags.Static);
-
-        if (Redial == null)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.WARN, "Jammer", "Couldn't get Redial method handle. Not patching.");
-            return;
-        }
-        
-        Manual.Patch(Redial, RedialSkip, HarmonyPatchType.Prefix);
+        Helpers.PatchMethod(
+            Helpers.TypeFromQualifiedName("Robust.Client.GameController"),
+            "Redial",
+            typeof(Jammer),
+            "Disable",
+            HarmonyPatchType.Prefix
+            );
     }
 
     private static bool Disable()

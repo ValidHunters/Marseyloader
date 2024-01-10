@@ -6,7 +6,7 @@ using System.Runtime.Loader;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.GameAssembly.Patches;
-using Marsey.Handbrake;
+using Marsey.Handbreak;
 using Marsey.Misc;
 using Marsey.Stealthsey.Reflection;
 

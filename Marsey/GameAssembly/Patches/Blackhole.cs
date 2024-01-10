@@ -1,7 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
-using Marsey.Handbrake;
+using Marsey.Handbreak;
 using Marsey.Misc;
 
 namespace Marsey.GameAssembly.Patches;
@@ -9,7 +9,7 @@ namespace Marsey.GameAssembly.Patches;
 /// <summary>
 /// Whitelists command execution that is dependent on server
 /// </summary>
-/// <remarks>This breaks features that rely on this, for example White Dream's "notice" command. Mileage may vary.</remarks>
+/// <remarks>Breaks features that rely on this, for example White Dream's "notice" command. Mileage may vary.</remarks>
 public static class Blackhole
 {
     private static List<string> AllowedCommands = ["observe", "joingame", "ghostroles", "openahelp", "deadmin", "readmin"];
@@ -18,17 +18,13 @@ public static class Blackhole
     {
         if (!MarseyConf.DisableREC) return;
 
-        Type? CCH = AccessTools.TypeByName("Robust.Client.Console.ClientConsoleHost");
-        MethodInfo? REC = AccessTools.Method(CCH, "RemoteExecuteCommand");
-        MethodInfo RECpf = AccessTools.Method(typeof(Blackhole), "RECPref");
-
-        if (REC == null)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.WARN, "Blackhole", "RemoteExecuteCommand not found, not patching.");
-            return;
-        }
-        
-        Manual.Patch(REC, RECpf, HarmonyPatchType.Prefix);
+        Helpers.PatchMethod(
+            Helpers.TypeFromQualifiedName("Robust.Client.Console.ClientConsoleHost"),
+            "RemoteExecuteCommand",
+            typeof(Blackhole),
+            "RECPref",
+            HarmonyPatchType.Prefix
+            );
     }
 
     private static bool RECPref(ref dynamic? session, ref string command)
