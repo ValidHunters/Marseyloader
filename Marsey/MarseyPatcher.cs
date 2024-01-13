@@ -90,9 +90,8 @@ public class MarseyPatcher
         if (Subverse.CheckSubversions()) 
             Subverse.PatchSubverter();
 
-        // Manage game assemblies
-        GameAssemblyManager.GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss);
-        GameAssemblies.AssignAssemblies(robustSharedAss, clientAss, clientSharedAss);
+        // Wait for the game itself to load
+        GameAssemblyManager.TrySetContentAssemblies();
         
         // Post assembly-load hide methods
         Hidesey.PostLoad();

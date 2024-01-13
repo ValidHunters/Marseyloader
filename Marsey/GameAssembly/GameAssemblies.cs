@@ -7,21 +7,16 @@ namespace Marsey.GameAssembly;
 /// </summary>
 public static class GameAssemblies
 {
-    private static Assembly? _robustClient;
-    private static Assembly? _robustShared;
-    private static Assembly? _contentClient;
-    private static Assembly? _contentShared;
-
-    public static void Initialize(Assembly RobustClient)
+    public static void Initialize(Assembly? robustClient)
     {
-        _robustClient = RobustClient;
+        RobustClient = robustClient;
+        RobustShared = GameAssemblyManager.GetSharedEngineAssembly();
     }
 
-    public static void AssignAssemblies(Assembly? robustShared, Assembly? contentClient, Assembly? contentShared)
+    public static void AssignContentAssemblies(Assembly? contentClient, Assembly? contentShared)
     {
-        _robustShared = robustShared;
-        _contentClient = contentClient;
-        _contentShared = contentShared;
+        ContentClient = contentClient;
+        ContentShared = contentShared;
     }
     
     /// <summary>
@@ -30,11 +25,14 @@ public static class GameAssemblies
     /// <returns>True if any of the assemblies are filled</returns>
     public static bool ClientInitialized()
     {
-        return _contentClient != null || _contentShared != null;
+        return ContentClient != null || ContentShared != null;
     }
     
-    public static Assembly? RobustClient => _robustClient;
-    public static Assembly? RobustShared => _robustShared;
-    public static Assembly? ContentClient => _contentClient;
-    public static Assembly? ContentShared => _contentShared;
+    public static Assembly? RobustClient { get; private set; }
+
+    public static Assembly? RobustShared { get; private set; }
+
+    public static Assembly? ContentClient { get; private set; }
+
+    public static Assembly? ContentShared { get; private set; }
 }

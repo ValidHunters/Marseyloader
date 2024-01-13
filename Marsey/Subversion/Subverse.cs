@@ -81,10 +81,7 @@ public static class Subverse
     
     private static MethodInfo? CheckEntry(Assembly assembly)
     {
-        Type? entryType = assembly.GetType("MarseyEntry");
-        if (entryType == null) return null;
-        
-        MethodInfo? entryMethod = AssemblyFieldHandler.GetEntry(assembly, entryType);
-        return entryMethod != null ? entryMethod : null;
+        MethodInfo? entryMethod = AssemblyFieldHandler.GetEntry(assembly);
+        return entryMethod;
     }
 }

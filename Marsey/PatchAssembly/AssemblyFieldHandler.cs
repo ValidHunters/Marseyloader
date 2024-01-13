@@ -35,7 +35,7 @@ public static class AssemblyFieldHandler
         Type? loggerType = assembly.GetType("MarseyLogger");
         if (loggerType != null)
         {
-            SetupLogger(assembly);
+            SetupLogger(loggerType);
         }
         else
         {
@@ -48,20 +48,16 @@ public static class AssemblyFieldHandler
     /// </summary>
     private static void InitEntry(Assembly assembly, IPatch patch, string? assemblyName)
     {
-        Type? entryType = assembly.GetType("MarseyEntry");
-        if (entryType != null)
-        {
-            MethodInfo? entryMethod = GetEntry(assembly, entryType);
-            if (entryMethod != null)
-            {
-                patch.Entry = entryMethod;
-            }
-        }
-        else
+        MethodInfo? entryMethod = GetEntry(assembly);
+        if (entryMethod == null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no MarseyEntry class");
+            return;
         }
+    
+        patch.Entry = entryMethod;
     }
+
 
 
     /// <summary>
@@ -128,28 +124,30 @@ public static class AssemblyFieldHandler
     }
 
     /// <summary>
-    /// Set patch field to use Robust.Client
+    /// Set engine targets for preloading patches that can only target the engine.
     /// </summary>
     /// <param name="target">MarseyPatch.RobustClient from a patch assembly</param>
-    public static void SetPreloadTarget(FieldInfo target)
+    /// <param name="client">MarseyPatch.RobustShared from a patch assembly</param>
+    /// <see cref="DeterminePreload"/>
+    public static void SetEngineTargets(FieldInfo client, FieldInfo shared)
     {
-        target.SetValue(null, GameAssemblies.RobustClient);
+        client.SetValue(null, GameAssemblies.RobustClient);
+        shared.SetValue(null, GameAssemblies.RobustShared);
     }
 
     /// <summary>
     /// Sets patch delegate to MarseyLogger::Log(AssemblyName, string)
     /// Executed only by the Loader.
     /// </summary>
-    /// <param name="patch">Assembly from MarseyPatch</param>
-    private static void SetupLogger(Assembly patch)
+    /// <param name="marseyLoggerType">MarseyLogger class from MarseyPatch</param>
+    private static void SetupLogger(Type marseyLoggerType)
     {
-        Type? marseyLoggerType = patch.GetType("MarseyLogger");
         MethodInfo? logMethod = typeof(MarseyLogger).GetMethod("Log", new[] { typeof(AssemblyName), typeof(string) });
         FieldInfo? logDelegateField = marseyLoggerType?.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static);
 
         if (marseyLoggerType == null || logMethod == null || logDelegateField == null)
         {
-            List<string> missingComps = new List<string>();
+            List<string> missingComps = [];
             if (marseyLoggerType == null) missingComps.Add("MarseyLoggerType");
             if (logMethod == null) missingComps.Add("LogMethod");
             if (logDelegateField == null) missingComps.Add("LogDelegateField");
@@ -174,10 +172,11 @@ public static class AssemblyFieldHandler
     /// <summary>
     /// Get methodhandle for the entrypoint function in patch
     /// </summary>
-    public static MethodInfo? GetEntry(Assembly patch, Type entryType)
+    public static MethodInfo? GetEntry(Assembly assembly)
     {
-        MethodInfo? entry = entryType.GetMethod("Entry", BindingFlags.Public | BindingFlags.Static);
-        return entry;
+        Type? entryType = assembly.GetType("MarseyEntry");
+        MethodInfo? entry = entryType?.GetMethod("Entry", BindingFlags.Public | BindingFlags.Static);
+        return entry; // This is going to be null if MarseyEntry is absent
     }
 
 
@@ -190,10 +189,8 @@ public static class AssemblyFieldHandler
     /// <remarks>If name or description cannot be found - "Unknown" is returned</remarks>
     public static void GetFields(Type? marseyPatchType, out string name, out string description)
     {
-        FieldInfo? nameField = marseyPatchType?.GetField("Name");
-        FieldInfo? descriptionField = marseyPatchType?.GetField("Description");
-
-        name = nameField != null && nameField.GetValue(null) is string nameValue ? nameValue : "Unknown";
-        description = descriptionField != null && descriptionField.GetValue(null) is string descriptionValue ? descriptionValue : "Unknown";
+        name = marseyPatchType?.GetField("Name")?.GetValue(null) as string ?? "Unknown";
+        description = marseyPatchType?.GetField("Description")?.GetValue(null) as string ?? "Unknown";
     }
+
 }

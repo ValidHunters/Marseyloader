@@ -22,6 +22,9 @@ public static class Helpers
         return null;
     }
 
+    /// <summary>
+    /// A type can be hidden by hidesey, therefore we need to tell AccessTools about it
+    /// </summary>
     public static MethodInfo? GetMethod(Type type, string MethodName, Type[]? parameters = null)
     {
         return AccessTools.Method(type, MethodName, parameters);

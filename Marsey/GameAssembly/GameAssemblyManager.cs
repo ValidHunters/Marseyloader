@@ -13,21 +13,26 @@ public static class GameAssemblyManager
     private static readonly Dictionary<string, Assembly?> _assemblies = new Dictionary<string, Assembly?>
     {
         { "Content.Client,", null },
-        { "Robust.Shared,", null },
         { "Content.Shared,", null }
     };
+
+    public static Assembly? GetSharedEngineAssembly()
+    {
+        Assembly? RobustShared = FindAssembly("Robust.Shared,");
+        if (RobustShared == null) MarseyLogger.Log(MarseyLogger.LogType.WARN, "Failed to find Shared engine assembly!");
+
+        return RobustShared;
+    }
 
     /// <summary>
     /// Retrieves game assemblies and logs if any are missing.
     /// </summary>
-    public static void GetGameAssemblies(out Assembly? clientAss, out Assembly? robustSharedAss, out Assembly? clientSharedAss)
+    public static void TrySetContentAssemblies()
     {
         if (!TryGetAssemblies())
             LogMissingAssemblies();
 
-        clientAss = _assemblies["Content.Client,"];
-        robustSharedAss = _assemblies["Robust.Shared,"];
-        clientSharedAss = _assemblies["Content.Shared,"];
+        GameAssemblies.AssignContentAssemblies(_assemblies["Content.Client,"], _assemblies["Content.Shared,"]);
 
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "Received assemblies.");
     }
@@ -51,21 +56,27 @@ public static class GameAssemblyManager
     /// <inheritdoc cref="TryGetAssemblies"/>
     private static bool FindAssemblies()
     {
+        foreach (string entry in _assemblies.Keys.ToList())
+        {
+            Assembly? foundAssembly = FindAssembly(entry);
+            if (foundAssembly != null)
+            {
+                AssignAssembly(entry, foundAssembly);
+            }
+        }
+    
+        return _assemblies.Values.All(a => a != null);
+    }
+    
+    private static Assembly? FindAssembly(string assemblyName)
+    {
         Assembly[] asmlist = AppDomain.CurrentDomain.GetAssemblies();
         foreach (Assembly asm in asmlist)
         {
-            string? fullName = asm.FullName;
-            if (fullName == null) continue;
-
-            foreach (string entry in _assemblies.Keys.ToList())
-            {
-                AssignAssembly(entry, asm);
-            }
-
-            if (_assemblies.Values.All(a => a != null))
-                return true;
+            if (asm.FullName?.Contains(assemblyName) == true)
+                return asm;
         }
-        return false;
+        return null;
     }
 
     /// <summary>

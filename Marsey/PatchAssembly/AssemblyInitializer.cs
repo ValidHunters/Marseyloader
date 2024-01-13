@@ -81,11 +81,11 @@ public static class AssemblyInitializer
                         $"Couldn't get assembly fields on {assembly.GetName().Name}.");
                     return;
                 }
-
                 if (preloadField)
                 {
-                    FieldInfo target = targets[0]; // Robust.Client
-                    AssemblyFieldHandler.SetPreloadTarget(target);
+                    FieldInfo client = targets[0]; // Robust.Client
+                    FieldInfo shared = targets[1]; // Robust.Shared
+                    AssemblyFieldHandler.SetEngineTargets(client, shared);
                 }
                 else
                 {
@@ -96,9 +96,12 @@ public static class AssemblyInitializer
             }
         }
 
+        // Retrieve additional fields such as name and description from the data type
         AssemblyFieldHandler.GetFields(dataType, out string name, out string description);
+        // Attempt to create and add a patch to the assembly with the retrieved information
         TryCreateAddPatch(assembly, dataType, name, description, preloadField);
     }
+
 
     private static void TryCreateAddPatch(Assembly assembly, MemberInfo? dataType, string name, string description, bool preloadField)
     {
