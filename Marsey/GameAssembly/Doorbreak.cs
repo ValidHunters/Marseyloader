@@ -15,6 +15,11 @@ public static class Doorbreak
     {
         if (entry == null) return;
         
-        entry.Invoke(null, new object[] {});
+        Thread entryThread = new Thread(() =>
+        {
+            entry.Invoke(null, new object[] {});
+        });
+        
+        entryThread.Start();
     }
 }
