@@ -73,7 +73,7 @@ public static class Subverse
                 Doorbreak.Enter(entryMethod);
             }
             
-            Hidesey.HidePatch(subverterAssembly);
+            Subverter.Hide(subverterAssembly);
         }
         
         return true;

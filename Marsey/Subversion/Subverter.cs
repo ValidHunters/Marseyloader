@@ -21,7 +21,7 @@ public static class Subverter
     /// </summary>
     /// <remarks>Assigned to a delegate in Subverter.dll</remarks>
     [HideLevelRequirement(HideLevel.Unconditional)]
-    private static void Hide(Assembly asm)
+    public static void Hide(Assembly asm)
     {
         Hidesey.HidePatch(asm);
     }
