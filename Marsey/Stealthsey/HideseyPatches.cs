@@ -15,36 +15,30 @@ namespace Marsey.Stealthsey;
 /// </summary>
 public static class HideseyPatches
 {
-    /// <summary>
-    /// This is a postfix patch which swaps an assembly list with a less honest one
-    /// </summary>
-    public static void LieLoader(ref Assembly[] __result)
+    public static void Lie<T>(ref T __result)
     {
-        __result = Hidesey.LyingDomain(__result);
-    }
-    
-    public static void LieContext(ref IEnumerable<Assembly> __result)
-    {
-        __result = Hidesey.LyingContext(__result);
-    }
-
-    public static void LieManifest(ref IEnumerable<AssemblyLoadContext> __result)
-    {
-        __result = Hidesey.LyingManifest(__result);
-    }
-
-    /// <summary>
-    /// Same but with referenced assemblies
-    /// </summary>
-    public static void LieReference(ref AssemblyName[] __result)
-    {
-        __result = Hidesey.LyingReference(__result);
+        switch (__result)
+        {
+            case Assembly[] assemblies:
+                __result = (T)(object)Hidesey.LyingDomain(assemblies);
+                break;
+            case IEnumerable<Assembly> assemblyEnumerable:
+                __result = (T)(object)Hidesey.LyingContext(assemblyEnumerable);
+                break;
+            case IEnumerable<AssemblyLoadContext> assemblyLoadContextEnumerable:
+                __result = (T)(object)Hidesey.LyingManifest(assemblyLoadContextEnumerable);
+                break;
+            case AssemblyName[] assemblyNames:
+                __result = (T)(object)Hidesey.LyingReference(assemblyNames);
+                break;
+            case Type[] types:
+                __result = (T)(object)Hidesey.LyingTyper(types);
+                break;
+            default:
+                throw new InvalidOperationException("Unsupported type for LiePatch");
+        }
     }
 
-    public static void LieTyper(ref Type[] __result)
-    {
-        __result = Hidesey.LyingTyper(__result);
-    }
 
     /// <summary>
     /// This patch skips function execution
@@ -61,8 +55,10 @@ public static class HideseyPatches
         string parameters = string.Join(", ", __originalMethod.GetParameters().Select(p => p.ParameterType.Name));
         fullMethodName += $"({parameters})";
         
-        if (__originalMethod.GetCustomAttributes(typeof(HideLevelRequirement), false).FirstOrDefault() is HideLevelRequirement hideLevelRequirement 
-            && MarseyConf.MarseyHide < hideLevelRequirement.Level)
+        // Check if the method has a HideLevelRequirement attribute and compare the required level with the current MarseyHide level.
+        if (__originalMethod.GetCustomAttributes(typeof(HideLevelRequirement), false).FirstOrDefault() is 
+                HideLevelRequirement hideLevelRequirement 
+                && MarseyConf.MarseyHide < hideLevelRequirement.Level)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, 
                 $"Not executing {fullMethodName} due to lower MarseyHide level. " +
@@ -70,8 +66,10 @@ public static class HideseyPatches
             return false;
         }
         
-        if (__originalMethod.GetCustomAttributes(typeof(HideLevelRestriction), false).FirstOrDefault() is HideLevelRestriction hideLevelRestriction 
-            && MarseyConf.MarseyHide >= hideLevelRestriction.MaxLevel)
+        // Check if the method has a HideLevelRestriction attribute and ensure the current MarseyHide level is below the threshold.
+        if (__originalMethod.GetCustomAttributes(typeof(HideLevelRestriction), false).FirstOrDefault() is 
+                HideLevelRestriction hideLevelRestriction && 
+                MarseyConf.MarseyHide >= hideLevelRestriction.MaxLevel)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, 
                 $"Not executing {fullMethodName} due to equal or above MarseyHide level. " +

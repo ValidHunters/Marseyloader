@@ -1,5 +1,6 @@
 using System.Reflection;
 using HarmonyLib;
+using Marsey.Config;
 using Marsey.Misc;
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -25,7 +26,7 @@ public static class Helpers
     /// <summary>
     /// A type can be hidden by hidesey, therefore we need to tell AccessTools about it
     /// </summary>
-    public static MethodInfo? GetMethod(Type type, string MethodName, Type[]? parameters = null)
+    public static MethodInfo? GetMethod(Type? type, string MethodName, Type[]? parameters = null)
     {
         return AccessTools.Method(type, MethodName, parameters);
     }
@@ -34,34 +35,68 @@ public static class Helpers
     /// Patches a method from the given pointers
     /// </summary>
     /// <param name="targetType">Class the target method is contained in</param>
-    /// <param name="methodName">Target method name</param>
+    /// <param name="targetMethodName">Target method name</param>
     /// <param name="patchType">Class the patch method is contained in</param>
-    /// <param name="patchedMethodName">Patch method name</param>
+    /// <param name="patchMethodName">Patch method name</param>
     /// <param name="patchingType">What type of patch is used</param>
     /// <param name="targetMethodParameters">Parameters used by the target method</param>
     /// <param name="patchMethodParameters">Parameters used by the patch method</param>
-    public static void PatchMethod(Type? targetType, string methodName, Type? patchType, string patchedMethodName, HarmonyPatchType patchingType, Type[]? targetMethodParameters = null, Type[]? patchMethodParameters = null)
+    public static void PatchMethod(Type? targetType, string targetMethodName, Type? patchType, string patchMethodName, HarmonyPatchType patchingType, Type[]? targetMethodParameters = null, Type[]? patchMethodParameters = null)
     {
-        if (targetType == null || patchType == null)
-        {
-            throw new HandBreakException($"Passed type is null. Target: {targetType}, patch: {patchType}");
-        }
+        ValidateTypes(targetType, patchType);
         
-        MethodInfo? targetMethod = GetMethod(targetType, methodName, targetMethodParameters);
-        if (targetMethod == null)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "Handbreak", $"{methodName} method not found, not patching.");
-            return;
-        }
-
-        MethodInfo? patchMethod = GetMethod(patchType, patchedMethodName, patchMethodParameters);
-        if (patchMethod == null)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "Handbreak", $"{patchedMethodName} method not found, not patching.");
-            return;
-        }
+        MethodInfo? targetMethod = GetAndValidateMethod(targetType, targetMethodName, targetMethodParameters, "target");
+        MethodInfo? patchMethod = GetAndValidateMethod(patchType, patchMethodName, patchMethodParameters, "patch");
 
         Manual.Patch(targetMethod, patchMethod, patchingType);
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Handbreak", $"{patchingType.ToString()}: Patched {methodName} with {patchedMethodName}.");
+        LogPatchSuccess(patchingType, targetMethodName, patchMethodName);
+    }
+
+    public static void PatchGenericMethod(Type? targetType, string targetMethodName, Type? patchType, string patchMethodName, Type returnType, HarmonyPatchType patchingType)
+    {
+        ValidateTypes(targetType, patchType);
+
+        MethodInfo? targetMethod = GetAndValidateMethod(targetType, targetMethodName, null, "target");
+        MethodInfo? patchMethod = GetAndValidateMethod(patchType, patchMethodName, null, "patch");
+
+        MethodInfo? genericMethod = MakeGenericMethod(patchMethod, returnType);
+        
+        Manual.Patch(targetMethod, genericMethod, patchingType);
+        LogPatchSuccess(patchingType, targetMethodName, patchMethodName);
+    }
+    
+    private static void ValidateTypes(Type? targetType, Type? patchType)
+    {
+        if (targetType == null || patchType == null)
+            throw new HandBreakException($"Passed type is null. Target: {targetType}, patch: {patchType}");
+    }
+
+    private static MethodInfo? GetAndValidateMethod(Type? type, string methodName, Type[]? methodParameters, string methodType)
+    {
+        MethodInfo? method = GetMethod(type, methodName, methodParameters);
+        if (method == null)
+            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "Handbreak", $"{methodName} {methodType} method not found, not patching.");
+        return method;
+    }
+
+    private static MethodInfo? MakeGenericMethod(MethodInfo? method, Type returnType)
+    {
+        if (method != null) return method.MakeGenericMethod(returnType);
+        
+        MarseyLogger.Log(MarseyLogger.LogType.ERRO, "Handbreak", $"Error making generic method");
+        return null;
+    }
+
+    private static void LogPatchSuccess(HarmonyPatchType patchingType, string targetMethodName, string patchMethodName)
+    {
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Handbreak", $"{patchingType}: Patched {targetMethodName} with {patchMethodName}.");
+    }
+    
+    public static void HandleFail(string methodName, MethodInfo? method)
+    {
+        string message = $"Failed to patch {methodName} using {method?.Name}";
+        if (MarseyConf.ThrowOnFail)
+            throw new HideseyException(message);
+        MarseyLogger.Log(MarseyLogger.LogType.FATL, message);
     }
 }

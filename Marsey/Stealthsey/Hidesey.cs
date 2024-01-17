@@ -178,51 +178,28 @@ public static class Hidesey
     /// <exception cref="HideseyException">Thrown if ThrowOnFail is true and any of the patches fails to apply</exception>
     private static void Perjurize()
     {
-        (MethodInfo?, MethodInfo?)[] postfixPatches = new (MethodInfo?, MethodInfo?)[]
+        (Type, string, Type)[] patches =
         {
-            (
-                typeof(AppDomain).GetMethod("GetAssemblies", BindingFlags.Public | BindingFlags.Instance), 
-                typeof(HideseyPatches).GetMethod("LieLoader", BindingFlags.Public | BindingFlags.Static)
-            ),
-            (
-                Assembly.GetExecutingAssembly().GetType().GetMethod("GetReferencedAssemblies"), 
-                typeof(HideseyPatches).GetMethod("LieReference", BindingFlags.Public | BindingFlags.Static)
-            ),
-            (
-                typeof(Assembly).GetMethod("GetTypes"), 
-                typeof(HideseyPatches).GetMethod("LieTyper", BindingFlags.Public | BindingFlags.Static)
-            ),
-            (
-                typeof(AssemblyLoadContext).GetProperty("Assemblies")!.GetGetMethod(), 
-                typeof(HideseyPatches).GetMethod("LieContext", BindingFlags.Public | BindingFlags.Static)
-            ),
-            (
-                typeof(AssemblyLoadContext).GetProperty("All")!.GetGetMethod(), 
-                typeof(HideseyPatches).GetMethod("LieManifest", BindingFlags.Public | BindingFlags.Static)
-            )
+            (typeof(AppDomain), nameof(AppDomain.GetAssemblies), typeof(Assembly[])),
+            (Assembly.GetExecutingAssembly().GetType(), nameof(Assembly.GetReferencedAssemblies), typeof(AssemblyName[])),
+            (typeof(Assembly), nameof(Assembly.GetTypes), typeof(Type[])),
+            (typeof(AssemblyLoadContext), "Assemblies", typeof(IEnumerable<Assembly>)),
+            (typeof(AssemblyLoadContext), "All", typeof(IEnumerable<AssemblyLoadContext>))
         };
 
-        foreach ((MethodInfo? original, MethodInfo? patch) in postfixPatches)
+        foreach ((Type? targetType, string methodName, Type returnType) in patches)
         {
-            if (original != null && patch != null)
-            {
-                Manual.Patch(original, patch, HarmonyPatchType.Postfix);
-            }
-            else
-            {
-                string message = $"Failed to patch {original?.Name} using {patch?.Name}";
-
-                // Close client if any of the hidesey patches fail
-                if (MarseyConf.ThrowOnFail)
-                    throw new HideseyException(message);
-            
-                MarseyLogger.Log(MarseyLogger.LogType.FATL, message);
-            }
+            Helpers.PatchGenericMethod(
+                targetType: targetType, 
+                targetMethodName: methodName, 
+                patchType: typeof(HideseyPatches),
+                patchMethodName: "Lie", 
+                returnType: returnType, 
+                patchingType: HarmonyPatchType.Postfix
+                );
         }
     }
-
-
-
+    
     /// <summary>
     /// Checks HideLevel env variable, defaults to Normal
     /// </summary>
