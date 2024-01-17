@@ -10,7 +10,7 @@ namespace Marsey.Handbreak;
 /// </summary>
 public static class Manual
 {
-    public static void Patch(MethodInfo? method, MethodInfo? patch, HarmonyPatchType type)
+    public static bool Patch(MethodInfo? method, MethodInfo? patch, HarmonyPatchType type)
     {
         try
         {
@@ -43,7 +43,10 @@ public static class Manual
         catch (HandBreakException e)
         {
             MarseyLogger.Log(MarseyLogger.LogType.ERRO, "HandBreak", e.ToString());
+            return false;
         }
+
+        return true;
     }
     
     private static void Prefix(MethodBase method, MethodInfo prefix)

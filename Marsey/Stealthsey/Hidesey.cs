@@ -88,7 +88,7 @@ public static class Hidesey
 
         Perjurize(); // Patch detection methods
         
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Hidesey started. Running {MarseyConf.MarseyHide.ToString()} configuration.");
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Hidesey started. Running {MarseyConf.MarseyHide.ToString()} configuration.");
     }
 
     /// <summary>
@@ -178,25 +178,25 @@ public static class Hidesey
     /// <exception cref="HideseyException">Thrown if ThrowOnFail is true and any of the patches fails to apply</exception>
     private static void Perjurize()
     {
-        (Type, string, Type)[] patches =
+        MethodInfo? Lie = Helpers.GetMethod(typeof(HideseyPatches), "Lie");
+        
+        (MethodInfo?, Type)[] patches =
         {
-            (typeof(AppDomain), nameof(AppDomain.GetAssemblies), typeof(Assembly[])),
-            (Assembly.GetExecutingAssembly().GetType(), nameof(Assembly.GetReferencedAssemblies), typeof(AssemblyName[])),
-            (typeof(Assembly), nameof(Assembly.GetTypes), typeof(Type[])),
-            (typeof(AssemblyLoadContext), "Assemblies", typeof(IEnumerable<Assembly>)),
-            (typeof(AssemblyLoadContext), "All", typeof(IEnumerable<AssemblyLoadContext>))
+            (typeof(AppDomain).GetMethod(nameof(AppDomain.GetAssemblies)), typeof(Assembly[])),
+            (Assembly.GetExecutingAssembly().GetType().GetMethod(nameof(Assembly.GetReferencedAssemblies)), typeof(AssemblyName[])),
+            (typeof(Assembly).GetMethod(nameof(Assembly.GetTypes)), typeof(Type[])),
+            (typeof(AssemblyLoadContext).GetProperty("Assemblies")?.GetGetMethod(), typeof(IEnumerable<Assembly>)),
+            (typeof(AssemblyLoadContext).GetProperty("All")?.GetGetMethod(), typeof(IEnumerable<AssemblyLoadContext>))
         };
 
-        foreach ((Type? targetType, string methodName, Type returnType) in patches)
+        foreach ((MethodInfo? targetMethod, Type returnType) in patches)
         {
             Helpers.PatchGenericMethod(
-                targetType: targetType, 
-                targetMethodName: methodName, 
-                patchType: typeof(HideseyPatches),
-                patchMethodName: "Lie", 
-                returnType: returnType, 
-                patchingType: HarmonyPatchType.Postfix
-                );
+                target: targetMethod,
+                patch: Lie,
+                returnType: returnType,
+                patchType: HarmonyPatchType.Postfix
+            );
         }
     }
     

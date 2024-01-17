@@ -48,8 +48,8 @@ public static class Helpers
         MethodInfo? targetMethod = GetAndValidateMethod(targetType, targetMethodName, targetMethodParameters, "target");
         MethodInfo? patchMethod = GetAndValidateMethod(patchType, patchMethodName, patchMethodParameters, "patch");
 
-        Manual.Patch(targetMethod, patchMethod, patchingType);
-        LogPatchSuccess(patchingType, targetMethodName, patchMethodName);
+        if (Manual.Patch(targetMethod, patchMethod, patchingType))
+            LogPatchSuccess(patchingType, targetMethodName, patchMethodName);
     }
 
     public static void PatchGenericMethod(Type? targetType, string targetMethodName, Type? patchType, string patchMethodName, Type returnType, HarmonyPatchType patchingType)
@@ -61,14 +61,29 @@ public static class Helpers
 
         MethodInfo? genericMethod = MakeGenericMethod(patchMethod, returnType);
         
-        Manual.Patch(targetMethod, genericMethod, patchingType);
-        LogPatchSuccess(patchingType, targetMethodName, patchMethodName);
+        if (Manual.Patch(targetMethod, genericMethod, patchingType))
+            LogPatchSuccess(patchingType, targetMethodName, patchMethodName);
+    }
+
+    public static void PatchGenericMethod(MethodInfo? target, MethodInfo? patch, Type returnType, HarmonyPatchType patchType)
+    {
+        MethodInfo? generic = MakeGenericMethod(patch, returnType);
+        
+        if (Manual.Patch(target, generic, patchType))
+            LogPatchSuccess(patchType, target!.Name, patch!.Name);
+            
     }
     
     private static void ValidateTypes(Type? targetType, Type? patchType)
     {
         if (targetType == null || patchType == null)
             throw new HandBreakException($"Passed type is null. Target: {targetType}, patch: {patchType}");
+    }
+    
+    private static void ValidateMethods(MethodInfo? target, MethodInfo? patch)
+    {
+        if (target == null || patch == null)
+            throw new HandBreakException($"Passed type is null. Target: {target}, patch: {patch}");
     }
 
     private static MethodInfo? GetAndValidateMethod(Type? type, string methodName, Type[]? methodParameters, string methodType)
