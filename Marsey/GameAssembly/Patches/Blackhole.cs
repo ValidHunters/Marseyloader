@@ -12,12 +12,14 @@ namespace Marsey.GameAssembly.Patches;
 /// <remarks>Breaks features that rely on this, for example White Dream's "notice" command. Mileage may vary.</remarks>
 public static class Blackhole
 {
-    private static List<string> AllowedCommands = ["observe", "joingame", "ghostroles", "openahelp", "deadmin", "readmin"];
+    private static List<string> AllowedCommands = ["observe", "joingame", "ghostroles", "openahelp", "deadmin", "readmin", "say", "whisper"];
 
     public static void Patch()
     {
         if (!MarseyConf.DisableREC) return;
 
+        MarseyLogger.Log(MarseyLogger.LogType.WARN, "Blackhole", "Blackholing RemoteExecutingCommand! This may break game functionality!");
+        
         Helpers.PatchMethod(
             Helpers.TypeFromQualifiedName("Robust.Client.Console.ClientConsoleHost"),
             "RemoteExecuteCommand",
