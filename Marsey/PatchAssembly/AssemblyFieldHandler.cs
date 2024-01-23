@@ -30,7 +30,7 @@ public static class AssemblyFieldHandler
     /// <summary>
     /// Initializes MarseyLogger
     /// </summary>
-    private static void InitLogger(Assembly assembly, string? assemblyName)
+    public static void InitLogger(Assembly assembly, string? assemblyName)
     {
         Type? loggerType = assembly.GetType("MarseyLogger");
         if (loggerType != null)
