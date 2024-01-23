@@ -60,7 +60,8 @@ public enum HideLevel
 public static class Hidesey
 {
     private static List<Assembly> _hideseys = new List<Assembly>();
-    private static bool _initialized = false;
+    private static bool _initialized;
+    private static bool _caching;
 
     /// <summary>
     /// Starts Hidesey. Patches GetAssemblies, GetReferencedAssemblies and hides Harmony from assembly list.
@@ -133,9 +134,20 @@ public static class Hidesey
     /// </summary>
     public static void Cleanup()
     {
-        // Include methods here if needed
+        // Another thread WOOOO
+        new Thread(() =>
+        {
+            Thread.Sleep(10000);
+            ToggleCaching();
+        }).Start();
     }
 
+    private static void ToggleCaching()
+    {
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Caching is set to {!_caching}");
+        _caching = !_caching;
+    }
+    
     /// <summary>
     /// Add assembly to _hideseys list
     /// </summary>
@@ -249,7 +261,17 @@ public static class Hidesey
     public static Type[] LyingTyper(Type[] original)
     {
         IEnumerable<Type> hiddentypes = Facade.GetTypes();
-        return original.Except(hiddentypes).ToArray();
+        if (!_caching)
+            return original.Except(hiddentypes).ToArray();
+
+        Type[] cached = Facade.Cached;
+
+        if (cached != Array.Empty<Type>()) return cached;
+        
+        cached = original.Except(hiddentypes).ToArray();
+        Facade.Cache(cached);
+
+        return cached;
     }
 
     #endregion

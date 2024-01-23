@@ -14,6 +14,7 @@ public static class Facade
 {
     private static readonly List<Type> _types = new List<Type>();
     private static readonly List<string> _keywords = new List<string> { "Robust", "Content", "Wizards", "Microsoft", "System" };
+    private static Type[] _cached = Array.Empty<Type>();
     
     /// <summary>
     /// Hides type from executing assembly
@@ -64,6 +65,9 @@ public static class Facade
         }
     }
 
+    public static void Cache(Type[] result) => _cached = result;
+
+    public static Type[] Cached => _cached;
 
     public static IEnumerable<Type> GetTypes() => _types.ToArray();
 }
