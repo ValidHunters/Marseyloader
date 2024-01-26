@@ -160,9 +160,9 @@
                         </Grid>
                         
                         <TextBlock Margin="4, 0" Text="Misc" Classes="NanoHeadingMedium" />
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump assemblies</CheckBox>
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump resources</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                   Text="Dumps all loaded assemblies of a server, then closes the game and disables itself."
+                                   Text="Dumps everything client facing off a server and disables itself."
                                    Margin="8" />
                         
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyHole}">Whitelist RemoteExecuteCommand</CheckBox>

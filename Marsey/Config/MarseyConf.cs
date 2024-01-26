@@ -1,4 +1,4 @@
-using Marsey.GameAssembly.Patches;
+using Marsey.Game.Patches;
 using Marsey.Misc;
 using Marsey.Stealthsey;
 
@@ -44,8 +44,8 @@ public static class MarseyConf
     /// <see cref="DiscordRPC"/>
     public static bool KillRPC;
     
-    /// <see cref="Dumper"/>
-    public static bool DumpAssemblies;
+    /// <see cref="Game.Patches.Dumper"/>
+    public static bool Dumper;
     
     /// <see cref="Jammer"/>
     public static bool JamDials;
@@ -61,7 +61,7 @@ public static class MarseyConf
         { "MARSEY_SEPARATE_LOGGER", value => SeparateLogger = value },
         { "MARSEY_FORCINGHWID", value => ForceHWID = value },
         { "MARSEY_DISABLE_PRESENCE", value => KillRPC = value },
-        { "MARSEY_DUMP_ASSEMBLIES", value => DumpAssemblies = value },
+        { "MARSEY_DUMP_ASSEMBLIES", value => Dumper = value },
         { "MARSEY_JAMMER", value => JamDials = value },
         { "MARSEY_DISABLE_REC", value => DisableREC = value }
     };

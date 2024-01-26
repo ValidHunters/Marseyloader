@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using HarmonyLib;
 using Marsey.Config;
-using Marsey.GameAssembly.Patches;
+using Marsey.Game.Patches;
 using Marsey.Handbreak;
 using Marsey.Misc;
 using Marsey.Stealthsey.Reflection;
@@ -134,12 +134,12 @@ public static class Hidesey
     /// </summary>
     public static void Cleanup()
     {
-        // Another thread WOOOO
-        new Thread(() =>
-        {
-            Thread.Sleep(10000);
-            ToggleCaching();
-        }).Start();
+        // // Another thread WOOOO
+        // new Thread(() =>
+        // {
+        //     Thread.Sleep(10000);
+        // }).Start();
+        ToggleCaching();
     }
 
     private static void ToggleCaching()

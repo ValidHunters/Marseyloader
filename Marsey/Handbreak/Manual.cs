@@ -1,6 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
-using Marsey.GameAssembly;
+using Marsey.Config;
+using Marsey.Game.Managers;
 using Marsey.Misc;
 
 namespace Marsey.Handbreak;
@@ -36,13 +37,19 @@ public static class Manual
                     break;
                 case HarmonyPatchType.All:
                 default:
-                    MarseyLogger.Log(MarseyLogger.LogType.ERRO, $"Passed an invalid patchtype: {type.ToString()}");
+                    MarseyLogger.Log(MarseyLogger.LogType.ERRO, $"Passed an invalid patchtype: {type}");
                     break;
             }
         }
-        catch (HandBreakException e)
+        catch (Exception e)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "HandBreak", e.ToString());
+            string message = $"Encountered an issue with patching {method?.Name} against {patch?.Name}!\n{e}";
+            
+            if (MarseyConf.ThrowOnFail)
+                throw new HandBreakException(message);
+            
+            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "HandBreak", message);
+            
             return false;
         }
 

@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using Marsey.Config;
+using Marsey.Game.Patches;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Serializer;
@@ -143,9 +140,9 @@ public abstract class FileHandler
 
     /// <summary>
     /// Saves assembly from stream to file.
-    /// Used by the dumper
+    /// Used by the AssemblyDumper
     /// </summary>
-    /// <see cref="GameAssembly.Patches.Dumper"/>
+    /// <see cref="AssemblyDumper"/>
     public static void SaveAssembly(string path, string name, Stream asmStream)
     {
         Directory.CreateDirectory(path);

@@ -20,11 +20,9 @@ using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
-using Marsey;
 using Marsey.Config;
-using Marsey.GameAssembly.Patches;
+using Marsey.Game.Patches;
 using Marsey.Stealthsey;
-using Marsey.Subversion;
 using Marsey.Misc;
 
 namespace SS14.Launcher.Models;
@@ -601,14 +599,14 @@ public class Connector : ReactiveObject
             startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
         
         // Dumper
-        if (!MarseyConf.DumpAssemblies) return;
+        if (!MarseyConf.Dumper) return;
         startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
         startInfo.EnvironmentVariables["MARSEY_DUMP_FORKID"] = _forkid;
     }
 
     private void MarseyCleanup()
     {
-        MarseyConf.DumpAssemblies = false;
+        MarseyConf.Dumper = false;
     }
 
     private static void ConfigureMultiWindow(ContentLaunchInfo launchInfo, ProcessStartInfo startInfo)

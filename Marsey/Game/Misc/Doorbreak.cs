@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Marsey.GameAssembly;
+namespace Marsey.Game.Misc;
 
 /// <summary>
 /// Manages MarseyEntry

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
-using Marsey.GameAssembly;
-using Marsey.GameAssembly.Patches;
+using Marsey.Game;
+using Marsey.Game.Managers;
+using Marsey.Game.Misc;
+using Marsey.Game.Patches;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Stealthsey;
@@ -69,6 +71,8 @@ public class MarseyPatcher
     // We might want to patch things before the loader has even a chance to execute anything
     public void Preload()
     {
+        Sentry.Patch();
+        
         // Preload marseypatches, if available
         Marsyfier.Preload();
         
@@ -76,8 +80,9 @@ public class MarseyPatcher
         Jammer.Patch();
         Blackhole.Patch();
 
-        // Patch assembly loading methods, if enabled
-        Dumper.Patch();
+        // Dump the game, if enabled
+        if (MarseyConf.Dumper)
+            Dumper.Start();
     }
     
     /// <summary>
@@ -106,9 +111,25 @@ public class MarseyPatcher
             AssemblyFieldHandler.InitHelpers(patches);
 
             // Execute patches
-            GamePatcher.Patch(patches);
+            Patcher.Patch(patches);
         }
         
+        Afterparty();
+    }
+    
+    private void Afterparty()
+    {
+        // TODO: Test if GameAssemblies.ClientInitialized works here
+        while (!Sentry.State) // Wait until EntryPoint is just about to start 
+        {
+            Thread.Sleep(125);
+        }
+        
+        // If preclusion is triggered - close the game bruh
+        if (Preclusion.State)
+            Preclusion.Fire();
+        
+        // Post-Load hidesey methods
         Hidesey.Cleanup();
     }
 }

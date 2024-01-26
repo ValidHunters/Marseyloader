@@ -1,6 +1,6 @@
 using System.Reflection;
 using HarmonyLib;
-using Marsey.GameAssembly;
+using Marsey.Game.Managers;
 using Marsey.Stealthsey;
 
 namespace Marsey.HideseyTests;

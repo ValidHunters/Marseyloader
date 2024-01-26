@@ -1,7 +1,7 @@
 using HarmonyLib;
 using Marsey.Config;
 
-namespace Marsey.GameAssembly;
+namespace Marsey.Game.Managers;
 
 public static class HarmonyManager
 {

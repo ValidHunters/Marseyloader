@@ -296,8 +296,8 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
 
     public bool DumpAssemblies
     {
-        get => MarseyConf.DumpAssemblies;
-        set => MarseyConf.DumpAssemblies = value;
+        get => MarseyConf.Dumper;
+        set => MarseyConf.Dumper = value;
     }
 
 

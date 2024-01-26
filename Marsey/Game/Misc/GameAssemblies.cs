@@ -1,6 +1,7 @@
 using System.Reflection;
+using Marsey.Game.Managers;
 
-namespace Marsey.GameAssembly;
+namespace Marsey.Game.Misc;
 
 /// <summary>
 /// Bagholds game assemblies

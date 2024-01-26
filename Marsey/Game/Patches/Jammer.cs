@@ -1,11 +1,9 @@
-using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.Handbreak;
 using Marsey.Misc;
-using Marsey.Stealthsey;
 
-namespace Marsey.GameAssembly.Patches;
+namespace Marsey.Game.Patches;
 
 /// <summary>
 /// Disable game's redialing feature, making sure you wont get sent to vore station if admins don't like you.

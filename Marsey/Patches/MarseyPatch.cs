@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Marsey.Config;
-using Marsey.GameAssembly;
+using Marsey.Game;
 using Marsey.PatchAssembly;
 using Marsey.Serializer;
 using Marsey.Stealthsey;
@@ -44,7 +44,7 @@ public static class Marsyfier
         
         AssemblyFieldHandler.InitHelpers(preloadedPatches);
 
-        if (preloadedPatches.Count != 0) GamePatcher.Patch(preloadedPatches);
+        if (preloadedPatches.Count != 0) Patcher.Patch(preloadedPatches);
         
         PatchListManager.ResetList();
     }

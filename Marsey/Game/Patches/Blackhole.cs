@@ -1,10 +1,9 @@
-using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.Handbreak;
 using Marsey.Misc;
 
-namespace Marsey.GameAssembly.Patches;
+namespace Marsey.Game.Patches;
 
 /// <summary>
 /// Whitelists command execution that is dependent on server

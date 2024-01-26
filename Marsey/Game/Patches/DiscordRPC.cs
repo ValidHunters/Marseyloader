@@ -1,11 +1,9 @@
-using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.Handbreak;
 using Marsey.Misc;
-using Marsey.Stealthsey;
 
-namespace Marsey.GameAssembly.Patches;
+namespace Marsey.Game.Patches;
 
 public static class DiscordRPC
 {

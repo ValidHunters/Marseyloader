@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 using Marsey.Config;
+using Marsey.Game.Managers;
+using Marsey.Game.Misc;
 using Marsey.Patches;
 using Marsey.Misc;
 
-namespace Marsey.GameAssembly;
+namespace Marsey.Game;
 
-public static class GamePatcher
+public static class Patcher
 {
     /// <summary>
     /// Patches the game using assemblies in List.
@@ -24,7 +26,7 @@ public static class GamePatcher
         }
     }
     
-    /// <inheritdoc cref="GamePatcher.Patch"/>
+    /// <inheritdoc cref="Patcher.Patch"/>
     private static void PatchAssembly<T>(Harmony harmony, T patch) where T : IPatch
     {
         AssemblyName assemblyName = patch.Asm.GetName();
