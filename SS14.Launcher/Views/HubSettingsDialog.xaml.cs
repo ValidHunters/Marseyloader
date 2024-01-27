@@ -61,7 +61,7 @@ public partial class HubSettingsDialog : Window
         }
 
         var allValid = _viewModel.HubList.All(h => IsValidHubUri(h.Address));
-        var noDupes = !dupes.Any();
+        var noDupes = dupes.Count == 0;
 
         DoneButton.IsEnabled = allValid && noDupes;
 

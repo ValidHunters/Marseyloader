@@ -11,6 +11,7 @@ namespace Marsey.Stealthsey;
 
 /// <summary>
 /// Manages AssemblyLoad event delegates
+/// Not to be confused with RedialAPI
 /// </summary>
 public static class Redial
 {
@@ -56,9 +57,7 @@ public static class Redial
     /// </summary>
     private static Delegate[] FillPhonebook()
     {
-        FieldInfo? fInfo = typeof(AssemblyLoadContext).GetField(EventFieldName, BindingFlags.Static | BindingFlags.NonPublic);
-
-        MulticastDelegate? eventDelegate = (MulticastDelegate?)fInfo?.GetValue(AppDomain.CurrentDomain);
+        MulticastDelegate? eventDelegate = GetEventDelegate();
 
         if (eventDelegate == null)
         {
@@ -74,5 +73,11 @@ public static class Redial
         }
 
         return delegates;
+    }
+
+    private static MulticastDelegate? GetEventDelegate()
+    {
+        FieldInfo? fInfo = typeof(AssemblyLoadContext).GetField(EventFieldName, BindingFlags.Static | BindingFlags.NonPublic);
+        return (MulticastDelegate?)fInfo?.GetValue(AppDomain.CurrentDomain);
     }
 }

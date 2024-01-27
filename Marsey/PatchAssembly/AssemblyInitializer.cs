@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Reflection;
 using Marsey.Patches;
 using Marsey.Stealthsey;
@@ -23,7 +20,7 @@ public static class AssemblyInitializer
 
     public static void Initialize(Assembly assembly)
     {
-        if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+        ArgumentNullException.ThrowIfNull(assembly);
 
         Type? dataType = GetDataType(assembly);
         if (dataType == null) return;
@@ -33,55 +30,48 @@ public static class AssemblyInitializer
 
     private static Type? GetDataType(Assembly assembly)
     {
-        // Check for each patch type name defined in the PatchFactory dictionary
-        Type? patchType = null;
-        foreach (string patchTypeName in PatchFactory.Keys)
+        List<Type?> patchTypes = PatchFactory.Keys.Select(assembly.GetType).Where(type => type != null).ToList();
+
+        switch (patchTypes.Count)
         {
-            Type? type = assembly.GetType(patchTypeName);
-            
-            if (type == null) continue;
-            
-            // Discard patch if it has multiple data types
-            if (patchType != null)
-            {
+            case > 1:
                 MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} contains multiple patch types!");
                 return null;
-            }
-            
-            patchType = type;
+            case 0:
+                MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} does not contain any recognized patch types!");
+                return null;
+            default:
+                return patchTypes.Single();
         }
-
-        // Patch found, bail
-        if (patchType != null) 
-            return patchType;
-        
-        // If no patch type was found, log an error
-        MarseyLogger.Log(MarseyLogger.LogType.FATL, $"{assembly.GetName().Name} does not contain any recognized patch types!");
-        return null;
-
     }
     
     private static void ProcessDataType(Assembly assembly, Type dataType)
     {
         string typeName = dataType.Name;
-        bool preloadField = AssemblyFieldHandler.DeterminePreload(dataType);
-        
+        string? assemblyName = assembly.GetName().Name;
+        bool preload = AssemblyFieldHandler.DeterminePreload(dataType);
+        bool ignore = AssemblyFieldHandler.DetermineIgnore(dataType);
+        List<FieldInfo>? targets = null;
+
+        if (typeName == "MarseyPatch")
+        {
+            targets = AssemblyFieldHandler.GetPatchAssemblyFields(dataType);
+        }
+
         switch (typeName)
         {
-            case "MarseyPatch" when AssemblyFieldHandler.DetermineIgnore(dataType):
+            case "MarseyPatch" when ignore:
                 MarseyLogger.Log(MarseyLogger.LogType.DEBG,
-                    $"{assembly.GetName().Name} is ignoring fields, not assigning");
+                    $"{assemblyName} is ignoring fields, not assigning");
                 break;
             case "MarseyPatch":
-            {
-                List<FieldInfo>? targets = AssemblyFieldHandler.GetPatchAssemblyFields(dataType);
                 if (targets == null)
                 {
                     MarseyLogger.Log(MarseyLogger.LogType.FATL,
-                        $"Couldn't get assembly fields on {assembly.GetName().Name}.");
+                        $"Couldn't get assembly fields on {assemblyName}.");
                     return;
                 }
-                if (preloadField)
+                if (preload)
                 {
                     FieldInfo client = targets[0]; // Robust.Client
                     FieldInfo shared = targets[1]; // Robust.Shared
@@ -91,15 +81,13 @@ public static class AssemblyInitializer
                 {
                     AssemblyFieldHandler.SetAssemblyTargets(targets);
                 }
-
                 break;
-            }
         }
 
         // Retrieve additional fields such as name and description from the data type
         AssemblyFieldHandler.GetFields(dataType, out string name, out string description);
         // Attempt to create and add a patch to the assembly with the retrieved information
-        TryCreateAddPatch(assembly, dataType, name, description, preloadField);
+        TryCreateAddPatch(assembly, dataType, name, description, preload);
     }
 
 

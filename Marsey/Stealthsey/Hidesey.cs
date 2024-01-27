@@ -18,6 +18,7 @@ namespace Marsey.Stealthsey;
 public enum HideLevel
 {
     // Note that this only protects you from programmatic checks.
+    // But so far nobody was told to hop on vc to stream their game
 
     /// <summary>
     /// Hidesey is disabled. No measures are taken to hide the patcher or patches.
@@ -134,11 +135,6 @@ public static class Hidesey
     /// </summary>
     public static void Cleanup()
     {
-        // // Another thread WOOOO
-        // new Thread(() =>
-        // {
-        //     Thread.Sleep(10000);
-        // }).Start();
         ToggleCaching();
     }
 

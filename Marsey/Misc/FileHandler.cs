@@ -41,7 +41,7 @@ public abstract class FileHandler
         Marserializer.Serialize(path, Marsyfier.PreloadMarserializerFile, preloadpaths);
         
         // If we actually do have any - remove them from the marseypatch list
-        if (preloadpaths.Any())
+        if (preloadpaths.Count != 0)
             marseyPatches.RemoveAll(p => preloadpaths.Contains(p.Asmpath));
 
         // Serialize remaining MarseyPatches
@@ -129,12 +129,12 @@ public abstract class FileHandler
             }
             
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Directory {path} does not exist");
-            return new List<string>();
+            return [];
         }
         catch (Exception ex)
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to find patches: {ex.Message}");
-            return new List<string>();
+            return [];
         }
     }
 
@@ -151,5 +151,31 @@ public abstract class FileHandler
         
         using FileStream st = new FileStream(fullpath, FileMode.Create, FileAccess.Write);
         asmStream.CopyTo(st);
+    }
+    
+    /// <see cref="ResDumpPatches"/>
+    public static void CheckRenameDirectory(string path)
+    {
+        if (!Directory.Exists(path)) return;
+        string newPath = $"{path}_{DateTime.Now:yyyyMMddHHmmss}";
+        Directory.Move(path, newPath);
+    }
+    
+    /// <see cref="ResDumpPatches"/>
+    public static void CreateDir(string filePath)
+    {
+        string? directoryName = Path.GetDirectoryName(filePath);
+        if (directoryName != null && !Directory.Exists(directoryName))
+        {
+            Directory.CreateDirectory(directoryName);
+        }
+    }
+    
+    /// <see cref="ResDumpPatches"/>
+    public static void SaveToFile(string filePath, MemoryStream stream)
+    {
+        using FileStream st = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Saving to {filePath}");
+        stream.WriteTo(st);
     }
 }

@@ -31,14 +31,13 @@ public static class AssemblyFieldHandler
     public static void InitLogger(Assembly assembly, string? assemblyName)
     {
         Type? loggerType = assembly.GetType("MarseyLogger");
-        if (loggerType != null)
-        {
-            SetupLogger(loggerType);
-        }
-        else
+        if (loggerType == null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no MarseyLogger class");
+            return;
         }
+    
+        SetupLogger(loggerType);
     }
 
     /// <summary>
