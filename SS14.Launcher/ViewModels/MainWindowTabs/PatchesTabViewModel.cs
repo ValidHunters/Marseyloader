@@ -9,6 +9,7 @@ using Avalonia.Data.Converters;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
 using Marsey.Config;
+using Marsey.Game.ResourcePack;
 using Marsey.Patches;
 using Marsey.Subversion;
 using Marsey.Misc;
@@ -20,24 +21,28 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public override string Name => "Plugins";
         public ObservableCollection<MarseyPatch> MarseyPatches { get; } = new ObservableCollection<MarseyPatch>();
         public ObservableCollection<SubverterPatch> SubverterPatches { get; } = new ObservableCollection<SubverterPatch>();
-
+        public ObservableCollection<ResourcePack> ResourcePacks { get; set; } = new ObservableCollection<ResourcePack>();
         public ICommand OpenPatchDirectoryCommand { get; }
 
         public PatchesTabViewModel()
         {
-            OpenPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.MarseyPatchFolder));
-            LoadPatches();
+            OpenPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.MarseyFolder));
+            ReloadMods();
         }
 
-        private void LoadPatches()
+        private void ReloadMods()
         {
+            ClearList();
             FileHandler.LoadAssemblies();
+            ResMan.LoadDir();
 
             List<MarseyPatch> marseys = Marsyfier.GetMarseyPatches();
             LoadPatchList(marseys, MarseyPatches, "marseypatches");
 
             List<SubverterPatch> subverters = Subverter.GetSubverterPatches();
             LoadPatchList(subverters, SubverterPatches, "subverterpatches");
+
+            LoadResPacks(ResMan.GetRPacks());
         }
 
         private void OpenPatchDirectory(string directoryName)
@@ -58,6 +63,22 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             Log.Debug($"Refreshed {patchName}, got {patchList.Count}.");
         }
 
+        private void LoadResPacks(List<ResourcePack> ResPacks)
+        {
+            foreach (ResourcePack resource in ResPacks)
+            {
+                ResourcePacks.Add(resource);
+            }
+            
+            Log.Debug($"Refreshed resourcepacks, got {ResourcePacks.Count}.");
+        }
+
+        private void ClearList()
+        {
+            ResourcePacks.Clear();
+            SubverterPatches.Clear();
+            MarseyPatches.Clear();
+        }
     }
 }
 

@@ -37,10 +37,14 @@ public static class MarseyConf
     /// </summary>
     public static bool ThrowOnFail;
     
+    /// <summary>
+    /// Disable strict fork checks when applying resource packs.
+    /// </summary>
+    public static bool DisableResPackStrict;
+    
     /// <see cref="HWID"/>
     public static bool ForceHWID;
-
-
+    
     /// <see cref="DiscordRPC"/>
     public static bool KillRPC;
     
@@ -59,6 +63,7 @@ public static class MarseyConf
         { "MARSEY_LOADER_DEBUG", value => DebugAllowed = value },
         { "MARSEY_THROW_FAIL", value => ThrowOnFail = value },
         { "MARSEY_SEPARATE_LOGGER", value => SeparateLogger = value },
+        { "MARSEY_DISABLE_STRICT", value => DisableResPackStrict = value},
         { "MARSEY_FORCINGHWID", value => ForceHWID = value },
         { "MARSEY_DISABLE_PRESENCE", value => KillRPC = value },
         { "MARSEY_DUMP_ASSEMBLIES", value => Dumper = value },

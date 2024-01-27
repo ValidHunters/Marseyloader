@@ -1,5 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
+using Marsey.Game.ResourcePack;
+using Marsey.Game.ResourcePack.Reflection;
 using Marsey.Handbreak;
 using Marsey.Misc;
 
@@ -8,35 +10,34 @@ namespace Marsey.Game.Patches;
 /// <summary>
 /// By complete accident this dumps everything
 /// </summary>
-public class ResourceDumper
+public static class ResourceDumper
 {
     public static MethodInfo? CFRMi; 
-    public void Patch()
+    public static void Patch()
     {
-        Type? ProtoMan = Helpers.TypeFromQualifiedName("Robust.Shared.ContentPack.ResourceManager");
-        Type? ResPath = Helpers.TypeFromQualifiedName("Robust.Shared.Utility.ResPath");
-
-        CFRMi = AccessTools.Method(ProtoMan, "ContentFileRead", new[] { ResPath });
-
-        if (ProtoMan == null)
+        FileHandler.CheckRenameDirectory(Dumper.path); 
+        
+        if (ResourceTypes.ProtoMan == null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.ERRO, "PrototypeManager is null.");
             return;
         }
         
-        if (ResPath == null)
+        if (ResourceTypes.ResPath == null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.ERRO, "ResPath is null.");
             return;
         }
         
+        CFRMi = AccessTools.Method(ResourceTypes.ProtoMan, "ContentFileRead", new[] { ResourceTypes.ResPath });
+        
         Helpers.PatchMethod(
-            targetType: ProtoMan,
+            targetType: ResourceTypes.ProtoMan,
             targetMethodName: "ContentFindFiles",
             patchType: typeof(ResDumpPatches),
             patchMethodName: "PostfixCFF",
             patchingType: HarmonyPatchType.Postfix,
-            new Type[]{ ResPath }
+            new Type[]{ ResourceTypes.ResPath }
         );
     }
 }

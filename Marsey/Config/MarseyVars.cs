@@ -35,17 +35,29 @@ public static class MarseyVars
     public static readonly int LoopCooldown = 200;
 
     /// <summary>
-    /// Marseypatches are saved to this one
+    /// Name of folder containing files used by Marsey
     /// </summary>
-    public static readonly string MarseyPatchFolder = "Marsey";
+    public static readonly string MarseyFolder = "Marsey";
+    
+    /// <summary>
+    /// Folder containing mods
+    /// </summary>
+    public static readonly string MarseyPatchFolder = Path.Combine(MarseyFolder, "Mods");
+
+    /// <summary>
+    /// Folder containing Resource Packs
+    /// </summary>
+    public static readonly string MarseyResourceFolder = Path.Combine(MarseyFolder, "ResourcePacks");
 
     /// <summary>
     /// Log identified for marseyloader
     /// </summary>
     public static readonly string MarseyLoggerPrefix = "MARSEY";
+
+    public static readonly string MarseyLoggerFileName = "client.marsey.log";
     
     /// <summary>
-    /// Refuse to play on servers over this engine version if hidesey is disabled
+    /// Refuse to play on servers over or equal to this engine version if hidesey is disabled
     /// <seealso cref="Abjure"/>
     /// </summary>
     public static readonly Version Detection = new Version("183.0.0");

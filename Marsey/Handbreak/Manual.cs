@@ -44,11 +44,10 @@ public static class Manual
         catch (Exception e)
         {
             string message = $"Encountered an issue with patching {method?.Name} against {patch?.Name}!\n{e}";
+            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "HandBreak", message);
             
             if (MarseyConf.ThrowOnFail)
                 throw new HandBreakException(message);
-            
-            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "HandBreak", message);
             
             return false;
         }

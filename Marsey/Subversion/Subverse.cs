@@ -24,6 +24,9 @@ public static class Subverse
 {
     private static List<string>? _subverters = null;
     
+    /// <summary>
+    /// Check if we have any subversions enabled
+    /// </summary>
     public static bool CheckSubversions()
     {
         _subverters = Marserializer.Deserialize(new string[]{MarseyVars.MarseyPatchFolder}, Subverter.MarserializerFile);
