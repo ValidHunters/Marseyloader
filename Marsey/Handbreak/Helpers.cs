@@ -106,12 +106,4 @@ public static class Helpers
     {
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Handbreak", $"{patchingType}: Patched {targetMethodName} with {patchMethodName}.");
     }
-    
-    public static void HandleFail(string methodName, MethodInfo? method)
-    {
-        string message = $"Failed to patch {methodName} using {method?.Name}";
-        if (MarseyConf.ThrowOnFail)
-            throw new HideseyException(message);
-        MarseyLogger.Log(MarseyLogger.LogType.FATL, message);
-    }
 }

@@ -569,7 +569,7 @@ public class Connector : ReactiveObject
     private void Marsify(ProcessStartInfo startInfo)
     {
         Log.Debug("Preparing patch assemblies.");
-        FileHandler.PrepAssemblies();
+        FileHandler.PrepareMods();
         
         ConfigureMarsey(startInfo);
         MarseyCleanup();
@@ -598,10 +598,11 @@ public class Connector : ReactiveObject
         else 
             startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
         
-        // Dumper
-        if (!MarseyConf.Dumper) return;
-        startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
-        startInfo.EnvironmentVariables["MARSEY_DUMP_FORKID"] = _forkid;
+        // Resources
+        startInfo.EnvironmentVariables["MARSEY_FORKID"] = _forkid;
+        startInfo.EnvironmentVariables["MARSEY_DISABLE_STRICT"] = _cfg.GetCVar(CVars.DisableStrict) ? "true" : null;
+        if (MarseyConf.Dumper)
+            startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
     }
 
     private void MarseyCleanup()

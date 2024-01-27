@@ -300,7 +300,15 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         set => MarseyConf.Dumper = value;
     }
 
-
+    public bool ResourceOverride
+    {
+        get => Cfg.GetCVar(CVars.DisableStrict);
+        set
+        {
+            Cfg.SetCVar(CVars.DisableStrict, value);
+            Cfg.CommitConfig();
+        }
+    }
     
     private void OnSetUsernameClick()
     {

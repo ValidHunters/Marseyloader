@@ -125,6 +125,11 @@ public static class CVars
     public static readonly CVarDef<bool> ThrowPatchFail = CVarDef.Create("ThrowPatchFail", false);
 
     /// <summary>
+    /// Ignore target checks when using a resource pack
+    /// </summary>
+    public static readonly CVarDef<bool> DisableStrict = CVarDef.Create("DisableStrict", false);
+
+    /// <summary>
     /// Do we disable RPC?
     /// </summary>
     public static readonly CVarDef<bool> DisableRPC = CVarDef.Create("DisableRPC", false);

@@ -1,6 +1,7 @@
 using System.Reflection;
 using Marsey.Config;
 using Marsey.Game.Patches;
+using Marsey.Game.ResourcePack;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Serializer;
@@ -16,29 +17,32 @@ public abstract class FileHandler
 {
     /// <summary>
     /// <para>
-    /// Serialize enabled patches.
+    /// Serialize enabled mods.
     /// Executed by the launcher at connection.
     /// </para>
     /// 
     /// <para>
-    /// We cant directly give marseys to the loader or tell it what patches to load because its started in a separate process.
-    /// Because of this we leave an array of paths to assemblies to enabled patches for the loader to read.
+    /// We cant directly give marseys to the loader or tell it what mods to load because its started in a separate process.
+    /// Because of this we leave an array of paths to assemblies to enabled mods for the loader to read.
     /// </para>
     /// </summary>
-    public static void PrepAssemblies(string[]? path = null)
+    public static void PrepareMods(string[]? path = null)
     {
-        path ??= new[] { MarseyVars.MarseyPatchFolder };
+        path ??= new[] { MarseyVars.MarseyFolder };
+        string[] patchPath = new[] { MarseyVars.MarseyPatchFolder };
+        string[] resPath = new[] { MarseyVars.MarseyResourceFolder };
 
         List<MarseyPatch> marseyPatches = Marsyfier.GetMarseyPatches();
         List<SubverterPatch> subverterPatches = Subverter.GetSubverterPatches();
+        List<ResourcePack> resourcePacks = ResMan.GetRPacks();
 
         // Serialize preloading MarseyPatches
         List<string> preloadpaths = marseyPatches
-            .Where(p => p.Enabled && p.Preload)
+            .Where(p => p is { Enabled: true, Preload: true })
             .Select(p => p.Asmpath)
             .ToList();
         
-        Marserializer.Serialize(path, Marsyfier.PreloadMarserializerFile, preloadpaths);
+        Marserializer.Serialize(patchPath, Marsyfier.PreloadMarserializerFile, preloadpaths);
         
         // If we actually do have any - remove them from the marseypatch list
         if (preloadpaths.Count != 0)
@@ -46,11 +50,15 @@ public abstract class FileHandler
 
         // Serialize remaining MarseyPatches
         List<string> marseyAsmpaths = marseyPatches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
-        Marserializer.Serialize(path, Marsyfier.MarserializerFile, marseyAsmpaths);
+        Marserializer.Serialize(patchPath, Marsyfier.MarserializerFile, marseyAsmpaths);
 
         // Serialize SubverterPatches
         List<string> subverterAsmpaths = subverterPatches.Where(p => p.Enabled).Select(p => p.Asmpath).ToList();
-        Marserializer.Serialize(path, Subverter.MarserializerFile, subverterAsmpaths);
+        Marserializer.Serialize(patchPath, Subverter.MarserializerFile, subverterAsmpaths);
+        
+        // Serialize ResourcePacks
+        List<string> rpackPaths = resourcePacks.Where(rp => rp.Enabled).Select(rp => rp.Dir).ToList();
+        Marserializer.Serialize(resPath, ResMan.MarserializerFile, rpackPaths);
     }
 
 
@@ -156,8 +164,27 @@ public abstract class FileHandler
     /// <see cref="ResDumpPatches"/>
     public static void CheckRenameDirectory(string path)
     {
-        if (!Directory.Exists(path)) return;
-        string newPath = $"{path}_{DateTime.Now:yyyyMMddHHmmss}";
+        // GetParent once shows itself, GetParent twice shows the actual parent
+        
+        if (string.IsNullOrEmpty(path) || !Directory.Exists(path)) return;
+    
+        string dirName = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+        string? parentDir = Directory.GetParent(Directory.GetParent(path)?.FullName ?? throw new InvalidOperationException())?.FullName;
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "FileHandler", $"Parentdir is {parentDir}");
+
+        if (string.IsNullOrEmpty(dirName) || string.IsNullOrEmpty(parentDir)) return;
+
+        string newPath = Path.Combine(parentDir, $"{dirName}{DateTime.Now:yyyyMMddHHmmss}");
+        
+        if (Directory.Exists(newPath))
+        {
+            MarseyLogger.Log(MarseyLogger.LogType.ERRO, "FileHandler",
+                $"Cannot move directory. Destination {newPath} already exists.");
+            return;
+        }
+
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "FileHandler", $"Trying to move {path} to {newPath}");
+        // Completely evil, do not try-catch this - if it fails - it fails and kills everything.
         Directory.Move(path, newPath);
     }
     

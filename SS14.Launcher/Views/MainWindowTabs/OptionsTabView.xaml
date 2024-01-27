@@ -144,7 +144,7 @@
                                    Text="For when things stop making sense"
                                    Margin="8" />
             
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SeparateLogging}">Separate game and patcher logs</CheckBox>
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SeparateLogging}">Separate Game/Patcher Logs</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Log Marsey to client.marsey.log instead."
                                    Margin="8"/>
@@ -160,7 +160,13 @@
                         </Grid>
                         
                         <TextBlock Margin="4, 0" Text="Misc" Classes="NanoHeadingMedium" />
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump resources</CheckBox>
+                        
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ResourceOverride}">Resource Pack Strict Override</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Disables Resource Pack fork target checking when set"
+                                   Margin="8" />
+                        
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump Resources</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Dumps everything client facing off a server and disables itself."
                                    Margin="8" />

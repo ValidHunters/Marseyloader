@@ -7,6 +7,7 @@ using Marsey.Game;
 using Marsey.Game.Managers;
 using Marsey.Game.Misc;
 using Marsey.Game.Patches;
+using Marsey.Game.ResourcePack;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Stealthsey;
@@ -79,7 +80,10 @@ public class MarseyPatcher
         // If set - Disable redialing and remote command execution
         Jammer.Patch();
         Blackhole.Patch();
-
+        
+        // Prep Resource Manager
+        ResMan.Initialize();
+        
         // Dump the game, if enabled
         if (MarseyConf.Dumper)
             Dumper.Start();

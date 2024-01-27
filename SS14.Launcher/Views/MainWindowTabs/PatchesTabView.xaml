@@ -16,59 +16,94 @@
     <mainWindowTabs:PatchesTabViewModel />
   </Design.DataContext>
 
-  <TabControl>
-    <TabItem Header="MarseyPatches">
-      <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-        <StackPanel>
-          <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
-          <Button Content="Open patch directory" Margin="4, 0" HorizontalAlignment="Left"
-                  Command="{Binding OpenPatchDirectoryCommand}"/>
-          <Separator/>
-
-          <ItemsControl Items="{Binding MarseyPatches}" Name="MarseyPatchList">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <StackPanel Orientation="Horizontal">
-                  <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
-                  <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                             Text="{Binding Desc}"
-                             Margin="8" />
-                  <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5"
-                             Text="{Binding Preload, Converter={StaticResource BooleanToPreloadConverter}}"></TextBlock>
-                  <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5" 
-                             Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
-                </StackPanel>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </StackPanel>
-      </ScrollViewer>
-    </TabItem>
-
-    <TabItem Header="Subverter">
-      <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-        <StackPanel>
-          <TextBlock Margin="4, 0" Text="Sideloading" Classes="NanoHeadingMedium" />
-          <Button Content="Open patch directory" Margin="4, 0" HorizontalAlignment="Left"
-                  Command="{Binding OpenPatchDirectoryCommand}"/>
-          <Separator/>
-
-          <ItemsControl Items="{Binding SubverterPatches}" Name="SubverterPatchList">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <StackPanel Orientation="Horizontal">
-                  <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
-                  <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                             Text="{Binding Desc}"
-                             Margin="8" />
-                  <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5" 
-                             Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
-                </StackPanel>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </StackPanel>
-      </ScrollViewer>
-    </TabItem>
-  </TabControl>
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      
+      <TabControl Grid.Row="0">
+        <TabItem Header="MarseyPatches">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
+              <Separator/>
+    
+              <ItemsControl Items="{Binding MarseyPatches}" Name="MarseyPatchList">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
+                      <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                 Text="{Binding Desc}"
+                                 Margin="8" />
+                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5"
+                                 Text="{Binding Preload, Converter={StaticResource BooleanToPreloadConverter}}"></TextBlock>
+                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5" 
+                                 Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+    
+        <TabItem Header="Subverter">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <TextBlock Margin="4, 0" Text="Sideloading" Classes="NanoHeadingMedium" />
+              <Separator/>
+    
+              <ItemsControl Items="{Binding SubverterPatches}" Name="SubverterPatchList">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
+                      <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                 Text="{Binding Desc}"
+                                 Margin="8" />
+                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5" 
+                                 Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+        
+        <TabItem Header="ResourcePacks">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
+              <Separator/>
+    
+              <ItemsControl Items="{Binding ResourcePacks}" Name="ResourcePackList">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                      <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
+                      <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                 Text="{Binding Desc}"
+                                 Margin="8" />
+                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5" 
+                                 Text="{Binding Dir, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+      </TabControl>
+      <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+        <Button Content="Open mod directory" Margin="4, 0" HorizontalAlignment="Right"
+                Command="{Binding OpenPatchDirectoryCommand}" Height="30"/>
+        <Button Content="Recheck mods" Margin="4, 0" HorizontalAlignment="Right"
+                Command="{Binding ReloadMods}" Height="30"/>
+      </StackPanel>
+    </Grid>
+  </ScrollViewer>
 </UserControl>

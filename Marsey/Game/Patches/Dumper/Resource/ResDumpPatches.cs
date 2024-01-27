@@ -10,12 +10,11 @@ internal static class ResDumpPatches
     {
         if (ResourceDumper.CFRMi == null) return; // If FileReader handle is not available, return
 
-        FileHandler.CheckRenameDirectory(Dumper.path); 
-
-        foreach (dynamic file in __result) 
+        foreach (dynamic file in __result)
         {
-            string canonPath = Dumper.path.StartsWith($"/") ? Dumper.path[1..] : Dumper.path;
-            string fullpath = Path.Combine(Dumper.path, canonPath);
+            string canonPath = file.CanonPath;
+            string fixedCanonPath = canonPath.StartsWith($"/") ? canonPath[1..] : canonPath;
+            string fullpath = Path.Combine(Dumper.path, fixedCanonPath);
 
             FileHandler.CreateDir(fullpath);
 
