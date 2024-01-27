@@ -63,7 +63,8 @@ Enable loader debug, will be on your desktop
 
 #### STOP!
 
-Project EOL's immediately when our beloved friends *over there* allow client-side resource packs
+Project EOL's immediately when our beloved friends *over there* allow client-side resource packs and UI mods.<br>
+This will never happen though.
 
 ### TODO
 * Resource swapping (resource packs)

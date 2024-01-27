@@ -5,14 +5,14 @@ using Marsey.Misc;
 namespace Marsey.Config;
 
 /// <summary>
-/// Variables only changed at compile
+/// Variables only set at compile
 /// </summary>
 public static class MarseyVars
 {
     /// <summary>
     /// Due to the nature of how Marseyloader is compiled (its not) we cannot check it's version 
     /// </summary>
-    public static readonly Version MarseyVersion = new Version("2.11.1");
+    public static readonly Version MarseyVersion = new Version("2.12.0");
 
     /// <summary>
     /// Default MarseyAPI endpoint url

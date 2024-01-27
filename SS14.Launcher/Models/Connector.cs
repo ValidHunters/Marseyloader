@@ -421,8 +421,8 @@ public class Connector : ReactiveObject
         IEnumerable<string> extraArgs,
         List<(string, string)> env)
     {
-        var engineVersion = launchInfo.ModuleInfo.Single(x => x.Module == "Robust").Version;
-        var startInfo = await GetLoaderStartInfo(engineVersion, launchInfo.Version, env);
+        string engineVersion = launchInfo.ModuleInfo.Single(x => x.Module == "Robust").Version;
+        ProcessStartInfo startInfo = await GetLoaderStartInfo(engineVersion, launchInfo.Version, env);
 
         // Abort if engine version hates us and we dont hide ourselves
         if (Abjure.CheckMalbox(engineVersion, (HideLevel)_cfg.GetCVar(CVars.MarseyHide)))
