@@ -61,5 +61,9 @@ No.
 #### IL logs?
 Enable loader debug, will be on your desktop
 
+#### STOP!
+
+Project EOL's immediately when our beloved friends *over there* allow client-side resource packs
+
 ### TODO
-* Log cleanup.
+* Resource swapping (resource packs)
