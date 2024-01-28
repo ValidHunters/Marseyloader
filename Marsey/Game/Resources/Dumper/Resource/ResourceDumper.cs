@@ -1,11 +1,10 @@
 using System.Reflection;
 using HarmonyLib;
-using Marsey.Game.ResourcePack;
-using Marsey.Game.ResourcePack.Reflection;
+using Marsey.Game.Resources.Reflection;
 using Marsey.Handbreak;
 using Marsey.Misc;
 
-namespace Marsey.Game.Patches;
+namespace Marsey.Game.Resources.Dumper.Resource;
 
 /// <summary>
 /// By complete accident this dumps everything
@@ -15,7 +14,7 @@ public static class ResourceDumper
     public static MethodInfo? CFRMi; 
     public static void Patch()
     {
-        FileHandler.CheckRenameDirectory(Dumper.path); 
+        FileHandler.CheckRenameDirectory(MarseyDumper.path); 
         
         if (ResourceTypes.ProtoMan == null)
         {

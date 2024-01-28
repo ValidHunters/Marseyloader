@@ -7,7 +7,8 @@ using Marsey.Game;
 using Marsey.Game.Managers;
 using Marsey.Game.Misc;
 using Marsey.Game.Patches;
-using Marsey.Game.ResourcePack;
+using Marsey.Game.Resources;
+using Marsey.Game.Resources.Dumper;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
 using Marsey.Stealthsey;
@@ -81,12 +82,8 @@ public class MarseyPatcher
         Jammer.Patch();
         Blackhole.Patch();
         
-        // Prep Resource Manager
+        // Start Resource Manager
         ResMan.Initialize();
-        
-        // Dump the game, if enabled
-        if (MarseyConf.Dumper)
-            Dumper.Start();
     }
     
     /// <summary>

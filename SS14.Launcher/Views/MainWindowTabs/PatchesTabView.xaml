@@ -74,7 +74,7 @@
           </ScrollViewer>
         </TabItem>
         
-        <TabItem Header="ResourcePacks">
+        <TabItem Header="ResourcePacks" IsVisible="{Binding ShowRPacks}">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
               <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />

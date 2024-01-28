@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Marsey.Misc;
 
-namespace Marsey.Game.Patches;
+namespace Marsey.Game.Resources.Dumper.Resource;
 
 internal static class ResDumpPatches
 {
@@ -14,7 +14,7 @@ internal static class ResDumpPatches
         {
             string canonPath = file.CanonPath;
             string fixedCanonPath = canonPath.StartsWith($"/") ? canonPath[1..] : canonPath;
-            string fullpath = Path.Combine(Dumper.path, fixedCanonPath);
+            string fullpath = Path.Combine(MarseyDumper.path, fixedCanonPath);
 
             FileHandler.CreateDir(fullpath);
 

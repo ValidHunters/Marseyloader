@@ -1,10 +1,11 @@
 using Marsey.Config;
-using Marsey.Game.ResourcePack.Reflection;
+using Marsey.Game.Resources.Dumper;
+using Marsey.Game.Resources.Reflection;
 using Marsey.Misc;
 using Marsey.Serializer;
 using Marsey.Stealthsey;
 
-namespace Marsey.Game.ResourcePack;
+namespace Marsey.Game.Resources;
 
 public static class ResMan
 {
@@ -23,11 +24,26 @@ public static class ResMan
         _fork = Environment.GetEnvironmentVariable(_forkEnvVar) ?? "marsey";
         Envsey.CleanFlag(_forkEnvVar);
         
+        // If were dumping the game we dont want to dump our own respack now would we
+        if (MarseyConf.Dumper)
+        {
+            MarseyDumper.Start();
+            return;
+        }
+
+#if DEBUG
         List<string> enabledPacks = Marserializer.Deserialize([MarseyVars.MarseyResourceFolder], MarserializerFile) ?? [];
+        if (enabledPacks.Count == 0) return;
+        
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Detecting {enabledPacks.Count} enabled resource packs.");
+        
         foreach (string dir in enabledPacks)
         {
             InitializeRPack(dir, !MarseyConf.DisableResPackStrict);
         }
+
+        ResourceSwapper.Start();
+#endif
     }
     
     /// <summary>

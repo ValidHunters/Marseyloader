@@ -1,6 +1,6 @@
 using Marsey.Handbreak;
 
-namespace Marsey.Game.ResourcePack.Reflection;
+namespace Marsey.Game.Resources.Reflection;
 
 /// <summary>
 /// Holds reflection data related to Resources

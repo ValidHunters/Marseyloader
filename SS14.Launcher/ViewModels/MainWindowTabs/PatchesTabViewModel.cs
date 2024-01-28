@@ -4,12 +4,13 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
 using Avalonia.Data.Converters;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
 using Marsey.Config;
-using Marsey.Game.ResourcePack;
+using Marsey.Game.Resources;
 using Marsey.Patches;
 using Marsey.Subversion;
 using Marsey.Misc;
@@ -21,8 +22,14 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public override string Name => "Plugins";
         public ObservableCollection<MarseyPatch> MarseyPatches { get; } = new ObservableCollection<MarseyPatch>();
         public ObservableCollection<SubverterPatch> SubverterPatches { get; } = new ObservableCollection<SubverterPatch>();
-        public ObservableCollection<ResourcePack> ResourcePacks { get; set; } = new ObservableCollection<ResourcePack>();
+        public ObservableCollection<ResourcePack> ResourcePacks { get; } = new ObservableCollection<ResourcePack>();
         public ICommand OpenPatchDirectoryCommand { get; }
+        
+#if DEBUG
+        public bool ShowRPacks => true;
+#else
+        public bool ShowRPacks => false;
+#endif
 
         public PatchesTabViewModel()
         {
@@ -32,7 +39,6 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         private void ReloadMods()
         {
-            ClearList();
             FileHandler.LoadAssemblies();
             ResMan.LoadDir();
 
@@ -41,8 +47,9 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
             List<SubverterPatch> subverters = Subverter.GetSubverterPatches();
             LoadPatchList(subverters, SubverterPatches, "subverterpatches");
-
-            LoadResPacks(ResMan.GetRPacks());
+            
+            List<ResourcePack> resourcePacks = ResMan.GetRPacks(); 
+            LoadResPacks(resourcePacks, ResourcePacks);
         }
 
         private void OpenPatchDirectory(string directoryName)
@@ -56,28 +63,24 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         private void LoadPatchList<T>(List<T> patches, ICollection<T> patchList, string patchName) where T : IPatch
         {
-            foreach (T patch in patches)
+            foreach (T patch in patches.Where(patch => !patchList.Any(r => r.Equals(patch))))
             {
                 patchList.Add(patch);
             }
+
             Log.Debug($"Refreshed {patchName}, got {patchList.Count}.");
         }
 
-        private void LoadResPacks(List<ResourcePack> ResPacks)
+        private void LoadResPacks(List<ResourcePack> ResPacks, ICollection<ResourcePack> RPacks)
         {
             foreach (ResourcePack resource in ResPacks)
             {
-                ResourcePacks.Add(resource);
+                if (RPacks.All(r => r.Dir != resource.Dir)){
+                    RPacks.Add(resource);
+                }
             }
-            
-            Log.Debug($"Refreshed resourcepacks, got {ResourcePacks.Count}.");
-        }
 
-        private void ClearList()
-        {
-            ResourcePacks.Clear();
-            SubverterPatches.Clear();
-            MarseyPatches.Clear();
+            Log.Debug($"Refreshed resourcepacks, got {ResourcePacks.Count}.");
         }
     }
 }

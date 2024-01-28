@@ -1,12 +1,11 @@
-using System.Reflection;
-using Marsey.Game.ResourcePack;
+using Marsey.Game.Resources.Dumper.Resource;
 
-namespace Marsey.Game.Patches;
+namespace Marsey.Game.Resources.Dumper;
 
 /// <summary>
 /// Dumps game content
 /// </summary>
-public static class Dumper
+public static class MarseyDumper
 {
     public static string path = "marsey";
     
@@ -20,7 +19,7 @@ public static class Dumper
     {
         string fork = ResMan.GetForkID() ?? "marsey";
 
-        string loc = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        string loc = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!;
         path = Path.Combine(loc, "Dumper/", $"{fork}/");
     }
     

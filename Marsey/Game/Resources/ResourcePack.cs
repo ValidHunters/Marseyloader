@@ -1,7 +1,7 @@
 using Marsey.Misc;
 using Newtonsoft.Json;
 
-namespace Marsey.Game.ResourcePack;
+namespace Marsey.Game.Resources;
 
 /// <summary>
 /// Metadata class for Resource Packs

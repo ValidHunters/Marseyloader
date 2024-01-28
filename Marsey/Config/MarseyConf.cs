@@ -48,7 +48,7 @@ public static class MarseyConf
     /// <see cref="DiscordRPC"/>
     public static bool KillRPC;
     
-    /// <see cref="Game.Patches.Dumper"/>
+    /// <see cref="Marsey.Game.Resources.Dumper.Dumper"/>
     public static bool Dumper;
     
     /// <see cref="Jammer"/>
