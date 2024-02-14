@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using DynamicData;
 using Marsey.Patches;
 using Marsey.Subversion;
+using Splat;
+using SS14.Launcher.Models.Data;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.MarseyFluff;
 
@@ -19,6 +22,13 @@ public class TitleManager
     
     public TitleManager()
     {
+        DataManager cfg = Locator.Current.GetRequiredService<DataManager>(); // Thanks for inspiration.gif
+        if (!cfg.GetCVar(CVars.RandTitle))
+        {
+            RandomTitle = LauncherVersion.Name;
+            return;
+        }
+
         List<TitleCondition> titleConditions = new List<TitleCondition>
         {
             new TitleCondition { Condition = () => OperatingSystem.IsWindows(), Message = "if (OperatingSystem.IsWindows()" },
@@ -60,6 +70,7 @@ public class TitleManager
     [
         "Marsey is the cutest cat", "Not a cheat loader",
         "PR self-merging solutions", "RSHOE please come back",
+        "Today I learned RSHOE is datae, it has never been more over",
         "As audited on discord.gg/ss14", "Leading disabler of engine signature checks",
         "Sigmund Goldberg died for this", "Sandbox sidestep simulator", "DIY bomb tutorials",
         "incel matchmaking service", "#1 ransomware provider", "God, King & Bussy",
@@ -99,9 +110,23 @@ public class TitleManager
         "asking people to do the thug shaker"
     ];
 
+    private static readonly List<string> Actions =
+    [
+        "Pumping nitrous into distro", "Injecting plasma into batteries", "Slipcuffing hos", "Starting a cult", "Rolling for antag",
+        "Plasmaflooding station", "Declaring cargonia", "Evading bans", "Taking fuel tanks for a walk", "Gibbing for no reason",
+        "Bullying trialmins", "ANNOUNCING PRESENCE", "Petting Marsey", "Gossiping about spaceman drama", "Porting /vg/ to 14",
+        "Granting +HOST", "Playing Balalaika", "Anime past 2018 is slop", "Trading Oil", "Abusing Roskomnadzor", "Making fun of people on mastodon",
+        "Hacking the powernet", "Overthrowing the captain", "Building a mech", "Creating AI laws", "Running diagnostics on the engine",
+        "Upgrading the medbay", "Securing the armory", "Repairing hull breaches", "Conducting xenobio research", "Exploring lavaland",
+        "Mining for plasma", "Crafting improv shells", "Setting up the SM", "Breaching into secure areas", "Fighting syndicate operatives",
+        "Escaping on the shuttle", "Reviving dead crewmembers", "Cloning the clown", "Rushing the captain's spare ID", "Sabotaging telecomms",
+        "Disposal bypassing into armory", "Exploiting pulling"
+    ];
+
     public string RandomTitle { get; }
 
     public static string RandTitle() => Titles[Random.Next(Titles.Count)];
     public static string RandTagLine() => TagLines[Random.Next(TagLines.Count)];
     public static string RandBanReason() => BanReasons[Random.Next(BanReasons.Count)];
+    public static string RandAction() => Actions[Random.Next(Actions.Count)];
 }

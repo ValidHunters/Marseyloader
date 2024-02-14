@@ -52,9 +52,9 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     }
 
 #if RELEASE
-        public bool HideDisableSigning => true;
+        public bool HideDebugKnobs => true;
 #else
-    public bool HideDisableSigning => false;
+    public bool HideDebugKnobs => false;
 #endif
 
     public override string Name => "Options";
@@ -176,6 +176,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         set
         {
             Cfg.SetCVar(CVars.MarseyApi, value);
+            OnPropertyChanged(nameof(MarseyApi));
             Cfg.CommitConfig();
         }
     }
@@ -186,7 +187,27 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         get => Cfg.GetCVar(CVars.MarseyApiEndpoint);
         set => _endpoint = value;
     }
+    
+    public bool MarseyApiIgnoreForced
+    {
+        get => Cfg.GetCVar(CVars.MarseyApiIgnoreForced);
+        set
+        {
+            Cfg.SetCVar(CVars.MarseyApiIgnoreForced, value);
+            Cfg.CommitConfig();
+        }
+    }
 
+    public bool NoActiveInit
+    {
+        get => Cfg.GetCVar(CVars.NoActiveInit);
+        set
+        {
+            Cfg.SetCVar(CVars.NoActiveInit, value);
+            Cfg.CommitConfig();
+        }
+    }
+    
     public bool DisableRPC
     {
         get => Cfg.GetCVar(CVars.DisableRPC);
@@ -251,6 +272,36 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         set
         {
             Cfg.SetCVar(CVars.Blackhole, value);
+            Cfg.CommitConfig();
+        }
+    }
+    
+    public bool RandTitle
+    {
+        get => Cfg.GetCVar(CVars.RandTitle);
+        set
+        {
+            Cfg.SetCVar(CVars.RandTitle, value);
+            Cfg.CommitConfig();
+        }
+    }
+    
+    public bool RandHeader
+    {
+        get => Cfg.GetCVar(CVars.RandHeader);
+        set
+        {
+            Cfg.SetCVar(CVars.RandHeader, value);
+            Cfg.CommitConfig();
+        }
+    }
+    
+    public bool RandConnAction
+    {
+        get => Cfg.GetCVar(CVars.RandConnAction);
+        set
+        {
+            Cfg.SetCVar(CVars.RandConnAction, value);
             Cfg.CommitConfig();
         }
     }

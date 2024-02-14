@@ -57,8 +57,8 @@
                              Text="For when the developers are *very* stumped with your problem. (requires launcher restart)"
                              Margin="8" />
                   
-                  <CheckBox VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" Margin="4" IsChecked="{Binding DisableSigning}">Disable Engine Signature Checks</CheckBox>
-                  <TextBlock VerticalAlignment="Center" IsVisible="{Binding !HideDisableSigning}" TextWrapping="Wrap"
+                  <CheckBox VerticalAlignment="Center" IsVisible="{Binding !HideDebugKnobs}" Margin="4" IsChecked="{Binding DisableSigning}">Disable Engine Signature Checks</CheckBox>
+                  <TextBlock VerticalAlignment="Center" IsVisible="{Binding !HideDebugKnobs}" TextWrapping="Wrap"
                              Text="[DEV ONLY] Disables verification of engine signatures. DO NOT ENABLE UNLESS YOU KNOW EXACTLY WHAT YOU'RE DOING."
                              Margin="8" />
           
@@ -86,7 +86,7 @@
                         
                         <TextBlock Margin="4, 0" Text="Hide Level" Classes="NanoHeadingMedium" />
                         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
-                            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Sets degree to which Marsey hides itself</TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Sets degree to which Marsey hides itself.</TextBlock>
                             <ComboBox Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="4" Items="{Binding HideLevels}" SelectedItem="{Binding HideLevel}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
@@ -97,8 +97,14 @@
                             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding HideLevel, Converter={StaticResource HideLevelDescriptionConverter}}" Margin="8" />
                         </Grid>
                         
+                        <TextBlock Margin="4, 0" Text="Launcher Behavior" Classes="NanoHeadingMedium" />
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding NoActiveInit}">Disable Automatic Login</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Do not log in into last active account when starting the launcher."
+                                   Margin="8" />
+                        
                         <!-- Game block -->
-                        <TextBlock Margin="4, 0" Text="Game" Classes="NanoHeadingMedium" />
+                        <TextBlock Margin="4, 0" Text="Game Behavior" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DisableRPC}">Disable RPC</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Does not let Discord RPC initialize, hiding your username and server from your profile."
@@ -113,7 +119,7 @@
                         <TextBlock Margin="4, 0" Text="HWID" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForcingHWID}">Force HWID</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" 
-                                   Text="Force change HWID when joining a server"
+                                   Text="Force change HWID when joining a server."
                                    Margin="8" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsVisible="{Binding ForcingHWID}" IsChecked="{Binding RandHWID}">Random HWID</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" IsVisible="{Binding ForcingHWID}"
@@ -136,12 +142,12 @@
                         <TextBlock Margin="4, 0" Text="Logging" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patcher</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                   Text="Write MarseyLogger output to log"
+                                   Text="Write MarseyLogger output to log."
                                    Margin="8" />
     
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLoaderDebug}">Enable Loader Debug Logs</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                   Text="For when things stop making sense"
+                                   Text="For when things stop making sense."
                                    Margin="8" />
             
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SeparateLogging}">Separate Game/Patcher Logs</CheckBox>
@@ -151,19 +157,24 @@
                         
                         <TextBlock Margin="4, 0" Text="MarseyApi" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyApi}">Enabled</CheckBox>
-                        <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
+                        <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto" IsVisible="{Binding MarseyApi}">
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="Wrap"
                                        Text="API Endpoint URL"
                                        Margin="8"/>
                             <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="MarseyApiEndpoint" VerticalAlignment="Center" Margin="4" Text="{Binding MarseyApiEndpoint}"/>
                             <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set API URL" Command="{Binding SetEndpointCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyApiIgnoreForced}">Ignore Forced Updates</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Ignores required update popups."
+                                   Margin="8"/>
                         
                         <TextBlock Margin="4, 0" Text="Misc" Classes="NanoHeadingMedium" />
                         
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ResourceOverride}">Resource Pack Strict Override</CheckBox>
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ResourceOverride}" IsVisible="{Binding !HideDebugKnobs}">Resource Pack Strict Override</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                   Text="Disables Resource Pack fork target checking when set"
+                                   IsVisible="{Binding !HideDebugKnobs}"
+                                   Text="Disables Resource Pack fork target checking."
                                    Margin="8" />
                         
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump Resources</CheckBox>
@@ -187,6 +198,16 @@
                             <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set Username" Command="{Binding SetUsernameCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
                         
+                        <!-- Truly pointless category -->
+                        <TextBlock Margin="4, 0" Text="Fluff" Classes="NanoHeadingMedium" />
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding RandTitle}">Randomize window titles</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Use a random title, otherwise its "Marseyloader"</TextBlock>
+                        
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding RandHeader}">Randomize header images</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Use a random header image, otherwise stick to default Marseyloader</TextBlock>
+                        
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding RandConnAction}">Randomize connection messages</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Use random, (un)funny messages instead of connection status ones</TextBlock>
                     </StackPanel>
                 </DockPanel>
             </ScrollViewer>

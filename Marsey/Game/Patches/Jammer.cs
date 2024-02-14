@@ -12,6 +12,8 @@ namespace Marsey.Game.Patches;
 /// <remarks><para>Not to be confused with Stealthsey.Redial.</para></remarks>
 public static class Jammer
 {
+    /// "Disabling engine redial instead of putting a check in Loader's RedialAPI actually doesnt let the client close"
+    /// Is, unfortunately, still just an excuse.
     public static void Patch()
     {
         if (!MarseyConf.JamDials) return;

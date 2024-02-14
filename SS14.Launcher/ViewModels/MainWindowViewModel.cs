@@ -72,6 +72,9 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         AccountDropDown = new AccountDropDownViewModel(this);
         LoginViewModel = new MainWindowLoginViewModel();
 
+        if (_cfg.GetCVar(CVars.NoActiveInit))
+            _loginMgr.ActiveAccount = null;
+        
         this.WhenAnyValue(x => x._loginMgr.ActiveAccount)
             .Subscribe(s =>
             {
@@ -196,7 +199,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
             }
             
             int comp = MarseyVars.MarseyVersion.CompareTo(minimum);
-            if (comp < 0) OutOfDate = true;
+            if (comp < 0 && _cfg.GetCVar(CVars.MarseyApiIgnoreForced)) OutOfDate = true;
         }
         catch (HttpRequestException e)
         {

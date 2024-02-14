@@ -62,8 +62,6 @@ public static class CVars
     /// </summary>
     public static readonly CVarDef<string> SelectedLogin = CVarDef.Create("SelectedLogin", "");
 
-    //public static readonly CVarDef<string> Fingerprint = CVarDef.Create("Fingerprint", "");
-
     /// <summary>
     /// Maximum amount of TOTAL versions to keep in the content database.
     /// </summary>
@@ -149,6 +147,11 @@ public static class CVars
     /// </summary>
     public static readonly CVarDef<bool> ForcingHWId = CVarDef.Create("ForcingHWId", false);
 
+    /// <summary>
+    /// Do not log in anywhere when starting the loader
+    /// </summary>
+    public static readonly CVarDef<bool> NoActiveInit = CVarDef.Create("NoActiveInit", false);
+
     // HWID
     
     /// <summary>
@@ -172,6 +175,28 @@ public static class CVars
     /// MarseyApi endpoint url
     /// </summary>
     public static readonly CVarDef<string> MarseyApiEndpoint = CVarDef.Create("MarseyApiEndpoint", "https://fujo.love/api/v1");
+
+    /// <summary>
+    /// Ignore "Marsey-M" (required updates) releases
+    /// </summary>
+    public static readonly CVarDef<bool> MarseyApiIgnoreForced = CVarDef.Create("MarseyApiIgnoreForced", false);
+    
+    // Fluff
+    
+    /// <summary>
+    /// Use a random title and tagline combination
+    /// </summary>
+    public static readonly CVarDef<bool> RandTitle = CVarDef.Create("RandTitle", true);
+    
+    /// <summary>
+    /// Use a random header image
+    /// </summary>
+    public static readonly CVarDef<bool> RandHeader = CVarDef.Create("RandHeader", true);
+    
+    /// <summary>
+    /// Replace connection messages with a random (un)funny action
+    /// </summary>
+    public static readonly CVarDef<bool> RandConnAction = CVarDef.Create("RandConnAction", false);
 }
 
 /// <summary>

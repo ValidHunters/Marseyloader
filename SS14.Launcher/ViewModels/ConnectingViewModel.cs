@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using ReactiveUI;
 using Splat;
+using SS14.Launcher.MarseyFluff;
 using SS14.Launcher.Models;
 using SS14.Launcher.Utility;
 
@@ -147,38 +148,53 @@ public class ConnectingViewModel : ViewModelBase
         }
     }
 
-    public string StatusText =>
-        _connectorStatus switch
+    public string StatusText
+    {
+        get
         {
-            Connector.ConnectionStatus.None => "Starting connection..." + _reasonSuffix,
-            Connector.ConnectionStatus.UpdateError =>
-                "There was an error while downloading server content. Please ask on Discord for support if the problem persists.",
-            Connector.ConnectionStatus.Updating => ("Updating: " + _updaterStatus switch
+            Random rnd = new Random();
+            if (rnd.Next(10) != 0 || _connectorStatus == Connector.ConnectionStatus.ConnectionFailed ||
+                _connectorStatus == Connector.ConnectionStatus.NotAContentBundle ||
+                _connectorStatus == Connector.ConnectionStatus.ClientExited)
             {
-                Updater.UpdateStatus.CheckingClientUpdate => "Checking for server content update...",
-                Updater.UpdateStatus.DownloadingEngineVersion => "Downloading server content...",
-                Updater.UpdateStatus.DownloadingClientUpdate => "Downloading server content...",
-                Updater.UpdateStatus.FetchingClientManifest => "Fetching server manifest...",
-                Updater.UpdateStatus.Verifying => "Verifying download integrity...",
-                Updater.UpdateStatus.CullingEngine => "Clearing old content...",
-                Updater.UpdateStatus.CullingContent => "Clearing old server content...",
-                Updater.UpdateStatus.Ready => "Update done!",
-                Updater.UpdateStatus.CheckingEngineModules => "Checking for additional dependencies...",
-                Updater.UpdateStatus.DownloadingEngineModules => "Downloading extra dependencies...",
-                Updater.UpdateStatus.CommittingDownload => "Synchronizing to disk...",
-                Updater.UpdateStatus.LoadingIntoDb => "Storing assets in database...",
-                Updater.UpdateStatus.LoadingContentBundle => "Loading content bundle...",
-                _ => "You shouldn't see this"
-            }) + _reasonSuffix,
-            Connector.ConnectionStatus.Connecting => "Fetching connection info from server..." + _reasonSuffix,
-            Connector.ConnectionStatus.ConnectionFailed => "Failed to connect to server!",
-            Connector.ConnectionStatus.StartingClient => "Starting client..." + _reasonSuffix,
-            Connector.ConnectionStatus.NotAContentBundle => "File is not a valid content bundle!",
-            Connector.ConnectionStatus.ClientExited => _connector.ClientExitedBadly
-                ? "Client seems to have crashed while starting. If this persists, please ask on Discord or GitHub for support."
-                : "",
-            _ => ""
-        };
+                return _connectorStatus switch
+                {
+                    Connector.ConnectionStatus.None => "Starting connection..." + _reasonSuffix,
+                    Connector.ConnectionStatus.UpdateError =>
+                        "There was an error while downloading server content. Please ask on Discord for support if the problem persists.",
+                    Connector.ConnectionStatus.Updating => ("Updating: " + _updaterStatus switch
+                    {
+                        Updater.UpdateStatus.CheckingClientUpdate => "Checking for server content update...",
+                        Updater.UpdateStatus.DownloadingEngineVersion => "Downloading server content...",
+                        Updater.UpdateStatus.DownloadingClientUpdate => "Downloading server content...",
+                        Updater.UpdateStatus.FetchingClientManifest => "Fetching server manifest...",
+                        Updater.UpdateStatus.Verifying => "Verifying download integrity...",
+                        Updater.UpdateStatus.CullingEngine => "Clearing old content...",
+                        Updater.UpdateStatus.CullingContent => "Clearing old server content...",
+                        Updater.UpdateStatus.Ready => "Update done!",
+                        Updater.UpdateStatus.CheckingEngineModules => "Checking for additional dependencies...",
+                        Updater.UpdateStatus.DownloadingEngineModules => "Downloading extra dependencies...",
+                        Updater.UpdateStatus.CommittingDownload => "Synchronizing to disk...",
+                        Updater.UpdateStatus.LoadingIntoDb => "Storing assets in database...",
+                        Updater.UpdateStatus.LoadingContentBundle => "Loading content bundle...",
+                        _ => "You shouldn't see this"
+                    }) + _reasonSuffix,
+                    Connector.ConnectionStatus.Connecting => "Fetching connection info from server..." + _reasonSuffix,
+                    Connector.ConnectionStatus.ConnectionFailed => "Failed to connect to server!",
+                    Connector.ConnectionStatus.StartingClient => "Starting client..." + _reasonSuffix,
+                    Connector.ConnectionStatus.NotAContentBundle => "File is not a valid content bundle!",
+                    Connector.ConnectionStatus.ClientExited => _connector.ClientExitedBadly
+                        ? "Client seems to have crashed while starting. If this persists, please ask on Discord or GitHub for support."
+                        : "",
+                    _ => ""
+                };
+            }
+            
+            // 10% to roll a random "Action" from the titlemanager
+            return TitleManager.RandAction();
+        }
+    }
+
 
     public static void StartConnect(MainWindowViewModel windowVm, string address, string? givenReason = null)
     {

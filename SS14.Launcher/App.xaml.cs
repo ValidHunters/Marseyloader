@@ -8,7 +8,10 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using JetBrains.Annotations;
 using Serilog;
+using Splat;
+using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.OverrideAssets;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher;
 
@@ -48,28 +51,34 @@ public class App : Application
 
     private void LoadBaseAssets()
     {
-        var loader = AvaloniaLocator.Current.GetService<IAssetLoader>()!;
+        DataManager _cfg = Locator.Current.GetRequiredService<DataManager>();
+        IAssetLoader loader = AvaloniaLocator.Current.GetService<IAssetLoader>()!;
 
-        var logoUris = loader.GetAssets(new Uri($"avares://SS14.Launcher/Assets/logos"), null);
-        var rand = new Random();
-        var logolist = new List<System.Uri>(logoUris);
+        IEnumerable<Uri> logoUris = loader.GetAssets(new Uri($"avares://SS14.Launcher/Assets/logos"), null);
+        Random rand = new Random();
+        List<Uri> logolist = new List<System.Uri>(logoUris);
 
         foreach (var (name, (path, type)) in AssetDefs)
         {
             Uri assetUri;
             if (name == "LogoLong" && logolist.Count > 0)
             {
-                var randomIndex = rand.Next(logolist.Count);
-                var randomAsset = logolist[randomIndex];
-                assetUri = new Uri(randomAsset.AbsoluteUri);
+                if (_cfg.GetCVar(CVars.RandHeader))
+                {
+                    int randomIndex = rand.Next(logolist.Count);
+                    Uri randomAsset = logolist[randomIndex];
+                    assetUri = new Uri(randomAsset.AbsoluteUri);
+                }
+                else
+                    assetUri = new Uri($"avares://SS14.Launcher/Assets/logo-long.png");
             }
             else
             {
                 assetUri = new Uri($"avares://SS14.Launcher/Assets/{path}");
             }
 
-            using var dataStream = loader.Open(assetUri);
-            var asset = LoadAsset(type, dataStream);
+            using Stream dataStream = loader.Open(assetUri);
+            object asset = LoadAsset(type, dataStream);
 
             _baseAssets.Add(name, asset);
             Resources.Add(name, asset);

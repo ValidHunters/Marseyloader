@@ -35,7 +35,7 @@ public class MainWindowLoginViewModel : ViewModelBase
         SwitchToLogin();
     }
 
-    public string Version => $"v{LauncherVersion.Version}";
+    public string Version => $"{LauncherVersion.Name}/v{LauncherVersion.Version}";
 
     public void SwitchToLogin()
     {
