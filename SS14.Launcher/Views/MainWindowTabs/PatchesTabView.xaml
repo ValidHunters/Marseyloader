@@ -17,12 +17,7 @@
   </Design.DataContext>
 
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-    <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
-      </Grid.RowDefinitions>
-      
+    <Grid RowDefinitions="Auto,*">
       <TabControl Grid.Row="0">
         <TabItem Header="MarseyPatches">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">

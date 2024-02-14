@@ -17,6 +17,7 @@ using ReactiveUI.Fody.Helpers;
 using Serilog;
 using Splat;
 using SS14.Launcher.Api;
+using SS14.Launcher.MarseyFluff;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
@@ -300,36 +301,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         ConnectingViewModel.StartContentBundle(this, fileName);
     }
 
-    private static readonly Random Random = new Random();
+    private readonly TitleManager _title = new TitleManager();
 
-    private static readonly string[] Titles =
-    {
-        "Space Station 14 Launcher", "Dramalauncher",
-        "Marsey", "Moonyware", "Marseyloader",
-        "Robustcontrol", "Mirailoader", "Almost BepInEx",
-        "Video game launcher", "MIT-certified funny",
-        "戏剧装载机", "Oldest anarchy launcher in ss14",
-        "ILVerifier", "Space Station 13", "BYOND",
-        "Goonstation", "BYONDCONTROL", "Unitystation",
-        "Stationeers", "RE:SS2D", "Schizostation 14"
-    };
+    public string RandomTitle => _title.RandomTitle;
 
-    private static readonly string[] TagLines =
-    {
-        "Marsey is the cutest cat", "Not a cheat loader",
-        "PR self-merging solutions", "RSHOE please come back",
-        "As audited on discord.gg/ss14", "Leading disabler of engine signature checks",
-        "Sigmund Goldberg died for this", "Sandbox sidestep simulator", "DIY bomb tutorials",
-        "incel matchmaking service", "#1 ransomware provider", "God, King & Bussy",
-        "The mayocide is coming", "Leading forum for misandrists", "Trans Rights!",
-        "Largest long bacon provider", "天安門大屠殺", "Shitcode tester",
-        "The code for the client literally calls itself a cheat client",
-        "Tumblr client for fujoshis", "Cheap airfare and hotels", "Aliyah consulting",
-        "Friday Night Funkin mod manager", "download .apk MOD (Infinite money, health, free admin)",
-        "Disaster generator", "if (OperatingSystem.IsWindows())", "Primary cause of binary blob discussions",
-        "George Bush did 9/11 and yet I'm the bad guy", "Hybristophiliac support group",
-        "Space game but awesome", "Game SUCKS I go bed", "Go be ironic on wizden"
-    };
-
-    public string RandomTitle => Titles[Random.Next(Titles.Length)] + ": " + TagLines[Random.Next(TagLines.Length)];
 }
