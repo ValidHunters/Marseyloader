@@ -82,6 +82,9 @@ public class MarseyPatcher
         Jammer.Patch();
         Blackhole.Patch();
         
+        // Fix keybinds lol
+        BindFix.Patch();
+        
         // Start Resource Manager
         ResMan.Initialize();
     }
@@ -101,21 +104,26 @@ public class MarseyPatcher
         
         // Post assembly-load hide methods
         Hidesey.PostLoad();
+        
+        ExecPatcher();
+        
+        Afterparty();
+    }
 
+    private void ExecPatcher()
+    {
         // Prepare marseypatches
         FileHandler.LoadAssemblies(marserializer: true, filename: Marsyfier.MarserializerFile);
         List<MarseyPatch> patches = Marsyfier.GetMarseyPatches();
-        
+
         if (patches.Count != 0)
         {
             // Connect patches to internal logger
             AssemblyFieldHandler.InitHelpers(patches);
-
-            // Execute patches
-            Patcher.Patch(patches);
         }
-        
-        Afterparty();
+
+        // Execute patches
+        Patcher.Patch(patches);
     }
     
     private void Afterparty()

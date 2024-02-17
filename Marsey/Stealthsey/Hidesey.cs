@@ -189,13 +189,13 @@ public static class Hidesey
         MethodInfo? Lie = Helpers.GetMethod(typeof(HideseyPatches), "Lie");
         
         (MethodInfo?, Type)[] patches =
-        {
+        [
             (typeof(AppDomain).GetMethod(nameof(AppDomain.GetAssemblies)), typeof(Assembly[])),
             (Assembly.GetExecutingAssembly().GetType().GetMethod(nameof(Assembly.GetReferencedAssemblies)), typeof(AssemblyName[])),
             (typeof(Assembly).GetMethod(nameof(Assembly.GetTypes)), typeof(Type[])),
             (typeof(AssemblyLoadContext).GetProperty("Assemblies")?.GetGetMethod(), typeof(IEnumerable<Assembly>)),
             (typeof(AssemblyLoadContext).GetProperty("All")?.GetGetMethod(), typeof(IEnumerable<AssemblyLoadContext>))
-        };
+        ];
 
         foreach ((MethodInfo? targetMethod, Type returnType) in patches)
         {
