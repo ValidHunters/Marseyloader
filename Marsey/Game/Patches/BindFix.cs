@@ -2,16 +2,20 @@ using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Marsey.Handbreak;
+using Marsey.Stealthsey;
 
 namespace Marsey.Game.Patches;
 
 // https://media.discordapp.net/attachments/1132440600478756879/1208211732980301964/MalPR.png?ex=65e275dc&is=65d000dc&hm=d0e99b62cca1151e13a8e4af65cbe7b0e3c4f0d35e74965ab07640f87276df93&=&format=webp&quality=lossless
 // Cred: https://github.com/space-wizards/RobustToolbox/pull/4903
-// Todo: Remove when 
 public static class BindFix
 {
     public static void Patch()
     {
+        // Non-210/210.1 engine does not have a keybind issue
+        // todo remove somewhen in the future (never)
+        if (Abjure.engineVer < new Version("210.0.0") || Abjure.engineVer > new Version("210.1.0")) return;
+        
         Type Input = AccessTools.TypeByName("Robust.Client.Input.InputManager");
         MethodInfo LKFmi = AccessTools.Method(Input, "LoadKeyFile");
         MethodInfo BindFixTranspiler = AccessTools.Method(typeof(BindFix), "Transpiler");
