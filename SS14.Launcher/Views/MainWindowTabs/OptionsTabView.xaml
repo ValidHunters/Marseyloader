@@ -115,6 +115,11 @@
                                    Text="Does not let game admins (or the game itself) to reconnect you to another station."
                                    Margin="8" />
                         
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Backports}">Enable backports</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                   Text="Apply fixes relevant for the fork and/or engine version if available."
+                                   Margin="8" />
+                        
                         <!-- HWID Block -->
                         <TextBlock Margin="4, 0" Text="HWID" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForcingHWID}">Force HWID</CheckBox>

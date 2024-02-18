@@ -56,6 +56,12 @@ public static class MarseyConf
 
     /// <see cref="Blackhole"/>
     public static bool DisableREC;
+    
+    /// <summary>
+    /// Enables backports and fixes for the game
+    /// </summary>
+    /// <see cref="Marsey.Game.Patches.Marseyports.MarseyPortMan"/>
+    public static bool Backports;
 
     public static readonly Dictionary<string, Action<bool>> EnvVarMap = new Dictionary<string, Action<bool>>
     {
@@ -68,6 +74,7 @@ public static class MarseyConf
         { "MARSEY_DISABLE_PRESENCE", value => KillRPC = value },
         { "MARSEY_DUMP_ASSEMBLIES", value => Dumper = value },
         { "MARSEY_JAMMER", value => JamDials = value },
-        { "MARSEY_DISABLE_REC", value => DisableREC = value }
+        { "MARSEY_DISABLE_REC", value => DisableREC = value },
+        { "MARSEY_BACKPORTS", value => Backports = value}
     };
 }

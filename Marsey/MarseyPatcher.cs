@@ -7,6 +7,7 @@ using Marsey.Game;
 using Marsey.Game.Managers;
 using Marsey.Game.Misc;
 using Marsey.Game.Patches;
+using Marsey.Game.Patches.Marseyports;
 using Marsey.Game.Resources;
 using Marsey.Game.Resources.Dumper;
 using Marsey.PatchAssembly;
@@ -61,6 +62,11 @@ public class MarseyPatcher
         Utility.SetupFlags();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Marseyloader started, version {MarseyVars.MarseyVersion}");
+        
+        // Init backport manager
+        MarseyPortMan.Initialize();
+        
         // Hide the loader
         Hidesey.Initialize();
 
@@ -82,8 +88,8 @@ public class MarseyPatcher
         Jammer.Patch();
         Blackhole.Patch();
         
-        // Fix keybinds lol
-        BindFix.Patch();
+        // Apply engine backports
+        MarseyPortMan.PatchBackports();
         
         // Start Resource Manager
         ResMan.Initialize();
@@ -129,7 +135,7 @@ public class MarseyPatcher
     private void Afterparty()
     {
         // TODO: Test if GameAssemblies.ClientInitialized works here
-        while (!Sentry.State) // Wait until EntryPoint is just about to start 
+        while (!GameAssemblies.ClientInitialized()) // Wait until EntryPoint is just about to start 
         {
             Thread.Sleep(125);
         }
@@ -137,6 +143,9 @@ public class MarseyPatcher
         // If preclusion is triggered - close the game bruh
         if (Preclusion.State)
             Preclusion.Fire();
+        
+        // Apply content-related backports
+        MarseyPortMan.PatchBackports(true);
         
         // Post-Load hidesey methods
         Hidesey.Cleanup();

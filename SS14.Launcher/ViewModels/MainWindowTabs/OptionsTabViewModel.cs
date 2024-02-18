@@ -275,6 +275,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
+
+    public bool Backports
+    {
+        get => Cfg.GetCVar(CVars.Backports);
+        set
+        {
+            Cfg.SetCVar(CVars.Backports, value);
+            Cfg.CommitConfig();
+        }
+    }
     
     public bool RandTitle
     {

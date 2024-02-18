@@ -282,6 +282,7 @@ public class Connector : ReactiveObject
             // Steal forkid for the dumper
             // I am not going to go through cvars in startinfo.
             _forkid = serverBuildInformation?.ForkId;
+            _engine = serverBuildInformation?.EngineVersion;
 
             // Pass build info to client. This is not critical to the client's function,
             // it was added to aid client replay recording.
@@ -577,6 +578,7 @@ public class Connector : ReactiveObject
 
     // TODO: Make this a json or something like holy shit
     private string? _forkid;
+    private string? _engine;
     private void ConfigureMarsey(ProcessStartInfo startInfo)
     {
         // Logging
@@ -598,8 +600,14 @@ public class Connector : ReactiveObject
         else 
             startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
         
-        // Resources
+        // Data
         startInfo.EnvironmentVariables["MARSEY_FORKID"] = _forkid;
+        startInfo.EnvironmentVariables["MARSEY_ENGINE"] = _engine;
+        
+        // Backporter
+        startInfo.EnvironmentVariables["MARSEY_BACKPORTS"] = _cfg.GetCVar(CVars.Backports) ? "true" : null;
+        
+        // ResPacks
         startInfo.EnvironmentVariables["MARSEY_DISABLE_STRICT"] = _cfg.GetCVar(CVars.DisableStrict) ? "true" : null;
         if (MarseyConf.Dumper)
             startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";

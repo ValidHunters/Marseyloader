@@ -14,8 +14,10 @@ public static class Envsey
     /// </summary>
     /// <param name="envName">Name of env var</param>
     [HideLevelRequirement(HideLevel.Normal)]
-    public static void CleanFlag(string envName)
+    public static string? CleanFlag(string envName)
     {
+        string? temp = Environment.GetEnvironmentVariable(envName);
         Environment.SetEnvironmentVariable(envName, null);
+        return temp;
     }
 }

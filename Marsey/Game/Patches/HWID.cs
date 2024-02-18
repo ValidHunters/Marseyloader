@@ -40,8 +40,7 @@ public static class HWID
 
     private static string GetForcedHWId()
     {
-        string? hwid = Environment.GetEnvironmentVariable(HWIDEnv);
-        Envsey.CleanFlag(HWIDEnv);
+        string? hwid = Envsey.CleanFlag(HWIDEnv);
         return hwid ?? string.Empty;
     }
 

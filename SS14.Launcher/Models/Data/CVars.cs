@@ -151,6 +151,11 @@ public static class CVars
     /// Do not log in anywhere when starting the loader
     /// </summary>
     public static readonly CVarDef<bool> NoActiveInit = CVarDef.Create("NoActiveInit", false);
+    
+    /// <summary>
+    /// Apply backports to game when able
+    /// </summary>
+    public static readonly CVarDef<bool> Backports = CVarDef.Create("Backports", false);
 
     // HWID
     

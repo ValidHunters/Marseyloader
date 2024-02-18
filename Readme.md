@@ -14,6 +14,7 @@ Space Station 14 launcher with client-side modding/patching support.
 * * Win/Mac/Linux support
 * * No injectors used, entirely based on reflection
 * * Patches are hidden from game
+* * "Backport" support
 * Enabled multiaccount
 * Privacy changes
 * * Tokens are updated only on connect or account switch to evade alt detection

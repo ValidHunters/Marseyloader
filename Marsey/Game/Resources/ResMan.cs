@@ -1,4 +1,5 @@
 using Marsey.Config;
+using Marsey.Game.Patches.Marseyports;
 using Marsey.Game.Resources.Dumper;
 using Marsey.Game.Resources.Reflection;
 using Marsey.Misc;
@@ -12,7 +13,6 @@ public static class ResMan
     public static readonly string MarserializerFile = "rpacks.marsey";
     private static readonly List<ResourcePack> _resourcePacks = [];
     private static string? _fork;
-    private static readonly string _forkEnvVar = "MARSEY_FORKID";
 
     /// <summary>
     /// Executed by the loader
@@ -21,8 +21,7 @@ public static class ResMan
     {
         ResourceTypes.Initialize();
         
-        _fork = Environment.GetEnvironmentVariable(_forkEnvVar) ?? "marsey";
-        Envsey.CleanFlag(_forkEnvVar);
+        _fork = MarseyPortMan.fork; // Peak spaghet moment
         
         // If were dumping the game we dont want to dump our own respack now would we
         if (MarseyConf.Dumper)

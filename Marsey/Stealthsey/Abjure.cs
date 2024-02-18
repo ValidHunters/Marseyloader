@@ -4,7 +4,7 @@ namespace Marsey.Stealthsey;
 
 public static class Abjure
 {
-    public static Version engineVer { get; private set; } 
+    private static Version? engineVer { get; set; } 
     
     /// <summary>
     /// Checks against version with detection methods
