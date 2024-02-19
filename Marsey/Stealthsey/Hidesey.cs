@@ -135,7 +135,11 @@ public static class Hidesey
     /// </summary>
     public static void Cleanup()
     {
-        ToggleCaching();
+        Task.Run(async () =>
+        {
+            await Task.Delay(TimeSpan.FromSeconds(10));
+            ToggleCaching();
+        });
     }
 
     private static void ToggleCaching()
