@@ -42,19 +42,19 @@ public static class Subverse
     {
         
         MethodInfo? Target = Helpers.GetMethod("Robust.Shared.ContentPack.ModLoader", "TryLoadModules");
-        MethodInfo? Prefix = Helpers.GetMethod(typeof(Subverse), "Prefix");
+        MethodInfo? Postfix = Helpers.GetMethod(typeof(Subverse), "Postfix");
 
-        if (Target != null && Prefix != null)
+        if (Target != null && Postfix != null)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Hooking {Target.Name} with {Prefix.Name}");
-            Manual.Patch(Target, Prefix, HarmonyPatchType.Prefix);
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Hooking {Target.Name} with {Postfix.Name}");
+            Manual.Patch(Target, Postfix, HarmonyPatchType.Postfix);
             return;
         }
         
         MarseyLogger.Log(MarseyLogger.LogType.ERRO, "Subverter failed load!");
     }
 
-    private static bool Prefix(object __instance)
+    private static void Postfix(object __instance)
     {
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", "Detour");
         MethodInfo? loadGameAssemblyMethod = AccessTools.Method(AccessTools.TypeByName("Robust.Shared.ContentPack.BaseModLoader"), "InitMod");
@@ -62,7 +62,7 @@ public static class Subverse
         if (loadGameAssemblyMethod == null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, "Subversion", "Failed to find InitMod method.");
-            return true;
+            return;
         }
     
         foreach (string path in _subverters!)
@@ -81,8 +81,6 @@ public static class Subverse
             
             Subverter.Hide(subverterAssembly);
         }
-        
-        return true;
     }
     
     private static MethodInfo? CheckEntry(Assembly assembly)
