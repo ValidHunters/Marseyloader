@@ -4,7 +4,7 @@
 |---------------|------------------------------------------------------------------|
 | API           | Handles MarseyAPI                                                |
 | Config        | Contains variables used by MarseyPatcher                         | 
-| GameAssembly  | Harmony patching library, game assemblies and applying patches   |
+| Game          | Game manipulation, patching and dumping                          |
 | PatchAssembly | Initializes assemblies, handles data fields, manages patch lists |
 | Handbrake     | Manual patching directly from MarseyPatcher                      |
 | Patches       | MarseyPatch objects, Patch types                                 |
