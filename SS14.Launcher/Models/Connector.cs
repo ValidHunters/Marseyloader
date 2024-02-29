@@ -594,11 +594,11 @@ public class Connector : ReactiveObject
         startInfo.EnvironmentVariables["MARSEY_DISABLE_PRESENCE"] = _cfg.GetCVar(CVars.DisableRPC) ? "true" : null; // Hide discord RPC
 
         // HWID
-        startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null;
-        if (_cfg.GetCVar(CVars.RandHWID)) 
-            startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = HWID.GenerateRandom(32);
-        else 
-            startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = _cfg.GetCVar(CVars.ForcedHWId);
+        if (_cfg.GetCVar(CVars.ForcingHWId))
+        {
+            startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = "true";
+            startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = MarseyGetHWID();
+        }
         
         // Data
         startInfo.EnvironmentVariables["MARSEY_FORKID"] = _forkid;
@@ -611,6 +611,21 @@ public class Connector : ReactiveObject
         startInfo.EnvironmentVariables["MARSEY_DISABLE_STRICT"] = _cfg.GetCVar(CVars.DisableStrict) ? "true" : null;
         if (MarseyConf.Dumper)
             startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
+    }
+
+    private string MarseyGetHWID()
+    {
+        string forcedHWID = _cfg.GetCVar(CVars.ForcedHWId);
+        if (_cfg.GetCVar(CVars.RandHWID)) 
+        {
+            forcedHWID = HWID.GenerateRandom(32);
+        }
+        else if (_cfg.GetCVar(CVars.LIHWIDBind))
+        {
+            forcedHWID = _loginManager.ActiveAccount!.LoginInfo.HWID;
+        }
+
+        return forcedHWID;
     }
 
     private void MarseyCleanup()

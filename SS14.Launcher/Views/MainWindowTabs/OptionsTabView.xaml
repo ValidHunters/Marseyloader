@@ -70,6 +70,7 @@
               </DockPanel>
             </ScrollViewer>
         </TabItem>
+        
         <TabItem Header="Marsey">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                 <DockPanel>
@@ -126,17 +127,28 @@
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" 
                                    Text="Force change HWID when joining a server."
                                    Margin="8" />
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsVisible="{Binding ForcingHWID}" IsChecked="{Binding RandHWID}">Random HWID</CheckBox>
-                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" IsVisible="{Binding ForcingHWID}"
-                                   Text="Gives a random HWID each time you connect. Trumps manual set below."
+                        
+                        <CheckBox IsVisible="{Binding ForcingHWID}" VerticalAlignment="Center" Margin="4" IsChecked="{Binding LIHWIDBind}">Bind hwid to account</CheckBox>
+                        <TextBlock IsVisible="{Binding ForcingHWID}" VerticalAlignment="Center" TextWrapping="Wrap" 
+                                   Text="Bind HWID to your account info"
                                    Margin="8" />
-                        <Grid IsVisible="{Binding ForcingHWID}" RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
+                        
+                        <Grid IsVisible="{Binding ForcingHWID}" RowDefinitions="*, *, *" ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
-                                       Text="Change your hwid. Can be set to be empty or any hexadecimal string."
+                                       Text="Change your HWID. Can be set to be empty or any hexadecimal string."
                                        Margin="8"/>
                             <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="HWIdTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding HWIdString}"/>
-                            <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set HWId" Command="{Binding SetHWIdCommand}" VerticalAlignment="Center" Margin="4"/>
+                            <Button Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Content="Set HWID" Command="{Binding SetHWIdCommand}" VerticalAlignment="Center" Margin="4"/>
+                            <Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Content="Generate random" Command="{Binding GenHWIdCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
+                        
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsVisible="{Binding ForcingHWID}" IsChecked="{Binding RandHWID}">Random HWID</CheckBox>
+                        <StackPanel IsVisible="{Binding ForcingHWID}" Margin="8">
+                            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                                       Text="Gives a random HWId each time you connect to a server."/>
+                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" TextWrapping="Wrap"
+                                       Text="Detection vector. Don't use on main accounts."/>
+                        </StackPanel>
 
                         <TextBlock Margin="4, 0" Text="Patching" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ThrowPatchFail}">Except On Patch Fail</CheckBox>
@@ -202,6 +214,8 @@
                             <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="UsernameTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding Username}"/>
                             <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set Username" Command="{Binding SetUsernameCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
+                        
+                        <Button HorizontalAlignment="Left" Content="Dump CVars" Command="{Binding DumpConfigCommand}" VerticalAlignment="Center" Margin="4"/>
                         
                         <!-- Truly pointless category -->
                         <TextBlock Margin="4, 0" Text="Fluff" Classes="NanoHeadingMedium" />

@@ -146,6 +146,11 @@ public static class CVars
     /// Do we force a hwid value
     /// </summary>
     public static readonly CVarDef<bool> ForcingHWId = CVarDef.Create("ForcingHWId", false);
+    
+    /// <summary>
+    /// Do we use the HWID value bound to LoginInfo
+    /// </summary>
+    public static readonly CVarDef<bool> LIHWIDBind = CVarDef.Create("LIHWIDBind", false);
 
     /// <summary>
     /// Do not log in anywhere when starting the loader

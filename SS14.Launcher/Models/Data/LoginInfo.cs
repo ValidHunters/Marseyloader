@@ -13,6 +13,8 @@ public class LoginInfo : ReactiveObject
     [Reactive]
     public LoginToken Token { get; set; }
 
+    public string HWID { get; set; } = ""; // Empty by default
+
     public override string ToString()
     {
         return $"{Username}/{UserId}";

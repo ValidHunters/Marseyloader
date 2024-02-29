@@ -59,7 +59,7 @@ public static class MarseyVars
     
     /// <summary>
     /// Refuse to play on servers over or equal to this engine version if hidesey is disabled
-    /// <seealso cref="Abjure"/>
+    /// <see cref="Abjure"/>
     /// </summary>
     public static readonly Version Detection = new Version("183.0.0");
 }

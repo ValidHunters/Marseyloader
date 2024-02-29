@@ -11,11 +11,13 @@ using Avalonia.Data.Converters;
 using DynamicData;
 using Marsey;
 using Marsey.Config;
+using Marsey.Game.Patches;
 using Marsey.Misc;
 using Marsey.Stealthsey;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
 using Splat;
+using SS14.Launcher.MarseyFluff;
 using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
@@ -33,6 +35,8 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     private readonly ContentManager _contentManager;
     
     public ICommand SetHWIdCommand { get; }
+    public ICommand GenHWIdCommand { get; }
+    public ICommand DumpConfigCommand { get; }
     public ICommand SetUsernameCommand { get; }
     public ICommand SetEndpointCommand { get; }
     public IEnumerable<HideLevel> HideLevels { get; } = Enum.GetValues(typeof(HideLevel)).Cast<HideLevel>();
@@ -47,8 +51,10 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         _contentManager = Locator.Current.GetRequiredService<ContentManager>();
 
         SetHWIdCommand = new RelayCommand(OnSetHWIdClick);
+        GenHWIdCommand = new RelayCommand(OnGenHWIdClick);
         SetUsernameCommand = new RelayCommand(OnSetUsernameClick);
         SetEndpointCommand = new RelayCommand(OnSetEndpointClick);
+        DumpConfigCommand = new RelayCommand(DumpConfig.Dump);
     }
 
 #if RELEASE
@@ -229,6 +235,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         }
     }
     
+    public bool LIHWIDBind
+    {
+        get => Cfg.GetCVar(CVars.LIHWIDBind);
+        set
+        {
+            Cfg.SetCVar(CVars.LIHWIDBind, value);
+            Cfg.CommitConfig();
+        }
+    }
+    
     public bool RandHWID
     {
         get => Cfg.GetCVar(CVars.RandHWID);
@@ -242,7 +258,13 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     private string _HWIdString = "";
     public string HWIdString
     {
-        get => Cfg.GetCVar(CVars.ForcedHWId);
+        get
+        {
+            if (!LIHWIDBind)
+                return Cfg.GetCVar(CVars.ForcedHWId);
+
+            return _loginManager.ActiveAccount != null ? _loginManager.ActiveAccount.LoginInfo.HWID : "";
+        }
         set => _HWIdString = value;
     }
 
@@ -342,17 +364,39 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     
     private void OnSetHWIdClick()
     {
+        string hwid = _HWIdString;
+        
         // Check if _HWIdString is a valid hex string (allowing empty string) and pad it if necessary
         if (Regex.IsMatch(_HWIdString, "^[a-fA-F0-9]*$")) // '*' allows for zero or more characters
         {
+            if (LIHWIDBind)
+            {
+                if (_loginManager.ActiveAccount != null)
+                {
+                    Log.Debug($"Writing {hwid} to {_loginManager.ActiveAccount.Username}");
+                    _loginManager.ActiveAccount.LoginInfo.HWID = hwid;
+                }
+            }
+            else
+            {
+                Log.Debug($"Writing {hwid} to MarseyConf");
+                Cfg.SetCVar(CVars.ForcedHWId, _HWIdString);
+                Cfg.CommitConfig();
+            }
+
+            return;
+        }
         
-            Cfg.SetCVar(CVars.ForcedHWId, _HWIdString);
-            Cfg.CommitConfig();
-        }
-        else
-        {
-            Log.Warning("Passed HWId is not a valid hexadecimal string! Refusing to apply.");
-        }
+        Log.Warning("Passed HWId is not a valid hexadecimal string! Refusing to apply.");
+    }
+
+    private void OnGenHWIdClick()
+    {
+        string hwid = HWID.GenerateRandom(32);
+        _HWIdString = hwid;
+        HWIdString = hwid;
+        
+        OnSetHWIdClick();
     }
 
     public bool DumpAssemblies
