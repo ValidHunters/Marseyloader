@@ -1,10 +1,12 @@
 using System;
 using System.Reactive.Linq;
 using System.Threading;
+using Marsey.Config;
 using ReactiveUI;
 using Splat;
 using SS14.Launcher.MarseyFluff;
 using SS14.Launcher.Models;
+using SS14.Launcher.Models.Data;
 using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.ViewModels;
@@ -152,8 +154,9 @@ public class ConnectingViewModel : ViewModelBase
     {
         get
         {
+            DataManager cfg = Locator.Current.GetRequiredService<DataManager>();
             Random rnd = new Random();
-            if (rnd.Next(10) != 0 || _connectorStatus == Connector.ConnectionStatus.ConnectionFailed ||
+            if (!cfg.GetCVar(CVars.RandConnAction) || rnd.Next(10) != 0 || _connectorStatus == Connector.ConnectionStatus.ConnectionFailed ||
                 _connectorStatus == Connector.ConnectionStatus.NotAContentBundle ||
                 _connectorStatus == Connector.ConnectionStatus.ClientExited)
             {
@@ -190,7 +193,7 @@ public class ConnectingViewModel : ViewModelBase
                 };
             }
             
-            // 10% to roll a random "Action" from the titlemanager
+            // 10% to roll a random "Action" from the titlemanager if enabled
             return TitleManager.RandAction();
         }
     }
