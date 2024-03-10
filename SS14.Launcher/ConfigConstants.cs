@@ -38,6 +38,10 @@ public static class ConfigConstants
     public const string RobustBuildsManifest = "https://central.spacestation14.io/builds/robust/manifest.json";
     public const string RobustModulesManifest = "https://central.spacestation14.io/builds/robust/modules.json";
 
+    // How long to keep cached copies of Robust manifests.
+    // TODO: Take this from Cache-Control header responses instead.
+    public static readonly TimeSpan RobustManifestCacheTime = TimeSpan.FromMinutes(15);
+
     public const string UrlOverrideAssets = "https://central.spacestation14.io/launcher/override_assets.json";
     public const string UrlAssetsBase = "https://central.spacestation14.io/launcher/assets/";
 
