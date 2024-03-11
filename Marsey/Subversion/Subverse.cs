@@ -42,17 +42,11 @@ public static class Subverse
     public static void PatchSubverter()
     {
         MethodInfo? Target = Helpers.GetMethod("Robust.Shared.ContentPack.ModLoader", "TryLoadModules");
-        MethodInfo? PatchMethod;
-        if (!MarseyConf.SubvertPreload)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", "Start postfix patch of TryLoadModules");
-            PatchMethod = Helpers.GetMethod(typeof(Subverse), "Postfix");
-        }
-        else
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", "Start prefix patch of TryLoadModules");
-            PatchMethod = Helpers.GetMethod(typeof(Subverse), "Prefix");
-        }
+        MethodInfo? PatchMethod = Helpers.GetMethod(typeof(Subverse), "Patch");
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion",
+            !MarseyConf.SubvertPreload
+                ? "Start postfix patch of TryLoadModules"
+                : "Start prefix patch of TryLoadModules");
 
         if (Target != null && PatchMethod != null)
         {
@@ -66,7 +60,7 @@ public static class Subverse
         MarseyLogger.Log(MarseyLogger.LogType.ERRO, "Subverter failed load!");
     }
 
-    private static void Postfix(object __instance)
+    private static void Patch(object __instance)
     {
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", "Detour");
         MethodInfo? loadGameAssemblyMethod =
