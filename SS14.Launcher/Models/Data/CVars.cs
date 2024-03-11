@@ -89,6 +89,21 @@ public static class CVars
     /// <seealso cref="ServerFilter.PlayerCountMax"/>
     public static readonly CVarDef<int> FilterPlayerCountMaxValue = CVarDef.Create("FilterPlayerCountMaxValue", 0);
 
+    /// <summary>
+    /// Enable local overriding of engine versions.
+    /// </summary>
+    /// <remarks>
+    /// If enabled and on a development build,
+    /// the launcher will pull all engine versions and modules from <see cref="EngineOverridePath"/>.
+    /// This can be set to <c>RobustToolbox/release/</c> to instantly pull in packaged engine builds.
+    /// </remarks>
+    public static readonly CVarDef<bool> EngineOverrideEnabled = CVarDef.Create("EngineOverrideEnabled", false);
+
+    /// <summary>
+    /// Path to load engines from when using <see cref="EngineOverrideEnabled"/>.
+    /// </summary>
+    public static readonly CVarDef<string> EngineOverridePath = CVarDef.Create("EngineOverridePath", "");
+
     // MarseyCVars start here
 
     // Stealthsey
