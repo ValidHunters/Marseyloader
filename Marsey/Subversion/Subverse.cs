@@ -44,15 +44,15 @@ public static class Subverse
         MethodInfo? Target = Helpers.GetMethod("Robust.Shared.ContentPack.ModLoader", "TryLoadModules");
         MethodInfo? PatchMethod = Helpers.GetMethod(typeof(Subverse), "Patch");
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion",
-            !MarseyConf.SubvertPreload
-                ? "Start postfix patch of TryLoadModules"
-                : "Start prefix patch of TryLoadModules");
+            MarseyConf.SubvertPreload
+                ? "Prefixing TryLoadModules"
+                : "Postfixing TryLoadModules");
 
         if (Target != null && PatchMethod != null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Hooking {Target.Name} with {PatchMethod.Name}");
             Manual.Patch(Target, PatchMethod,
-                !MarseyConf.SubvertPreload ? HarmonyPatchType.Postfix : HarmonyPatchType.Prefix);
+                MarseyConf.SubvertPreload ? HarmonyPatchType.Prefix : HarmonyPatchType.Postfix);
 
             return;
         }
