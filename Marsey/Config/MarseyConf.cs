@@ -64,7 +64,7 @@ public static class MarseyConf
     public static bool Backports;
 
     /// <summary>
-    /// Enables backports and fixes for the game
+    /// Load subversions before content
     /// </summary>
     public static bool SubvertPreload;
 

@@ -155,6 +155,11 @@
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Exits client if any patch fails to apply. Useful when you need all patches applied or debugging a patch."
                                    Margin="8" />
+                        
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SubverterPreload}">Subverter preloading</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" 
+                                   Text="Load subversions before content" 
+                                   Margin="8"/>
 
                         <TextBlock Margin="4, 0" Text="Logging" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patcher</CheckBox>
@@ -227,8 +232,6 @@
 
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding RandConnAction}">Randomize connection messages</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Use random, (un)funny messages instead of connection status ones</TextBlock>
-                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SubverterPreload}">Subverter prefix/postfix</CheckBox>
-                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Using a prefix or postfix. Prefix if true, if false - postfix</TextBlock>
                     </StackPanel>
                 </DockPanel>
             </ScrollViewer>

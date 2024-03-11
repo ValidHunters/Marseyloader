@@ -222,10 +222,11 @@ public static class CVars
     /// Replace connection messages with a random (un)funny action
     /// </summary>
     public static readonly CVarDef<bool> RandConnAction = CVarDef.Create("RandConnAction", false);
+    
     /// <summary>
-    /// Prefix if true, if false - postfix
+    /// Load subversions before content
     /// </summary>
-    public static readonly CVarDef<bool> SubverterPreload = CVarDef.Create("SubverterPreload", false);
+    public static readonly CVarDef<bool> SubverterPreload = CVarDef.Create("SubverterPreload", true);
 }
 
 /// <summary>
