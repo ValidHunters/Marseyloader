@@ -9,7 +9,7 @@
     <Design.DataContext>
         <mainWindowTabs:OptionsTabViewModel />
     </Design.DataContext>
-    
+
     <UserControl.Resources>
         <mainWindowTabs:HideLevelDescriptionConverter x:Key="HideLevelDescriptionConverter" />
     </UserControl.Resources>
@@ -25,43 +25,43 @@
                         HorizontalAlignment="Left" Click="ClearServerContentPressed" />
                 <Button Content="Open log directory" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
                         Command="{Binding OpenLogDirectory}"/>
-          
+
                 <StackPanel Orientation="Vertical">
                   <Button Content="Account Settings" Margin="4" Command="{Binding OpenAccountSettings}" HorizontalAlignment="Left" />
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="You can manage your account settings, such as changing email or password, through our website."
                              Margin="8" />
-          
+
                   <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding CompatMode}">Compatibility Mode</CheckBox>
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="This uses OpenGL ES 2 (via ANGLE if necessary), which is less likely to suffer from driver bugs. Try this if you are experiencing graphical issues or crashes."
                              Margin="8" />
-          
+
                   <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DynamicPgo}">Experimental Performance Options</CheckBox>
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="Experimental .NET 6 environment variables that enable full Dynamic PGO. Disable if you experience issues."
                              Margin="8" />
-          
+
                   <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogClient}">Log Client</CheckBox>
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="Enables logging of any game client output. Useful for developers."
                              Margin="8" />
-          
+
                   <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLauncher}">Log Launcher</CheckBox>
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="Enables logging of the launcher. Useful for developers. (requires launcher restart)"
                              Margin="8" />
-          
+
                   <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLauncherVerbose}">Verbose Launcher Logging</CheckBox>
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="For when the developers are *very* stumped with your problem. (requires launcher restart)"
                              Margin="8" />
-                  
+
                   <CheckBox VerticalAlignment="Center" IsVisible="{Binding !HideDebugKnobs}" Margin="4" IsChecked="{Binding DisableSigning}">Disable Engine Signature Checks</CheckBox>
                   <TextBlock VerticalAlignment="Center" IsVisible="{Binding !HideDebugKnobs}" TextWrapping="Wrap"
                              Text="[DEV ONLY] Disables verification of engine signatures. DO NOT ENABLE UNLESS YOU KNOW EXACTLY WHAT YOU'RE DOING."
                              Margin="8" />
-          
+
                   <Button Click="OpenHubSettings" Content="Hub Settings" Margin="4" HorizontalAlignment="Left" />
                   <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                              Text="Change what hub server or servers you would like to use to fetch the server list."
@@ -70,7 +70,7 @@
               </DockPanel>
             </ScrollViewer>
         </TabItem>
-        
+
         <TabItem Header="Marsey">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                 <DockPanel>
@@ -84,7 +84,7 @@
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
-                        
+
                         <TextBlock Margin="4, 0" Text="Hide Level" Classes="NanoHeadingMedium" />
                         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Sets degree to which Marsey hides itself.</TextBlock>
@@ -97,42 +97,42 @@
                             </ComboBox>
                             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding HideLevel, Converter={StaticResource HideLevelDescriptionConverter}}" Margin="8" />
                         </Grid>
-                        
+
                         <TextBlock Margin="4, 0" Text="Launcher Behavior" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding NoActiveInit}">Disable Automatic Login</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Do not log in into last active account when starting the launcher."
                                    Margin="8" />
-                        
+
                         <!-- Game block -->
                         <TextBlock Margin="4, 0" Text="Game Behavior" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DisableRPC}">Disable RPC</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Does not let Discord RPC initialize, hiding your username and server from your profile."
                                    Margin="8" />
-                        
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyJam}">Disable Redial</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Does not let game admins (or the game itself) to reconnect you to another station."
                                    Margin="8" />
-                        
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Backports}">Enable backports</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Apply fixes relevant for the fork and/or engine version if available."
                                    Margin="8" />
-                        
+
                         <!-- HWID Block -->
                         <TextBlock Margin="4, 0" Text="HWID" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ForcingHWID}">Force HWID</CheckBox>
-                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" 
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Force change HWID when joining a server."
                                    Margin="8" />
-                        
+
                         <CheckBox IsVisible="{Binding ForcingHWID}" VerticalAlignment="Center" Margin="4" IsChecked="{Binding LIHWIDBind}">Bind hwid to account</CheckBox>
-                        <TextBlock IsVisible="{Binding ForcingHWID}" VerticalAlignment="Center" TextWrapping="Wrap" 
+                        <TextBlock IsVisible="{Binding ForcingHWID}" VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Bind HWID to your account info"
                                    Margin="8" />
-                        
+
                         <Grid IsVisible="{Binding ForcingHWID}" RowDefinitions="*, *, *" ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
                                        Text="Change your HWID. Can be set to be empty or any hexadecimal string."
@@ -141,7 +141,7 @@
                             <Button Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Content="Set HWID" Command="{Binding SetHWIdCommand}" VerticalAlignment="Center" Margin="4"/>
                             <Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Content="Generate random" Command="{Binding GenHWIdCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
-                        
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsVisible="{Binding ForcingHWID}" IsChecked="{Binding RandHWID}">Random HWID</CheckBox>
                         <StackPanel IsVisible="{Binding ForcingHWID}" Margin="8">
                             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
@@ -155,23 +155,23 @@
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Exits client if any patch fails to apply. Useful when you need all patches applied or debugging a patch."
                                    Margin="8" />
-                        
+
                         <TextBlock Margin="4, 0" Text="Logging" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patcher</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Write MarseyLogger output to log."
                                    Margin="8" />
-    
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLoaderDebug}">Enable Loader Debug Logs</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="For when things stop making sense."
                                    Margin="8" />
-            
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SeparateLogging}">Separate Game/Patcher Logs</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Log Marsey to client.marsey.log instead."
                                    Margin="8"/>
-                        
+
                         <TextBlock Margin="4, 0" Text="MarseyApi" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyApi}">Enabled</CheckBox>
                         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto" IsVisible="{Binding MarseyApi}">
@@ -185,20 +185,20 @@
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Ignores required update popups."
                                    Margin="8"/>
-                        
+
                         <TextBlock Margin="4, 0" Text="Misc" Classes="NanoHeadingMedium" />
-                        
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ResourceOverride}" IsVisible="{Binding !HideDebugKnobs}">Resource Pack Strict Override</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    IsVisible="{Binding !HideDebugKnobs}"
                                    Text="Disables Resource Pack fork target checking."
                                    Margin="8" />
-                        
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump Resources</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                    Text="Dumps everything client facing off a server and disables itself."
                                    Margin="8" />
-                        
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyHole}">Whitelist RemoteExecuteCommand</CheckBox>
                         <StackPanel Margin="8">
                             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
@@ -206,7 +206,7 @@
                             <TextBlock VerticalAlignment="Center" FontWeight="Bold" TextWrapping="Wrap"
                                        Text="May break functions in game. Your mileage may vary."/>
                         </StackPanel>
-                        
+
                         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
                                        Text="Change your account's name to something else. This does not change your in-game username, requires a restart."
@@ -214,19 +214,21 @@
                             <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="UsernameTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding Username}"/>
                             <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Content="Set Username" Command="{Binding SetUsernameCommand}" VerticalAlignment="Center" Margin="4"/>
                         </Grid>
-                        
+
                         <Button HorizontalAlignment="Left" Content="Dump CVars" Command="{Binding DumpConfigCommand}" VerticalAlignment="Center" Margin="4"/>
-                        
+
                         <!-- Truly pointless category -->
                         <TextBlock Margin="4, 0" Text="Fluff" Classes="NanoHeadingMedium" />
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding RandTitle}">Randomize window titles</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Use a random title, otherwise its "Marseyloader"</TextBlock>
-                        
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding RandHeader}">Randomize header images</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Use a random header image, otherwise stick to default Marseyloader</TextBlock>
-                        
+
                         <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding RandConnAction}">Randomize connection messages</CheckBox>
                         <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Use random, (un)funny messages instead of connection status ones</TextBlock>
+                        <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SubverterPreload}">Subverter prefix/postfix</CheckBox>
+                        <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Using a prefix or postfix. Prefix if true, if false - postfix</TextBlock>
                     </StackPanel>
                 </DockPanel>
             </ScrollViewer>

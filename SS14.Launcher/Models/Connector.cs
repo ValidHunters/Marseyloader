@@ -433,13 +433,13 @@ public class Connector : ReactiveObject
         }
 
         Marsify(startInfo);
-        
+
         ConfigureEnvironmentVariables(startInfo, launchInfo, engineVersion);
         ConfigureLogging(startInfo);
         SetDynamicPgo(startInfo);
         UnfuckGlibcLinux(startInfo);
         ConfigureMultiWindow(launchInfo, startInfo);
-        
+
 
         startInfo.UseShellExecute = false;
         startInfo.ArgumentList.AddRange(extraArgs);
@@ -452,7 +452,7 @@ public class Connector : ReactiveObject
 
         return process;
     }
-    
+
     private void ConfigureEnvironmentVariables(ProcessStartInfo startInfo, ContentLaunchInfo launchInfo, string engineVersion)
     {
         // Set environment variables for engine modules.
@@ -460,40 +460,40 @@ public class Connector : ReactiveObject
         {
             if (moduleName == "Robust")
                 continue;
-    
+
             var modulePath = _engineManager.GetEngineModule(moduleName, moduleVersion);
             var envVar = $"ROBUST_MODULE_{moduleName.ToUpperInvariant().Replace('.', '_')}";
             startInfo.EnvironmentVariables[envVar] = modulePath;
         }
-    
+
         // Set other necessary environment variables.
         startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = _cfg.GetCVar(CVars.DisableSigning) ? "true" : null;
         startInfo.EnvironmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
     }
-    
+
     private void ConfigureLogging(ProcessStartInfo startInfo)
     {
         if (!_cfg.GetCVar(CVars.LogClient)) return;
-        
+
         startInfo.RedirectStandardOutput = true;
         startInfo.RedirectStandardError = true;
-    
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             startInfo.EnvironmentVariables["SS14_LOG_CLIENT"] = LauncherPaths.PathClientMacLog;
         }
     }
-    
+
     private void SetDynamicPgo(ProcessStartInfo startInfo)
     {
         if (!_cfg.GetCVar(CVars.DynamicPgo)) return;
-        
+
         Log.Debug("Dynamic PGO is enabled.");
         startInfo.EnvironmentVariables["DOTNET_TieredPGO"] = "1";
         startInfo.EnvironmentVariables["DOTNET_TC_QuickJitForLoops"] = "1";
         startInfo.EnvironmentVariables["DOTNET_ReadyToRun"] = "0";
     }
-    
+
     private void UnfuckGlibcLinux(ProcessStartInfo startInfo)
     {
         if (OperatingSystem.IsLinux())
@@ -502,12 +502,12 @@ public class Connector : ReactiveObject
             startInfo.EnvironmentVariables["GLIBC_TUNABLES"] = "glibc.rtld.dynamic_sort=1";
         }
     }
-    
+
     private void SetupManualPipeLogging(Process process)
     {
         // Set up manual-pipe logging for new client with PID.
         Log.Debug("Setting up manual-pipe logging for new client with PID {pid}.", process.Id);
-    
+
         var fileStdout = new FileStream(
             LauncherPaths.PathClientStdoutLog,
             FileMode.Create,
@@ -515,7 +515,7 @@ public class Connector : ReactiveObject
             FileShare.Delete | FileShare.ReadWrite,
             4096,
             FileOptions.Asynchronous);
-    
+
         var fileStderr = new FileStream(
             LauncherPaths.PathClientStderrLog,
             FileMode.Create,
@@ -526,9 +526,9 @@ public class Connector : ReactiveObject
 
         File.Delete(LauncherPaths.PathClientStdmarseyLog);
         FileStream? fileStdmarsey = null;
-        
+
         MarseyConf.SeparateLogger = _cfg.GetCVar(CVars.SeparateLogging);
-        
+
         if (MarseyConf.MarseyHide < HideLevel.Explicit)
         {
             fileStdmarsey = new FileStream(
@@ -566,12 +566,12 @@ public class Connector : ReactiveObject
 
         return startInfo;
     }
-    
+
     private void Marsify(ProcessStartInfo startInfo)
     {
         Log.Debug("Preparing patch assemblies.");
         FileHandler.PrepareMods();
-        
+
         ConfigureMarsey(startInfo);
         MarseyCleanup();
     }
@@ -585,7 +585,7 @@ public class Connector : ReactiveObject
         startInfo.EnvironmentVariables["MARSEY_LOADER_DEBUG"] = _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_LOGGING"] = _cfg.GetCVar(CVars.LogPatcher) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyConf.SeparateLogger ? "true" : null;
-        
+
         // Safety
         startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
         startInfo.EnvironmentVariables["MARSEY_HIDE_LEVEL"] = $"{_cfg.GetCVar(CVars.MarseyHide)}";
@@ -599,24 +599,26 @@ public class Connector : ReactiveObject
             startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = "true";
             startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = MarseyGetHWID();
         }
-        
+
         // Data
         startInfo.EnvironmentVariables["MARSEY_FORKID"] = _forkid;
         startInfo.EnvironmentVariables["MARSEY_ENGINE"] = _engine;
-        
+
         // Backporter
         startInfo.EnvironmentVariables["MARSEY_BACKPORTS"] = _cfg.GetCVar(CVars.Backports) ? "true" : null;
-        
+
         // ResPacks
         startInfo.EnvironmentVariables["MARSEY_DISABLE_STRICT"] = _cfg.GetCVar(CVars.DisableStrict) ? "true" : null;
         if (MarseyConf.Dumper)
             startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
+        // Subverter Preload
+        startInfo.EnvironmentVariables["MARSEY_SUBVERTER_PRELOAD"] = _cfg.GetCVar(CVars.SubverterPreload) ? "true" : null;
     }
 
     private string MarseyGetHWID()
     {
         string forcedHWID = _cfg.GetCVar(CVars.ForcedHWId);
-        if (_cfg.GetCVar(CVars.RandHWID)) 
+        if (_cfg.GetCVar(CVars.RandHWID))
         {
             forcedHWID = HWID.GenerateRandom(32);
         }

@@ -88,16 +88,16 @@ public static class CVars
     /// </summary>
     /// <seealso cref="ServerFilter.PlayerCountMax"/>
     public static readonly CVarDef<int> FilterPlayerCountMaxValue = CVarDef.Create("FilterPlayerCountMaxValue", 0);
-    
+
     // MarseyCVars start here
-    
+
     // Stealthsey
-    
+
     /// <summary>
     /// Define strict level
     /// </summary>
     public static readonly CVarDef<int> MarseyHide = CVarDef.Create("HideLevel", 2);
-    
+
     // Logging
 
     /// <summary>
@@ -109,14 +109,14 @@ public static class CVars
     /// Log debug messages coming from loader
     /// </summary>
     public static readonly CVarDef<bool> LogLoaderDebug = CVarDef.Create("LogLoaderDebug", false);
-    
+
     /// <summary>
     /// Log patcher output to a separate file
     /// </summary>
     public static readonly CVarDef<bool> SeparateLogging = CVarDef.Create("SeparateLogging", false);
-    
+
     // Behavior
-    
+
     /// <summary>
     /// Throw an exception if a patch fails to apply.
     /// </summary>
@@ -136,7 +136,7 @@ public static class CVars
     /// Do we disable redialing?
     /// </summary>
     public static readonly CVarDef<bool> JamDials = CVarDef.Create("JamDials", false);
-    
+
     /// <summary>
     /// Do we disable remote command execution
     /// </summary>
@@ -146,7 +146,7 @@ public static class CVars
     /// Do we force a hwid value
     /// </summary>
     public static readonly CVarDef<bool> ForcingHWId = CVarDef.Create("ForcingHWId", false);
-    
+
     /// <summary>
     /// Do we use the HWID value bound to LoginInfo
     /// </summary>
@@ -156,14 +156,14 @@ public static class CVars
     /// Do not log in anywhere when starting the loader
     /// </summary>
     public static readonly CVarDef<bool> NoActiveInit = CVarDef.Create("NoActiveInit", false);
-    
+
     /// <summary>
     /// Apply backports to game when able
     /// </summary>
     public static readonly CVarDef<bool> Backports = CVarDef.Create("Backports", false);
 
     // HWID
-    
+
     /// <summary>
     /// Do we use a random HWID each time?
     /// </summary>
@@ -175,7 +175,7 @@ public static class CVars
     public static readonly CVarDef<string> ForcedHWId = CVarDef.Create("ForcedHWId", "");
 
     // API
-    
+
     /// <summary>
     /// Enable MarseyApi
     /// </summary>
@@ -190,23 +190,27 @@ public static class CVars
     /// Ignore "Marsey-M" (required updates) releases
     /// </summary>
     public static readonly CVarDef<bool> MarseyApiIgnoreForced = CVarDef.Create("MarseyApiIgnoreForced", false);
-    
+
     // Fluff
-    
+
     /// <summary>
     /// Use a random title and tagline combination
     /// </summary>
     public static readonly CVarDef<bool> RandTitle = CVarDef.Create("RandTitle", true);
-    
+
     /// <summary>
     /// Use a random header image
     /// </summary>
     public static readonly CVarDef<bool> RandHeader = CVarDef.Create("RandHeader", true);
-    
+
     /// <summary>
     /// Replace connection messages with a random (un)funny action
     /// </summary>
     public static readonly CVarDef<bool> RandConnAction = CVarDef.Create("RandConnAction", false);
+    /// <summary>
+    /// Prefix if true, if false - postfix
+    /// </summary>
+    public static readonly CVarDef<bool> SubverterPreload = CVarDef.Create("SubverterPreload", false);
 }
 
 /// <summary>
