@@ -25,11 +25,11 @@ public static class HWID
         /// Maybe if you wrote it in entirely numeric, with "Rane" being 18F1F14F5 or something.
         /// Nobody will read that anyway - its for ban evasion and thats it.
         /// Don't forget a VPN or a proxy!
-        
+
         // Check if forcing is enabled
         if (!MarseyConf.ForceHWID)
             return;
-        
+
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "HWIDForcer", "Starting");
 
         string hwid = GetForcedHWId();
@@ -63,12 +63,12 @@ public static class HWID
             _hwId = Array.Empty<byte>();
         }
     }
-    
+
     public static string GenerateRandom(int length)
     {
         Random random = new Random();
         const string chars = "0123456789abcdef";
-        StringBuilder result = new StringBuilder(length);
+        StringBuilder result = new StringBuilder(length*2); // Were generating a string here actually, not an array of byte.
 
         for (int i = 0; i < length; i++)
         {
