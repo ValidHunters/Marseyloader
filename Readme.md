@@ -40,7 +40,7 @@ If you have any feature you want added to the main repository you are free to su
 ### Patching
 Marseyloader uses the [Harmony](https://github.com/pardeike/Harmony) patching library. Introduction for the library is provided [here](https://harmony.pardeike.net/) and documentation [here](https://harmony.pardeike.net/articles/intro.html).
 
-Example patches can be found in the [ExampleMarseyPatch](https://github.com/ValidHunters/ExampleMarseyPatch) repository.
+Example patches can be found in the [ExampleMarseyPatch](https://github.com/ValidHunters/ExampleMarseyPatch) [SubversionalExamplePatch](https://github.com/ValidHunters/SubversionalExamplePatch) repositories.
 
 ### FAQ
 
