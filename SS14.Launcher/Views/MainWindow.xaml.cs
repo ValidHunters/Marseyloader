@@ -1,11 +1,10 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Win32;
+using Avalonia.Platform.Storage;
 using SS14.Launcher.ViewModels;
 using TerraFX.Interop.Windows;
 using IDataObject = Avalonia.Input.IDataObject;
@@ -51,18 +50,16 @@ public partial class MainWindow : Window
 
     private unsafe void DarkMode()
     {
-        if (PlatformImpl is not WindowImpl windowImpl || Environment.OSVersion.Version.Build < 22000)
+        if (!OperatingSystem.IsWindows() || Environment.OSVersion.Version.Build < 22000)
             return;
 
-        var type = windowImpl.GetType();
-        var prop = type.GetProperty("Hwnd", BindingFlags.NonPublic | BindingFlags.Instance);
-        if (prop == null)
+        if (TryGetPlatformHandle() is not { HandleDescriptor: "HWND" } handle)
         {
             // No need to log a warning, PJB will notice when this breaks.
             return;
         }
 
-        var hWnd = (HWND)(nint)prop.GetValue(windowImpl)!;
+        var hWnd = (HWND)handle.Handle;
 
         COLORREF r = 0x00262121;
         Windows.DwmSetWindowAttribute(hWnd, 35, &r, (uint) sizeof(COLORREF));
@@ -79,9 +76,8 @@ public partial class MainWindow : Window
         if (!IsDragDropValid(args.Data))
             return;
 
-        var fileName = GetDragDropFileName(args.Data)!;
-
-        _viewModel!.Dropped(fileName);
+        var file = GetDragDropFile(args.Data)!;
+        _viewModel!.Dropped(file);
     }
 
     private void DragOver(object? sender, DragEventArgs args)
@@ -113,17 +109,17 @@ public partial class MainWindow : Window
         if (_viewModel == null)
             return false;
 
-        if (GetDragDropFileName(dataObject) is not { } fileName)
+        if (GetDragDropFile(dataObject) is not { } fileName)
             return false;
 
         return _viewModel.IsContentBundleDropValid(fileName);
     }
 
-    private static string? GetDragDropFileName(IDataObject dataObject)
+    private static IStorageFile? GetDragDropFile(IDataObject dataObject)
     {
-        if (!dataObject.Contains(DataFormats.FileNames))
+        if (!dataObject.Contains(DataFormats.Files))
             return null;
 
-        return dataObject.GetFileNames()?.SingleOrDefault();
+        return dataObject.GetFiles()?.OfType<IStorageFile>().FirstOrDefault();
     }
 }

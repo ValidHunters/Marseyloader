@@ -104,6 +104,11 @@ public static class CVars
     /// </summary>
     public static readonly CVarDef<string> EngineOverridePath = CVarDef.Create("EngineOverridePath", "");
 
+    /// <summary>
+    /// Stores whether the user has seen the Wine warning.
+    /// </summary>
+    public static readonly CVarDef<bool> WineWarningShown = CVarDef.Create("WineWarningShown", false);
+
 
     // MarseyCVars start here
 

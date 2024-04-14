@@ -11,5 +11,9 @@
         <PackageReference Include="Lib.Harmony" />
         <PackageReference Include="Newtonsoft.Json" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageVersion Update="Lib.Harmony" Version="2.3.3" />
+    </ItemGroup>
     
 </Project>
