@@ -95,12 +95,15 @@ public class AccountDropDownViewModel : ViewModelBase
             await _authApi.LogoutTokenAsync(_loginMgr.ActiveAccount.LoginInfo.Token.Token);
             _cfg.RemoveLogin(_loginMgr.ActiveAccount.LoginInfo);
         }
+
+        this.RaisePropertyChanged(nameof(IsNotGuest));
     }
 
     private void LoginAsGuest()
     {
         IsDropDownOpen = false;
         _loginMgr.ActiveAccount = _loginMgr.GuestAccount;
+
         this.RaisePropertyChanged(nameof(IsNotGuest));
     }
 
@@ -108,15 +111,17 @@ public class AccountDropDownViewModel : ViewModelBase
     public void AccountButtonPressed(LoggedInAccount account)
     {
         IsDropDownOpen = false;
-
         _mainVm.TrySwitchToAccount(account);
+
+        this.RaisePropertyChanged(nameof(IsNotGuest));
     }
 
     public void AddAccountPressed()
     {
         IsDropDownOpen = false;
-
         _loginMgr.ActiveAccount = null;
+
+        this.RaisePropertyChanged(nameof(IsNotGuest));
     }
 }
 
