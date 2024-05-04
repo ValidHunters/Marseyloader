@@ -270,16 +270,6 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         set => _HWIdString = value;
     }
 
-    public bool GuestMode
-    {
-        get => Cfg.GetCVar(CVars.GuestMode);
-        set
-        {
-            Cfg.SetCVar(CVars.GuestMode, value);
-            Cfg.CommitConfig();
-        }
-    }
-
     private string _GuestUname;
     public string GuestName
     {

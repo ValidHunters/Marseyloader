@@ -213,7 +213,6 @@
       <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <DockPanel>
           <StackPanel Orientation="Vertical">
-            <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding GuestMode}">Enable guest mode</CheckBox>
             <Grid RowDefinitions="*, *, *" ColumnDefinitions="*, Auto">
               <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
                          Text="Set your guest username."

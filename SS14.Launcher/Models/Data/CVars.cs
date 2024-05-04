@@ -225,11 +225,6 @@ public static class CVars
     public static readonly CVarDef<bool> RandConnAction = CVarDef.Create("RandConnAction", false);
 
     /// <summary>
-    /// Dont authenticate with anyone
-    /// </summary>
-    public static readonly CVarDef<bool> GuestMode = CVarDef.Create("GuestMode", false);
-
-    /// <summary>
     /// Username used in guest mode
     /// </summary>
     public static readonly CVarDef<string> GuestUsername = CVarDef.Create("GuestUsername", "Guest");
