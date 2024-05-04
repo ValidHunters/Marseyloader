@@ -178,6 +178,11 @@ public static class CVars
     /// </summary>
     public static readonly CVarDef<bool> Backports = CVarDef.Create("Backports", false);
 
+    /// <summary>
+    /// Apply backports to game when able
+    /// </summary>
+    public static readonly CVarDef<bool> DisableAnyEngineBackports = CVarDef.Create("DisableAnyEngineBackports", false);
+
     // HWID
 
     /// <summary>

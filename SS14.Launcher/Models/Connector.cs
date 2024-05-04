@@ -611,6 +611,8 @@ public class Connector : ReactiveObject
 
         // Backporter
         startInfo.EnvironmentVariables["MARSEY_BACKPORTS"] = _cfg.GetCVar(CVars.Backports) ? "true" : null;
+        startInfo.EnvironmentVariables["MARSEY_NO_ANY_BACKPORTS"] =
+            _cfg.GetCVar(CVars.DisableAnyEngineBackports) ? "true" : null;
 
         // ResPacks
         startInfo.EnvironmentVariables["MARSEY_DISABLE_STRICT"] = _cfg.GetCVar(CVars.DisableStrict) ? "true" : null;

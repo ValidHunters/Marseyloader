@@ -81,6 +81,6 @@ public static class MarseyConf
         { "MARSEY_JAMMER", value => JamDials = value },
         { "MARSEY_DISABLE_REC", value => DisableREC = value },
         { "MARSEY_BACKPORTS", value => Backports = value},
-        { "MARSEY_ANY_BACKPORTS", value => DisableAnyBackports = value}
+        { "MARSEY_NO_ANY_BACKPORTS", value => DisableAnyBackports = value}
     };
 }

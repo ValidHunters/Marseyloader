@@ -235,11 +235,18 @@
                        Text="Dumps everything client facing off a server and disables itself."
                        Margin="8" />
 
+            <TextBlock Margin="4, 0" Text="Backports" Classes="NanoHeadingMedium" />
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Backports}">Enable backports</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                        Text="Apply fixes relevant for the fork and/or engine version if available."
                        Margin="8" />
 
+            <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DisableAnyEngineBackports}">Disable global backports</CheckBox>
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                       Text="Disable available backports targeting any engine version."
+                       Margin="8" />
+
+            <TextBlock Margin="4, 0" Text="Resource packs" Classes="NanoHeadingMedium" IsVisible="{Binding !HideDebugKnobs}"/>
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding ResourceOverride}" IsVisible="{Binding !HideDebugKnobs}">Resource Pack Strict Override</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                        IsVisible="{Binding !HideDebugKnobs}"
