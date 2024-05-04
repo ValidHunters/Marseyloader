@@ -72,9 +72,11 @@ public sealed class LoginManager : ReactiveObject
         }
         set
         {
+            Guid? newId = null;
+
             if (value != null && value == GuestAccount)
             {
-                _activeLoginId = GuestAccount.UserId;
+                newId = GuestAccount.UserId;
             }
             else if (value != null)
             {
@@ -85,14 +87,10 @@ public sealed class LoginManager : ReactiveObject
                     throw new ArgumentException("We do not have a login with that ID.");
                 }
 
-                _activeLoginId = value.UserId;
-            }
-            else
-            {
-                _activeLoginId = null;
+                newId = value.UserId;
             }
 
-            this.RaiseAndSetIfChanged(ref _activeLoginId, value?.UserId);
+            this.RaiseAndSetIfChanged(ref _activeLoginId, newId);
             this.RaisePropertyChanged(nameof(ActiveAccount));
             _cfg.SelectedLoginId = value?.UserId;
         }

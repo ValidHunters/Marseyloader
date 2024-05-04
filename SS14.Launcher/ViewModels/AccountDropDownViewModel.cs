@@ -77,7 +77,7 @@ public class AccountDropDownViewModel : ViewModelBase
     public bool AccountSwitchVisible => _cfg.Logins.Count > 1 || _loginMgr.ActiveAccount == null;
     public string AccountSwitchText => _loginMgr.ActiveAccount != null ? "Switch account:" : "Select account:";
     public bool AccountControlsVisible => _loginMgr.ActiveAccount != null;
-    public bool IsNotGuest => _loginMgr.ActiveAccount != _loginMgr.GuestAccount;
+    public bool IsNotGuest => _loginMgr.ActiveAccount?.Status != AccountLoginStatus.Guest;
 
     [Reactive] public bool IsDropDownOpen { get; set; }
 
@@ -101,6 +101,7 @@ public class AccountDropDownViewModel : ViewModelBase
     {
         IsDropDownOpen = false;
         _loginMgr.ActiveAccount = _loginMgr.GuestAccount;
+        this.RaisePropertyChanged(nameof(IsNotGuest));
     }
 
     [UsedImplicitly]
