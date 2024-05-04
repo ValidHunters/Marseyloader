@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using DynamicData;
+using DynamicData.Kernel;
 using ReactiveUI;
 using Serilog;
 using SS14.Launcher.Api;
@@ -30,6 +31,8 @@ public sealed class LoginManager : ReactiveObject
 
     private readonly IObservableCache<ActiveLoginData, Guid> _logins;
 
+    public LoggedInAccount? GuestAccount { get; private set; }
+
     public Guid? ActiveAccountId
     {
         get => _activeLoginId;
@@ -53,9 +56,48 @@ public sealed class LoginManager : ReactiveObject
 
     public LoggedInAccount? ActiveAccount
     {
-        get => _activeLoginId == null ? null : _logins.Lookup(_activeLoginId.Value).Value;
-        set => ActiveAccountId = value?.UserId;
+        get
+        {
+            if (_activeLoginId == null)
+            {
+                return null;
+            }
+
+            if (GuestAccount != null && _activeLoginId == GuestAccount.UserId)
+            {
+                return GuestAccount;
+            }
+
+            return _logins.Lookup(_activeLoginId.Value).Value;
+        }
+        set
+        {
+            if (value != null && value == GuestAccount)
+            {
+                _activeLoginId = GuestAccount.UserId;
+            }
+            else if (value != null)
+            {
+                Optional<ActiveLoginData> lookup = _logins.Lookup(value.UserId);
+
+                if (!lookup.HasValue)
+                {
+                    throw new ArgumentException("We do not have a login with that ID.");
+                }
+
+                _activeLoginId = value.UserId;
+            }
+            else
+            {
+                _activeLoginId = null;
+            }
+
+            this.RaiseAndSetIfChanged(ref _activeLoginId, value?.UserId);
+            this.RaisePropertyChanged(nameof(ActiveAccount));
+            _cfg.SelectedLoginId = value?.UserId;
+        }
     }
+
 
     public IObservableCache<LoggedInAccount, Guid> Logins { get; }
 
@@ -84,6 +126,7 @@ public sealed class LoginManager : ReactiveObject
 
     public Task Initialize()
     {
+        CreateGuestAccount();
         return Task.CompletedTask;
     }
 
@@ -121,6 +164,11 @@ public sealed class LoginManager : ReactiveObject
         }));
     }
 
+    private void CreateGuestAccount()
+    {
+        GuestAccount = new GuestAccount();
+    }
+
     public void AddFreshLogin(LoginInfo info)
     {
         _cfg.AddLogin(info);
@@ -143,6 +191,11 @@ public sealed class LoginManager : ReactiveObject
 
     private async Task UpdateSingleAccountStatus(ActiveLoginData data)
     {
+        if (data.Status == AccountLoginStatus.Guest)
+        {
+            return;
+        }
+
         if (data.LoginInfo.Token.ShouldRefresh())
         {
             Log.Debug("Refreshing token for {login}", data.LoginInfo);

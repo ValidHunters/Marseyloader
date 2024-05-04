@@ -229,9 +229,10 @@ public class Connector : ReactiveObject
     {
         var cVars = new List<(string, string)>();
 
-        await _loginManager.UpdateSingleAccountStatus(_loginManager.ActiveAccount!);
+        if (_loginManager.ActiveAccount != null && _loginManager.ActiveAccount.Status != AccountLoginStatus.Guest)
+            await _loginManager.UpdateSingleAccountStatus(_loginManager.ActiveAccount!);
 
-        if (info != null && info.AuthInformation.Mode != AuthMode.Disabled && _loginManager.ActiveAccount != null && !_cfg.GetCVar(CVars.GuestMode))
+        if (info != null && info.AuthInformation.Mode != AuthMode.Disabled && _loginManager.ActiveAccount != null && _loginManager.ActiveAccount.Status != AccountLoginStatus.Guest)
         {
             var account = _loginManager.ActiveAccount;
 
@@ -243,8 +244,9 @@ public class Connector : ReactiveObject
 
         try
         {
-            string uname = _cfg.GetCVar(CVars.GuestMode) ? _cfg.GetCVar(CVars.GuestUsername)
+            string uname = _loginManager.ActiveAccount?.Status == AccountLoginStatus.Guest ? _cfg.GetCVar(CVars.GuestUsername)
                 : _loginManager.ActiveAccount?.Username ?? ConfigConstants.FallbackUsername;
+
 
             var args = new List<string>
             {

@@ -12,5 +12,10 @@ public enum AccountLoginStatus
     /// <summary>
     ///     The login token expired and we need the user to log in again.
     /// </summary>
-    Expired
+    Expired,
+
+    /// <summary>
+    ///     This is a local account, and has no token
+    /// </summary>
+    Guest
 }
