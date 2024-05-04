@@ -36,32 +36,37 @@ public static class MarseyConf
     /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool ThrowOnFail;
-    
+
     /// <summary>
     /// Disable strict fork checks when applying resource packs.
     /// </summary>
     public static bool DisableResPackStrict;
-    
+
     /// <see cref="HWID"/>
     public static bool ForceHWID;
-    
+
     /// <see cref="DiscordRPC"/>
     public static bool KillRPC;
-    
+
     /// <see cref="Marsey.Game.Resources.Dumper.Dumper"/>
     public static bool Dumper;
-    
+
     /// <see cref="Jammer"/>
     public static bool JamDials;
 
     /// <see cref="Blackhole"/>
     public static bool DisableREC;
-    
+
     /// <summary>
     /// Enables backports and fixes for the game
     /// </summary>
     /// <see cref="Marsey.Game.Patches.Marseyports.MarseyPortMan"/>
     public static bool Backports;
+
+    /// <summary>
+    /// Disable any backports
+    /// </summary>
+    public static bool DisableAnyBackports;
 
     public static readonly Dictionary<string, Action<bool>> EnvVarMap = new Dictionary<string, Action<bool>>
     {
@@ -75,6 +80,7 @@ public static class MarseyConf
         { "MARSEY_DUMP_ASSEMBLIES", value => Dumper = value },
         { "MARSEY_JAMMER", value => JamDials = value },
         { "MARSEY_DISABLE_REC", value => DisableREC = value },
-        { "MARSEY_BACKPORTS", value => Backports = value}
+        { "MARSEY_BACKPORTS", value => Backports = value},
+        { "MARSEY_ANY_BACKPORTS", value => DisableAnyBackports = value}
     };
 }
