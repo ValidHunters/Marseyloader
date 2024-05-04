@@ -5,9 +5,9 @@ namespace SS14.Launcher.Models.Logins;
 
 public class GuestAccount : LoggedInAccount
 {
-    public GuestAccount() : base(new LoginInfo())
+    public GuestAccount(string username) : base(new LoginInfo())
     {
-        LoginInfo.Username = "Guest";
+        LoginInfo.Username = $"Guest / {username}";
         LoginInfo.UserId = Guid.Empty;
         LoginInfo.Token = new LoginToken("marsey", DateTimeOffset.MaxValue);
     }

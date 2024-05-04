@@ -164,7 +164,7 @@ public sealed class LoginManager : ReactiveObject
 
     private void CreateGuestAccount()
     {
-        GuestAccount = new GuestAccount();
+        GuestAccount = new GuestAccount(_cfg.GetCVar(CVars.GuestUsername));
     }
 
     public void AddFreshLogin(LoginInfo info)
