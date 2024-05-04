@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
+using System.Windows.Input;
 using DynamicData;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -24,6 +25,8 @@ public class AccountDropDownViewModel : ViewModelBase
     public ReadOnlyObservableCollection<AvailableAccountViewModel> Accounts => _accounts;
 
     public bool EnableMultiAccounts => _cfg.ActuallyMultiAccounts;
+
+    public ICommand LoginAsGuestCommand { get; }
 
     public AccountDropDownViewModel(MainWindowViewModel mainVm)
     {
@@ -57,6 +60,8 @@ public class AccountDropDownViewModel : ViewModelBase
             .Transform(p => new AvailableAccountViewModel(p))
             .Bind(out _accounts)
             .Subscribe();
+
+        LoginAsGuestCommand = ReactiveCommand.Create(LoginAsGuest);
     }
 
     private static Func<LoggedInAccount?, bool> MakeFilter(LoggedInAccount? selected)
@@ -72,6 +77,7 @@ public class AccountDropDownViewModel : ViewModelBase
     public bool AccountSwitchVisible => _cfg.Logins.Count > 1 || _loginMgr.ActiveAccount == null;
     public string AccountSwitchText => _loginMgr.ActiveAccount != null ? "Switch account:" : "Select account:";
     public bool AccountControlsVisible => _loginMgr.ActiveAccount != null;
+    public bool IsNotGuest => _loginMgr.ActiveAccount?.Status != AccountLoginStatus.Guest;
 
     [Reactive] public bool IsDropDownOpen { get; set; }
 
@@ -79,11 +85,23 @@ public class AccountDropDownViewModel : ViewModelBase
     {
         IsDropDownOpen = false;
 
+        if (_loginMgr.ActiveAccount == _loginMgr.GuestAccount)
+        {
+            _loginMgr.ActiveAccount = null;
+        }
+
         if (_loginMgr.ActiveAccount != null)
         {
             await _authApi.LogoutTokenAsync(_loginMgr.ActiveAccount.LoginInfo.Token.Token);
             _cfg.RemoveLogin(_loginMgr.ActiveAccount.LoginInfo);
         }
+    }
+
+    private void LoginAsGuest()
+    {
+        IsDropDownOpen = false;
+        _loginMgr.ActiveAccount = _loginMgr.GuestAccount;
+        this.RaisePropertyChanged(nameof(IsNotGuest));
     }
 
     [UsedImplicitly]

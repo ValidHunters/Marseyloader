@@ -249,11 +249,21 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
                 _loginMgr.ActiveAccount = null;
                 LoginViewModel.SwitchToExpiredLogin(account);
                 break;
+
+            case AccountLoginStatus.Guest:
+                _loginMgr.ActiveAccount = account;
+                break;
         }
     }
 
     private async void TrySelectUnsureAccount(LoggedInAccount account)
     {
+        if (account.Status == AccountLoginStatus.Guest)
+        {
+            _loginMgr.ActiveAccount = account;
+            return;
+        }
+
         BusyTask = "Checking account status";
         try
         {

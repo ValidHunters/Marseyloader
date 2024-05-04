@@ -33,15 +33,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     private readonly DataManager _dataManager;
     private readonly IEngineManager _engineManager;
     private readonly ContentManager _contentManager;
-    
+
     public ICommand SetHWIdCommand { get; }
     public ICommand GenHWIdCommand { get; }
     public ICommand DumpConfigCommand { get; }
     public ICommand SetUsernameCommand { get; }
+    public ICommand SetGuestUsernameCommand { get; }
     public ICommand SetEndpointCommand { get; }
     public IEnumerable<HideLevel> HideLevels { get; } = Enum.GetValues(typeof(HideLevel)).Cast<HideLevel>();
 
-    
+
     public OptionsTabViewModel()
     {
         Cfg = Locator.Current.GetRequiredService<DataManager>();
@@ -53,6 +54,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         SetHWIdCommand = new RelayCommand(OnSetHWIdClick);
         GenHWIdCommand = new RelayCommand(OnGenHWIdClick);
         SetUsernameCommand = new RelayCommand(OnSetUsernameClick);
+        SetGuestUsernameCommand = new RelayCommand(OnSetGuestUsernameClick);
         SetEndpointCommand = new RelayCommand(OnSetEndpointClick);
         DumpConfigCommand = new RelayCommand(DumpConfig.Dump);
     }
@@ -144,7 +146,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
-    
+
     public bool SeparateLogging
     {
         get => Cfg.GetCVar(CVars.SeparateLogging);
@@ -193,7 +195,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         get => Cfg.GetCVar(CVars.MarseyApiEndpoint);
         set => _endpoint = value;
     }
-    
+
     public bool MarseyApiIgnoreForced
     {
         get => Cfg.GetCVar(CVars.MarseyApiIgnoreForced);
@@ -213,7 +215,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
-    
+
     public bool DisableRPC
     {
         get => Cfg.GetCVar(CVars.DisableRPC);
@@ -234,7 +236,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
-    
+
     public bool LIHWIDBind
     {
         get => Cfg.GetCVar(CVars.LIHWIDBind);
@@ -244,7 +246,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
-    
+
     public bool RandHWID
     {
         get => Cfg.GetCVar(CVars.RandHWID);
@@ -266,6 +268,13 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             return _loginManager.ActiveAccount != null ? _loginManager.ActiveAccount.LoginInfo.HWID : "";
         }
         set => _HWIdString = value;
+    }
+
+    private string _GuestUname;
+    public string GuestName
+    {
+        get => Cfg.GetCVar(CVars.GuestUsername);
+        set => _GuestUname = value;
     }
 
     public bool MarseySlightOutOfDate
@@ -307,7 +316,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
-    
+
     public bool RandTitle
     {
         get => Cfg.GetCVar(CVars.RandTitle);
@@ -317,7 +326,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
-    
+
     public bool RandHeader
     {
         get => Cfg.GetCVar(CVars.RandHeader);
@@ -327,7 +336,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
-    
+
     public bool RandConnAction
     {
         get => Cfg.GetCVar(CVars.RandConnAction);
@@ -361,11 +370,11 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             LI.Username = value;
         }
     }
-    
+
     private void OnSetHWIdClick()
     {
         string hwid = _HWIdString;
-        
+
         // Check if _HWIdString is a valid hex string (allowing empty string) and pad it if necessary
         if (Regex.IsMatch(_HWIdString, "^[a-fA-F0-9]*$")) // '*' allows for zero or more characters
         {
@@ -386,7 +395,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
 
             return;
         }
-        
+
         Log.Warning("Passed HWId is not a valid hexadecimal string! Refusing to apply.");
     }
 
@@ -395,7 +404,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         string hwid = HWID.GenerateRandom(32);
         _HWIdString = hwid;
         HWIdString = hwid;
-        
+
         OnSetHWIdClick();
     }
 
@@ -414,17 +423,23 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.CommitConfig();
         }
     }
-    
+
     private void OnSetUsernameClick()
     {
         _dataManager.ChangeLogin(ChangeReason.Update, _loginManager.ActiveAccount?.LoginInfo!);
         _dataManager.CommitConfig();
     }
-    
+
+    private void OnSetGuestUsernameClick()
+    {
+        Cfg.SetCVar(CVars.GuestUsername, _GuestUname);
+        Cfg.CommitConfig();
+    }
+
     private void OnSetEndpointClick()
     {
         if (_endpoint == "") return;
-        
+
         Task.Run(async () =>
         {
             bool result = await Marsey.API.MarseyApi.MarseyHello(_endpoint).ConfigureAwait(false);
@@ -460,7 +475,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     {
         Helpers.OpenUri(ConfigConstants.AccountManagementUrl);
     }
-    
+
     public new event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void OnPropertyChanged(string propertyName)

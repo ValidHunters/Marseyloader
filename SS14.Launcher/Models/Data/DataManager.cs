@@ -16,6 +16,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using ReactiveUI;
 using Serilog;
+using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 
 namespace SS14.Launcher.Models.Data;
@@ -113,7 +114,8 @@ public sealed class DataManager : ReactiveObject
         }
         set
         {
-            if (value != null && !_logins.Lookup(value.Value).HasValue)
+            //                              Guest
+            if (value != null && value != Guid.Empty && !_logins.Lookup(value.Value).HasValue)
             {
                 throw new ArgumentException("We are not logged in for that user ID.");
             }
