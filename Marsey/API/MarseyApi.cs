@@ -18,11 +18,11 @@ namespace Marsey.API
         public static async Task Initialize(string endpoint, bool enabled)
         {
             if (!enabled) return;
-    
+
             if (await MarseyHello(endpoint))
             {
                 _endpoint = endpoint;
-        
+
                 await UpdateMarseyVersion();
             }
             else
@@ -31,7 +31,6 @@ namespace Marsey.API
                 _enabled = false;
             }
         }
-
 
         // ReSharper disable once MemberCanBePrivate.Global
         public static Task<bool> MarseyHello(string endpoint)
@@ -47,7 +46,7 @@ namespace Marsey.API
         private static async Task<JObject?> GetJsonResponse(string url)
         {
             if (!_enabled) return null;
-    
+
             try
             {
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
@@ -70,9 +69,9 @@ namespace Marsey.API
         private static async Task<bool> SendHelloRequest(string url)
         {
             JObject? json = await GetJsonResponse(url);
-            
+
             if (json?["message"] == null || json?["version"] == null) return false;
-            
+
             Log(MarseyLogger.LogType.DEBG, "Endpoint hello'd correctly!");
             return true;
         }
@@ -81,7 +80,7 @@ namespace Marsey.API
         {
             // Add a check to see if _versions is already populated
             if (_versions != null && _versions.Count != 0) return;
-            
+
             JObject? json = await GetJsonResponse($"{_endpoint}/version");
             if (json?["latest"] != null && json?["minimum"] != null && json?["releases"] != null)
             {
@@ -91,7 +90,6 @@ namespace Marsey.API
                 _releases = json["releases"]!.ToString();
             }
         }
-
 
         public static Version? GetLatestVersion() => _versions != null && _versions.Count > 0 ? _versions[0] : null;
         public static Version? GetMinimumVersion() => _versions != null && _versions.Count > 1 ? _versions[1] : null;

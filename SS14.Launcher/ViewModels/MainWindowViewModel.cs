@@ -50,7 +50,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         _cfg = Locator.Current.GetRequiredService<DataManager>();
         _loginMgr = Locator.Current.GetRequiredService<LoginManager>();
         _http = Locator.Current.GetRequiredService<HttpClient>();
-        
+
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         Hidesey.Initialize();
 
@@ -74,7 +74,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
 
         if (_cfg.GetCVar(CVars.NoActiveInit))
             _loginMgr.ActiveAccount = null;
-        
+
         this.WhenAnyValue(x => x._loginMgr.ActiveAccount)
             .Subscribe(s =>
             {
@@ -197,9 +197,9 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
                 OutOfDate = false;
                 return;
             }
-            
+
             int comp = MarseyVars.MarseyVersion.CompareTo(minimum);
-            if (comp < 0 && _cfg.GetCVar(CVars.MarseyApiIgnoreForced)) OutOfDate = true;
+            if (comp < 0 && !_cfg.GetCVar(CVars.MarseyApiIgnoreForced)) OutOfDate = true;
         }
         catch (HttpRequestException e)
         {
@@ -218,7 +218,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         string? url = MarseyApi.GetReleasesURL();
         if (string.IsNullOrEmpty(url))
             url = ConfigConstants.DownloadUrl;
-        
+
         Helpers.OpenUri(new Uri(url));
     }
 

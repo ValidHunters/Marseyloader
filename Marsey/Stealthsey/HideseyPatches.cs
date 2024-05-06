@@ -29,7 +29,6 @@ public static class HideseyPatches
         };
     }
 
-
     /// <summary>
     /// This patch skips function execution
     /// </summary>
