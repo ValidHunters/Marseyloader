@@ -19,7 +19,7 @@ public static class AssemblyFieldHandler
         {
             Assembly assembly = patch.Asm;
             string? assemblyName = assembly.GetName().Name;
-            
+
             InitLogger(assembly, assemblyName);
             InitEntry(assembly, patch, assemblyName);
         }
@@ -36,7 +36,7 @@ public static class AssemblyFieldHandler
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no MarseyLogger class");
             return;
         }
-    
+
         SetupLogger(loggerType);
     }
 
@@ -51,7 +51,7 @@ public static class AssemblyFieldHandler
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no MarseyEntry class");
             return;
         }
-    
+
         patch.Entry = entryMethod;
     }
 
@@ -142,10 +142,9 @@ public static class AssemblyFieldHandler
         MethodInfo? logMethod = typeof(MarseyLogger).GetMethod("Log", new[] { typeof(AssemblyName), typeof(string) });
         FieldInfo? logDelegateField = marseyLoggerType?.GetField("logDelegate", BindingFlags.Public | BindingFlags.Static);
 
-        if (marseyLoggerType == null || logMethod == null || logDelegateField == null)
+        if (logMethod == null || logDelegateField == null)
         {
             List<string> missingComps = [];
-            if (marseyLoggerType == null) missingComps.Add("MarseyLoggerType");
             if (logMethod == null) missingComps.Add("LogMethod");
             if (logDelegateField == null) missingComps.Add("LogDelegateField");
 
@@ -154,7 +153,7 @@ public static class AssemblyFieldHandler
             MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to connect patch to marseylogger. Missing components: {missingCompStr}.");
             return;
         }
-        
+
         try
         {
             Delegate logDelegate = Delegate.CreateDelegate(logDelegateField.FieldType, logMethod);

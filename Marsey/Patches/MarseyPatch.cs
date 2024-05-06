@@ -31,7 +31,7 @@ public static class Marsyfier
         List<string>? preloads = Marserializer.Deserialize(path, filename: PreloadMarserializerFile);
 
         if (preloads == null || preloads.Count == 0) return;
-        
+
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "Preloader", $"Preloading {preloads.Count} patches.");
 
         foreach (string patch in preloads)
@@ -41,17 +41,16 @@ public static class Marsyfier
         }
 
         List<MarseyPatch> preloadedPatches = GetMarseyPatches();
-        
+
         AssemblyFieldHandler.InitHelpers(preloadedPatches);
 
         if (preloadedPatches.Count != 0) Patcher.Patch(preloadedPatches);
-        
+
         PatchListManager.ResetList();
     }
 }
 
 /// <summary>
-/// The bread and butter of the loader, the MarseyPatch.
 /// This class contains the data about a patch (called a Marsey), that is later used the loader to alter the game's functionality.
 /// </summary>
 public class MarseyPatch : IPatch
