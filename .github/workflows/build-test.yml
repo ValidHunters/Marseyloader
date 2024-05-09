@@ -8,16 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: Mirai
 
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 8.0.x
       - name: Install dependencies
         run: dotnet restore
       - name: Build
