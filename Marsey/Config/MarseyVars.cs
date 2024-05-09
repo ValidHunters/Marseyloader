@@ -13,13 +13,13 @@ public static class MarseyVars
     /// Due to the nature of how Marseyloader is compiled (its not) we cannot check its version
     /// Almost as if this variable is a consequence of having the project included rather than referenced
     /// </summary>
-    public static readonly Version MarseyVersion = new Version("2.12.5");
+    public static readonly Version MarseyVersion = new Version("2.12.6");
 
     /// <summary>
     /// Default MarseyAPI endpoint url
     /// </summary>
     public static readonly string MarseyApiEndpoint = "https://fujo.love/api/v1";
-    
+
     /// <summary>
     /// Namespace identifier for Harmony
     /// </summary>
@@ -39,7 +39,7 @@ public static class MarseyVars
     /// Name of folder containing files used by Marsey
     /// </summary>
     public static readonly string MarseyFolder = "Marsey";
-    
+
     /// <summary>
     /// Folder containing mods
     /// </summary>
@@ -56,7 +56,7 @@ public static class MarseyVars
     public static readonly string MarseyLoggerPrefix = "MARSEY";
 
     public static readonly string MarseyLoggerFileName = "client.marsey.log";
-    
+
     /// <summary>
     /// Refuse to play on servers over or equal to this engine version if hidesey is disabled
     /// <see cref="Abjure"/>
