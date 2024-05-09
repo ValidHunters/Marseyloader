@@ -71,4 +71,13 @@ public class MarseyPatch : IPatch
         this.Asm = asm;
         this.Preload = preload;
     }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is MarseyPatch other)
+        {
+            return this.Name == other.Name && this.Desc == other.Desc;
+        }
+        return false;
+    }
 }

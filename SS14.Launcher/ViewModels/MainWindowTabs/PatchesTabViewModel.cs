@@ -24,7 +24,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public ObservableCollection<SubverterPatch> SubverterPatches { get; } = new ObservableCollection<SubverterPatch>();
         public ObservableCollection<ResourcePack> ResourcePacks { get; } = new ObservableCollection<ResourcePack>();
         public ICommand OpenPatchDirectoryCommand { get; }
-        
+
 #if DEBUG
         public bool ShowRPacks => true;
 #else
@@ -47,8 +47,8 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
             List<SubverterPatch> subverters = Subverter.GetSubverterPatches();
             LoadPatchList(subverters, SubverterPatches, "subverterpatches");
-            
-            List<ResourcePack> resourcePacks = ResMan.GetRPacks(); 
+
+            List<ResourcePack> resourcePacks = ResMan.GetRPacks();
             LoadResPacks(resourcePacks, ResourcePacks);
         }
 

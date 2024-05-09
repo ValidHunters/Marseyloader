@@ -44,7 +44,7 @@ public static class AssemblyInitializer
                 return patchTypes.Single();
         }
     }
-    
+
     private static void ProcessDataType(Assembly assembly, Type dataType)
     {
         string typeName = dataType.Name;
@@ -97,9 +97,9 @@ public static class AssemblyInitializer
 
         // Check if its even valid
         if (!PatchFactory.TryGetValue(dataType.Name, out Func<Assembly, string, string, bool, IPatch>? createPatch)) return;
-        
+
         Hidesey.HidePatch(assembly); // Conceal assembly from the game
-        
+
         IPatch patch = createPatch(assembly, name, description, preloadField);
         PatchListManager.AddPatchToList(patch);
     }
