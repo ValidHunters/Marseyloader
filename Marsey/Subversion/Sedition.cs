@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using HarmonyLib;
-using Marsey.Game.Managers;
+using JetBrains.Annotations;
 using Marsey.Handbreak;
 using Marsey.Stealthsey;
 using Marsey.Stealthsey.Reflection;
@@ -8,7 +8,7 @@ using Marsey.Stealthsey.Reflection;
 namespace Marsey.Subversion;
 
 /// <summary>
-/// Manages the subversion hide queue list
+/// Manages the subversion hide queue, hides subversions
 /// </summary>
 public static class Sedition
 {
@@ -27,6 +27,7 @@ public static class Sedition
         _queue.Add(subversion);
     }
 
+    [UsedImplicitly]
     private static bool Prefix()
     {
         foreach (Assembly asm in _queue)

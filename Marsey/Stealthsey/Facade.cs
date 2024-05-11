@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using Marsey.Misc;
 
@@ -15,7 +11,7 @@ public static class Facade
     private static readonly List<Type> _types = new List<Type>();
     private static readonly List<string> _keywords = new List<string> { "Robust", "Content", "Wizards", "Microsoft", "System" };
     private static Type[] _cached = Array.Empty<Type>();
-    
+
     /// <summary>
     /// Hides type from executing assembly
     /// </summary>
@@ -55,7 +51,7 @@ public static class Facade
         try
         {
             typeArray = patch.GetTypes();
-            
+
             // Hide types if their namespace isn't null and doesn't start with any of the protected keywords
             Imposition(typeArray.Where(type => type.Namespace != null && !_keywords.Any(keyword => type.Namespace.StartsWith(keyword))).ToArray());
         }

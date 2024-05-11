@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
-using Marsey.Misc;
 using Marsey.Stealthsey;
 using Marsey.Stealthsey.Reflection;
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
 namespace Marsey.Subversion;
 
@@ -45,7 +43,7 @@ public class SubverterPatch : IPatch
         Asm = asm;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is SubverterPatch other)
         {

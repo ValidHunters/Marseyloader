@@ -270,7 +270,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         set => _HWIdString = value;
     }
 
-    private string _GuestUname;
+    private string _GuestUname = "";
     public string GuestName
     {
         get => Cfg.GetCVar(CVars.GuestUsername);

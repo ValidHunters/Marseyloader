@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using HarmonyLib;
-using Marsey.Config;
 using Marsey.Handbreak;
-using Marsey.Misc;
 
 namespace Marsey.Stealthsey.Reflection;
 
@@ -21,15 +16,15 @@ public static class HideLevelExec
     {
         Assembly assembly = Assembly.GetExecutingAssembly();
         IEnumerable<Type> types = assembly.GetTypes();
-        
+
         IEnumerable<Type> marseyTypes = types.Where(t => t.Namespace != null && t.Namespace.StartsWith("Marsey"));
-        
+
         foreach (Type type in marseyTypes)
         {
             CheckAndExecute(type);
         }
     }
-    
+
     /// <summary>
     /// Checks each type for methods with HideLevelRequirement attributes and executes them if the hide level is met.
     /// </summary>
@@ -43,7 +38,7 @@ public static class HideLevelExec
             ExecIfLevelMet(method);
         }
     }
-    
+
     /// <summary>
     /// Executes the method if the current hide level meets or exceeds the required level specified by the HideLevelRequirement attribute.
     /// </summary>
@@ -53,7 +48,7 @@ public static class HideLevelExec
         HideLevelRestriction? hideLevelRestriction = method.GetCustomAttribute<HideLevelRestriction>();
 
         if (hideLevelRequirement == null && hideLevelRestriction == null) return;
-        
+
         MethodInfo? prefix = typeof(HideseyPatches).GetMethod("LevelCheck", BindingFlags.Public | BindingFlags.Static);
         Manual.Patch(method, prefix, HarmonyPatchType.Prefix);
     }

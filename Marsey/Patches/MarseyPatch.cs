@@ -8,6 +8,7 @@ using Marsey.Serializer;
 using Marsey.Stealthsey;
 using Marsey.Misc;
 using Marsey.Stealthsey.Reflection;
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
 namespace Marsey.Patches;
 
@@ -72,7 +73,7 @@ public class MarseyPatch : IPatch
         this.Preload = preload;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is MarseyPatch other)
         {
