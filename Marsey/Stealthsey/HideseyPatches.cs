@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using JetBrains.Annotations;
 using Marsey.Config;
 using Marsey.Misc;
 using Marsey.Stealthsey.Reflection;
@@ -15,6 +16,7 @@ namespace Marsey.Stealthsey;
 /// </summary>
 public static class HideseyPatches
 {
+    [UsedImplicitly]
     public static void Lie<T>(ref T __result)
     {
         __result = __result switch
@@ -32,6 +34,7 @@ public static class HideseyPatches
     /// <summary>
     /// This patch skips function execution
     /// </summary>
+    [UsedImplicitly]
     public static bool Skip() => false;
 
     /// <summary>

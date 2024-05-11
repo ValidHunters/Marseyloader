@@ -102,7 +102,7 @@ public static class Subverse
                 Doorbreak.Enter(entryMethod);
             }
 
-            Subverter.Hide(sideload);
+            Sedition.Queue(sideload);
         }
 
         _firstPassed = true;

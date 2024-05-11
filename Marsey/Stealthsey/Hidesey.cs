@@ -9,6 +9,7 @@ using Marsey.Game.Patches;
 using Marsey.Handbreak;
 using Marsey.Misc;
 using Marsey.Stealthsey.Reflection;
+using Marsey.Subversion;
 
 namespace Marsey.Stealthsey;
 
@@ -74,10 +75,10 @@ public static class Hidesey
             return;
 
         _initialized = true;
-        
+
         MarseyConf.MarseyHide = GetHideseyLevel();
         HideLevelExec.Initialize();
-        
+
         Load();
     }
 
@@ -85,11 +86,11 @@ public static class Hidesey
     private static void Load()
     {
         Disperse();
-        
+
         Facade.Imposition("Marsey");
 
         Perjurize(); // Patch detection methods
-        
+
         MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Hidesey started. Running {MarseyConf.MarseyHide.ToString()} configuration.");
     }
 
@@ -125,7 +126,7 @@ public static class Hidesey
     {
         HWID.Force();
         DiscordRPC.Disable();
-        
+
         // Cleanup
         Disperse();
     }
@@ -135,6 +136,8 @@ public static class Hidesey
     /// </summary>
     public static void Cleanup()
     {
+        Sedition.Patch();
+
         Task.Run(async () =>
         {
             await Task.Delay(TimeSpan.FromSeconds(10));
@@ -147,7 +150,7 @@ public static class Hidesey
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Caching is set to {!_caching}");
         _caching = !_caching;
     }
-    
+
     /// <summary>
     /// Add assembly to _hideseys list
     /// </summary>
@@ -162,7 +165,7 @@ public static class Hidesey
             if (!recursive) return;
         }
     }
-    
+
     /// <summary>
     /// If we have the assembly object
     /// </summary>
@@ -191,7 +194,7 @@ public static class Hidesey
     private static void Perjurize()
     {
         MethodInfo? Lie = Helpers.GetMethod(typeof(HideseyPatches), "Lie");
-        
+
         (MethodInfo?, Type)[] patches =
         [
             (typeof(AppDomain).GetMethod(nameof(AppDomain.GetAssemblies)), typeof(Assembly[])),
@@ -211,17 +214,17 @@ public static class Hidesey
             );
         }
     }
-    
+
     /// <summary>
     /// Checks HideLevel env variable, defaults to Normal
     /// </summary>
     private static HideLevel GetHideseyLevel()
     {
         string envVar = Environment.GetEnvironmentVariable("MARSEY_HIDE_LEVEL")!;
-        
-        if (int.TryParse(envVar, out int hideLevelValue) && Enum.IsDefined(typeof(HideLevel), hideLevelValue)) 
+
+        if (int.TryParse(envVar, out int hideLevelValue) && Enum.IsDefined(typeof(HideLevel), hideLevelValue))
             return (HideLevel)hideLevelValue;
-        
+
         return HideLevel.Normal;
     }
 
@@ -267,7 +270,7 @@ public static class Hidesey
         Type[] cached = Facade.Cached;
 
         if (cached != Array.Empty<Type>()) return cached;
-        
+
         cached = original.Except(hiddentypes).ToArray();
         Facade.Cache(cached);
 

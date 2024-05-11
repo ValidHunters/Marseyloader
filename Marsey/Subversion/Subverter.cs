@@ -17,9 +17,8 @@ public static class Subverter
     public const string MarserializerFile = "subversion.marsey";
 
     /// <summary>
-    /// Hides a subversion module from the game
+    /// Hides a subversion module from the game directly
     /// </summary>
-    /// <remarks>Assigned to a delegate in Subverter.dll</remarks>
     [HideLevelRequirement(HideLevel.Unconditional)]
     public static void Hide(Assembly asm)
     {
