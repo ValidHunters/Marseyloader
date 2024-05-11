@@ -28,7 +28,7 @@ public static class AssemblyInitializer
         ProcessDataType(assembly, dataType);
     }
 
-    private static Type? GetDataType(Assembly assembly)
+    public static Type? GetDataType(Assembly assembly)
     {
         List<Type?> patchTypes = PatchFactory.Keys.Select(assembly.GetType).Where(type => type != null).ToList();
 

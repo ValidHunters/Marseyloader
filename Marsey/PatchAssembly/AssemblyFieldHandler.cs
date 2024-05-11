@@ -94,17 +94,18 @@ public static class AssemblyFieldHandler
 
     /// <summary>
     /// Is the patch asking to be loaded before the game?
-    /// If marseypatch has a bool called "preload" - check it.
+    /// If a marseypatch has a bool called "preload" - check it.
     /// </summary>
     /// <param name="DataType">Patch class type</param>
-    public static bool DeterminePreload(Type DataType)
+    /// <param name="missing">Return value if the preload field is missing. False by default</param>
+    public static bool DeterminePreload(Type DataType, bool missing = false)
     {
         FieldInfo? preloadFieldInfo = DataType.GetField("preload");
 
         if (preloadFieldInfo != null)
             return preloadFieldInfo.GetValue(null) is bool;
 
-        return false;
+        return missing;
     }
 
     /// <summary>
