@@ -64,9 +64,12 @@ public static class Subverse
 
             // The only way this assert would not be true is if you manually put the path to a dll in the json list
             Type patch = AssemblyInitializer.GetDataType(subverterAssembly)!;
+
             //                                   Should be preloading by default
-            if (AssemblyFieldHandler.DeterminePreload(patch, missing: true)) _subversions.Preload.Add(subverterAssembly);
-            else _subversions.Postload.Add(subverterAssembly);
+            if (AssemblyFieldHandler.DeterminePreload(patch, missing: true))
+                _subversions.Preload.Add(subverterAssembly);
+            else
+                _subversions.Postload.Add(subverterAssembly);
         }
     }
 
@@ -93,7 +96,14 @@ public static class Subverse
     [UsedImplicitly]
     private static void Postfix(bool __state)
     {
-        if (__state) Sideload(_subversions.Postload);
+        if (!__state) return;
+
+        Task.Run(async () =>
+        {
+            await Task.Delay(TimeSpan.FromSeconds(0.2));
+            if (GameAssemblies.ClientInitialized())
+                Sideload(_subversions.Postload);
+        });
     }
 
     private static void Sideload(List<Assembly> assemblies)

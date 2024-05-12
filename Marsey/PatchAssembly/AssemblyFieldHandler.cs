@@ -1,4 +1,5 @@
 using System.Reflection;
+using HarmonyLib;
 using Marsey.Game.Misc;
 using Marsey.Patches;
 using Marsey.Misc;
@@ -103,7 +104,8 @@ public static class AssemblyFieldHandler
         FieldInfo? preloadFieldInfo = DataType.GetField("preload");
 
         if (preloadFieldInfo != null)
-            return preloadFieldInfo.GetValue(null) is bool;
+            if (preloadFieldInfo.GetValue(null) is bool e)
+                return e;
 
         return missing;
     }

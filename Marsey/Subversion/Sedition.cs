@@ -17,9 +17,9 @@ public static class Sedition
     [HideLevelRequirement(HideLevel.Normal)]
     public static void Patch()
     {
-        MethodInfo? Target = Helpers.GetMethod("Content.Client.Entry.EntryPoint", "Init");
-        MethodInfo? Patch = Helpers.GetMethod(typeof(Sedition), "Prefix");
-        Manual.Patch(Target, Patch, HarmonyPatchType.Prefix);
+        MethodInfo? Target = Helpers.GetMethod("Content.Client.Entry.EntryPoint", "SwitchToDefaultState");
+        MethodInfo? Patch = Helpers.GetMethod(typeof(Sedition), "Postfix");
+        Manual.Patch(Target, Patch, HarmonyPatchType.Postfix);
     }
 
     public static void Queue(Assembly subversion)
@@ -28,13 +28,11 @@ public static class Sedition
     }
 
     [UsedImplicitly]
-    private static bool Prefix()
+    private static void Postfix()
     {
         foreach (Assembly asm in _queue)
         {
             Hidesey.HidePatch(asm);
         }
-
-        return true;
     }
 }
