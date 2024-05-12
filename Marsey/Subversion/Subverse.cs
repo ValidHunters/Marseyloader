@@ -2,6 +2,7 @@ using System.Reflection;
 using HarmonyLib;
 using JetBrains.Annotations;
 using Marsey.Config;
+using Marsey.Game.Managers;
 using Marsey.Game.Misc;
 using Marsey.Handbreak;
 using Marsey.Misc;
@@ -36,14 +37,18 @@ public static class Subverse
     {
         InitLists();
 
+        //MethodInfo? Target = Helpers.GetMethod(, "TryLoadModules");
         MethodInfo? Target = Helpers.GetMethod("Robust.Shared.ContentPack.ModLoader", "TryLoadModules");
-        MethodInfo? UniFix = Helpers.GetMethod(typeof(Subverse), "UniHook");
+        MethodInfo? Prefix = Helpers.GetMethod(typeof(Subverse), "Prefix");
+        MethodInfo? Postfix = Helpers.GetMethod(typeof(Subverse), "Postfix");
 
-        if (Target != null && UniFix != null)
+
+        if (Target != null && Prefix != null && Postfix != null)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Hooking {Target.Name} with {UniFix.Name}");
-            Manual.Patch(Target, UniFix, HarmonyPatchType.Prefix);
-            Manual.Patch(Target, UniFix, HarmonyPatchType.Postfix);
+            // We are required to patch both prefix and postfix at once
+            // TODO: rewrite Handbreak.Manual for that
+            Harmony e = HarmonyManager.GetHarmony();
+            e.Patch(Target, prefix: Prefix, postfix: Postfix);
             return;
         }
 
@@ -65,28 +70,39 @@ public static class Subverse
         }
     }
 
-
-    private static bool _firstPassed = false;
+    private static MethodInfo? _lGAMi = null;
+    private static object? _instance = null;
     [UsedImplicitly]
-    private static void UniHook(object __instance)
+    private static void Prefix(ref object __instance, out bool __state)
     {
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", "Detour");
-        MethodInfo? loadGameAssemblyMethod = AccessTools.Method(AccessTools.TypeByName("Robust.Shared.ContentPack.BaseModLoader"), "InitMod");
+        _lGAMi = AccessTools.Method(AccessTools.TypeByName("Robust.Shared.ContentPack.BaseModLoader"), "InitMod");
+        _instance = __instance;
 
-        if (loadGameAssemblyMethod == null)
+        if (_lGAMi == null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.FATL, "Subversion", "Failed to find InitMod method.");
+            __state = false;
             return;
         }
 
-        List<Assembly> queue;
-        queue = _firstPassed ? _subversions.Preload : _subversions.Postload;
+        __state = true;
+        Sideload(_subversions.Preload);
+    }
 
-        foreach (Assembly sideload in queue)
+    [UsedImplicitly]
+    private static void Postfix(bool __state)
+    {
+        if (__state) Sideload(_subversions.Postload);
+    }
+
+    private static void Sideload(List<Assembly> assemblies)
+    {
+        foreach (Assembly sideload in assemblies)
         {
             AssemblyFieldHandler.InitLogger(sideload, sideload.FullName);
 
-            loadGameAssemblyMethod.Invoke(__instance, new object[] { sideload });
+            _lGAMi!.Invoke(_instance, new object[] { sideload });
 
             MethodInfo? entryMethod = CheckEntry(sideload);
             if (entryMethod != null)
@@ -96,8 +112,6 @@ public static class Subverse
 
             Sedition.Queue(sideload);
         }
-
-        _firstPassed = true;
     }
 
     private static MethodInfo? CheckEntry(Assembly assembly)
