@@ -22,6 +22,8 @@ Space Station 14 launcher with client-side modding/patching support.
 * * Forcibly disable Discord RPC
 * * Disable Redialing (Forced reconnects)
 * * Wizden hub mirror set as default hub
+* * Guest/Authless mode
+* * Option to not log into an account by default
 * * Locally change username for screenshots (This doesn't change your username in-game)
 * Marsey.
 
@@ -45,7 +47,7 @@ Example patches can be found in the [ExampleMarseyPatch](https://github.com/Vali
 ### FAQ
 
 #### Where do I ask for help?
-Github issues or on the [discord server](https://discord.gg/5RjbK7EzEm).
+Github issues or on the [discord server](https://discord.gg/xHtZXybKeh).
 
 #### How do I make a patch?
 [Example Marseypatches](https://github.com/ValidHunters/ExampleMarseyPatch)
