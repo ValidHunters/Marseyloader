@@ -403,6 +403,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
                 Cfg.CommitConfig();
             }
 
+            OnPropertyChanged(nameof(HWIdString));
             return;
         }
 
@@ -411,7 +412,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
 
     private void OnGenHWIdClick()
     {
-        string hwid = HWID.GenerateRandom(32);
+        string hwid = HWID.GenerateRandom();
         _HWIdString = hwid;
         HWIdString = hwid;
 

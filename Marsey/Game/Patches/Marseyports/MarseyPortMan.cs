@@ -13,19 +13,18 @@ namespace Marsey.Game.Patches.Marseyports;
 /// </summary>
 public static class MarseyPortMan
 {
-    private static readonly string _forkenvvar = "MARSEY_FORKID";
-    private static readonly string _engineenvvar = "MARSEY_ENGINE";
     public static string fork = "";
     public static Version engine = new Version();
     private static IEnumerable<Type>? _backports;
+
+    public static void SetEngineVer(string eng) => engine = new Version(eng);
+    public static void SetForkID(string forkid) => fork = forkid;
 
     public static void Initialize()
     {
         // https://www.youtube.com/watch?v=vmUGxXrlRmE
         if (!MarseyConf.Backports) return;
 
-        fork = Envsey.CleanFlag(_forkenvvar)!;
-        engine = new Version(Envsey.CleanFlag(_engineenvvar)!);
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Backporter", $"Starting backporter against fork \"{fork}\", engine {engine}.");
 
         IEnumerable<Type> backports = GetBackports();

@@ -22,8 +22,10 @@ using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 using Marsey.Config;
 using Marsey.Game.Patches;
+using Marsey.IPC;
 using Marsey.Stealthsey;
 using Marsey.Misc;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 namespace SS14.Launcher.Models;
 
@@ -437,7 +439,7 @@ public class Connector : ReactiveObject
             return null;
         }
 
-        Marsify(startInfo);
+        Marsify();
 
         ConfigureEnvironmentVariables(startInfo, launchInfo, engineVersion);
         ConfigureLogging(startInfo);
@@ -572,52 +574,51 @@ public class Connector : ReactiveObject
         return startInfo;
     }
 
-    private void Marsify(ProcessStartInfo startInfo)
+    private void Marsify()
     {
         Log.Debug("Preparing patch assemblies.");
         FileHandler.PrepareMods();
 
-        ConfigureMarsey(startInfo);
+        ConfigureMarsey();
         MarseyCleanup();
     }
 
     // TODO: Make this a json or something like holy shit
     private string? _forkid;
     private string? _engine;
-    private void ConfigureMarsey(ProcessStartInfo startInfo)
+    private void ConfigureMarsey()
     {
-        // Logging
-        startInfo.EnvironmentVariables["MARSEY_LOADER_DEBUG"] = _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_LOGGING"] = _cfg.GetCVar(CVars.LogPatcher) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_SEPARATE_LOGGER"] = MarseyConf.SeparateLogger ? "true" : null;
-
-        // Safety
-        startInfo.EnvironmentVariables["MARSEY_THROW_FAIL"] = _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_HIDE_LEVEL"] = $"{_cfg.GetCVar(CVars.MarseyHide)}";
-        startInfo.EnvironmentVariables["MARSEY_JAMMER"] = _cfg.GetCVar(CVars.JamDials) ? "true" : null; // Redial
-        startInfo.EnvironmentVariables["MARSEY_DISABLE_REC"] = _cfg.GetCVar(CVars.Blackhole) ? "true" : null; // Remote Execute Command
-        startInfo.EnvironmentVariables["MARSEY_DISABLE_PRESENCE"] = _cfg.GetCVar(CVars.DisableRPC) ? "true" : null; // Hide discord RPC
-
-        // HWID
-        if (_cfg.GetCVar(CVars.ForcingHWId))
+        // Prepare environment variables
+        Dictionary<string, string?> envVars = new Dictionary<string, string?>
         {
-            startInfo.EnvironmentVariables["MARSEY_FORCINGHWID"] = "true";
-            startInfo.EnvironmentVariables["MARSEY_FORCEDHWID"] = MarseyGetHWID();
-        }
+            { "MARSEY_LOADER_DEBUG", _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null },
+            { "MARSEY_LOGGING", _cfg.GetCVar(CVars.LogPatcher) ? "true" : null },
+            { "MARSEY_SEPARATE_LOGGER", _cfg.GetCVar(CVars.LogPatcher) ? "true" : null },
+            { "MARSEY_THROW_FAIL", _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null },
+            { "MARSEY_HIDE_LEVEL", $"{_cfg.GetCVar(CVars.MarseyHide)}" },
+            { "MARSEY_JAMMER", _cfg.GetCVar(CVars.JamDials) ? "true" : null },
+            { "MARSEY_DISABLE_REC", _cfg.GetCVar(CVars.Blackhole) ? "true" : null },
+            { "MARSEY_DISABLE_PRESENCE", _cfg.GetCVar(CVars.DisableRPC) ? "true" : null },
+            { "MARSEY_FORCINGHWID", _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null },
+            { "MARSEY_FORCEDHWID", _cfg.GetCVar(CVars.ForcingHWId) ? MarseyGetHWID() : null },
+            { "MARSEY_FORKID", _forkid },
+            { "MARSEY_ENGINE", _engine },
+            { "MARSEY_BACKPORTS", _cfg.GetCVar(CVars.Backports) ? "true" : null },
+            { "MARSEY_NO_ANY_BACKPORTS", _cfg.GetCVar(CVars.DisableAnyEngineBackports) ? "true" : null },
+            { "MARSEY_DISABLE_STRICT", _cfg.GetCVar(CVars.DisableStrict) ? "true" : null },
+            { "MARSEY_DUMP_ASSEMBLIES", MarseyConf.Dumper ? "true" : null }
+        };
 
-        // Data
-        startInfo.EnvironmentVariables["MARSEY_FORKID"] = _forkid;
-        startInfo.EnvironmentVariables["MARSEY_ENGINE"] = _engine;
+        // Serialize environment variables
+        string serializedEnvVars = string.Join(";", envVars.Select(kv => $"{kv.Key}={kv.Value}"));
 
-        // Backporter
-        startInfo.EnvironmentVariables["MARSEY_BACKPORTS"] = _cfg.GetCVar(CVars.Backports) ? "true" : null;
-        startInfo.EnvironmentVariables["MARSEY_NO_ANY_BACKPORTS"] =
-            _cfg.GetCVar(CVars.DisableAnyEngineBackports) ? "true" : null;
+        SendConfig(serializedEnvVars);
+    }
 
-        // ResPacks
-        startInfo.EnvironmentVariables["MARSEY_DISABLE_STRICT"] = _cfg.GetCVar(CVars.DisableStrict) ? "true" : null;
-        if (MarseyConf.Dumper)
-            startInfo.EnvironmentVariables["MARSEY_DUMP_ASSEMBLIES"] = "true";
+    private async Task SendConfig(string config)
+    {
+        Server MarseyConfPipeServer = new Server();
+        await MarseyConfPipeServer.ReadySend("MarseyConf", config);
     }
 
     private string MarseyGetHWID()
@@ -625,13 +626,14 @@ public class Connector : ReactiveObject
         string forcedHWID = _cfg.GetCVar(CVars.ForcedHWId);
         if (_cfg.GetCVar(CVars.RandHWID))
         {
-            forcedHWID = HWID.GenerateRandom(32);
+            forcedHWID = HWID.GenerateRandom();
         }
         else if (_cfg.GetCVar(CVars.LIHWIDBind))
         {
             forcedHWID = _loginManager.ActiveAccount!.LoginInfo.HWID;
         }
 
+        Log.Debug($"Exiting with {forcedHWID}");
         return forcedHWID;
     }
 

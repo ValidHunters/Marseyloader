@@ -13,7 +13,7 @@ namespace Marsey.Game.Patches;
 public static class HWID
 {
     private static byte[] _hwId = Array.Empty<byte>();
-    private const string HWIDEnv = "MARSEY_FORCEDHWID";
+    private static string _hwidString = "";
 
     /// <summary>
     /// Patching the HWId function and replacing it with a custom HWId.
@@ -32,16 +32,14 @@ public static class HWID
 
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "HWIDForcer", "Starting");
 
-        string hwid = GetForcedHWId();
-        string cleanedHwid = CleanHwid(hwid);
+        string cleanedHwid = CleanHwid(_hwidString);
         ForceHWID(cleanedHwid);
         PatchCalcMethod();
     }
 
-    private static string GetForcedHWId()
+    public static void SetHWID(string? hwid)
     {
-        string? hwid = Envsey.CleanFlag(HWIDEnv);
-        return hwid ?? string.Empty;
+        _hwidString = hwid ?? string.Empty;
     }
 
     private static string CleanHwid(string hwid)
@@ -64,11 +62,11 @@ public static class HWID
         }
     }
 
-    public static string GenerateRandom(int length)
+    public static string GenerateRandom(int length = 64)
     {
         Random random = new Random();
-        const string chars = "0123456789abcdef";
-        StringBuilder result = new StringBuilder(length*2); // Were generating a string here actually, not an array of byte.
+        const string chars = "0123456789ABCDEF";
+        StringBuilder result = new StringBuilder(length);
 
         for (int i = 0; i < length; i++)
         {

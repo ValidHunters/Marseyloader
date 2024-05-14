@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using Marsey.Config;
+using Marsey.IPC;
 using Marsey.PatchAssembly;
 using Marsey.Stealthsey;
 
@@ -29,7 +30,7 @@ public static class MarseyLogger
 
         SharedLog($"[{logType.ToString()}] {message}");
     }
-    
+
     /// <summary>
     /// Ditto but specifying a system used
     /// </summary>
@@ -60,23 +61,28 @@ public static class MarseyLogger
 }
 public abstract class Utility
 {
-    /// <summary>
-    /// Checks loader environment variables, sets relevant flags in MarseyVars.
-    /// Executed only by the loader.
-    /// </summary>
-    public static void SetupFlags()
-    {
-        foreach (KeyValuePair<string, Action<bool>> kvp in MarseyConf.EnvVarMap)
-        {
-            bool value = CheckEnv(kvp.Key);
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Marseyconf", $"{kvp.Key} returned {value}");
-            kvp.Value(value);
-        }
-    }
-
     private static bool CheckEnv(string envName)
     {
         string envVar = Envsey.CleanFlag(envName)!;
         return !string.IsNullOrEmpty(envVar) && bool.Parse(envVar);
+    }
+
+    public static void ReadConf()
+    {
+        Client MarseyConfPipeClient = new Client();
+        string config = MarseyConfPipeClient.ConnRecv("MarseyConf");
+
+        Dictionary<string, string> envVars = config.Split(';')
+            .Select(kv => kv.Split('='))
+            .ToDictionary(kv => kv[0], kv => kv[1]);
+
+        // Apply the environment variables to MarseyConf
+        foreach (KeyValuePair<string, string> kv in envVars)
+        {
+            if (!MarseyConf.EnvVarMap.TryGetValue(kv.Key, value: out Action<string>? value)) continue;
+
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{kv.Key} read {kv.Value}");
+            value(kv.Value);
+        }
     }
 }
