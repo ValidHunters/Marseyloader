@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marsey", "Marsey\Marsey.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marsey.Tests", "Marsey.Tests\Marsey.Tests.csproj", "{E47E0552-FF89-450D-880A-54B745481CD4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marsey.IPC", "Marsey.IPC\Marsey.IPC.csproj", "{97CFAE49-9274-447A-832C-55BC360235EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,18 @@ Global
 		{E47E0552-FF89-450D-880A-54B745481CD4}.Release|x64.Build.0 = Release|Any CPU
 		{E47E0552-FF89-450D-880A-54B745481CD4}.Release|x86.ActiveCfg = Release|Any CPU
 		{E47E0552-FF89-450D-880A-54B745481CD4}.Release|x86.Build.0 = Release|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Debug|x64.Build.0 = Debug|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Debug|x86.Build.0 = Debug|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Release|x64.ActiveCfg = Release|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Release|x64.Build.0 = Release|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{97CFAE49-9274-447A-832C-55BC360235EE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{31D3CCC5-36F4-48C3-8885-E029A2026B57} = {12BB41B7-34BA-44EF-9ECA-434A276D83BD}

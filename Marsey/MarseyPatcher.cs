@@ -25,7 +25,7 @@ public class MarseyPatcher
 {
     private static MarseyPatcher? _instance;
     private static ManualResetEvent? _flag;
-    
+
     public static MarseyPatcher Instance
     {
         get
@@ -37,41 +37,42 @@ public class MarseyPatcher
             return _instance;
         }
     }
-    
+
     public static void CreateInstance(Assembly? robClientAssembly, ManualResetEvent mre)
     {
         if (_instance != null)
         {
             throw new Exception("Instance already created.");
         }
-        
+
         _instance = new MarseyPatcher(robClientAssembly, mre);
     }
-   
+
     /// <exception cref="Exception">Excepts if Robust.Client assembly is null</exception>
     private MarseyPatcher(Assembly? robClientAssembly, ManualResetEvent mre)
     {
         if (robClientAssembly == null) throw new Exception("Robust.Client was null.");
 
         _flag = mre;
-        
+
         // Initialize GameAssemblies
         GameAssemblies.Initialize(robClientAssembly);
-        
+
         // Initialize loader
-        Utility.SetupFlags();
+        //Utility.SetupFlags();
+        Utility.ReadConf();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
-        
+
         MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Marseyloader started, version {MarseyVars.MarseyVersion}");
-        
+
         // Init backport manager
         MarseyPortMan.Initialize();
-        
+
         // Hide the loader
         Hidesey.Initialize();
 
         Preload();
-        
+
         // Tell the loader were done here, start the game
         _flag.Set();
     }
@@ -80,21 +81,21 @@ public class MarseyPatcher
     public void Preload()
     {
         Sentry.Patch();
-        
+
         // Preload marseypatches, if available
         Marsyfier.Preload();
-        
+
         // If set - Disable redialing and remote command execution
         Jammer.Patch();
         Blackhole.Patch();
-        
+
         // Apply engine backports
         MarseyPortMan.PatchBackports();
-        
+
         // Start Resource Manager
         ResMan.Initialize();
     }
-    
+
     /// <summary>
     /// Boots up the patcher
     /// Executed by the loader.
@@ -102,17 +103,17 @@ public class MarseyPatcher
     public void Boot()
     {
         // Side-load custom code
-        if (Subverse.CheckSubversions()) 
+        if (Subverse.CheckSubversions())
             Subverse.PatchSubverter();
 
         // Wait for the game itself to load
         GameAssemblyManager.TrySetContentAssemblies();
-        
+
         // Post assembly-load hide methods
         Hidesey.PostLoad();
-        
+
         ExecPatcher();
-        
+
         Afterparty();
     }
 
@@ -131,22 +132,22 @@ public class MarseyPatcher
         // Execute patches
         Patcher.Patch(patches);
     }
-    
+
     private void Afterparty()
     {
         // TODO: Test if GameAssemblies.ClientInitialized works here
-        while (!GameAssemblies.ClientInitialized()) // Wait until EntryPoint is just about to start 
+        while (!GameAssemblies.ClientInitialized()) // Wait until EntryPoint is just about to start
         {
             Thread.Sleep(125);
         }
-        
+
         // If preclusion is triggered - close the game bruh
         if (Preclusion.State)
             Preclusion.Fire();
-        
+
         // Apply content-related backports
         MarseyPortMan.PatchBackports(true);
-        
+
         // Post-Load hidesey methods
         Hidesey.Cleanup();
     }
