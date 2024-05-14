@@ -22,19 +22,16 @@ public static class MarseyConf
 
     /// <summary>
     /// Should we log anything from the loader
-    /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool Logging;
 
     /// <summary>
     /// Log DEBG messages
-    /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool DebugAllowed;
 
     /// <summary>
     /// Throws an exception on client if any patch had failed applying.
-    /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool ThrowOnFail;
 

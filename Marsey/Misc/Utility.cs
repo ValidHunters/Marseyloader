@@ -61,20 +61,6 @@ public static class MarseyLogger
 }
 public abstract class Utility
 {
-    /// <summary>
-    /// Checks loader environment variables, sets relevant flags in MarseyVars.
-    /// Executed only by the loader.
-    /// </summary>
-    /*public static void SetupFlags()
-    {
-        foreach (KeyValuePair<string, Action<bool>> kvp in MarseyConf.EnvVarMap)
-        {
-            bool value = CheckEnv(kvp.Key);
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Marseyconf", $"{kvp.Key} returned {value}");
-            kvp.Value(value);
-        }
-    }*/
-
     private static bool CheckEnv(string envName)
     {
         string envVar = Envsey.CleanFlag(envName)!;
