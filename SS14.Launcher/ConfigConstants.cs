@@ -32,8 +32,8 @@ public static class ConfigConstants
     public const string AccountManagementUrl = $"{AccountBaseUrl}Manage";
     public const string AccountRegisterUrl = $"{AccountBaseUrl}Register";
     public const string AccountResendConfirmationUrl = $"{AccountBaseUrl}ResendEmailConfirmation";
-    public const string WebsiteUrl = "https://spacestation14.io";
-    public const string DownloadUrl = "https://spacestation14.io/about/nightlies/";
+    public const string WebsiteUrl = "https://spacestation14.com";
+    public const string DownloadUrl = "https://spacestation14.com/about/nightlies/";
     public const string LauncherVersionUrl = "https://central.spacestation14.io/launcher_version.txt";
     public const string RobustBuildsManifest = "https://central.spacestation14.io/builds/robust/manifest.json";
     public const string RobustModulesManifest = "https://central.spacestation14.io/builds/robust/modules.json";
