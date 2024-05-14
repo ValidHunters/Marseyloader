@@ -593,7 +593,7 @@ public class Connector : ReactiveObject
         {
             { "MARSEY_LOADER_DEBUG", _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null },
             { "MARSEY_LOGGING", _cfg.GetCVar(CVars.LogPatcher) ? "true" : null },
-            { "MARSEY_SEPARATE_LOGGER", MarseyConf.SeparateLogger ? "true" : null },
+            { "MARSEY_SEPARATE_LOGGER", _cfg.GetCVar(CVars.LogPatcher) ? "true" : null },
             { "MARSEY_THROW_FAIL", _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null },
             { "MARSEY_HIDE_LEVEL", $"{_cfg.GetCVar(CVars.MarseyHide)}" },
             { "MARSEY_JAMMER", _cfg.GetCVar(CVars.JamDials) ? "true" : null },

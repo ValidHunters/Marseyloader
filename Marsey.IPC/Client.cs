@@ -12,7 +12,6 @@ public class Client
         pipeClient.Connect();
 
         using StreamReader reader = new StreamReader(pipeClient);
-        string serialized = reader.ReadToEnd();
-        return serialized;
+        return reader.ReadToEnd();
     }
 }
