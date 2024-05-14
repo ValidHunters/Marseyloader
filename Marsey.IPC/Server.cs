@@ -11,7 +11,8 @@ public class Server
         await pipeServer.WaitForConnectionAsync();
 
         byte[] buffer = Encoding.UTF8.GetBytes(data);
-
         await pipeServer.WriteAsync(buffer);
+
+        pipeServer.Close();
     }
 }
