@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using Serilog;
 using Splat;
+using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
 using SS14.Launcher.ViewModels;
@@ -135,6 +136,13 @@ public class LauncherCommands
             // Redialling wait
             await Task.Delay(ConfigConstants.LauncherCommandsRedialWaitTimeout);
         }
+        else if (cmd == DMApiCommand)
+        {
+            // Disable Marsey API
+            DataManager cfg = Locator.Current.GetRequiredService<DataManager>();
+            cfg.SetCVar(CVars.MarseyApi, false);
+            Log.Information("Marsey API has been disabled.");
+        }
         else if (cmd.StartsWith("R"))
         {
             // Reason (encoded in UTF-8 and then into hex for safety)
@@ -166,6 +174,7 @@ public class LauncherCommands
     // Command constructors
 
     public const string PingCommand = ":Ping";
+    public const string DMApiCommand = ":DMAPI"; // Disable Marsey API
     public const string RedialWaitCommand = ":RedialWait";
     public const string BlankReasonCommand = "r";
     public static string ConstructConnectCommand(Uri uri) => "c" + uri.ToString();

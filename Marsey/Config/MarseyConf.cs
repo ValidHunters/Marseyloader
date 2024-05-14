@@ -1,4 +1,5 @@
 using Marsey.Game.Patches;
+using Marsey.Game.Patches.Marseyports;
 using Marsey.Misc;
 using Marsey.Stealthsey;
 
@@ -21,19 +22,16 @@ public static class MarseyConf
 
     /// <summary>
     /// Should we log anything from the loader
-    /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool Logging;
 
     /// <summary>
     /// Log DEBG messages
-    /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool DebugAllowed;
 
     /// <summary>
     /// Throws an exception on client if any patch had failed applying.
-    /// <see cref="Utility.SetupFlags"/>
     /// </summary>
     public static bool ThrowOnFail;
 
@@ -68,19 +66,23 @@ public static class MarseyConf
     /// </summary>
     public static bool DisableAnyBackports;
 
-    public static readonly Dictionary<string, Action<bool>> EnvVarMap = new Dictionary<string, Action<bool>>
+    public static readonly Dictionary<string, Action<string>> EnvVarMap = new Dictionary<string, Action<string>>
     {
-        { "MARSEY_LOGGING", value => Logging = value },
-        { "MARSEY_LOADER_DEBUG", value => DebugAllowed = value },
-        { "MARSEY_THROW_FAIL", value => ThrowOnFail = value },
-        { "MARSEY_SEPARATE_LOGGER", value => SeparateLogger = value },
-        { "MARSEY_DISABLE_STRICT", value => DisableResPackStrict = value},
-        { "MARSEY_FORCINGHWID", value => ForceHWID = value },
-        { "MARSEY_DISABLE_PRESENCE", value => KillRPC = value },
-        { "MARSEY_DUMP_ASSEMBLIES", value => Dumper = value },
-        { "MARSEY_JAMMER", value => JamDials = value },
-        { "MARSEY_DISABLE_REC", value => DisableREC = value },
-        { "MARSEY_BACKPORTS", value => Backports = value},
-        { "MARSEY_NO_ANY_BACKPORTS", value => DisableAnyBackports = value}
+        { "MARSEY_LOGGING", value => Logging = value == "true" },
+        { "MARSEY_LOADER_DEBUG", value => DebugAllowed = value == "true" },
+        { "MARSEY_THROW_FAIL", value => ThrowOnFail = value == "true" },
+        { "MARSEY_SEPARATE_LOGGER", value => SeparateLogger = value == "true" },
+        { "MARSEY_DISABLE_STRICT", value => DisableResPackStrict = value == "true" },
+        { "MARSEY_FORCINGHWID", value => ForceHWID = value == "true" },
+        { "MARSEY_FORCEDHWID", value => HWID.SetHWID(value)},
+        { "MARSEY_DISABLE_PRESENCE", value => KillRPC = value == "true" },
+        { "MARSEY_DUMP_ASSEMBLIES", value => Dumper = value == "true" },
+        { "MARSEY_JAMMER", value => JamDials = value == "true" },
+        { "MARSEY_DISABLE_REC", value => DisableREC = value == "true" },
+        { "MARSEY_BACKPORTS", value => Backports = value == "true" },
+        { "MARSEY_NO_ANY_BACKPORTS", value => DisableAnyBackports = value == "true" },
+        { "MARSEY_FORKID", MarseyPortMan.SetForkID },
+        { "MARSEY_ENGINE", MarseyPortMan.SetEngineVer },
+        { "MARSEY_HIDE_LEVEL", value => MarseyHide = (HideLevel)Enum.Parse(typeof(HideLevel), value) }
     };
 }

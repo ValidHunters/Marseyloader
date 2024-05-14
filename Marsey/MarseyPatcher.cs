@@ -59,7 +59,8 @@ public class MarseyPatcher
         GameAssemblies.Initialize(robClientAssembly);
 
         // Initialize loader
-        Utility.SetupFlags();
+        //Utility.SetupFlags();
+        Utility.ReadConf();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
 
         MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Marseyloader started, version {MarseyVars.MarseyVersion}");

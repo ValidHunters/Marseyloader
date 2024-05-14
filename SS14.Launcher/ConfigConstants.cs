@@ -27,12 +27,12 @@ public static class ConfigConstants
 
     public static readonly string AuthUrl = "https://central.spacestation14.io/auth/";
     public static readonly Uri[] DefaultHubUrls = { new("https://cdn.spacestationmultiverse.com/wizden-hub-mirror/") };
-    public const string DiscordUrl = "https://discord.gg/QE7JzMG4Ba";
+    public const string DiscordUrl = "https://discord.gg/xHtZXybKeh";
     public const string AccountBaseUrl = "https://central.spacestation14.io/web/Identity/Account/";
     public const string AccountManagementUrl = $"{AccountBaseUrl}Manage";
     public const string AccountRegisterUrl = $"{AccountBaseUrl}Register";
     public const string AccountResendConfirmationUrl = $"{AccountBaseUrl}ResendEmailConfirmation";
-    public const string WebsiteUrl = "https://fujo.love";
+    public const string WebsiteUrl = "https://ss14.ac";
     public const string DownloadUrl = "https://github.com/ValidHunters/MarseyLoader/releases";
     public const string LauncherVersionUrl = "https://central.spacestation14.io/launcher_version.txt";
     public const string RobustBuildsManifest = "https://central.spacestation14.io/builds/robust/manifest.json";

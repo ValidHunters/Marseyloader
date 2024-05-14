@@ -73,7 +73,6 @@ public static class Hidesey
 
         _initialized = true;
 
-        MarseyConf.MarseyHide = GetHideseyLevel();
         HideLevelExec.Initialize();
 
         Load();
