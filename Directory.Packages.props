@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Launcher-loader shared stuff -->
+    <PackageVersion Include="JetBrains.Annotations" Version="10.3.0" />
     <PackageVersion Include="Lib.Harmony" Version="2.3.0-prerelease.4" />
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="7.0.4" />
     <PackageVersion Include="MonoMod.Utils" Version="25.0.3" />

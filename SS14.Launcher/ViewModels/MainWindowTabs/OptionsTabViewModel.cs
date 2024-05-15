@@ -38,6 +38,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     public ICommand GenHWIdCommand { get; }
     public ICommand DumpConfigCommand { get; }
     public ICommand SetUsernameCommand { get; }
+    public ICommand SetRPCUsernameCommand { get; }
     public ICommand SetGuestUsernameCommand { get; }
     public ICommand SetEndpointCommand { get; }
     public IEnumerable<HideLevel> HideLevels { get; } = Enum.GetValues(typeof(HideLevel)).Cast<HideLevel>();
@@ -52,6 +53,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         _contentManager = Locator.Current.GetRequiredService<ContentManager>();
 
         SetHWIdCommand = new RelayCommand(OnSetHWIdClick);
+        SetRPCUsernameCommand = new RelayCommand(OnSetRPCUsernameClick);
         GenHWIdCommand = new RelayCommand(OnGenHWIdClick);
         SetUsernameCommand = new RelayCommand(OnSetUsernameClick);
         SetGuestUsernameCommand = new RelayCommand(OnSetGuestUsernameClick);
@@ -224,6 +226,24 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
             Cfg.SetCVar(CVars.DisableRPC, value);
             Cfg.CommitConfig();
         }
+    }
+
+    public bool FakeRPC
+    {
+        get => Cfg.GetCVar(CVars.FakeRPC);
+        set
+        {
+            Cfg.SetCVar(CVars.FakeRPC, value);
+            OnPropertyChanged(nameof(FakeRPC));
+            Cfg.CommitConfig();
+        }
+    }
+
+    private string _RPCUsername = "";
+    public string RPCUsername
+    {
+        get => Cfg.GetCVar(CVars.RPCUsername);
+        set => _RPCUsername = value;
     }
 
     public bool ForcingHWID
@@ -408,6 +428,12 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         }
 
         Log.Warning("Passed HWId is not a valid hexadecimal string! Refusing to apply.");
+    }
+
+    private void OnSetRPCUsernameClick()
+    {
+        Cfg.SetCVar(CVars.RPCUsername, _RPCUsername);
+        Cfg.CommitConfig();
     }
 
     private void OnGenHWIdClick()
