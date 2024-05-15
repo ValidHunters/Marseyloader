@@ -30,16 +30,16 @@ public static class HWID
         if (!MarseyConf.ForceHWID)
             return;
 
-        MarseyLogger.Log(MarseyLogger.LogType.INFO, "HWIDForcer", "Starting");
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, "HWIDForcer", $"Trying to apply {_hwidString}");
 
         string cleanedHwid = CleanHwid(_hwidString);
         ForceHWID(cleanedHwid);
         PatchCalcMethod();
     }
 
-    public static void SetHWID(string? hwid)
+    public static void SetHWID(string hwid)
     {
-        _hwidString = hwid ?? string.Empty;
+        _hwidString = hwid;
     }
 
     private static string CleanHwid(string hwid)
