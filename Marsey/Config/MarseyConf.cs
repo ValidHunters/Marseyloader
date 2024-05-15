@@ -43,8 +43,11 @@ public static class MarseyConf
     /// <see cref="HWID"/>
     public static bool ForceHWID;
 
-    /// <see cref="DiscordRPC"/>
+    /// <see cref="DiscordRPC.Disable"/>
     public static bool KillRPC;
+
+    /// <see cref="DiscordRPC.Fake"/>
+    public static bool FakeRPC;
 
     /// <see cref="Marsey.Game.Resources.Dumper.Dumper"/>
     public static bool Dumper;
@@ -66,6 +69,9 @@ public static class MarseyConf
     /// </summary>
     public static bool DisableAnyBackports;
 
+    /// <summary>
+    /// Reflect changes made here to the Dictionary in the launcher's Connector.cs
+    /// </summary>
     public static readonly Dictionary<string, Action<string>> EnvVarMap = new Dictionary<string, Action<string>>
     {
         { "MARSEY_LOGGING", value => Logging = value == "true" },
@@ -76,6 +82,8 @@ public static class MarseyConf
         { "MARSEY_FORCINGHWID", value => ForceHWID = value == "true" },
         { "MARSEY_FORCEDHWID", value => HWID.SetHWID(value)},
         { "MARSEY_DISABLE_PRESENCE", value => KillRPC = value == "true" },
+        { "MARSEY_FAKE_PRESENCE", value => FakeRPC = value == "true"},
+        { "MARSEY_PRESENCE_USERNAME", value => DiscordRPC.SetUsername(value)},
         { "MARSEY_DUMP_ASSEMBLIES", value => Dumper = value == "true" },
         { "MARSEY_JAMMER", value => JamDials = value == "true" },
         { "MARSEY_DISABLE_REC", value => DisableREC = value == "true" },
