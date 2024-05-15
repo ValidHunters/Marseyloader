@@ -235,6 +235,7 @@ internal static class Program
         var hubApi = new HubApi(http);
         var overrideAssets = new OverrideAssetsManager(cfg, http);
         var loginManager = new LoginManager(cfg, authApi);
+        var launcherInfo = new LauncherInfoManager(http);
 
         locator.RegisterConstant(new ContentManager());
         locator.RegisterConstant<IEngineManager>(new EngineManagerDynamic());
@@ -244,6 +245,7 @@ internal static class Program
         locator.RegisterConstant(new ServerListCache());
         locator.RegisterConstant(loginManager);
         locator.RegisterConstant(overrideAssets);
+        locator.RegisterConstant(launcherInfo);
 
         return AppBuilder.Configure(() => new App(overrideAssets))
             .UsePlatformDetect()
@@ -262,9 +264,11 @@ internal static class Program
         var msgr = Locator.Current.GetRequiredService<LauncherMessaging>();
         var contentManager = Locator.Current.GetRequiredService<ContentManager>();
         var overrideAssets = Locator.Current.GetRequiredService<OverrideAssetsManager>();
+        var launcherInfo = Locator.Current.GetRequiredService<LauncherInfoManager>();
 
         contentManager.Initialize();
         overrideAssets.Initialize();
+        launcherInfo.Initialize();
 
         var viewModel = new MainWindowViewModel();
         var window = new MainWindow
