@@ -149,6 +149,16 @@ public static class CVars
     public static readonly CVarDef<bool> DisableRPC = CVarDef.Create("DisableRPC", false);
 
     /// <summary>
+    /// Do we fake the username on RPC?
+    /// </summary>
+    public static readonly CVarDef<bool> FakeRPC = CVarDef.Create("FakeRPC", false);
+
+    /// <summary>
+    /// Username to fake RPC with
+    /// </summary>
+    public static readonly CVarDef<string> RPCUsername = CVarDef.Create("RPCUsername", "");
+
+    /// <summary>
     /// Do we disable redialing?
     /// </summary>
     public static readonly CVarDef<bool> JamDials = CVarDef.Create("JamDials", false);

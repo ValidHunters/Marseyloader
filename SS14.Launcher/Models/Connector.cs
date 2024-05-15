@@ -599,6 +599,8 @@ public class Connector : ReactiveObject
             { "MARSEY_JAMMER", _cfg.GetCVar(CVars.JamDials) ? "true" : null },
             { "MARSEY_DISABLE_REC", _cfg.GetCVar(CVars.Blackhole) ? "true" : null },
             { "MARSEY_DISABLE_PRESENCE", _cfg.GetCVar(CVars.DisableRPC) ? "true" : null },
+            { "MARSEY_FAKE_PRESENCE", _cfg.GetCVar(CVars.FakeRPC) ? "true" : null },
+            { "MARSEY_PRESENCE_USERNAME", _cfg.GetCVar(CVars.RPCUsername) },
             { "MARSEY_FORCINGHWID", _cfg.GetCVar(CVars.ForcingHWId) ? "true" : null },
             { "MARSEY_FORCEDHWID", _cfg.GetCVar(CVars.ForcingHWId) ? MarseyGetHWID() : null },
             { "MARSEY_FORKID", _forkid },

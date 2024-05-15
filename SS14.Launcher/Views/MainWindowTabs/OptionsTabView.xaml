@@ -82,6 +82,19 @@
                        Text="Does not let Discord RPC initialize, hiding your username and server from your profile."
                        Margin="8" />
 
+            <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding FakeRPC}">Fake RPC Username</CheckBox>
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                       Text="Changes the username on Discord Rich Presence."
+                       Margin="8" />
+
+            <Grid IsVisible="{Binding FakeRPC}" RowDefinitions="*, *, *" ColumnDefinitions="*, Auto">
+              <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="NoWrap"
+                         Text="Set your username below. This username will be shown in the discord rich presence activity when hovering on the big icon."
+                         Margin="8"/>
+              <TextBox Grid.Row="1" Grid.Column="0" Width="600" MaxWidth="1000" HorizontalAlignment="Left" x:Name="RPCUsernameTextBox" VerticalAlignment="Center" Margin="4" Text="{Binding RPCUsername}"/>
+              <Button Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Content="Set username" Command="{Binding SetRPCUsernameCommand}" VerticalAlignment="Center" Margin="4"/>
+            </Grid>
+
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding MarseyJam}">Disable Redial</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                        Text="Does not let game admins (or the game itself) to reconnect you to another station."
