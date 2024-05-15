@@ -25,10 +25,10 @@ public static class ConfigConstants
     // Amount of time to wait to let a redialling client properly die
     public const int LauncherCommandsRedialWaitTimeout = 1000;
 
-    public static readonly string AuthUrl = "https://central.spacestation14.io/auth/";
+    public static readonly string AuthUrl = "https://auth.spacestation14.com/";
     public static readonly Uri[] DefaultHubUrls = { new("https://hub.spacestation14.com/") };
     public const string DiscordUrl = "https://discord.ss14.io/";
-    public const string AccountBaseUrl = "https://central.spacestation14.io/web/Identity/Account/";
+    public const string AccountBaseUrl = "https://account.spacestation14.com/Identity/Account/Manage";
     public const string AccountManagementUrl = $"{AccountBaseUrl}Manage";
     public const string AccountRegisterUrl = $"{AccountBaseUrl}Register";
     public const string AccountResendConfirmationUrl = $"{AccountBaseUrl}ResendEmailConfirmation";
