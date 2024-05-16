@@ -53,7 +53,9 @@
               <ItemsControl Grid.Row="0" ItemsSource="{Binding SearchedServers}" Classes="ServerList" />
               <TextBlock Grid.Row="1" IsVisible="{Binding ListTextVisible}" TextAlignment="Center" VerticalAlignment="Center"
                          Text="{Binding ListText}" />
-              <views:DungSpinner Grid.Row="2" IsVisible="{Binding SpinnerVisible}" HorizontalAlignment="Center" />
+              <Viewbox Grid.Row="2" IsVisible="{Binding SpinnerVisible}" Classes="DungSpinnerBox">
+                <views:DungSpinner />
+              </Viewbox>
             </Grid>
           </ScrollViewer>
           <StackPanel Orientation="Vertical" VerticalAlignment="Center" />
