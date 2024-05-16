@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using System.Threading;
+using Avalonia.Platform.Storage;
 using ReactiveUI;
 using Splat;
 using SS14.Launcher.Models;
@@ -202,12 +203,12 @@ public class ConnectingViewModel : ViewModelBase
         StartedConnecting?.Invoke();
     }
 
-    public static void StartContentBundle(MainWindowViewModel windowVm, string fileName)
+    public static void StartContentBundle(MainWindowViewModel windowVm, IStorageFile file)
     {
         var connector = new Connector();
         var vm = new ConnectingViewModel(connector, windowVm, null, ConnectionType.ContentBundle);
         windowVm.ConnectingVM = vm;
-        vm.StartContentBundle(fileName);
+        vm.StartContentBundle(file);
         StartedConnecting?.Invoke();
     }
 
@@ -216,9 +217,9 @@ public class ConnectingViewModel : ViewModelBase
         _connector.Connect(address, _cancelSource.Token);
     }
 
-    private void StartContentBundle(string fileName)
+    private void StartContentBundle(IStorageFile file)
     {
-        _connector.LaunchContentBundle(fileName, _cancelSource.Token);
+        _connector.LaunchContentBundle(file, _cancelSource.Token);
     }
 
     public void ErrorDismissed()

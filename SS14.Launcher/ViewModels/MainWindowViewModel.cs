@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Http;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
 using DynamicData;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -257,7 +258,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         OverlayViewModel = null;
     }
 
-    public bool IsContentBundleDropValid(string fileName)
+    public bool IsContentBundleDropValid(IStorageFile file)
     {
         // Can only load content bundles if logged in, in some capacity.
         if (!LoggedIn)
@@ -267,14 +268,14 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         if (ConnectingVM != null)
             return false;
 
-        return Path.GetExtension(fileName) == ".zip";
+        return Path.GetExtension(file.Name) == ".zip";
     }
 
-    public void Dropped(string fileName)
+    public void Dropped(IStorageFile file)
     {
         // Trust view validated this.
-        Debug.Assert(IsContentBundleDropValid(fileName));
+        Debug.Assert(IsContentBundleDropValid(file));
 
-        ConnectingViewModel.StartContentBundle(this, fileName);
+        ConnectingViewModel.StartContentBundle(this, file);
     }
 }

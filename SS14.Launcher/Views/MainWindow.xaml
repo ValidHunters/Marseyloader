@@ -79,8 +79,8 @@
 
     <ContentControl Classes="OverlayBox" IsVisible="{Binding LoginViewModel.Screen.Busy}">
       <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-        <Viewbox Width="72" Height="72" HorizontalAlignment="Center">
-          <v:DungSpinner DockPanel.Dock="Top" />
+        <Viewbox Classes="DungSpinnerBox">
+          <v:DungSpinner />
         </Viewbox>
         <TextBlock Text="{Binding LoginViewModel.Screen.BusyText}" HorizontalAlignment="Center" />
       </StackPanel>
@@ -93,7 +93,7 @@
 
     <ContentControl Classes="OverlayBox" IsVisible="{Binding BusyTask,Converter={x:Static ObjectConverters.IsNotNull}}">
       <StackPanel Orientation="Vertical">
-        <Viewbox Width="72" Height="72" HorizontalAlignment="Center">
+        <Viewbox Classes="DungSpinnerBox">
           <v:DungSpinner DockPanel.Dock="Top" />
         </Viewbox>
         <TextBlock Text="{Binding BusyTask}" HorizontalAlignment="Center" />

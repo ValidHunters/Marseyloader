@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using SS14.Launcher.ViewModels;
 using TerraFX.Interop.Windows;
 using IDataObject = Avalonia.Input.IDataObject;
@@ -72,9 +72,8 @@ public partial class MainWindow : Window
         if (!IsDragDropValid(args.Data))
             return;
 
-        var fileName = GetDragDropFileName(args.Data)!;
-
-        _viewModel!.Dropped(fileName);
+        var file = GetDragDropFile(args.Data)!;
+        _viewModel!.Dropped(file);
     }
 
     private void DragOver(object? sender, DragEventArgs args)
@@ -106,17 +105,17 @@ public partial class MainWindow : Window
         if (_viewModel == null)
             return false;
 
-        if (GetDragDropFileName(dataObject) is not { } fileName)
+        if (GetDragDropFile(dataObject) is not { } fileName)
             return false;
 
         return _viewModel.IsContentBundleDropValid(fileName);
     }
 
-    private static string? GetDragDropFileName(IDataObject dataObject)
+    private static IStorageFile? GetDragDropFile(IDataObject dataObject)
     {
         if (!dataObject.Contains(DataFormats.Files))
             return null;
 
-        return dataObject.GetFiles()?.SingleOrDefault()?.Path.AbsolutePath;
+        return dataObject.GetFiles()?.OfType<IStorageFile>().FirstOrDefault();
     }
 }
