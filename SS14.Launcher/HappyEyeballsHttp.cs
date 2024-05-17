@@ -76,88 +76,15 @@ public static class HappyEyeballsHttp
 
         Debug.Assert(ips.Length > 0);
 
-        using var successCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        // All tasks we have ever tried.
-        var allTasks = new List<Task<Socket>>();
-        // Tasks we are still waiting on.
-        var tasks = new List<Task<Socket>>();
+        var (socket, index) = await ParallelTask(
+            ips.Length,
+            (i, cancel) => AttemptConnection(i, ips[i], endPoint.Port, cancel),
+            TimeSpan.FromMilliseconds(ConnectionAttemptDelay),
+            cancellationToken);
 
-        // The general loop here is as follows:
-        // 1. Add a new task for the next IP to try.
-        // 2. Wait until any task completes OR the ConnectionAttemptDelay happens.
-        // If an error occurs, we stop checking that task and continue checking the next.
-        // Every iteration we add another task, until we're full on them.
-        // We keep looping until we have SUCCESS, or we run out of attempt tasks entirely.
+        Log.Verbose("Successfully connected {EndPoint} to address: {Address}", endPoint, ips[index]);
 
-        Task<Socket>? successTask = null;
-        while (successTask == null && (allTasks.Count < ips.Length || tasks.Count > 0))
-        {
-            if (allTasks.Count < ips.Length)
-            {
-                // We have to queue another task this iteration.
-                var newTask = AttemptConnection(allTasks.Count, ips[allTasks.Count], context.DnsEndPoint.Port,
-                    successCts.Token);
-                tasks.Add(newTask);
-                allTasks.Add(newTask);
-            }
-
-            var whenAnyDone = Task.WhenAny(tasks);
-            Task<Socket> completedTask;
-
-            if (allTasks.Count < ips.Length)
-            {
-                Log.Verbose("Waiting on ConnectionAttemptDelay");
-                // If we have another one to queue, wait for a timeout instead of *just* waiting for a connection task.
-                var timeoutTask = Task.Delay(ConnectionAttemptDelay, successCts.Token);
-                var whenAnyOrTimeout = await Task.WhenAny(whenAnyDone, timeoutTask);
-                if (whenAnyOrTimeout != whenAnyDone)
-                {
-                    // Timeout finished. Go to next iteration so we queue another one.
-                    continue;
-                }
-
-                completedTask = whenAnyDone.Result;
-            }
-            else
-            {
-                completedTask = await whenAnyDone;
-            }
-
-            if (completedTask.IsCompletedSuccessfully)
-            {
-                // We did it. We have success.
-                successTask = completedTask;
-                Log.Verbose("Successfully connected to endpoint: {Address}", completedTask.Result.RemoteEndPoint);
-                break;
-            }
-            else
-            {
-                // Faulted. Remove it.
-                tasks.Remove(completedTask);
-            }
-        }
-
-        Debug.Assert(allTasks.Count > 0);
-
-        cancellationToken.ThrowIfCancellationRequested();
-        await successCts.CancelAsync();
-
-        if (successTask == null)
-        {
-            // We didn't get a single successful connection. Well heck.
-            throw new AggregateException($"Connecting to host {context.DnsEndPoint.Host} failed",
-                allTasks.Where(x => x.IsFaulted).SelectMany(x => x.Exception!.InnerExceptions));
-        }
-
-        // I don't know if this is possible but MAKE SURE that we don't get two sockets completing at once.
-        // Just a safety measure.
-        foreach (var task in allTasks)
-        {
-            if (task.IsCompletedSuccessfully && task != successTask)
-                task.Result.Dispose();
-        }
-
-        return new NetworkStream(successTask.Result, ownsSocket: true);
+        return new NetworkStream(socket, ownsSocket: true);
     }
 
     private static async Task<Socket> AttemptConnection(
@@ -226,5 +153,96 @@ public static class HappyEyeballsHttp
         }
 
         return result;
+    }
+
+    internal static async Task<(T, int)> ParallelTask<T>(
+        int candidateCount,
+        Func<int, CancellationToken, Task<T>> taskBuilder,
+        TimeSpan delay,
+        CancellationToken cancel) where T : IDisposable
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(candidateCount);
+
+        using var successCts = CancellationTokenSource.CreateLinkedTokenSource(cancel);
+
+        // All tasks we have ever tried.
+        var allTasks = new List<Task<T>>();
+        // Tasks we are still waiting on.
+        var tasks = new List<Task<T>>();
+
+        // The general loop here is as follows:
+        // 1. Add a new task for the next IP to try.
+        // 2. Wait until any task completes OR the delay happens.
+        // If an error occurs, we stop checking that task and continue checking the next.
+        // Every iteration we add another task, until we're full on them.
+        // We keep looping until we have SUCCESS, or we run out of attempt tasks entirely.
+
+        Task<T>? successTask = null;
+        while (successTask == null && (allTasks.Count < candidateCount || tasks.Count > 0))
+        {
+            if (allTasks.Count < candidateCount)
+            {
+                // We have to queue another task this iteration.
+                var newTask = taskBuilder(allTasks.Count, successCts.Token);
+                tasks.Add(newTask);
+                allTasks.Add(newTask);
+            }
+
+            var whenAnyDone = Task.WhenAny(tasks);
+            Task<T> completedTask;
+
+            if (allTasks.Count < candidateCount)
+            {
+                Log.Verbose("Waiting on ConnectionAttemptDelay");
+                // If we have another one to queue, wait for a timeout instead of *just* waiting for a connection task.
+                var timeoutTask = Task.Delay(delay, successCts.Token);
+                var whenAnyOrTimeout = await Task.WhenAny(whenAnyDone, timeoutTask).ConfigureAwait(false);
+                if (whenAnyOrTimeout != whenAnyDone)
+                {
+                    // Timeout finished. Go to next iteration so we queue another one.
+                    continue;
+                }
+
+                completedTask = whenAnyDone.Result;
+            }
+            else
+            {
+                completedTask = await whenAnyDone.ConfigureAwait(false);
+            }
+
+            if (completedTask.IsCompletedSuccessfully)
+            {
+                // We did it. We have success.
+                successTask = completedTask;
+                break;
+            }
+            else
+            {
+                // Faulted. Remove it.
+                tasks.Remove(completedTask);
+            }
+        }
+
+        Debug.Assert(allTasks.Count > 0);
+
+        cancel.ThrowIfCancellationRequested();
+        await successCts.CancelAsync().ConfigureAwait(false);
+
+        if (successTask == null)
+        {
+            // We didn't get a single successful connection. Well heck.
+            throw new AggregateException(
+                allTasks.Where(x => x.IsFaulted).SelectMany(x => x.Exception!.InnerExceptions));
+        }
+
+        // I don't know if this is possible but MAKE SURE that we don't get two sockets completing at once.
+        // Just a safety measure.
+        foreach (var task in allTasks)
+        {
+            if (task.IsCompletedSuccessfully && task != successTask)
+                task.Result.Dispose();
+        }
+
+        return (successTask.Result, allTasks.IndexOf(successTask));
     }
 }

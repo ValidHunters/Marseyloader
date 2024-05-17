@@ -1,4 +1,5 @@
 using System;
+using SS14.Launcher.Utility;
 
 namespace SS14.Launcher;
 
@@ -35,8 +36,16 @@ public static class ConfigConstants
     public const string WebsiteUrl = "https://spacestation14.com";
     public const string DownloadUrl = "https://spacestation14.com/about/nightlies/";
     public const string LauncherVersionUrl = "https://central.spacestation14.io/launcher_version.txt";
-    public const string RobustBuildsManifest = "https://central.spacestation14.io/builds/robust/manifest.json";
-    public const string RobustModulesManifest = "https://central.spacestation14.io/builds/robust/modules.json";
+
+    public static readonly UrlFallbackSet RobustBuildsManifest = new([
+        "https://robust-builds.cdn.spacestation14.com/manifest.json",
+        "https://robust-builds.fallback.cdn.spacestation14.com/manifest.json"
+    ]);
+
+    public static readonly UrlFallbackSet RobustModulesManifest = new([
+        "https://robust-builds.cdn.spacestation14.com/modules.json",
+        "https://robust-builds.fallback.cdn.spacestation14.com/modules.json"
+    ]);
 
     // How long to keep cached copies of Robust manifests.
     // TODO: Take this from Cache-Control header responses instead.
