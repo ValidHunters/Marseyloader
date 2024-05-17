@@ -35,29 +35,26 @@ public static class ConfigConstants
     public const string AccountResendConfirmationUrl = $"{AccountBaseUrl}ResendEmailConfirmation";
     public const string WebsiteUrl = "https://spacestation14.com";
     public const string DownloadUrl = "https://spacestation14.com/about/nightlies/";
-    public const string LauncherVersionUrl = "https://central.spacestation14.io/launcher_version.txt";
 
-    public static readonly UrlFallbackSet RobustBuildsManifest = new([
-        "https://robust-builds.cdn.spacestation14.com/manifest.json",
-        "https://robust-builds.fallback.cdn.spacestation14.com/manifest.json"
+    private static readonly UrlFallbackSet RobustBuildsBaseUrl = new([
+        "https://robust-builds.cdn.spacestation14.com/",
+        "https://robust-builds.fallback.cdn.spacestation14.com/"
     ]);
 
-    public static readonly UrlFallbackSet RobustModulesManifest = new([
-        "https://robust-builds.cdn.spacestation14.com/modules.json",
-        "https://robust-builds.fallback.cdn.spacestation14.com/modules.json"
+    private static readonly UrlFallbackSet LauncherDataBaseUrl = new([
+        "https://launcher-data.cdn.spacestation14.com/",
+        "https://launcher-data.fallback.cdn.spacestation14.com/"
     ]);
+
+    public static readonly UrlFallbackSet RobustBuildsManifest = RobustBuildsBaseUrl + "manifest.json";
+    public static readonly UrlFallbackSet RobustModulesManifest = RobustBuildsBaseUrl + "modules.json";
 
     // How long to keep cached copies of Robust manifests.
     // TODO: Take this from Cache-Control header responses instead.
     public static readonly TimeSpan RobustManifestCacheTime = TimeSpan.FromMinutes(15);
 
-    public const string UrlOverrideAssets = "https://central.spacestation14.io/launcher/override_assets.json";
-    public const string UrlAssetsBase = "https://central.spacestation14.io/launcher/assets/";
-
-    // Currently contains server-set messages.
-    // In the future, planning to merge launcher version and override assets info,
-    // so we can coalesce all of that into a single HTTP request at startup.
-    public const string UrlLauncherInfo = "https://central.spacestation14.io/launcher/info.json";
+    public static readonly UrlFallbackSet UrlLauncherInfo = LauncherDataBaseUrl + "info.json";
+    public static readonly UrlFallbackSet UrlAssetsBase = LauncherDataBaseUrl + "assets/";
 
     public const string FallbackUsername = "JoeGenero";
 

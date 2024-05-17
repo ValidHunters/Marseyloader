@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading;
@@ -20,6 +21,22 @@ public sealed class UrlFallbackSet(ImmutableArray<string> urls)
         msg.EnsureSuccessStatusCode();
 
         return await msg.Content.ReadFromJsonAsync<T>(cancel).ConfigureAwait(false);
+    }
+
+    public async Task<byte[]> GetByteArrayAsync(HttpClient client, CancellationToken cancel = default)
+    {
+        var msg = await GetAsync(client, cancel).ConfigureAwait(false);
+        msg.EnsureSuccessStatusCode();
+
+        return await msg.Content.ReadAsByteArrayAsync(cancel).ConfigureAwait(false);
+    }
+
+    public async Task<string> GetStringAsync(HttpClient client, CancellationToken cancel = default)
+    {
+        var msg = await GetAsync(client, cancel).ConfigureAwait(false);
+        msg.EnsureSuccessStatusCode();
+
+        return await msg.Content.ReadAsStringAsync(cancel).ConfigureAwait(false);
     }
 
     public async Task<HttpResponseMessage> GetAsync(HttpClient httpClient, CancellationToken cancel = default)
@@ -62,5 +79,10 @@ public sealed class UrlFallbackSet(ImmutableArray<string> urls)
         ).ConfigureAwait(false);
 
         return response;
+    }
+
+    public static UrlFallbackSet operator +(UrlFallbackSet set, string s)
+    {
+        return new UrlFallbackSet([..set.Urls.Select(x => x + s)]);
     }
 }

@@ -233,9 +233,9 @@ internal static class Program
 
         var authApi = new AuthApi(http);
         var hubApi = new HubApi(http);
-        var overrideAssets = new OverrideAssetsManager(cfg, http);
-        var loginManager = new LoginManager(cfg, authApi);
         var launcherInfo = new LauncherInfoManager(http);
+        var overrideAssets = new OverrideAssetsManager(cfg, http, launcherInfo);
+        var loginManager = new LoginManager(cfg, authApi);
 
         locator.RegisterConstant(new ContentManager());
         locator.RegisterConstant<IEngineManager>(new EngineManagerDynamic());
@@ -267,8 +267,8 @@ internal static class Program
         var launcherInfo = Locator.Current.GetRequiredService<LauncherInfoManager>();
 
         contentManager.Initialize();
-        overrideAssets.Initialize();
         launcherInfo.Initialize();
+        overrideAssets.Initialize();
 
         var viewModel = new MainWindowViewModel();
         var window = new MainWindow

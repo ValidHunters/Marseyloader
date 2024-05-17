@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
+using System.Threading.Tasks;
 using Serilog;
 
 namespace SS14.Launcher.Models;
@@ -14,18 +14,33 @@ public sealed class LauncherInfoManager(HttpClient httpClient)
     private readonly Random _messageRandom = new();
     private string[]? _messages;
 
-    public void Initialize()
+    private LauncherInfoModel? _model;
+
+    public LauncherInfoModel? Model
     {
-        LoadData();
+        get
+        {
+            if (!LoadTask.IsCompleted)
+                throw new InvalidOperationException("Data has not been loaded yet");
+
+            return _model;
+        }
     }
 
-    private async void LoadData()
+    public Task LoadTask { get; private set; } = default!;
+
+    public void Initialize()
+    {
+        LoadTask = LoadData();
+    }
+
+    private async Task LoadData()
     {
         LauncherInfoModel? info;
         try
         {
             Log.Debug("Loading launcher info... {Url}", ConfigConstants.UrlLauncherInfo);
-            info = await httpClient.GetFromJsonAsync<LauncherInfoModel>(ConfigConstants.UrlLauncherInfo);
+            info = await ConfigConstants.UrlLauncherInfo.GetFromJsonAsync<LauncherInfoModel>(httpClient);
             if (info == null)
             {
                 Log.Warning("Launcher info response was null.");
@@ -41,6 +56,8 @@ public sealed class LauncherInfoManager(HttpClient httpClient)
         // This is future-proofed to support multiple languages,
         // but for now the launcher only supports English so it'll have to do.
         info.Messages.TryGetValue("en-US", out _messages);
+
+        _model = info;
     }
 
     public string? GetRandomMessage()
@@ -51,5 +68,9 @@ public sealed class LauncherInfoManager(HttpClient httpClient)
         return _messages[_messageRandom.Next(_messages.Length)];
     }
 
-    private sealed record LauncherInfoModel(Dictionary<string, string[]> Messages);
+    public sealed record LauncherInfoModel(
+        Dictionary<string, string[]> Messages,
+        string[] AllowedVersions,
+        Dictionary<string, string?> OverrideAssets
+    );
 }

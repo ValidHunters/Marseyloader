@@ -12,6 +12,7 @@ using ReactiveUI.Fody.Helpers;
 using Serilog;
 using Splat;
 using SS14.Launcher.Api;
+using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
@@ -26,6 +27,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
     private readonly DataManager _cfg;
     private readonly LoginManager _loginMgr;
     private readonly HttpClient _http;
+    private readonly LauncherInfoManager _infoManager;
 
     private int _selectedIndex;
 
@@ -42,6 +44,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         _cfg = Locator.Current.GetRequiredService<DataManager>();
         _loginMgr = Locator.Current.GetRequiredService<LoginManager>();
         _http = Locator.Current.GetRequiredService<HttpClient>();
+        _infoManager = Locator.Current.GetRequiredService<LauncherInfoManager>();
 
         ServersTab = new ServerListTabViewModel(this);
         NewsTab = new NewsTabViewModel();
@@ -173,18 +176,17 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
             return;
         }
 
-        try
+        await _infoManager.LoadTask;
+        if (_infoManager.Model == null)
         {
-            var curVersion = await _http.GetStringAsync(ConfigConstants.LauncherVersionUrl);
-            var versions = curVersion.Trim().Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            OutOfDate = Array.IndexOf(versions, ConfigConstants.CurrentLauncherVersion) == -1;
-        }
-        catch (HttpRequestException e)
-        {
-            Log.Warning(e, "Unable to check for launcher update due to error, assuming up-to-date.");
-            HttpSelfTest.StartSelfTest();
+            // Error while loading.
+            Log.Warning("Unable to check for launcher update due to error, assuming up-to-date.");
             OutOfDate = false;
+            return;
         }
+
+        OutOfDate = Array.IndexOf(_infoManager.Model.AllowedVersions, ConfigConstants.CurrentLauncherVersion) == -1;
+        Log.Debug("Launcher out of date? {Value}", OutOfDate);
     }
 
     public void ExitPressed()
