@@ -406,7 +406,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         string hwid = _HWIdString;
 
         // Check if _HWIdString is a valid hex string (allowing empty string) and pad it if necessary
-        if (Regex.IsMatch(_HWIdString, "^[a-fA-F0-9]*$")) // '*' allows for zero or more characters
+        if (Regex.IsMatch(_HWIdString, "^$|^[A-F0-9]{64}$")) // '*' allows for zero or more characters
         {
             if (LIHWIDBind)
             {

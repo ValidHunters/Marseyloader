@@ -44,7 +44,7 @@ public static class HWID
 
     private static string CleanHwid(string hwid)
     {
-        return new string(hwid.Where(c => "0123456789ABCDEFabcdef".Contains(c)).ToArray());
+        return new string(hwid.Where(c => "0123456789ABCDEF".Contains(c)).ToArray());
     }
 
     private static void ForceHWID(string cleanedHwid)
