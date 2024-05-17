@@ -67,12 +67,12 @@ public static class HappyEyeballsHttp
         // I could find no other robust way to check "is there a chance in hell IPv6 works" other than "try it",
         // so... try it we will.
         var endPoint = context.DnsEndPoint;
-        var hostEntry = await Dns.GetHostEntryAsync(endPoint.Host, cancellationToken).ConfigureAwait(false);
-        if (hostEntry.AddressList.Length == 0)
+        var resolvedAddresses = await GetIpsForHost(endPoint, cancellationToken).ConfigureAwait(false);
+        if (resolvedAddresses.Length == 0)
             throw new Exception($"Host {context.DnsEndPoint.Host} resolved to no IPs!");
 
         // Sort as specified in the RFC, interleaving.
-        var ips = SortInterleaved(hostEntry.AddressList);
+        var ips = SortInterleaved(resolvedAddresses);
 
         Debug.Assert(ips.Length > 0);
 
@@ -123,6 +123,15 @@ public static class HappyEyeballsHttp
             socket.Dispose();
             throw;
         }
+    }
+
+    private static async Task<IPAddress[]> GetIpsForHost(DnsEndPoint endPoint, CancellationToken cancel)
+    {
+        if (IPAddress.TryParse(endPoint.Host, out var ip))
+            return [ip];
+
+        var entry = await Dns.GetHostEntryAsync(endPoint.Host, cancel).ConfigureAwait(false);
+        return entry.AddressList;
     }
 
     private static IPAddress[] SortInterleaved(IPAddress[] addresses)
