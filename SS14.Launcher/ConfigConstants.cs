@@ -5,7 +5,7 @@ namespace SS14.Launcher;
 
 public static class ConfigConstants
 {
-    public const string CurrentLauncherVersion = "46";
+    public const string CurrentLauncherVersion = "47";
     public static readonly bool DoVersionCheck = true;
 
     // Refresh login tokens if they're within <this much> of expiry.
@@ -29,7 +29,7 @@ public static class ConfigConstants
     public static readonly string AuthUrl = "https://auth.spacestation14.com/";
     public static readonly Uri[] DefaultHubUrls = { new("https://hub.spacestation14.com/") };
     public const string DiscordUrl = "https://discord.ss14.io/";
-    public const string AccountBaseUrl = "https://account.spacestation14.com/Identity/Account/Manage";
+     public const string AccountBaseUrl = "https://account.spacestation14.com/Identity/Account/";
     public const string AccountManagementUrl = $"{AccountBaseUrl}Manage";
     public const string AccountRegisterUrl = $"{AccountBaseUrl}Register";
     public const string AccountResendConfirmationUrl = $"{AccountBaseUrl}ResendEmailConfirmation";
