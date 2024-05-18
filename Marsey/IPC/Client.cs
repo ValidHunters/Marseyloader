@@ -1,6 +1,5 @@
 ﻿using System.IO.Pipes;
 
-
 namespace Marsey.IPC;
 
 public class Client
