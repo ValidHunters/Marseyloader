@@ -10,10 +10,9 @@ namespace Marsey.Stealthsey;
 public static class Envsey
 {
     /// <summary>
-    /// Sets an env variable to null
+    /// Gets the value of an env variable and then sets it to null
     /// </summary>
     /// <param name="envName">Name of env var</param>
-    [HideLevelRequirement(HideLevel.Normal)]
     public static string? CleanFlag(string envName)
     {
         string? temp = Environment.GetEnvironmentVariable(envName);
