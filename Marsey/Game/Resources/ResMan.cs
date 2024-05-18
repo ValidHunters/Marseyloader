@@ -3,8 +3,6 @@ using Marsey.Game.Patches.Marseyports;
 using Marsey.Game.Resources.Dumper;
 using Marsey.Game.Resources.Reflection;
 using Marsey.Misc;
-using Marsey.Serializer;
-using Marsey.Stealthsey;
 
 namespace Marsey.Game.Resources;
 

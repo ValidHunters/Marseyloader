@@ -1,11 +1,9 @@
 using System.Reflection;
 using Marsey.Config;
-using Marsey.Game.Patches;
 using Marsey.Game.Resources;
 using Marsey.Game.Resources.Dumper.Resource;
 using Marsey.PatchAssembly;
 using Marsey.Patches;
-using Marsey.Serializer;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 
