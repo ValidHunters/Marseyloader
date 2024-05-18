@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using Marsey.Config;
 using Serilog;
 using Splat;
 using SS14.Launcher.Models.Data;
@@ -143,6 +144,11 @@ public class LauncherCommands
             cfg.SetCVar(CVars.MarseyApi, false);
             Log.Information("Marsey API has been disabled.");
         }
+        else if (cmd == DBGJumpCommand)
+        {
+            Log.Information("JUMPER ENABLED - Loader will wait for a debugger to attach!");
+            MarseyConf.JumpLoaderDebug = true;
+        }
         else if (cmd.StartsWith("R"))
         {
             // Reason (encoded in UTF-8 and then into hex for safety)
@@ -175,6 +181,7 @@ public class LauncherCommands
 
     public const string PingCommand = ":Ping";
     public const string DMApiCommand = ":DMAPI"; // Disable Marsey API
+    public const string DBGJumpCommand = ":Jumper";
     public const string RedialWaitCommand = ":RedialWait";
     public const string BlankReasonCommand = "r";
     public static string ConstructConnectCommand(Uri uri) => "c" + uri.ToString();

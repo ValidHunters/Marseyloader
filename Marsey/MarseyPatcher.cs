@@ -120,7 +120,7 @@ public class MarseyPatcher
     private void ExecPatcher()
     {
         // Prepare marseypatches
-        FileHandler.LoadAssemblies(marserializer: true, filename: Marsyfier.MarserializerFile);
+        FileHandler.LoadAssemblies(pipe: true);
         List<MarseyPatch> patches = Marsyfier.GetMarseyPatches();
 
         if (patches.Count != 0)

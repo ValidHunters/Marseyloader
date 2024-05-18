@@ -61,7 +61,7 @@ public static class MarseyLogger
 }
 public abstract class Utility
 {
-    private static bool CheckEnv(string envName)
+    public static bool CheckEnv(string envName)
     {
         string envVar = Envsey.CleanFlag(envName)!;
         return !string.IsNullOrEmpty(envVar) && bool.Parse(envVar);
@@ -69,7 +69,7 @@ public abstract class Utility
 
     public static void ReadConf()
     {
-        Client MarseyConfPipeClient = new Client();
+        IPC.Client MarseyConfPipeClient = new();
         string config = MarseyConfPipeClient.ConnRecv("MarseyConf");
 
         Dictionary<string, string> envVars = config.Split(';')

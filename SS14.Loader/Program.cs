@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
@@ -10,6 +11,7 @@ using System.Threading;
 using NSec.Cryptography;
 using Robust.LoaderApi;
 using Marsey;
+using Marsey.Misc;
 
 namespace SS14.Loader;
 
@@ -22,6 +24,8 @@ internal class Program
 
     private Program(string robustPath, string[] engineArgs)
     {
+        CheckDebugger();
+
         _engineArgs = engineArgs;
         var zipArchive = new ZipArchive(File.OpenRead(robustPath), ZipArchiveMode.Read);
 
@@ -35,6 +39,16 @@ internal class Program
         }
 
         _fileApi = new ZipFileApi(zipArchive, prefix);
+    }
+
+    private void CheckDebugger()
+    {
+        bool Jumper = Utility.CheckEnv("MARSEY_JUMP_LOADER_DEBUG");
+        if (!Jumper) return;
+
+        // Wait until debugger gets attached
+        while (!Debugger.IsAttached)
+            Thread.Sleep(100);
     }
 
     private IntPtr LoadContextOnResolvingUnmanaged(Assembly assembly, string unmanaged)
@@ -61,7 +75,7 @@ internal class Program
         SQLitePCL.Batteries_V2.Init();
 
         ManualResetEvent mre = new ManualResetEvent(false);
-        
+
         // Start the MarseyPatcher
         MarseyPatcher.CreateInstance(clientAssembly, mre);
         mre.WaitOne();
@@ -81,7 +95,7 @@ internal class Program
         }
 
         var args = new MainArgs(_engineArgs, _fileApi, redialApi, extraMounts);
-        
+
         try
         {
             loader.Main(args);

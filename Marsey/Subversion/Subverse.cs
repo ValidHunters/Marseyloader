@@ -7,7 +7,6 @@ using Marsey.Game.Misc;
 using Marsey.Handbreak;
 using Marsey.Misc;
 using Marsey.PatchAssembly;
-using Marsey.Serializer;
 
 namespace Marsey.Subversion;
 
@@ -16,17 +15,16 @@ namespace Marsey.Subversion;
 /// </summary>
 public static class Subverse
 {
-    private static List<string>? _subversionPaths = null;
-    private static SubversionQueue _subversions = new SubversionQueue();
+    private static List<string>? _subverters = null;
 
     /// <summary>
     /// Check if we have any subversions enabled
     /// </summary>
     public static bool CheckSubversions()
     {
-        _subversionPaths = Marserializer.Deserialize(new string[]{MarseyVars.MarseyPatchFolder}, Subverter.MarserializerFile);
+        _subverters = FileHandler.GetFilesFromPipe("SubverterPatchesPipe");
 
-        return _subversionPaths != null && _subversionPaths.Count != 0;
+        return _subverters.Count != 0;
     }
 
     /// <summary>

@@ -11,9 +11,5 @@
         <PackageReference Include="Lib.Harmony" />
         <PackageReference Include="Newtonsoft.Json" />
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Marsey.IPC\Marsey.IPC.csproj" />
-    </ItemGroup>
     
 </Project>
