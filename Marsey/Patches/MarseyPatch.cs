@@ -1,54 +1,6 @@
 using System.Reflection;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using Marsey.Config;
-using Marsey.Game;
-using Marsey.PatchAssembly;
-using Marsey.Serializer;
-using Marsey.Stealthsey;
-using Marsey.Misc;
-using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Patches;
-
-/// <summary>
-/// Manages MarseyPatch instances
-/// </summary>
-public static class Marsyfier
-{
-    public const string MarserializerFile = "patches.marsey";
-    public const string PreloadMarserializerFile = "preload.marsey";
-
-    public static List<MarseyPatch> GetMarseyPatches() => PatchListManager.GetPatchList<MarseyPatch>();
-
-    /// <summary>
-    /// Start preload of marseypatches that are flagged as such
-    /// </summary>
-    public static void Preload(string[]? path = null)
-    {
-        path ??= new[] { MarseyVars.MarseyPatchFolder };
-
-        List<string>? preloads = Marserializer.Deserialize(path, filename: PreloadMarserializerFile);
-
-        if (preloads == null || preloads.Count == 0) return;
-
-        MarseyLogger.Log(MarseyLogger.LogType.INFO, "Preloader", $"Preloading {preloads.Count} patches.");
-
-        foreach (string patch in preloads)
-        {
-            MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Preloader", $"Preloading {patch}");
-            FileHandler.LoadExactAssembly(patch);
-        }
-
-        List<MarseyPatch> preloadedPatches = GetMarseyPatches();
-
-        AssemblyFieldHandler.InitHelpers(preloadedPatches);
-
-        if (preloadedPatches.Count != 0) Patcher.Patch(preloadedPatches);
-
-        PatchListManager.ResetList();
-    }
-}
 
 /// <summary>
 /// This class contains the data about a patch (called a Marsey), that is later used the loader to alter the game's functionality.
