@@ -14,8 +14,6 @@ namespace Marsey.Subversion;
 /// </summary>
 public static class Subverter
 {
-    public const string MarserializerFile = "subversion.marsey";
-
     /// <summary>
     /// Hides a subversion module from the game
     /// </summary>

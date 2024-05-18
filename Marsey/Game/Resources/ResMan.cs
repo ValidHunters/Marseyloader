@@ -10,7 +10,6 @@ namespace Marsey.Game.Resources;
 
 public static class ResMan
 {
-    public static readonly string MarserializerFile = "rpacks.marsey";
     private static readonly List<ResourcePack> _resourcePacks = [];
     private static string? _fork;
 
