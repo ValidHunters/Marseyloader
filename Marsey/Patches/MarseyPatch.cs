@@ -16,9 +16,6 @@ namespace Marsey.Patches;
 /// </summary>
 public static class Marsyfier
 {
-    public const string MarserializerFile = "patches.marsey";
-    public const string PreloadMarserializerFile = "preload.marsey";
-
     public static List<MarseyPatch> GetMarseyPatches() => PatchListManager.GetPatchList<MarseyPatch>();
 
     /// <summary>
@@ -26,11 +23,9 @@ public static class Marsyfier
     /// </summary>
     public static void Preload(string[]? path = null)
     {
-        path ??= new[] { MarseyVars.MarseyPatchFolder };
+        List<string> preloads = FileHandler.GetFilesFromPipe("PreloadMarseyPatchesPipe");
 
-        List<string>? preloads = Marserializer.Deserialize(path, filename: PreloadMarserializerFile);
-
-        if (preloads == null || preloads.Count == 0) return;
+        if (preloads.Count == 0) return;
 
         MarseyLogger.Log(MarseyLogger.LogType.INFO, "Preloader", $"Preloading {preloads.Count} patches.");
 

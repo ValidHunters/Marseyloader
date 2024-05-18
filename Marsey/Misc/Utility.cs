@@ -69,7 +69,7 @@ public abstract class Utility
 
     public static void ReadConf()
     {
-        Client MarseyConfPipeClient = new Client();
+        IPC.Client MarseyConfPipeClient = new();
         string config = MarseyConfPipeClient.ConnRecv("MarseyConf");
 
         Dictionary<string, string> envVars = config.Split(';')

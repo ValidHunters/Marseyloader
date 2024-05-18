@@ -20,10 +20,10 @@ public static class ResMan
     public static void Initialize()
     {
         ResourceTypes.Initialize();
-        
+
         _fork = MarseyPortMan.fork; // Peak spaghet moment
-        
-        // If were dumping the game we dont want to dump our own respack now would we
+
+        // If we're dumping the game we don't want to dump our own respack now would we
         if (MarseyConf.Dumper)
         {
             MarseyDumper.Start();
@@ -31,11 +31,13 @@ public static class ResMan
         }
 
 #if DEBUG
-        List<string> enabledPacks = Marserializer.Deserialize([MarseyVars.MarseyResourceFolder], MarserializerFile) ?? [];
+        // Retrieve enabled resource packs data through named pipe
+        List<string> enabledPacks = FileHandler.GetFilesFromPipe("ResourcePacksPipe");
+
         if (enabledPacks.Count == 0) return;
-        
+
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Detecting {enabledPacks.Count} enabled resource packs.");
-        
+
         foreach (string dir in enabledPacks)
         {
             InitializeRPack(dir, !MarseyConf.DisableResPackStrict);
@@ -44,7 +46,8 @@ public static class ResMan
         ResourceSwapper.Start();
 #endif
     }
-    
+
+
     /// <summary>
     /// Executed by the launcher
     /// </summary>
@@ -66,7 +69,7 @@ public static class ResMan
     private static void InitializeRPack(string path, bool strict = false)
     {
         ResourcePack rpack = new ResourcePack(path);
-        
+
         try
         {
             rpack.ParseMeta();
@@ -76,7 +79,7 @@ public static class ResMan
             MarseyLogger.Log(MarseyLogger.LogType.FATL, e.ToString());
             return;
         }
-        
+
         AddRPack(rpack, strict);
     }
 
@@ -84,7 +87,7 @@ public static class ResMan
     {
         if (_resourcePacks.Any(rp => rp.Dir == rpack.Dir)) return;
         if (strict && rpack.Target != _fork && rpack.Target != "") return;
-            
+
         _resourcePacks.Add(rpack);
     }
 
