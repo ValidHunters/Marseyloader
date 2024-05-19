@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Lib.Harmony" />
+        <PackageReference Include="Lib.Harmony" Version="2.3.3" />
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="NUnit"/>
         <PackageReference Include="NUnit3TestAdapter"/>
@@ -33,5 +33,5 @@
     <ItemGroup>
       <ProjectReference Include="..\Marsey\Marsey.csproj" />
     </ItemGroup>
-    
+
 </Project>

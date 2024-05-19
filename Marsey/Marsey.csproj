@@ -4,16 +4,13 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" />
-        <PackageReference Include="Lib.Harmony" />
+        <PackageReference Include="JetBrains.Annotations" Version="2024.2.0-eap1" />
+        <PackageReference Include="Lib.Harmony" Version="2.3.3" />
         <PackageReference Include="Newtonsoft.Json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageVersion Update="Lib.Harmony" Version="2.3.3" />
     </ItemGroup>
     
 </Project>

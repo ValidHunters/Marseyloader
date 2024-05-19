@@ -24,6 +24,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public ObservableCollection<SubverterPatch> SubverterPatches { get; } = new ObservableCollection<SubverterPatch>();
         public ObservableCollection<ResourcePack> ResourcePacks { get; } = new ObservableCollection<ResourcePack>();
         public ICommand OpenPatchDirectoryCommand { get; }
+        public ICommand ReloadModsCommand { get; }
 
 #if DEBUG
         public bool ShowRPacks => true;
@@ -34,6 +35,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public PatchesTabViewModel()
         {
             OpenPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.MarseyFolder));
+            ReloadModsCommand = new RelayCommand(ReloadMods);
             ReloadMods();
         }
 

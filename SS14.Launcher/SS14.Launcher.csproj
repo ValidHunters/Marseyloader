@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <Nullable>enable</Nullable>
     <!--<PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>-->
@@ -30,17 +31,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" />
-    <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.ReactiveUI" />
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
-    <PackageReference Include="Avalonia.Themes.Simple" />
+    <PackageReference Include="Avalonia" Version="11.0.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.6" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.6" />
     <PackageReference Include="CodeHollow.FeedReader" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="DynamicData" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" />
-    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NP.Ava.Visuals" />
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="ReactiveUI.Fody" />
     <PackageReference Include="Robust.Shared.AuthLib" />
@@ -54,7 +56,7 @@
     <PackageReference Include="SharpZstd.Interop" />
     <PackageReference Include="SpaceWizards.Sodium" />
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
-    <PackageReference Include="JetBrains.Annotations" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.2.0-eap1"/>
   </ItemGroup>
   <ItemGroup>
     <None Remove="Utility\runtime.json" />
@@ -87,6 +89,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marsey\Marsey.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Themes.Simple" Version="11.1.0-beta2" />
   </ItemGroup>
   <Import Project="..\MSBuild\Robust.Trimming.targets" />
 </Project>
