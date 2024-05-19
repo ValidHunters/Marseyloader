@@ -97,7 +97,7 @@ public static class MarseyConf
     // Conf variables that do not go into the EnvVarMap go here
 
     /// <summary>
-    /// Start a debugger in the loader process
+    /// Wait for a debugger to attach in the loader process before executing anything
     /// </summary>
     public static bool JumpLoaderDebug;
 }
