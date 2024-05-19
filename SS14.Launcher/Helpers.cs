@@ -139,7 +139,7 @@ public static class Helpers
         fixed (char* pPath = path)
         {
             var handle = Windows.CreateFileW(
-                (ushort*)pPath,
+                pPath, // Cast char* to ushort*
                 Windows.GENERIC_ALL,
                 FILE.FILE_SHARE_READ,
                 null,
@@ -164,11 +164,20 @@ public static class Helpers
         }
     }
 
+
     public static void ChmodPlusX(string path)
     {
         var f = new UnixFileInfo(path);
         f.FileAccessPermissions |=
             FileAccessPermissions.UserExecute | FileAccessPermissions.GroupExecute |
             FileAccessPermissions.OtherExecute;
+    }
+    public static unsafe int MessageBoxHelper(string text, string caption, uint type)
+    {
+        fixed (char* pText = text)
+        fixed (char* pCaption = caption)
+        {
+            return Windows.MessageBoxW(HWND.NULL, pText, pCaption, type);
+        }
     }
 }

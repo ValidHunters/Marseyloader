@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Http;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
 using DynamicData;
 using HarmonyLib;
 using Marsey;
@@ -18,6 +19,7 @@ using Serilog;
 using Splat;
 using SS14.Launcher.Api;
 using SS14.Launcher.MarseyFluff;
+using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;
 using SS14.Launcher.Utility;
@@ -32,6 +34,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
     private readonly DataManager _cfg;
     private readonly LoginManager _loginMgr;
     private readonly HttpClient _http;
+    private readonly LauncherInfoManager _infoManager;
 
     private int _selectedIndex;
 
@@ -50,6 +53,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         _cfg = Locator.Current.GetRequiredService<DataManager>();
         _loginMgr = Locator.Current.GetRequiredService<LoginManager>();
         _http = Locator.Current.GetRequiredService<HttpClient>();
+        _infoManager = Locator.Current.GetRequiredService<LauncherInfoManager>();
 
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
         Hidesey.Initialize();
@@ -60,14 +64,16 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         PatchesTab = new PatchesTabViewModel();
         OptionsTab = new OptionsTabViewModel();
 
-        Tabs = new MainWindowTabViewModel[]
-        {
-            HomeTab,
-            ServersTab,
-            NewsTab,
-            PatchesTab,
-            OptionsTab
-        };
+        var tabs = new List<MainWindowTabViewModel>();
+        tabs.Add(HomeTab);
+        tabs.Add(ServersTab);
+        tabs.Add(NewsTab);
+        tabs.Add(PatchesTab);
+        tabs.Add(OptionsTab);
+#if DEVELOPMENT
+        tabs.Add(new DevelopmentTabViewModel());
+#endif
+        Tabs = tabs;
 
         AccountDropDown = new AccountDropDownViewModel(this);
         LoginViewModel = new MainWindowLoginViewModel();
@@ -293,7 +299,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         OverlayViewModel = null;
     }
 
-    public bool IsContentBundleDropValid(string fileName)
+    public bool IsContentBundleDropValid(IStorageFile file)
     {
         // Can only load content bundles if logged in, in some capacity.
         if (!LoggedIn)
@@ -303,15 +309,15 @@ public sealed class MainWindowViewModel : ViewModelBase, IErrorOverlayOwner
         if (ConnectingVM != null)
             return false;
 
-        return Path.GetExtension(fileName) == ".zip";
+        return Path.GetExtension(file.Name) == ".zip";
     }
 
-    public void Dropped(string fileName)
+    public void Dropped(IStorageFile file)
     {
         // Trust view validated this.
-        Debug.Assert(IsContentBundleDropValid(fileName));
+        Debug.Assert(IsContentBundleDropValid(file));
 
-        ConnectingViewModel.StartContentBundle(this, fileName);
+        ConnectingViewModel.StartContentBundle(this, file);
     }
 
     private readonly TitleManager _title = new TitleManager();

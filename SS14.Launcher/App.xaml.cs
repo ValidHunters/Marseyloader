@@ -52,9 +52,8 @@ public class App : Application
     private void LoadBaseAssets()
     {
         DataManager _cfg = Locator.Current.GetRequiredService<DataManager>();
-        IAssetLoader loader = AvaloniaLocator.Current.GetService<IAssetLoader>()!;
 
-        IEnumerable<Uri> logoUris = loader.GetAssets(new Uri($"avares://SS14.Launcher/Assets/logos"), null);
+        IEnumerable<Uri> logoUris = AssetLoader.GetAssets(new Uri($"avares://SS14.Launcher/Assets/logos"), null);
         Random rand = new Random();
         List<Uri> logolist = new List<System.Uri>(logoUris);
 
@@ -77,7 +76,7 @@ public class App : Application
                 assetUri = new Uri($"avares://SS14.Launcher/Assets/{path}");
             }
 
-            using Stream dataStream = loader.Open(assetUri);
+            using Stream dataStream = AssetLoader.Open(assetUri);
             object asset = LoadAsset(type, dataStream);
 
             _baseAssets.Add(name, asset);
