@@ -9,8 +9,8 @@
 
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2024.2.0-eap1" />
-        <PackageReference Include="Lib.Harmony" Version="2.3.3" />
+        <PackageReference Include="Lib.Harmony" />
         <PackageReference Include="Newtonsoft.Json" />
     </ItemGroup>
-    
+
 </Project>

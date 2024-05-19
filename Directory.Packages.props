@@ -6,6 +6,7 @@
     <!-- Launcher-loader shared stuff -->
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="9.0.0-preview.3.24172.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Lib.Harmony" Version="2.3.3" />
     <PackageVersion Include="NP.Ava.Visuals" Version="1.0.5" />
     <PackageVersion Include="NSec.Cryptography" Version="24.5.0-preview.1" />
     <PackageVersion Include="SharpZstd.Interop" Version="1.5.5-beta1" />

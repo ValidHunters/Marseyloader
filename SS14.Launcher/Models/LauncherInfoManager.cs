@@ -8,6 +8,7 @@ namespace SS14.Launcher.Models;
 
 /// <summary>
 /// Fetches and caches information from <see cref="ConfigConstants.UrlLauncherInfo"/>.
+/// MarseyFluff was such a good idea they made it a real thing
 /// </summary>
 public sealed class LauncherInfoManager(HttpClient httpClient)
 {
