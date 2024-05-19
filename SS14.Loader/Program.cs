@@ -48,7 +48,7 @@ internal class Program
 
         // Wait until debugger gets attached
         while (!Debugger.IsAttached)
-            Thread.Sleep(100);;
+            Thread.Sleep(100);
     }
 
     private IntPtr LoadContextOnResolvingUnmanaged(Assembly assembly, string unmanaged)
