@@ -22,7 +22,8 @@
         <Button Content="Login as Guest" Command="{Binding LoginAsGuestCommand}" Margin="4" IsVisible="{Binding IsNotGuest}" />
         <StackPanel Orientation="Vertical" IsVisible="{Binding AccountSwitchVisible}">
           <TextBlock Text="{Binding AccountSwitchText}" Margin="4" />
-          <ItemsControl Name="Items" Items="{Binding Accounts}">
+
+          <ItemsControl Name="Items" ItemsSource="{Binding Accounts}">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="vm:AvailableAccountViewModel">
                 <Button Content="{Binding StatusText}" Margin="4"

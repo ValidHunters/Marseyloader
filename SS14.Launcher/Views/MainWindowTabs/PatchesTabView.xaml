@@ -11,7 +11,7 @@
     <global:PathToFileNameConverter x:Key="PathToFileNameConverter"/>
     <global:BooleanToPreloadConverter x:Key="BooleanToPreloadConverter"/>
   </UserControl.Resources>
-  
+
   <Design.DataContext>
     <mainWindowTabs:PatchesTabViewModel />
   </Design.DataContext>
@@ -24,8 +24,8 @@
             <StackPanel>
               <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
               <Separator/>
-    
-              <ItemsControl Items="{Binding MarseyPatches}" Name="MarseyPatchList">
+
+              <ItemsControl ItemsSource="{Binding MarseyPatches}" Name="MarseyPatchList">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -35,7 +35,7 @@
                                  Margin="8" />
                       <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5"
                                  Text="{Binding Preload, Converter={StaticResource BooleanToPreloadConverter}}"></TextBlock>
-                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5" 
+                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5"
                                  Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
                     </StackPanel>
                   </DataTemplate>
@@ -44,14 +44,14 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-    
+
         <TabItem Header="Subverter">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
               <TextBlock Margin="4, 0" Text="Sideloading" Classes="NanoHeadingMedium" />
               <Separator/>
-    
-              <ItemsControl Items="{Binding SubverterPatches}" Name="SubverterPatchList">
+
+              <ItemsControl ItemsSource="{Binding SubverterPatches}" Name="SubverterPatchList">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -59,7 +59,7 @@
                       <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                  Text="{Binding Desc}"
                                  Margin="8" />
-                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5" 
+                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5"
                                  Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
                     </StackPanel>
                   </DataTemplate>
@@ -68,14 +68,14 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        
+
         <TabItem Header="ResourcePacks" IsVisible="{Binding ShowRPacks}">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
               <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
               <Separator/>
-    
-              <ItemsControl Items="{Binding ResourcePacks}" Name="ResourcePackList">
+
+              <ItemsControl ItemsSource="{Binding ResourcePacks}" Name="ResourcePackList">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -83,7 +83,7 @@
                       <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                                  Text="{Binding Desc}"
                                  Margin="8" />
-                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5" 
+                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5"
                                  Text="{Binding Dir, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
                     </StackPanel>
                   </DataTemplate>
@@ -97,7 +97,7 @@
         <Button Content="Open mod directory" Margin="4, 0" HorizontalAlignment="Right"
                 Command="{Binding OpenPatchDirectoryCommand}" Height="30"/>
         <Button Content="Recheck mods" Margin="4, 0" HorizontalAlignment="Right"
-                Command="{Binding ReloadMods}" Height="30"/>
+                Command="{Binding ReloadModsCommand}" Height="30"/>
       </StackPanel>
     </Grid>
   </ScrollViewer>

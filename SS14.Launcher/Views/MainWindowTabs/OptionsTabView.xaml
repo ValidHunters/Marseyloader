@@ -60,7 +60,7 @@
             <TextBlock Margin="4, 0" Text="Hide Level" Classes="NanoHeadingMedium" />
             <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
               <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap" Margin="8">Sets degree to which Marsey hides itself.</TextBlock>
-              <ComboBox Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="4" Items="{Binding HideLevels}" SelectedItem="{Binding HideLevel}">
+              <ComboBox Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="4" ItemsSource="{Binding HideLevels}" SelectedItem="{Binding HideLevel}">
                 <ComboBox.ItemTemplate>
                   <DataTemplate>
                     <TextBlock Text="{Binding}" />

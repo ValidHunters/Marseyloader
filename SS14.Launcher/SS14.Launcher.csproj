@@ -23,30 +23,31 @@
       <SubType>Designer</SubType>
     </AvaloniaResource>
 
-    <AdditionalFiles Include="**\*.xaml" />
+    <AdditionalFiles Include="**\*.xaml" SourceItemGroup="AvaloniaXaml" />
 
     <Compile Update="Views\MainWindowTabs\ServerFilterView.xaml.cs">
       <DependentUpon>ServerFilterView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" />
-    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia "/>
+    <PackageReference Include="Avalonia.Desktop "/>
     <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
+    <PackageReference Include="Avalonia.Themes.Simple" />
     <PackageReference Include="CodeHollow.FeedReader" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="DynamicData" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NP.Ava.Visuals" />
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="ReactiveUI.Fody" />
     <PackageReference Include="Robust.Shared.AuthLib" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Serilog.Sinks.File" />
-    <PackageReference Include="XamlNameReferenceGenerator" />
     <PackageReference Include="YamlDotNet" />
     <PackageReference Include="TerraFX.Interop.Windows" />
     <PackageReference Include="NSec.Cryptography" />
@@ -54,6 +55,7 @@
     <PackageReference Include="SharpZstd.Interop" />
     <PackageReference Include="SpaceWizards.Sodium" />
     <PackageReference Include="Microsoft.NET.ILLink.Tasks" />
+    <PackageReference Include="JetBrains.Annotations" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Utility\runtime.json" />
@@ -79,6 +81,13 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marsey\Marsey.csproj" />
+    <AdditionalFiles Include="**\*.xaml" SourceItemGroup="AvaloniaXaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Marsey\Marsey.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Update="Avalonia.Themes.Simple" />
   </ItemGroup>
   <Import Project="..\MSBuild\Robust.Trimming.targets" />
 </Project>

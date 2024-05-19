@@ -4,41 +4,43 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Launcher-loader shared stuff -->
-    <PackageVersion Include="JetBrains.Annotations" Version="10.3.0" />
-    <PackageVersion Include="Lib.Harmony" Version="2.3.0-prerelease.4" />
-    <PackageVersion Include="Microsoft.Data.Sqlite" Version="7.0.4" />
-    <PackageVersion Include="MonoMod.Utils" Version="25.0.3" />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="9.0.0-preview.3.24172.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="NSec.Cryptography" Version="22.4.0" />
-    <PackageVersion Include="SharpZstd.Interop" Version="1.5.2-beta2" />
-    <PackageVersion Include="Microsoft.NET.ILLink.Tasks" Version="8.0.0" />
+    <PackageVersion Include="Lib.Harmony" Version="2.3.3" />
+    <PackageVersion Include="NP.Ava.Visuals" Version="1.0.5" />
+    <PackageVersion Include="NSec.Cryptography" Version="24.5.0-preview.1" />
+    <PackageVersion Include="SharpZstd.Interop" Version="1.5.5-beta1" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2024.2.0-eap1" />
     <!-- Loader -->
     <PackageVersion Include="Robust.Natives" Version="0.1.1" />
     <!-- Launcher -->
-    <PackageVersion Include="Avalonia" Version="0.10.19" />
-    <PackageVersion Include="Avalonia.Desktop" Version="0.10.19" />
-    <PackageVersion Include="Avalonia.ReactiveUI" Version="0.10.19" />
-    <PackageVersion Include="Avalonia.Diagnostics" Version="0.10.19" />
+    <PackageVersion Include="Avalonia" Version="11.0.6" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.0.6" />
+    <PackageVersion Include="Avalonia.ReactiveUI" Version="11.0.6" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.0.6" />
+    <PackageVersion Include="Avalonia.Themes.Simple" Version="11.0.6" />
     <PackageVersion Include="CodeHollow.FeedReader" Version="1.2.6" />
-    <PackageVersion Include="Dapper" Version="2.0.123" />
-    <PackageVersion Include="DynamicData" Version="7.13.1" />
+    <PackageVersion Include="Dapper" Version="2.1.35" />
+    <PackageVersion Include="DynamicData" Version="8.4.1" />
     <PackageVersion Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
-    <PackageVersion Include="ReactiveUI" Version="18.4.26" />
-    <PackageVersion Include="ReactiveUI.Fody" Version="18.4.26" />
+    <PackageVersion Include="ReactiveUI" Version="20.1.1" />
+    <PackageVersion Include="ReactiveUI.Fody" Version="19.5.41" />
     <PackageVersion Include="Robust.Shared.AuthLib" Version="0.1.2" />
-    <PackageVersion Include="Serilog" Version="2.12.0" />
-    <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0" />
-    <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageVersion Include="Serilog" Version="4.0.0-dev-02174" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="5.1.0-dev-00943" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="5.0.1-dev-00972" />
     <PackageVersion Include="XamlNameReferenceGenerator" Version="1.6.1" />
-    <PackageVersion Include="YamlDotNet" Version="13.0.2" />
-    <PackageVersion Include="TerraFX.Interop.Windows" Version="10.0.22621.1" />
-    <PackageVersion Include="Mono.Posix.NETStandard" Version="1.0.0" />
+    <PackageVersion Include="YamlDotNet" Version="15.1.4" />
+    <PackageVersion Include="TerraFX.Interop.Windows" Version="10.0.22621.6" />
+    <PackageVersion Include="Mono.Posix.NETStandard" Version="5.20.1-preview" />
     <PackageVersion Include="SpaceWizards.Sodium" Version="0.2.1" />
     <!-- Test stuff -->
     <PackageVersion Include="nunit" Version="3.13.3" />
     <PackageVersion Include="NUnit.Analyzers" Version="3.6.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.4.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageVersion Include="Microsoft.NET.ILLink.Tasks" Version="8.0.5" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2"/>
     <!-- Bootstrap -->
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
   </ItemGroup>
