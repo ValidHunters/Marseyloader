@@ -16,6 +16,7 @@ namespace Marsey.Subversion;
 public static class Subverse
 {
     private static List<string>? _subverters = null;
+    private static SubversionQueue _subversions = new SubversionQueue();
 
     /// <summary>
     /// Check if we have any subversions enabled
@@ -55,7 +56,7 @@ public static class Subverse
 
     private static void InitLists()
     {
-        foreach (string path in _subversionPaths!)
+        foreach (string path in _subverters!)
         {
             Assembly subverterAssembly = Assembly.LoadFrom(path);
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Loading {path}");
