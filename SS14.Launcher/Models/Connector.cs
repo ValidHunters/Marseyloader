@@ -476,6 +476,7 @@ public class Connector : ReactiveObject
         // Set other necessary environment variables.
         startInfo.EnvironmentVariables["SS14_DISABLE_SIGNING"] = _cfg.GetCVar(CVars.DisableSigning) ? "true" : null;
         startInfo.EnvironmentVariables["DOTNET_MULTILEVEL_LOOKUP"] = "0";
+        startInfo.EnvironmentVariables["MARSEY_JUMP_LOADER_DEBUG"] = MarseyConf.JumpLoaderDebug ? "true" : null;
     }
 
     private void ConfigureLogging(ProcessStartInfo startInfo)

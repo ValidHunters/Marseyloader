@@ -93,4 +93,11 @@ public static class MarseyConf
         { "MARSEY_ENGINE", MarseyPortMan.SetEngineVer },
         { "MARSEY_HIDE_LEVEL", value => MarseyHide = (HideLevel)Enum.Parse(typeof(HideLevel), value) }
     };
+
+    // Conf variables that do not go into the EnvVarMap go here
+
+    /// <summary>
+    /// Start a debugger in the loader process
+    /// </summary>
+    public static bool JumpLoaderDebug;
 }
