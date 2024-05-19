@@ -9,11 +9,8 @@ namespace Marsey.Config;
 /// </summary>
 public static class MarseyVars
 {
-    /// <summary>
-    /// Due to the nature of how Marseyloader is compiled (its not) we cannot check its version
-    /// Almost as if this variable is a consequence of having the project included rather than referenced
-    /// </summary>
-    public static readonly Version MarseyVersion = new Version("2.12.7");
+    // TODO: Kill this
+    public static readonly Version MarseyVersion = new Version("2.17.0");
 
     /// <summary>
     /// Default MarseyAPI endpoint url
