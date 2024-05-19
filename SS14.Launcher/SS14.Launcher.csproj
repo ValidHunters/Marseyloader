@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <Nullable>enable</Nullable>
     <!--<PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>-->
