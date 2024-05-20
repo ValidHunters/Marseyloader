@@ -5,7 +5,7 @@ using Marsey.Config;
 using Marsey.Misc;
 using Serilog;
 
-namespace SS14.Launcher.MarseyFluff;
+namespace SS14.Launcher.Marseyverse;
 
 public static class DumpConfig
 {

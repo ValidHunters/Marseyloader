@@ -19,25 +19,34 @@
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
     <Grid RowDefinitions="Auto,*">
       <TabControl Grid.Row="0">
-        <TabItem Header="MarseyPatches">
+        <TabItem Header="Patches">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
-              <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
+              <TextBlock Margin="4, 0" Text="Marseys" Classes="NanoHeadingMedium" />
               <Separator/>
 
               <ItemsControl ItemsSource="{Binding MarseyPatches}" Name="MarseyPatchList">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                      <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
-                      <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                 Text="{Binding Desc}"
-                                 Margin="8" />
-                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5"
-                                 Text="{Binding Preload, Converter={StaticResource BooleanToPreloadConverter}}"></TextBlock>
-                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5"
-                                 Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
-                    </StackPanel>
+                    <Grid Width="200" Margin="5">
+                      <ToggleButton
+                                    Command="{Binding DataContext.EnableRefreshCommand, ElementName=MarseyPatchList, FallbackValue={x:Null}}"
+                                    IsChecked="{Binding Enabled}"
+                                    Content="{Binding Name}">
+                        <ToolTip.Tip>
+                          <StackPanel>
+                            <TextBlock Text="{Binding Desc}" />
+                            <TextBlock Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}" Foreground="Gray"/>
+                            <TextBlock Text="{Binding Preload, Converter={StaticResource BooleanToPreloadConverter}}" IsVisible="{Binding Preload}"/>
+                          </StackPanel>
+                        </ToolTip.Tip>
+                      </ToggleButton>
+                    </Grid>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -45,23 +54,33 @@
           </ScrollViewer>
         </TabItem>
 
-        <TabItem Header="Subverter">
+        <TabItem Header="Sideloading">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
-              <TextBlock Margin="4, 0" Text="Sideloading" Classes="NanoHeadingMedium" />
+              <TextBlock Margin="4, 0" Text="Subversion" Classes="NanoHeadingMedium" />
               <Separator/>
 
               <ItemsControl ItemsSource="{Binding SubverterPatches}" Name="SubverterPatchList">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                      <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
-                      <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                 Text="{Binding Desc}"
-                                 Margin="8" />
-                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="Gray" Opacity="0.5"
-                                 Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
-                    </StackPanel>
+                    <Grid Width="200" Margin="5">
+                      <ToggleButton
+                                    Command="{Binding DataContext.EnableRefreshCommand, ElementName=SubverterPatchList, FallbackValue={x:Null}}"
+                                    IsChecked="{Binding Enabled}"
+                                    Content="{Binding Name}">
+                        <ToolTip.Tip>
+                          <StackPanel>
+                            <TextBlock Text="{Binding Desc}" />
+                            <TextBlock Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}" Foreground="Gray"/>
+                          </StackPanel>
+                        </ToolTip.Tip>
+                      </ToggleButton>
+                    </Grid>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -69,23 +88,31 @@
           </ScrollViewer>
         </TabItem>
 
-        <TabItem Header="ResourcePacks" IsVisible="{Binding ShowRPacks}">
+        <TabItem Header="Resources" IsVisible="{Binding ShowRPacks}">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
-              <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
+              <TextBlock Margin="4, 0" Text="Resource packs" Classes="NanoHeadingMedium" />
               <Separator/>
 
               <ItemsControl ItemsSource="{Binding ResourcePacks}" Name="ResourcePackList">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                      <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Enabled}" Content="{Binding Name}"></CheckBox>
-                      <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
-                                 Text="{Binding Desc}"
-                                 Margin="8" />
-                      <TextBlock VerticalAlignment="Center" Margin="4" Foreground="DimGray" Opacity="0.5"
-                                 Text="{Binding Dir, Converter={StaticResource PathToFileNameConverter}}"></TextBlock>
-                    </StackPanel>
+                    <Grid Width="200" Margin="5">
+                      <ToggleButton IsChecked="{Binding Enabled}"
+                                    Content="{Binding Name}">
+                        <ToolTip.Tip>
+                          <StackPanel>
+                            <TextBlock Text="{Binding Desc}" />
+                            <TextBlock Text="{Binding Dir, Converter={StaticResource PathToFileNameConverter}}" Foreground="Gray"/>
+                          </StackPanel>
+                        </ToolTip.Tip>
+                      </ToggleButton>
+                    </Grid>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>
@@ -102,3 +129,4 @@
     </Grid>
   </ScrollViewer>
 </UserControl>
+

@@ -7,7 +7,7 @@ using Splat;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Utility;
 
-namespace SS14.Launcher.MarseyFluff;
+namespace SS14.Launcher.Marseyverse;
 
 public class TitleCondition
 {
@@ -19,7 +19,7 @@ public class TitleManager
 {
     private const string BanMessage = "Banned";
     private static readonly Random Random = new Random();
-    
+
     public TitleManager()
     {
         DataManager cfg = Locator.Current.GetRequiredService<DataManager>(); // Thanks for inspiration.gif
@@ -35,13 +35,13 @@ public class TitleManager
             new TitleCondition { Condition = () => Subverter.GetSubverterPatches().Count > 5, Message = "Subversion is superior to git you know" },
             new TitleCondition { Condition = () => Marsyfier.GetMarseyPatches().Count > 10, Message = "Marsyfiedisms" }
         };
-        
+
         foreach (TitleCondition condition in titleConditions)
         {
             if (condition.Condition())
                 TagLines.Add(condition.Message);
         }
-        
+
         string name = RandTitle();
         string tagline = "";
 
@@ -52,7 +52,7 @@ public class TitleManager
 
         RandomTitle = name + ": " + tagline;
     }
-    
+
     private static readonly List<string> Titles =
     [
         "Space Station 14 Launcher", "Dramalauncher",
@@ -65,7 +65,7 @@ public class TitleManager
         "Stationeers", "RE:SS2D", "Schizostation 14",
         "Thaumatrauma", "Calamari v3", "hamaSS14", BanMessage
     ];
-    
+
     private static readonly List<string> TagLines =
     [
         "Marsey is the cutest cat", "Not a cheat loader",
@@ -105,7 +105,7 @@ public class TitleManager
         "No-appeal perma ban based on advice of the player and other hosts", "Metacomms", "\"soft antag rolling,\" powergaming, being rude in OOC",
         "Warned multiple times about powergaming as antag roles", "found to have been soft-antag rolling", "made the Janitor a furry against his will",
         "found to be displaying unhealthy investments in rounds based off of OOC/deadchat commentary", "Mass-RDM. Killed 31 people using electrified grilles",
-        "Openly bragging about being a shitter", "Posting fake porn links isn't funny", "3 bans in 6 months threshold", 
+        "Openly bragging about being a shitter", "Posting fake porn links isn't funny", "3 bans in 6 months threshold",
         "factors leading to a lot of attention seeking behavior", "Did nothing but plasmabomb med for 35 minutes",
         "asking people to do the thug shaker"
     ];
