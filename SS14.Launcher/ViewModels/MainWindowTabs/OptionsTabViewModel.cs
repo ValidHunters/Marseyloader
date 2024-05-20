@@ -303,7 +303,6 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         {
             if (Latest == null) return false;
             int dist = MarseyVars.MarseyVersion.CompareTo(Marsey.API.MarseyApi.GetLatestVersion());
-            Marsey.API.MarseyApi.GetLatestVersion();
             return dist < 0;
         }
     }
