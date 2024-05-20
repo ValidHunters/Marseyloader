@@ -18,7 +18,7 @@ using ReactiveUI.Fody.Helpers;
 using Serilog;
 using Splat;
 using SS14.Launcher.Api;
-using SS14.Launcher.MarseyFluff;
+using SS14.Launcher.Marseyverse;
 using SS14.Launcher.Models;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.Logins;

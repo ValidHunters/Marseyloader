@@ -17,7 +17,7 @@ using Marsey.Stealthsey;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
 using Splat;
-using SS14.Launcher.MarseyFluff;
+using SS14.Launcher.Marseyverse;
 using SS14.Launcher.Models.ContentManagement;
 using SS14.Launcher.Models.Data;
 using SS14.Launcher.Models.EngineManager;
@@ -303,6 +303,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         {
             if (Latest == null) return false;
             int dist = MarseyVars.MarseyVersion.CompareTo(Marsey.API.MarseyApi.GetLatestVersion());
+            Marsey.API.MarseyApi.GetLatestVersion();
             return dist < 0;
         }
     }

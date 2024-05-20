@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using Avalonia.Data.Converters;
+using Avalonia.Media;
 using Microsoft.Toolkit.Mvvm.Input;
 using Serilog;
 using Marsey.Config;
@@ -14,6 +15,7 @@ using Marsey.Game.Resources;
 using Marsey.Patches;
 using Marsey.Subversion;
 using Marsey.Misc;
+using SS14.Launcher.Marseyverse;
 
 namespace SS14.Launcher.ViewModels.MainWindowTabs
 {
@@ -25,6 +27,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         public ObservableCollection<ResourcePack> ResourcePacks { get; } = new ObservableCollection<ResourcePack>();
         public ICommand OpenPatchDirectoryCommand { get; }
         public ICommand ReloadModsCommand { get; }
+        public ICommand EnableRefreshCommand { get; }
 
 #if DEBUG
         public bool ShowRPacks => true;
@@ -36,22 +39,40 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
         {
             OpenPatchDirectoryCommand = new RelayCommand(() => OpenPatchDirectory(MarseyVars.MarseyFolder));
             ReloadModsCommand = new RelayCommand(ReloadMods);
+            EnableRefreshCommand = new RelayCommand(Refresh);
             ReloadMods();
         }
 
+        private bool first = true;
         private void ReloadMods()
+        {
+            LoadInitialResources();
+            LoadPatches();
+
+            if (!first) return;
+
+            EnableConfiguredPatches();
+            first = false;
+        }
+
+        private void LoadInitialResources()
         {
             FileHandler.LoadAssemblies();
             ResMan.LoadDir();
+        }
 
-            List<MarseyPatch> marseys = Marsyfier.GetMarseyPatches();
-            LoadPatchList(marseys, MarseyPatches, "marseypatches");
+        private void LoadPatches()
+        {
+            LoadPatchList(Marsyfier.GetMarseyPatches(), MarseyPatches, "marseypatches");
+            LoadPatchList(Subverter.GetSubverterPatches(), SubverterPatches, "subverterpatches");
+            LoadResPacks(ResMan.GetRPacks(), ResourcePacks);
+        }
 
-            List<SubverterPatch> subverters = Subverter.GetSubverterPatches();
-            LoadPatchList(subverters, SubverterPatches, "subverterpatches");
-
-            List<ResourcePack> resourcePacks = ResMan.GetRPacks();
-            LoadResPacks(resourcePacks, ResourcePacks);
+        private void EnableConfiguredPatches()
+        {
+            List<string> assemblies = Persist.LoadConfig();
+            LoadEnabledPatches(assemblies, MarseyPatches);
+            LoadEnabledPatches(assemblies, SubverterPatches);
         }
 
         private void OpenPatchDirectory(string directoryName)
@@ -83,6 +104,35 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             }
 
             Log.Debug($"Refreshed resourcepacks, got {ResourcePacks.Count}.");
+        }
+
+        private void Refresh()
+        {
+            List<string> assemblyFileNames = new();
+            SaveEnabledPatches(MarseyPatches, assemblyFileNames);
+            SaveEnabledPatches(SubverterPatches, assemblyFileNames);
+
+            Log.Debug($"Saved {assemblyFileNames.Count} patches to config");
+            Persist.SaveConfig(assemblyFileNames);
+        }
+
+        private void SaveEnabledPatches(IEnumerable<IPatch> patches, List<string> fileNames)
+        {
+            foreach (IPatch patch in patches)
+            {
+                if (patch.Enabled)
+                {
+                    fileNames.Add(Path.GetFileName(patch.Asmpath));
+                }
+            }
+        }
+
+        private void LoadEnabledPatches(List<string> fileNames, IEnumerable<IPatch> patches)
+        {
+            foreach (IPatch patch in from filename in fileNames from patch in patches where Path.GetFileName(patch.Asmpath) == filename select patch)
+            {
+                patch.Enabled = true;
+            }
         }
     }
 }

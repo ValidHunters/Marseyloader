@@ -12,6 +12,8 @@ public static class MarseyVars
     // TODO: Kill this
     public static readonly Version MarseyVersion = new Version("2.17.0");
 
+    public static readonly string EnabledPatchListFileName = "patches.marsey";
+
     /// <summary>
     /// Default MarseyAPI endpoint url
     /// </summary>
