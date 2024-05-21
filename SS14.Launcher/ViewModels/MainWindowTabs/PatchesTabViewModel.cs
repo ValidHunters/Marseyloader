@@ -70,7 +70,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
 
         private void EnableConfiguredPatches()
         {
-            List<string> assemblies = Persist.LoadConfig();
+            List<string> assemblies = Persist.LoadPatchlistConfig();
             LoadEnabledPatches(assemblies, MarseyPatches);
             LoadEnabledPatches(assemblies, SubverterPatches);
         }
@@ -113,7 +113,7 @@ namespace SS14.Launcher.ViewModels.MainWindowTabs
             SaveEnabledPatches(SubverterPatches, assemblyFileNames);
 
             Log.Debug($"Saved {assemblyFileNames.Count} patches to config");
-            Persist.SaveConfig(assemblyFileNames);
+            Persist.SavePatchlistConfig(assemblyFileNames);
         }
 
         private void SaveEnabledPatches(IEnumerable<IPatch> patches, List<string> fileNames)

@@ -90,6 +90,7 @@ public static async Task PrepareMods(string[]? path = null)
 
         foreach (string file in files)
         {
+            MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Loading assembly from {file}");
             LoadExactAssembly(file);
         }
     }
@@ -117,8 +118,9 @@ public static async Task PrepareMods(string[]? path = null)
 
         try
         {
-            Assembly assembly = Assembly.LoadFrom(file);
-            AssemblyInitializer.Initialize(assembly);
+            byte[] assemblyData = File.ReadAllBytes(file);
+            Assembly assembly = Assembly.Load(assemblyData);
+            AssemblyInitializer.Initialize(assembly, file);
         }
         catch (FileNotFoundException)
         {
@@ -137,7 +139,6 @@ public static async Task PrepareMods(string[]? path = null)
             Redial.Enable(); // Enable callbacks in case the game needs them
         }
     }
-
 
     /// <summary>
     /// Retrieves the file paths of all DLL files in a specified subdirectory

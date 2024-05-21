@@ -26,9 +26,14 @@ public static class MarseyConf
     public static bool Logging;
 
     /// <summary>
-    /// Log DEBG messages
+    /// Log DBG messages
     /// </summary>
     public static bool DebugAllowed;
+
+    /// <summary>
+    /// Log TRC messages
+    /// </summary>
+    public static bool TraceAllowed;
 
     /// <summary>
     /// Throws an exception on client if any patch had failed applying.
@@ -76,6 +81,7 @@ public static class MarseyConf
     {
         { "MARSEY_LOGGING", value => Logging = value == "true" },
         { "MARSEY_LOADER_DEBUG", value => DebugAllowed = value == "true" },
+        { "MARSEY_LOADER_TRACE", value => TraceAllowed = value == "true" },
         { "MARSEY_THROW_FAIL", value => ThrowOnFail = value == "true" },
         { "MARSEY_SEPARATE_LOGGER", value => SeparateLogger = value == "true" },
         { "MARSEY_DISABLE_STRICT", value => DisableResPackStrict = value == "true" },

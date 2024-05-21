@@ -59,6 +59,8 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         SetGuestUsernameCommand = new RelayCommand(OnSetGuestUsernameClick);
         SetEndpointCommand = new RelayCommand(OnSetEndpointClick);
         DumpConfigCommand = new RelayCommand(DumpConfig.Dump);
+
+        Persist.UpdateLauncherConfig();
     }
 
 #if RELEASE
@@ -129,6 +131,18 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         }
     }
 
+    public bool LogLauncherPatcher
+    {
+        get => Cfg.GetCVar(CVars.LogLauncherPatcher);
+        set
+        {
+            Cfg.SetCVar(CVars.LogLauncherPatcher, value);
+            Cfg.CommitConfig();
+
+            Persist.UpdateLauncherConfig();
+        }
+    }
+
     public bool LogLoaderDebug
     {
         get => Cfg.GetCVar(CVars.LogLoaderDebug);
@@ -136,6 +150,20 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         {
             Cfg.SetCVar(CVars.LogLoaderDebug, value);
             Cfg.CommitConfig();
+
+            Persist.UpdateLauncherConfig();
+        }
+    }
+
+    public bool LogTrace
+    {
+        get => Cfg.GetCVar(CVars.LogLoaderTrace);
+        set
+        {
+            Cfg.SetCVar(CVars.LogLoaderTrace, value);
+            Cfg.CommitConfig();
+
+            Persist.UpdateLauncherConfig();
         }
     }
 

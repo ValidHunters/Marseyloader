@@ -593,8 +593,9 @@ public class Connector : ReactiveObject
         // Prepare environment variables
         Dictionary<string, string?> envVars = new Dictionary<string, string?>
         {
-            { "MARSEY_LOADER_DEBUG", _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null },
             { "MARSEY_LOGGING", _cfg.GetCVar(CVars.LogPatcher) ? "true" : null },
+            { "MARSEY_LOADER_DEBUG", _cfg.GetCVar(CVars.LogLoaderDebug) ? "true" : null },
+            { "MARSEY_LOADER_TRACE", _cfg.GetCVar(CVars.LogLoaderTrace) ? "true" : null },
             { "MARSEY_SEPARATE_LOGGER", _cfg.GetCVar(CVars.LogPatcher) ? "true" : null },
             { "MARSEY_THROW_FAIL", _cfg.GetCVar(CVars.ThrowPatchFail) ? "true" : null },
             { "MARSEY_HIDE_LEVEL", $"{_cfg.GetCVar(CVars.MarseyHide)}" },
