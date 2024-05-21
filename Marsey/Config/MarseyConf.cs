@@ -26,12 +26,12 @@ public static class MarseyConf
     public static bool Logging;
 
     /// <summary>
-    /// Log DBG messages
+    /// Log DEBG messages
     /// </summary>
     public static bool DebugAllowed;
 
     /// <summary>
-    /// Log TRC messages
+    /// Log TRCE messages
     /// </summary>
     public static bool TraceAllowed;
 
