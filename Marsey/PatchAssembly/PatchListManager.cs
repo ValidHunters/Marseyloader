@@ -34,7 +34,7 @@ public static class PatchListManager
     {
         if (_patches.Any(p => p.Asmpath == patch.Asmpath)) return;
 
-        MarseyLogger.Log(MarseyLogger.LogType.TRC, $"Adding {patch.Name} ({patch.Asmpath}) to patchlist");
+        MarseyLogger.Log(MarseyLogger.LogType.TRCE, $"Adding {patch.Name} ({patch.Asmpath}) to patchlist");
         _patches.Add(patch);
     }
 

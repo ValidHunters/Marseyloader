@@ -54,7 +54,7 @@ public static class AssemblyInitializer
         bool ignore = AssemblyFieldHandler.DetermineIgnore(dataType);
         List<FieldInfo>? targets = null;
 
-        MarseyLogger.Log(MarseyLogger.LogType.TRC, "AssemblyInitializer", $"Processing {assemblyName}, preload: {preload}, ignore: {ignore}");
+        MarseyLogger.Log(MarseyLogger.LogType.TRCE, "AssemblyInitializer", $"Processing {assemblyName}, preload: {preload}, ignore: {ignore}");
 
         if (typeName == "MarseyPatch")
         {
@@ -101,7 +101,7 @@ public static class AssemblyInitializer
         // Check if its even valid
         if (!PatchFactory.TryGetValue(dataType.Name, out Func<Assembly, string, string, string, bool, IPatch>? createPatch)) return;
 
-        MarseyLogger.Log(MarseyLogger.LogType.TRC, "AssemblyInitializer", $"{assembly.GetName()} passed PatchFactory validation");
+        MarseyLogger.Log(MarseyLogger.LogType.TRCE, "AssemblyInitializer", $"{assembly.GetName()} passed PatchFactory validation");
 
         Hidesey.HidePatch(assembly); // Conceal assembly from the game
 

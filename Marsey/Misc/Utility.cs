@@ -16,7 +16,7 @@ public static class MarseyLogger
         ERRO,
         FATL,
         DEBG,
-        TRC
+        TRCE
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public static class MarseyLogger
         switch (logType)
         {
             case LogType.DEBG when MarseyConf.DebugAllowed != true:
-            case LogType.TRC when MarseyConf.TraceAllowed != true:
+            case LogType.TRCE when MarseyConf.TraceAllowed != true:
                 return;
             default:
                 SharedLog($"[{logType.ToString()}] [{system}] {message}");
