@@ -136,6 +136,17 @@ public static class CVars
     /// </summary>
     public static readonly CVarDef<bool> SeparateLogging = CVarDef.Create("SeparateLogging", false);
 
+    /// <summary>
+    /// Log patcher output in launcher
+    /// </summary>
+    public static readonly CVarDef<bool> LogLauncherPatcher = CVarDef.Create("LogLauncherPatcher", false);
+
+    /// <summary>
+    /// Log TRC messages
+    /// </summary>
+    /// <remarks>Hidden behind the debug compile flag</remarks>
+    public static readonly CVarDef<bool> LogLoaderTrace = CVarDef.Create("LogLoaderTrace", false);
+
     // Behavior
 
     /// <summary>

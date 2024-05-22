@@ -182,6 +182,8 @@
         <DockPanel>
           <StackPanel Orientation="Vertical">
             <TextBlock Margin="4, 0" Text="Game" Classes="NanoHeadingMedium" />
+            <Button Content="Open log directory" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
+                    Command="{Binding OpenLogDirectory}"/>
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogClient}">Log Client</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                        Text="Enables logging of any game client output. Useful for developers."
@@ -197,18 +199,24 @@
                        Text="For when the developers are *very* stumped with your problem. (requires launcher restart)"
                        Margin="8" />
 
-            <Button Content="Open log directory" DockPanel.Dock="Bottom" HorizontalAlignment="Left"
-                    Command="{Binding OpenLogDirectory}"/>
-
-            <TextBlock Margin="4, 0" Text="Patcher" Classes="NanoHeadingMedium" />
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogPatches}">Log Patcher</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                        Text="Write MarseyLogger output to log."
                        Margin="8" />
 
+            <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLauncherPatcher}">Enable launcher-patcher logging</CheckBox>
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                       Text="Write MarseyLogger output to launcher's stdout."
+                       Margin="8" />
+
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding LogLoaderDebug}">Enable Loader Debug Logs</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                        Text="Enable harmony debug mode, outputting IL code to desktop and providing marsey debug logs."
+                       Margin="8" />
+
+            <CheckBox VerticalAlignment="Center" Margin="4" IsVisible="{Binding !HideDebugKnobs}" IsChecked="{Binding LogTrace}">Log Trace MarseyLogger messages</CheckBox>
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                       Text="Write MarseyLogger trace logs to stdout."
                        Margin="8" />
 
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding SeparateLogging}">Separate Game/Patcher Logs</CheckBox>
