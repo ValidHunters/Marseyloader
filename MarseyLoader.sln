@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Launcher", "SS14.Launc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Launcher.Tests", "SS14.Launcher.Tests\SS14.Launcher.Tests.csproj", "{AC4AA63C-DFC5-4C8A-B802-8135956BCAD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Launcher.Bootstrap", "SS14.Launcher.Bootstrap\SS14.Launcher.Bootstrap.csproj", "{505C4E21-0B62-4F1E-82C6-8FDBA914757A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS14.Launcher.Strap", "SS14.Launcher.Strap\SS14.Launcher.Strap.csproj", "{505C4E21-0B62-4F1E-82C6-8FDBA914757A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12BB41B7-34BA-44EF-9ECA-434A276D83BD}"
 ProjectSection(SolutionItems) = preProject
