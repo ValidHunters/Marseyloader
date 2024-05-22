@@ -28,7 +28,7 @@ public static class ConfigConstants
 
     public static readonly string AuthUrl = "https://auth.spacestation14.com/";
     public static readonly Uri[] DefaultHubUrls = { new("https://cdn.spacestationmultiverse.com/wizden-hub-mirror/") };
-    public const string DiscordUrl = "https://discord.ss14.io/";
+    public const string DiscordUrl = "https://discord.gg/xHtZXybKeh";
     public const string AccountBaseUrl = "https://account.spacestation14.com/Identity/Account/";
     public const string AccountManagementUrl = $"{AccountBaseUrl}Manage";
     public const string AccountRegisterUrl = $"{AccountBaseUrl}Register";
