@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using HarmonyLib;
 using Marsey.Config;
 using Marsey.Handbreak;
@@ -85,6 +86,11 @@ public static class HWID
             "RecalcHwid",
             HarmonyPatchType.Postfix
             );
+    }
+
+    public static bool CheckHWID(string hwid)
+    {
+        return Regex.IsMatch(hwid, "^$|^[A-F0-9]{64}$");
     }
 
     private static void RecalcHwid(ref byte[] __result)

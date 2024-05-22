@@ -7,7 +7,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Controls;
 using Avalonia.Data.Converters;
+using Avalonia.Input;
+using Avalonia.Media;
 using DynamicData;
 using Marsey;
 using Marsey.Config;
@@ -61,6 +64,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         DumpConfigCommand = new RelayCommand(DumpConfig.Dump);
 
         Persist.UpdateLauncherConfig();
+        SetTempHwid();
     }
 
 #if RELEASE
@@ -271,7 +275,11 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
     public string RPCUsername
     {
         get => Cfg.GetCVar(CVars.RPCUsername);
-        set => _RPCUsername = value;
+        set
+        {
+            Cfg.SetCVar(CVars.RPCUsername, value);
+            Cfg.CommitConfig();
+        }
     }
 
     public bool ForcingHWID
@@ -305,17 +313,36 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         }
     }
 
-    private string _HWIdString = "";
+    private void SetTempHwid()
+    {
+        if (!LIHWIDBind)
+        {
+            _hwidString = Cfg.GetCVar(CVars.ForcedHWId);
+            return;
+        }
+
+        _hwidString = _loginManager.ActiveAccount != null ? _loginManager.ActiveAccount.LoginInfo.HWID : "";
+    }
+
+    private string _hwidString = "";
     public string HWIdString
     {
-        get
-        {
-            if (!LIHWIDBind)
-                return Cfg.GetCVar(CVars.ForcedHWId);
+        get => _hwidString;
+        set => _hwidString = value;
+    }
 
-            return _loginManager.ActiveAccount != null ? _loginManager.ActiveAccount.LoginInfo.HWID : "";
+
+    // This is cancer, quite literally
+    // I hate this
+    private Brush? _hwidTextBoxBorderBrush = new SolidColorBrush(Color.Parse("#FF888888"));
+    public Brush? HWIDTextBoxBorderBrush
+    {
+        get => _hwidTextBoxBorderBrush;
+        set
+        {
+            _hwidTextBoxBorderBrush = value;
+            OnPropertyChanged(nameof(HWIDTextBoxBorderBrush));
         }
-        set => _HWIdString = value;
     }
 
     private string _GuestUname;
@@ -431,43 +458,30 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
 
     private void OnSetHWIdClick()
     {
-        string hwid = _HWIdString;
+        Cfg.SetCVar(CVars.ForcedHWId, _hwidString);
 
-        // Check if _HWIdString is a valid hex string (allowing empty string) and pad it if necessary
-        if (Regex.IsMatch(_HWIdString, "^$|^[A-F0-9]{64}$")) // '*' allows for zero or more characters
+        if (HWID.CheckHWID(_hwidString))
         {
-            if (LIHWIDBind)
-            {
-                if (_loginManager.ActiveAccount != null)
-                {
-                    Log.Debug($"Writing {hwid} to {_loginManager.ActiveAccount.Username}");
-                    _loginManager.ActiveAccount.LoginInfo.HWID = hwid;
-                }
-            }
-            else
-            {
-                Log.Debug($"Writing {hwid} to MarseyConf");
-                Cfg.SetCVar(CVars.ForcedHWId, _HWIdString);
-                Cfg.CommitConfig();
-            }
-
-            OnPropertyChanged(nameof(HWIdString));
-            return;
+            HWIDTextBoxBorderBrush = new SolidColorBrush(Color.Parse("#FF888888"));
+            Cfg.CommitConfig();
+        }
+        else
+        {
+            HWIDTextBoxBorderBrush = new SolidColorBrush(Brushes.Red.Color);
         }
 
-        Log.Warning("Passed HWId is not a valid hexadecimal string! Refusing to apply.");
+        OnPropertyChanged(nameof(HWIdString));
     }
 
     private void OnSetRPCUsernameClick()
     {
-        Cfg.SetCVar(CVars.RPCUsername, _RPCUsername);
+        Cfg.SetCVar(CVars.RPCUsername, RPCUsername);
         Cfg.CommitConfig();
     }
 
     private void OnGenHWIdClick()
     {
         string hwid = HWID.GenerateRandom();
-        _HWIdString = hwid;
         HWIdString = hwid;
 
         OnSetHWIdClick();
