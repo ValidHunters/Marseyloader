@@ -91,7 +91,7 @@ public static async Task PrepareMods(string[]? path = null)
         foreach (string file in files)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Loading assembly from {file}");
-            LoadExactAssembly(file);
+            LoadExactAssembly(file, pipe);
         }
     }
 
@@ -112,15 +112,24 @@ public static async Task PrepareMods(string[]? path = null)
     /// Loads an assembly from the specified file path and initializes it.
     /// </summary>
     /// <param name="file">The file path of the assembly to load.</param>
-    public static void LoadExactAssembly(string file)
+    /// <param name="lockup">Load from the dll directly instead of reading from file</param>
+    public static void LoadExactAssembly(string file, bool lockup = false)
     {
         Redial.Disable(); // Disable any AssemblyLoad callbacks found
 
         try
         {
-            byte[] assemblyData = File.ReadAllBytes(file);
-            Assembly assembly = Assembly.Load(assemblyData);
-            AssemblyInitializer.Initialize(assembly, file);
+            if (lockup)
+            {
+                Assembly assembly = Assembly.LoadFrom(file);
+                AssemblyInitializer.Initialize(assembly, assembly.Location);
+            }
+            else
+            {
+                byte[] assemblyData = File.ReadAllBytes(file);
+                Assembly assembly = Assembly.Load(assemblyData);
+                AssemblyInitializer.Initialize(assembly, file);
+            }
         }
         catch (FileNotFoundException)
         {
