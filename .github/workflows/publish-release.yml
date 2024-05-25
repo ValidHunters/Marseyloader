@@ -7,14 +7,15 @@ on:
 
 jobs:
   build:
-    runs-on: Mirai
+    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
         submodules: 'recursive'
-        
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
     - name: Create build
       run: ./publish.sh
 
