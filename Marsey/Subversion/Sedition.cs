@@ -15,19 +15,19 @@ public static class Sedition
         Hidesey.HidePatch(asm);
     }
 
-    public static void InitHidesey(Assembly assembly, string? assemblyName)
+    public static void InitSedition(Assembly assembly, string? assemblyName)
     {
-        Type? hideseyType = assembly.GetType("Hidesey");
+        Type? hideseyType = assembly.GetType("Sedition");
         if (hideseyType == null)
         {
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"{assemblyName} has no Hidesey class");
             return;
         }
 
-        SetupHidesey(hideseyType);
+        SetupSedition(hideseyType);
     }
 
-    private static void SetupHidesey(Type hidesey)
+    private static void SetupSedition(Type hidesey)
     {
         MethodInfo? stealthseyHide =
             typeof(Sedition).GetMethod("HideDelegate", BindingFlags.Static | BindingFlags.NonPublic);
@@ -35,7 +35,7 @@ public static class Sedition
 
         if (asmHideseyDelegate == null || stealthseyHide == null)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.ERRO, $"Missing delegate fields on hidesey");
+            MarseyLogger.Log(MarseyLogger.LogType.ERRO, $"Missing delegate fields on sedition");
             return;
         }
 
@@ -46,7 +46,7 @@ public static class Sedition
         }
         catch (Exception e)
         {
-            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to to assign logger delegate: {e.Message}");
+            MarseyLogger.Log(MarseyLogger.LogType.FATL, $"Failed to to assign sedition delegate: {e.Message}");
         }
     }
 }

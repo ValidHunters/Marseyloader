@@ -61,7 +61,7 @@ public static class Subverse
             Assembly subverterAssembly = Assembly.LoadFrom(path);
             MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Subversion", $"Sideloading {path}");
             AssemblyFieldHandler.InitLogger(subverterAssembly, subverterAssembly.FullName);
-            Sedition.InitHidesey(subverterAssembly, subverterAssembly.FullName);
+            Sedition.InitSedition(subverterAssembly, subverterAssembly.FullName);
 
             loadGameAssemblyMethod.Invoke(__instance, new object[] { subverterAssembly });
 
