@@ -14,16 +14,6 @@ namespace Marsey.Subversion;
 /// </summary>
 public static class Subverter
 {
-    /// <summary>
-    /// Hides a subversion module from the game
-    /// </summary>
-    /// <remarks>Assigned to a delegate in Subverter.dll</remarks>
-    [HideLevelRequirement(HideLevel.Unconditional)]
-    public static void Hide(Assembly asm)
-    {
-        Hidesey.HidePatch(asm);
-    }
-
     public static List<SubverterPatch> GetSubverterPatches() => PatchListManager.GetPatchList<SubverterPatch>();
 }
 

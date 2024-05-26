@@ -9,6 +9,10 @@ namespace Marsey.Subversion;
 /// </summary>
 public static class Sedition
 {
+    /// <summary>
+    /// Hides a subversion module from the game
+    /// </summary>
+    /// <remarks>Assigned to a delegate in a subverter patch</remarks>
     private static void HideDelegate(Assembly asm)
     {
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "Hiding");

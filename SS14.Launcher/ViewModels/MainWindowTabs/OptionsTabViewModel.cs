@@ -573,7 +573,7 @@ public class HideLevelDescriptionConverter : IValueConverter
             HideLevel.Duplicit => "Patcher is hidden from the game. Patches remain visible to allow administrators to inspect which patches are being used.",
             HideLevel.Normal => "Patcher and patches are hidden.",
             HideLevel.Explicit => "Patcher and patches are hidden. Separate patch logging is disabled.",
-            HideLevel.Unconditional => "Patcher, patches are hidden. Separate patch logging, Subversion is hidden.",
+            HideLevel.Unconditional => "Patcher, patches are hidden. Separate patch logging, Subversion is disabled.",
             _ => "Unknown hide level."
         };
     }
