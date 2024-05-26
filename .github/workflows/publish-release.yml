@@ -3,61 +3,64 @@ name: Publish Release
 on:
   push:
     tags:
-    - 'v*'
+      - 'v*'
 
 jobs:
   build:
-    runs-on: Mirai
-    
+    runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-        
-    - name: Create build
-      run: ./publish.sh
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: mrsy-${{ github.sha }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
 
-    # Upload Linux
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SS14.Launcher_Linux.zip
-        asset_name: SS14.Launcher_Linux.zip
-        asset_content_type: application/zip
+      - name: Create build
+        run: ./publish.sh
 
-    # Upload Windows
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SS14.Launcher_Windows.zip
-        asset_name: SS14.Launcher_Windows.zip
-        asset_content_type: application/zip
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
 
-    # Upload macOS
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SS14.Launcher_macOS.zip
-        asset_name: SS14.Launcher_macOS.zip
-        asset_content_type: application/zip
+      # Upload Linux
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./SS14.Launcher_Linux.zip
+          asset_name: SS14.Launcher_Linux.zip
+          asset_content_type: application/zip
+
+      # Upload Windows
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./SS14.Launcher_Windows.zip
+          asset_name: SS14.Launcher_Windows.zip
+          asset_content_type: application/zip
+
+      # Upload macOS
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./SS14.Launcher_macOS.zip
+          asset_name: SS14.Launcher_macOS.zip
+          asset_content_type: application/zip
