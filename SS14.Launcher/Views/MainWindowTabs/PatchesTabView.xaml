@@ -41,7 +41,7 @@
                         <ToolTip.Tip>
                           <StackPanel>
                             <TextBlock Text="{Binding Desc}" />
-                            <TextBlock Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}" Foreground="Gray"/>
+                            <TextBlock Text="{Binding Asmpath, Converter={StaticResource PathToFileNameConverter}}" Foreground="Gray"/>
                             <TextBlock Text="{Binding Preload, Converter={StaticResource BooleanToPreloadConverter}}" IsVisible="{Binding Preload}"/>
                           </StackPanel>
                         </ToolTip.Tip>
@@ -76,7 +76,7 @@
                         <ToolTip.Tip>
                           <StackPanel>
                             <TextBlock Text="{Binding Desc}" />
-                            <TextBlock Text="{Binding Asm.Location, Converter={StaticResource PathToFileNameConverter}}" Foreground="Gray"/>
+                            <TextBlock Text="{Binding Asmpath, Converter={StaticResource PathToFileNameConverter}}" Foreground="Gray"/>
                           </StackPanel>
                         </ToolTip.Tip>
                       </ToggleButton>
