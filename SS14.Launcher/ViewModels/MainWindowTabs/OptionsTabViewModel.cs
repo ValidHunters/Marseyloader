@@ -65,6 +65,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
 
         Persist.UpdateLauncherConfig();
         SetTempHwid();
+        SetTempGuestUsername();
     }
 
 #if RELEASE
@@ -324,6 +325,11 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         _hwidString = _loginManager.ActiveAccount != null ? _loginManager.ActiveAccount.LoginInfo.HWID : "";
     }
 
+    private void SetTempGuestUsername()
+    {
+        _guestUname = Cfg.GetCVar(CVars.GuestUsername);
+    }
+
     private string _hwidString = "";
     public string HWIdString
     {
@@ -345,11 +351,11 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         }
     }
 
-    private string _GuestUname;
+    private string _guestUname = "";
     public string GuestName
     {
-        get => Cfg.GetCVar(CVars.GuestUsername);
-        set => _GuestUname = value;
+        get => _guestUname;
+        set => _guestUname = value;
     }
 
     public bool MarseySlightOutOfDate
@@ -511,7 +517,7 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
 
     private void OnSetGuestUsernameClick()
     {
-        Cfg.SetCVar(CVars.GuestUsername, _GuestUname);
+        Cfg.SetCVar(CVars.GuestUsername, _guestUname);
         Cfg.CommitConfig();
     }
 
