@@ -86,11 +86,14 @@ public static class AssemblyFieldHandler
     {
         FieldInfo? ignoreFieldInfo = DataType.GetField("ignoreFields");
 
-        if (ignoreFieldInfo != null)
-            return ignoreFieldInfo.GetValue(null) is bool;
+        if (ignoreFieldInfo != null && ignoreFieldInfo.FieldType == typeof(bool))
+        {
+            return (bool)(ignoreFieldInfo.GetValue(null) ?? false);
+        }
 
         return false;
     }
+
 
     /// <summary>
     /// Is the patch asking to be loaded before the game?
@@ -101,8 +104,10 @@ public static class AssemblyFieldHandler
     {
         FieldInfo? preloadFieldInfo = DataType.GetField("preload");
 
-        if (preloadFieldInfo != null)
-            return preloadFieldInfo.GetValue(null) is bool;
+        if (preloadFieldInfo != null && preloadFieldInfo.FieldType == typeof(bool))
+        {
+            return (bool)(preloadFieldInfo.GetValue(null) ?? false);
+        }
 
         return false;
     }
