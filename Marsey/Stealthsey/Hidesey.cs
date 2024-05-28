@@ -122,6 +122,7 @@ public static class Hidesey
     /// </summary>
     public static void PostLoad()
     {
+        Veil.Patch();
         HWID.Force();
         DiscordRPC.Patch();
 
@@ -184,7 +185,7 @@ public static class Hidesey
     }
 
     /// <summary>
-    /// Undermines system functions, hides what doesnt belong from view
+    /// Undermines system functions, hides what doesn't belong from view
     /// </summary>
     /// <exception cref="HideseyException">Thrown if ThrowOnFail is true and any of the patches fails to apply</exception>
     private static void Perjurize()
