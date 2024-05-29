@@ -1,6 +1,4 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
 using HarmonyLib;
@@ -62,7 +60,7 @@ public static class Hidesey
 {
     private static List<Assembly> _hideseys = new List<Assembly>();
     private static bool _initialized;
-    private static bool _caching;
+    internal static bool caching;
 
     /// <summary>
     /// Starts Hidesey. Patches GetAssemblies, GetReferencedAssemblies and hides Harmony from assembly list.
@@ -144,8 +142,8 @@ public static class Hidesey
 
     private static void ToggleCaching()
     {
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Caching is set to {!_caching}");
-        _caching = !_caching;
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Caching is set to {!caching}");
+        caching = !caching;
     }
 
     /// <summary>
@@ -261,7 +259,7 @@ public static class Hidesey
     public static Type[] LyingTyper(Type[] original)
     {
         IEnumerable<Type> hiddentypes = Facade.GetTypes();
-        if (!_caching)
+        if (!caching)
             return original.Except(hiddentypes).ToArray();
 
         Type[] cached = Facade.Cached;
@@ -275,5 +273,28 @@ public static class Hidesey
     }
 
     #endregion
+
+    /// <summary>
+    /// Checks if the call was made by or concerns the content pack
+    /// </summary>
+    internal static bool FromContent()
+    {
+        StackTrace stackTrace = new();
+        //MarseyLogger.Log(MarseyLogger.LogType.TRCE, "Veil", $"Stacktrace check called, given {stackTrace.GetFrames().Length} frames.");
+
+        foreach (StackFrame frame in stackTrace.GetFrames())
+        {
+            MethodBase? method = frame.GetMethod();
+            if (method == null || method.DeclaringType == null) continue;
+            string? namespaceName = method.DeclaringType.Namespace;
+            if (!string.IsNullOrEmpty(namespaceName) && namespaceName.StartsWith("Content."))
+            {
+                //MarseyLogger.Log(MarseyLogger.LogType.INFO, "Veil", "Hidden types from a contentpack check!");
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }
