@@ -12,7 +12,7 @@ namespace Marsey.Stealthsey;
 internal static class Veil
 {
     private static List<string?> HiddenAssemblies = [];
-    private static IEnumerable<Type> _veilCache;
+    private static IEnumerable<Type> _veilCache = [];
 
     internal static void Patch()
     {
