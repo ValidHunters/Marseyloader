@@ -10,7 +10,7 @@ namespace Marsey.Config;
 public static class MarseyVars
 {
     // TODO: Kill this
-    public static readonly Version MarseyVersion = new Version("2.17.2");
+    public static readonly Version MarseyVersion = new Version("2.18");
 
     public static readonly string EnabledPatchListFileName = "patches.marsey";
 
