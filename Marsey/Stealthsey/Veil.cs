@@ -65,7 +65,7 @@ internal static class Veil
     {
         if (!Hidesey.FromContent()) return;
 
-        MarseyLogger.Log(MarseyLogger.LogType.TRCE, "Passed fromcontent check with negative?");
+        MarseyLogger.Log(MarseyLogger.LogType.TRCE, "Veil",$"IReflection types call from content!\nStack:\n{Environment.StackTrace}");
 
         if (Hidesey.caching && _veilCache.Any())
         {
