@@ -33,7 +33,8 @@ public class TitleManager
         {
             new TitleCondition { Condition = () => OperatingSystem.IsWindows(), Message = "if (OperatingSystem.IsWindows()" },
             new TitleCondition { Condition = () => Subverter.GetSubverterPatches().Count > 5, Message = "Subversion is superior to git you know" },
-            new TitleCondition { Condition = () => Marsyfier.GetMarseyPatches().Count > 10, Message = "Marsyfiedisms" }
+            new TitleCondition { Condition = () => Marsyfier.GetMarseyPatches().Count > 10, Message = "Marsyfiedisms" },
+            new TitleCondition { Condition = () => cfg.GetCVar(CVars.FakeRPC), Message = $"{CVars.RPCUsername} RP" }
         };
 
         foreach (TitleCondition condition in titleConditions)
@@ -85,7 +86,8 @@ public class TitleManager
         "On payroll from the saudi government", "Handling the cheating situation since November",
         "World-class anti-cheat", "Leading cause of secondary psychosis",
         "they even made one for fastnoiselite which tells me some people have brain damage",
-        "Station Announcement: Buttfucker69 (Medical Intern) has arrived at the station!"
+        "Station Announcement: Buttfucker69 (Medical Intern) has arrived at the station!",
+        "Game's not out but there's 7,000+ ban appeals"
     ];
 
     // Have I truly lost any imagination? Yeah, kind of.
