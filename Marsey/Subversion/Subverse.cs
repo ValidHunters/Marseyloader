@@ -74,7 +74,7 @@ public static class Subverse
             MethodInfo? entryMethod = CheckEntry(subverterAssembly);
             if (entryMethod != null)
             {
-                Doorbreak.Enter(entryMethod);
+                Doorbreak.Enter(entryMethod, threading: false);
             }
         }
     }

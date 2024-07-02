@@ -11,15 +11,14 @@ public static class Doorbreak
     /// Invokes MarseyEntry
     /// </summary>
     /// <param name="entry">MethodInfo of MarseyEntry::Entry()</param>
-    public static void Enter(MethodInfo? entry)
+    /// <param name="threading">Call in another thread</param>
+    public static void Enter(MethodInfo? entry, bool threading = true)
     {
         if (entry == null) return;
-        
-        Thread entryThread = new Thread(() =>
-        {
-            entry.Invoke(null, new object[] {});
-        });
-        
-        entryThread.Start();
+
+        if (threading)
+            new Thread(() => { entry.Invoke(null, []); }).Start();
+        else
+            entry.Invoke(null, []);
     }
 }
