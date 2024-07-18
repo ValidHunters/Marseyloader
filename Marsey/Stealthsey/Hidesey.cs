@@ -60,7 +60,7 @@ public static class Hidesey
 {
     private static List<Assembly> _hideseys = new List<Assembly>();
     private static bool _initialized;
-    internal static bool caching;
+    private static bool _caching;
 
     /// <summary>
     /// Starts Hidesey. Patches GetAssemblies, GetReferencedAssemblies and hides Harmony from assembly list.
@@ -141,8 +141,8 @@ public static class Hidesey
 
     private static void ToggleCaching()
     {
-        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Caching is set to {!caching}");
-        caching = !caching;
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, $"Caching is set to {!_caching}");
+        _caching = !_caching;
     }
 
     /// <summary>
@@ -258,7 +258,7 @@ public static class Hidesey
     public static Type[] LyingTyper(Type[] original)
     {
         IEnumerable<Type> hiddentypes = Facade.GetTypes();
-        if (!caching)
+        if (!_caching)
             return original.Except(hiddentypes).ToArray();
 
         Type[] cached = Facade.Cached;
