@@ -18,8 +18,8 @@ cp -r "PublishFiles/Space Station 14 Launcher.app" bin/publish/macOS
 
 mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/dotnet/"
 mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/bin/"
-mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/Marsey/Mods"
-mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/Marsey/ResourcePacks"
+mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/MacOS/Marsey/Mods"
+mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/MacOS/Marsey/ResourcePacks"
 mkdir -p "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/bin/loader/Space Station 14.app/Contents/Resources/bin/"
 
 cp -r Dependencies/dotnet/mac/* "bin/publish/macOS/Space Station 14 Launcher.app/Contents/Resources/dotnet/"
