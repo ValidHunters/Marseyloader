@@ -64,12 +64,8 @@ public static class HideseyAttributeManager
         if (method.GetCustomAttribute<Patching>() is null) return;
         if (method.IsGenericMethod) throw new InvalidOperationException("Patching attribute not allowed on generic methods.");
 
-        Console.WriteLine($"Trying to patch {method.Name}");
-
         MethodInfo? prefix = AccessTools.Method(typeof(HideseyPatches), nameof(HideseyPatches.SkipPatchless));
 
         Manual.Patch(method, prefix, HarmonyPatchType.Prefix);
-
-        Console.WriteLine($"Patched {method.Name} fine");
     }
 }
