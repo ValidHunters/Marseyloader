@@ -32,6 +32,7 @@ public static class Subverse
     /// This is done as we attach to the assembly loading function
     /// </summary>
     [HideLevelRestriction(HideLevel.Unconditional)]
+    [Patching]
     public static void PatchSubverter()
     {
 

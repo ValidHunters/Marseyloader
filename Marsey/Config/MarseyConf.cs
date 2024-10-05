@@ -75,6 +75,11 @@ public static class MarseyConf
     public static bool DisableAnyBackports;
 
     /// <summary>
+    /// Don't run any patches
+    /// </summary>
+    public static bool Patchless;
+
+    /// <summary>
     /// Reflect changes made here to the Dictionary in the launcher's Connector.cs
     /// </summary>
     public static readonly Dictionary<string, Action<string>> EnvVarMap = new Dictionary<string, Action<string>>
@@ -97,7 +102,8 @@ public static class MarseyConf
         { "MARSEY_NO_ANY_BACKPORTS", value => DisableAnyBackports = value == "true" },
         { "MARSEY_FORKID", MarseyPortMan.SetForkID },
         { "MARSEY_ENGINE", MarseyPortMan.SetEngineVer },
-        { "MARSEY_HIDE_LEVEL", value => MarseyHide = (HideLevel)Enum.Parse(typeof(HideLevel), value) }
+        { "MARSEY_HIDE_LEVEL", value => MarseyHide = (HideLevel)Enum.Parse(typeof(HideLevel), value) },
+        { "MARSEY_PATCHLESS", value => Patchless = value == "true"}
     };
 
     // Conf variables that do not go into the EnvVarMap go here

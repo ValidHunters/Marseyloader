@@ -19,13 +19,12 @@ public static class HWID
     /// <summary>
     /// Patching the HWId function and replacing it with a custom HWId.
     /// </summary>
-    /// <remarks>Requires Normal or above MarseyHide</remarks>
     public static void Force()
     {
-        /// Only accepts a hexidecimal string, so you don't get to write "FUCK YOU PJB/SLOTH/RANE/MOONY/FAYE/SMUG/EXEC/ALLAH/EMO/ONIKS/MORTY".
-        /// Maybe if you wrote it in entirely numeric, with "Rane" being 18F1F14F5 or something.
-        /// Nobody will read that anyway - its for ban evasion and thats it.
-        /// Don't forget a VPN or a proxy!
+        // TODO: Further work on HWID2
+        // While currently trust is not used, I suspect having an empty hwid string will harm its value
+        // This is made so you couldn't hwid ban other people this easily
+        // As of 10/4/2024 hwid2 instead of this bullshit you can pass an env variable to tell the client that you're not sending your hwid
 
         // Check if forcing is enabled
         if (!MarseyConf.ForceHWID)
@@ -79,13 +78,39 @@ public static class HWID
 
     private static void PatchCalcMethod()
     {
-        Helpers.PatchMethod(
-            Helpers.TypeFromQualifiedName("Robust.Shared.Network.HWId"),
-            "Calc",
-            typeof(HWID),
-            "RecalcHwid",
-            HarmonyPatchType.Postfix
+        Type? hwid1 = Helpers.TypeFromQualifiedName("Robust.Shared.Network.HWId");
+        Type? hwid2 = Helpers.TypeFromQualifiedName("Robust.Client.Hwid.BasicHwid");
+
+        if (hwid1 is not null)
+        {
+            Helpers.PatchMethod(
+                hwid1,
+                "Calc",
+                typeof(HWID),
+                "RecalcHwid",
+                HarmonyPatchType.Postfix
             );
+            return;
+        }
+
+        if (hwid2 is not null)
+        {
+            Helpers.PatchMethod(
+                hwid2,
+                "GetLegacy",
+                typeof(HWID),
+                nameof(RecalcHwid),
+                HarmonyPatchType.Postfix
+            );
+
+            Helpers.PatchMethod(
+                hwid2,
+                "GetModern",
+                typeof(HWID),
+                nameof(RecalcHwid2),
+                HarmonyPatchType.Postfix
+            );
+        }
     }
 
     public static bool CheckHWID(string hwid)
@@ -98,5 +123,12 @@ public static class HWID
         string hwidString = BitConverter.ToString(_hwId).Replace("-", "");
         MarseyLogger.Log(MarseyLogger.LogType.DEBG, "HWIDForcer", $"\"Recalculating\" HWID to {hwidString}");
         __result = _hwId;
+    }
+
+    private static void RecalcHwid2(ref byte[] __result)
+    {
+        string hwidString = BitConverter.ToString(_hwId).Replace("-", "");
+        MarseyLogger.Log(MarseyLogger.LogType.DEBG, "HWIDForcer", $"\"Recalculating\" HWID to {hwidString}");
+        __result = [0, .._hwId];
     }
 }

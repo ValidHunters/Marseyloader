@@ -259,6 +259,16 @@ public static class CVars
     /// Username used in guest mode
     /// </summary>
     public static readonly CVarDef<string> GuestUsername = CVarDef.Create("GuestUsername", "Guest");
+
+    /// <summary>
+    /// Do not patch anything in the game modules
+    /// </summary>
+    public static readonly CVarDef<bool> Patchless = CVarDef.Create("Patchless", false);
+
+    /// <summary>
+    /// HWID2 - Disallow sending hwid to server.
+    /// </summary>
+    public static readonly CVarDef<bool> DisallowHwid = CVarDef.Create("DisallowHwid", false);
 }
 
 /// <summary>

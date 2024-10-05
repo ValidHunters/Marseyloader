@@ -573,6 +573,9 @@ public class Connector : ReactiveObject
         startInfo.EnvironmentVariables["SS14_LOADER_CONTENT_VERSION"] = contentVersion.ToString();
         startInfo.EnvironmentVariables["SS14_LAUNCHER_PATH"] = Process.GetCurrentProcess().MainModule!.FileName;
 
+        if (_cfg.GetCVar(CVars.DisallowHwid))
+            startInfo.EnvironmentVariables["ROBUST_AUTH_ALLOW_HWID"] = "0";
+
         return startInfo;
     }
 
@@ -611,7 +614,8 @@ public class Connector : ReactiveObject
             { "MARSEY_BACKPORTS", _cfg.GetCVar(CVars.Backports) ? "true" : null },
             { "MARSEY_NO_ANY_BACKPORTS", _cfg.GetCVar(CVars.DisableAnyEngineBackports) ? "true" : null },
             { "MARSEY_DISABLE_STRICT", _cfg.GetCVar(CVars.DisableStrict) ? "true" : null },
-            { "MARSEY_DUMP_ASSEMBLIES", MarseyConf.Dumper ? "true" : null }
+            { "MARSEY_DUMP_ASSEMBLIES", MarseyConf.Dumper ? "true" : null },
+            { "MARSEY_PATCHLESS", _cfg.GetCVar(CVars.Patchless) ? "true" : null }
         };
 
         // Serialize environment variables

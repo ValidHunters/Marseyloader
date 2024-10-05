@@ -19,6 +19,14 @@
       <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <DockPanel>
           <StackPanel Orientation="Vertical">
+            <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding HWID2OptOut}">Explicitly disallow HWID</CheckBox>
+            <StackPanel Margin="8">
+              <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                         Text="[Patchless] HWId2 - Opt out of sending your HWId to the server."/>
+              <TextBlock VerticalAlignment="Center" FontWeight="Bold" TextWrapping="Wrap"
+                         Text="Servers may require a HWId in the future, as HWId2 works (sort of) on Linux."/>
+            </StackPanel>
+
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding CompatMode}">Compatibility Mode</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
                        Text="This uses OpenGL ES 2 (via ANGLE if necessary), which is less likely to suffer from driver bugs. Try this if you are experiencing graphical issues or crashes."
@@ -127,6 +135,8 @@
                             Text="Gives a random HWId each time you connect to a server."/>
                  <TextBlock VerticalAlignment="Center" FontWeight="Bold" TextWrapping="Wrap"
                             Text="Detection vector. Don't use on main accounts."/>
+                 <TextBlock VerticalAlignment="Center" FontWeight="Bold" TextWrapping="Wrap"
+                            Text="HWId2 - a lot of hwids on one account may harm trust in the future."/>
              </StackPanel>
 
              <TextBlock Margin="4, 0" Text="Patching" Classes="NanoHeadingMedium" />
@@ -251,6 +261,11 @@
       <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <DockPanel>
           <StackPanel Orientation="Vertical">
+            <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Patchless}">Run patchless</CheckBox>
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                       Text="Disables any patching except hiding harmony, essentially acting like a killswitch. Useful when game breaks due to the launcher itself."
+                       Margin="8" />
+
             <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump Resources</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"

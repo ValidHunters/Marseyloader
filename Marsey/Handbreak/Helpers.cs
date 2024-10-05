@@ -18,7 +18,7 @@ public static class Helpers
         Type? t = TypeFromQualifiedName(FullyQualifiedTypeName);
 
         if (t != null) return GetMethod(t, MethodName, parameters);
-        
+
         MarseyLogger.Log(MarseyLogger.LogType.ERRO, $"{FullyQualifiedTypeName} not found.");
         return null;
     }
@@ -30,7 +30,7 @@ public static class Helpers
     {
         return AccessTools.Method(type, MethodName, parameters);
     }
-    
+
     /// <summary>
     /// Patches a method from the given pointers
     /// </summary>
@@ -44,7 +44,7 @@ public static class Helpers
     public static void PatchMethod(Type? targetType, string targetMethodName, Type? patchType, string patchMethodName, HarmonyPatchType patchingType, Type[]? targetMethodParameters = null, Type[]? patchMethodParameters = null)
     {
         ValidateTypes(targetType, patchType);
-        
+
         MethodInfo? targetMethod = GetAndValidateMethod(targetType, targetMethodName, targetMethodParameters, "target");
         MethodInfo? patchMethod = GetAndValidateMethod(patchType, patchMethodName, patchMethodParameters, "patch");
 
@@ -52,6 +52,7 @@ public static class Helpers
             LogPatchSuccess(patchingType, targetMethodName, patchMethodName);
     }
 
+    #region Generics
     public static void PatchGenericMethod(Type? targetType, string targetMethodName, Type? patchType, string patchMethodName, Type returnType, HarmonyPatchType patchingType)
     {
         ValidateTypes(targetType, patchType);
@@ -60,26 +61,50 @@ public static class Helpers
         MethodInfo? patchMethod = GetAndValidateMethod(patchType, patchMethodName, null, "patch");
 
         MethodInfo? genericMethod = MakeGenericMethod(patchMethod, returnType);
-        
+
         if (Manual.Patch(targetMethod, genericMethod, patchingType))
             LogPatchSuccess(patchingType, targetMethodName, patchMethodName);
     }
 
-    public static void PatchGenericMethod(MethodInfo? target, MethodInfo? patch, Type returnType, HarmonyPatchType patchType)
+    public static void PatchGenericMethod(MethodInfo? target, Type targetReturnType, MethodInfo? patch, Type patchReturnType, HarmonyPatchType patchType)
     {
-        MethodInfo? generic = MakeGenericMethod(patch, returnType);
-        
-        if (Manual.Patch(target, generic, patchType))
+        target = MakeGenericMethod(target, targetReturnType);
+        patch = MakeGenericMethod(patch, patchReturnType);
+
+        if (Manual.Patch(target, patch, patchType))
             LogPatchSuccess(patchType, target!.Name, patch!.Name);
-            
     }
-    
+
+    public static void PatchGenericMethod(MethodInfo? target, MethodInfo? patch, Type patchReturnType, HarmonyPatchType patchType)
+    {
+        patch = MakeGenericMethod(patch, patchReturnType);
+
+        if (Manual.Patch(target, patch, patchType))
+            LogPatchSuccess(patchType, target!.Name, patch!.Name);
+    }
+
+    public static void PatchGenericMethod(MethodInfo target, Type targetReturnType, MethodInfo? patch, HarmonyPatchType patchType)
+    {
+        target = target.MakeGenericMethod([]);
+
+        if (Manual.Patch(target, patch, patchType))
+            LogPatchSuccess(patchType, target.Name, patch!.Name);
+    }
+
+    public static void PatchGenericMethod(MethodInfo? target, MethodInfo? patch, HarmonyPatchType patchType)
+    {
+        if (Manual.Patch(target, patch, patchType))
+            LogPatchSuccess(patchType, target!.Name, patch!.Name);
+    }
+
+    #endregion
+
     private static void ValidateTypes(Type? targetType, Type? patchType)
     {
         if (targetType == null || patchType == null)
             throw new HandBreakException($"Passed type is null. Target: {targetType}, patch: {patchType}");
     }
-    
+
     private static void ValidateMethods(MethodInfo? target, MethodInfo? patch)
     {
         if (target == null || patch == null)
@@ -97,7 +122,7 @@ public static class Helpers
     private static MethodInfo? MakeGenericMethod(MethodInfo? method, Type returnType)
     {
         if (method != null) return method.MakeGenericMethod(returnType);
-        
+
         MarseyLogger.Log(MarseyLogger.LogType.ERRO, "Handbreak", $"Error making generic method");
         return null;
     }
