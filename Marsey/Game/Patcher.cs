@@ -7,6 +7,7 @@ using Marsey.Game.Managers;
 using Marsey.Game.Misc;
 using Marsey.Patches;
 using Marsey.Misc;
+using Marsey.Stealthsey.Reflection;
 
 namespace Marsey.Game;
 
@@ -25,9 +26,10 @@ public static class Patcher
             PatchAssembly(harmony, patch);
         }
     }
-    
+
     /// <inheritdoc cref="Patcher.Patch"/>
-    private static void PatchAssembly<T>(Harmony harmony, T patch) where T : IPatch
+    [Patching]
+    private static void PatchAssembly(Harmony harmony, IPatch patch)
     {
         AssemblyName assemblyName = patch.Asm.GetName();
         MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Patching {assemblyName}");

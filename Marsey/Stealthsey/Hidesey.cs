@@ -73,7 +73,7 @@ public static class Hidesey
 
         _initialized = true;
 
-        HideLevelExec.Initialize();
+        HideseyAttributeManager.Initialize();
 
         Load();
     }
@@ -203,7 +203,7 @@ public static class Hidesey
             Helpers.PatchGenericMethod(
                 target: targetMethod,
                 patch: Lie,
-                returnType: returnType,
+                patchReturnType: returnType,
                 patchType: HarmonyPatchType.Postfix
             );
         }

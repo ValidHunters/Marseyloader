@@ -499,6 +499,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         set => MarseyConf.Dumper = value;
     }
 
+    public bool Patchless
+    {
+        get => Cfg.GetCVar(CVars.Patchless);
+        set
+        {
+            Cfg.SetCVar(CVars.Patchless, value);
+            Cfg.CommitConfig();
+        }
+    }
+
     public bool ResourceOverride
     {
         get => Cfg.GetCVar(CVars.DisableStrict);

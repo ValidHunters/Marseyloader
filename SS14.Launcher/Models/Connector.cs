@@ -611,7 +611,8 @@ public class Connector : ReactiveObject
             { "MARSEY_BACKPORTS", _cfg.GetCVar(CVars.Backports) ? "true" : null },
             { "MARSEY_NO_ANY_BACKPORTS", _cfg.GetCVar(CVars.DisableAnyEngineBackports) ? "true" : null },
             { "MARSEY_DISABLE_STRICT", _cfg.GetCVar(CVars.DisableStrict) ? "true" : null },
-            { "MARSEY_DUMP_ASSEMBLIES", MarseyConf.Dumper ? "true" : null }
+            { "MARSEY_DUMP_ASSEMBLIES", MarseyConf.Dumper ? "true" : null },
+            { "MARSEY_PATCHLESS", _cfg.GetCVar(CVars.Patchless) ? "true" : null }
         };
 
         // Serialize environment variables

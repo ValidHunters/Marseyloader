@@ -251,6 +251,11 @@
       <ScrollViewer HorizontalScrollBarVisibility="Disabled">
         <DockPanel>
           <StackPanel Orientation="Vertical">
+            <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding Patchless}">Run patchless</CheckBox>
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"
+                       Text="Disables any patching except hiding harmony, essentially acting like a killswitch. Useful when game breaks due to the launcher itself."
+                       Margin="8" />
+
             <TextBlock Margin="4, 0" Text="Patches" Classes="NanoHeadingMedium" />
             <CheckBox VerticalAlignment="Center" Margin="4" IsChecked="{Binding DumpAssemblies}">Dump Resources</CheckBox>
             <TextBlock VerticalAlignment="Center" TextWrapping="Wrap"

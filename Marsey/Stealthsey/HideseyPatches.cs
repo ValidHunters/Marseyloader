@@ -34,6 +34,8 @@ public static class HideseyPatches
     /// </summary>
     public static bool Skip() => false;
 
+    public static bool SkipPatchless() => !MarseyConf.Patchless;
+
     /// <summary>
     /// Prefix patch that checks if MarseyHide matches or above the attributed HideLevelRequirement
     /// </summary>

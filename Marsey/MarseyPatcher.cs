@@ -15,6 +15,7 @@ using Marsey.Patches;
 using Marsey.Stealthsey;
 using Marsey.Subversion;
 using Marsey.Misc;
+using Marsey.Stealthsey.Reflection;
 
 namespace Marsey;
 
@@ -63,7 +64,7 @@ public class MarseyPatcher
         Utility.ReadConf();
         HarmonyManager.Init(new Harmony(MarseyVars.Identifier));
 
-        MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Marseyloader started, version {MarseyVars.MarseyVersion}");
+        MarseyLogger.Log(MarseyLogger.LogType.INFO, $"Marseyloader started{(MarseyConf.Patchless ? " in patchless mode" : "")}, version {MarseyVars.MarseyVersion}");
 
         // Init backport manager
         MarseyPortMan.Initialize();
@@ -78,7 +79,8 @@ public class MarseyPatcher
     }
 
     // We might want to patch things before the loader has even a chance to execute anything
-    public void Preload()
+    [Patching]
+    private void Preload()
     {
         Sentry.Patch();
 
