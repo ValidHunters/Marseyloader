@@ -573,6 +573,9 @@ public class Connector : ReactiveObject
         startInfo.EnvironmentVariables["SS14_LOADER_CONTENT_VERSION"] = contentVersion.ToString();
         startInfo.EnvironmentVariables["SS14_LAUNCHER_PATH"] = Process.GetCurrentProcess().MainModule!.FileName;
 
+        if (_cfg.GetCVar(CVars.DisallowHwid))
+            startInfo.EnvironmentVariables["ROBUST_AUTH_ALLOW_HWID"] = "0";
+
         return startInfo;
     }
 

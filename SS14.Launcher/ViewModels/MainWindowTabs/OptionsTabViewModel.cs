@@ -499,6 +499,16 @@ public class OptionsTabViewModel : MainWindowTabViewModel, INotifyPropertyChange
         set => MarseyConf.Dumper = value;
     }
 
+    public bool HWID2OptOut
+    {
+        get => Cfg.GetCVar(CVars.DisallowHwid);
+        set
+        {
+            Cfg.SetCVar(CVars.DisallowHwid, value);
+            Cfg.CommitConfig();
+        }
+    }
+
     public bool Patchless
     {
         get => Cfg.GetCVar(CVars.Patchless);
