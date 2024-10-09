@@ -120,10 +120,10 @@
           </ScrollViewer>
         </TabItem>
       </TabControl>
-      <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+      <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right">
         <DockPanel LastChildFill="True">
           <TextBlock Text="Patches are unsandboxed, run at own risk."
-                     VerticalAlignment="Bottom" FontWeight="Bold" HorizontalAlignment="Left" DockPanel.Dock="Left"/>
+                     VerticalAlignment="Bottom" FontWeight="Bold" HorizontalAlignment="Center" DockPanel.Dock="Left"/>
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Open mod directory" Margin="4, 0" Command="{Binding OpenPatchDirectoryCommand}" Height="30"/>
             <Button Content="Recheck mods" Margin="4, 0" Command="{Binding ReloadModsCommand}" Height="30"/>
